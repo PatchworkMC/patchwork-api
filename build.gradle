@@ -1,0 +1,217 @@
+plugins {
+	id 'java'
+	id 'eclipse'
+	id 'idea'
+	id 'maven-publish'
+	id 'fabric-loom' version '0.2.6-SNAPSHOT' apply false
+	id 'net.minecrell.licenser' version '0.4.1'
+	id "org.ajoberstar.grgit" version "3.1.1"
+}
+
+def ENV = System.getenv()
+
+class Globals {
+	static def baseVersion = "0.1.0"
+	static def mcVersion = "1.14.4"
+	static def yarnVersion = "+build.15"
+}
+
+def getSubprojectVersion(project, version) {
+	if (grgit == null) {
+		return version + "+nogit"
+	}
+	def latestCommits = grgit.log(paths: [project.name], maxCommits: 1)
+	if (latestCommits.isEmpty()) {
+		return version + "+uncommited"
+	} else {
+		return version + "+" + latestCommits.get(0).id.substring(0, 8)
+	}
+}
+
+def getBranch(){
+	if(System.getenv().GIT_BRANCH){
+		def branch = System.getenv().GIT_BRANCH
+		return branch.substring(branch.lastIndexOf("/") + 1)
+	}
+	if (grgit == null) {
+		return "unknown"
+	}
+	return grgit.branch.current().name
+}
+
+allprojects {
+	apply plugin: 'checkstyle'
+	apply plugin: 'maven-publish'
+	apply plugin: 'fabric-loom'
+	apply plugin: 'net.minecrell.licenser'
+
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+
+	group = "com.patchworkmc.patchwork-api"
+
+	dependencies {
+		minecraft "com.mojang:minecraft:$Globals.mcVersion"
+		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+		modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
+		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
+	}
+
+	configurations {
+		dev
+	}
+
+	repositories {
+		mavenLocal()
+	}
+
+	jar {
+		classifier = "dev"
+	}
+
+	afterEvaluate {
+		remapJar {
+			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+			archiveName = "${archivesBaseName}-${version}.jar"
+		}
+
+		artifacts {
+			dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
+		}
+
+		processResources {
+			inputs.property "version", project.version
+
+			from(sourceSets.main.resources.srcDirs) {
+				include "fabric.mod.json"
+				expand "version": project.version
+			}
+
+			from(sourceSets.main.resources.srcDirs) {
+				exclude "fabric.mod.json"
+			}
+		}
+
+		license {
+			header rootProject.file('HEADER')
+			include '**/*.java'
+		}
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	checkstyle {
+		configFile = rootProject.file("checkstyle.xml")
+		toolVersion = '8.25'
+	}
+}
+
+javadoc {
+	options.memberLevel = "PACKAGE"
+	allprojects.each{
+			source( it.sourceSets.main.allJava.srcDirs)
+		}
+	classpath = sourceSets.main.compileClasspath
+}
+
+subprojects {
+	task remapMavenJar(type: Copy, dependsOn: remapJar) {
+		afterEvaluate {
+			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
+			into("${project.buildDir}/libs/")
+			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
+		}
+	}
+
+	publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
+					builtBy remapMavenJar
+				}
+				artifact(sourcesJar) {
+					builtBy remapSourcesJar
+				}
+			}
+		}
+
+		repositories {
+			maven {
+				url "http://mavenupload.modmuss50.me/"
+				if (project.hasProperty('mavenPass')) {
+					credentials {
+						username 'buildslave'
+						password project.getProperty('mavenPass')
+					}
+				}
+			}
+		}
+	}
+
+	javadoc.enabled = false
+}
+
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+	afterEvaluate {
+		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+		archiveName = "${archivesBaseName}-${version}-maven.jar"
+		addNestedDependencies = false
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
+				builtBy remapMavenJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+			pom.withXml {
+				def depsNode = asNode().appendNode("dependencies")
+				subprojects.each {
+					def depNode = depsNode.appendNode("dependency")
+					depNode.appendNode("groupId", it.group)
+					depNode.appendNode("artifactId", it.name)
+					depNode.appendNode("version", it.version)
+					depNode.appendNode("scope", "compile")
+				}
+			}
+		}
+	}
+
+	repositories {
+		maven {
+			url "http://mavenupload.modmuss50.me/"
+			if (project.hasProperty('mavenPass')) {
+				credentials {
+					username 'buildslave'
+					password project.getProperty('mavenPass')
+				}
+			}
+		}
+	}
+}
+
+task licenseFormatAll
+subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
+subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
+
+dependencies {
+	afterEvaluate {
+		subprojects.each {
+			compile project(path: ":${it.name}", configuration: "dev")
+			include project("${it.name}:")
+		}
+	}
+}
+
+version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
+
+logger.lifecycle("Building Patchwork: " + version)
+
+apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
