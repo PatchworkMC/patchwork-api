@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+		"http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
 	<property name="charset" value="UTF-8"/>
 	<property name="fileExtensions" value="java"/>
@@ -47,14 +48,16 @@
 		- <indentation> as captured earlier
 		- <control statement> as specified above
 		- { before the next new line -->
-		<property name="format" value="(?&lt;=\n)([\t]+)(?:[^/\r\n \t][^\r\n]*|/[^/\r\n][^\r\n]*|[^/\r\n][^\r\n]*(\r?\n\1//[^\r\n]*)+)\r?\n\1(|(if|do|while|for|try)[^\r\n]+)\{[\t ]*\r?\n"/>
+		<property name="format"
+				  value="(?&lt;=\n)([\t]+)(?:[^/\r\n \t][^\r\n]*|/[^/\r\n][^\r\n]*|[^/\r\n][^\r\n]*(\r?\n\1//[^\r\n]*)+)\r?\n\1(|(if|do|while|for|try)[^\r\n]+)\{[\t ]*\r?\n"/>
 		<property name="message" value="missing blank line before block at same indentation level"/>
 	</module>
 
 	<!-- require blank after } in the same indentation level -->
 	<module name="RegexpMultiline">
 		<!-- \n<indentation>}\n<same indentation><whatever unless newline, '}' or starting with cas(e) or def(ault)> -->
-		<property name="format" value="(?&lt;=\n)([\t]+)\}\r?\n\1(?:[^\r\n\}cd]|c[^\r\na]|ca[^\r\ns]|d[^\r\ne]|de[^\r\nf])"/>
+		<property name="format"
+				  value="(?&lt;=\n)([\t]+)\}\r?\n\1(?:[^\r\n\}cd]|c[^\r\na]|ca[^\r\ns]|d[^\r\ne]|de[^\r\nf])"/>
 		<property name="message" value="missing blank line after block at same indentation level"/>
 	</module>
 
@@ -67,7 +70,8 @@
 
 		<module name="ImportOrder">
 			<property name="groups" value="java,javax,*,net.minecraft,net.fabricmc"/>
-			<property name="ordered" value="false"/><!-- the plugin orders alphabetically without considering separators.. -->
+			<property name="ordered"
+					  value="false"/><!-- the plugin orders alphabetically without considering separators.. -->
 			<property name="separated" value="true"/>
 			<property name="option" value="top"/>
 			<property name="sortStaticImportsAlphabetically" value="true"/>
@@ -91,7 +95,8 @@
 			<property name="allowNoEmptyLineBetweenFields" value="true"/>
 			<property name="allowMultipleEmptyLines" value="false"/>
 			<!-- exclude  METHOD_DEF and VARIABLE_DEF -->
-			<property name="tokens" value="PACKAGE_DEF,IMPORT,STATIC_IMPORT,CLASS_DEF,INTERFACE_DEF,ENUM_DEF,STATIC_INIT,INSTANCE_INIT,CTOR_DEF"/>
+			<property name="tokens"
+					  value="PACKAGE_DEF,IMPORT,STATIC_IMPORT,CLASS_DEF,INTERFACE_DEF,ENUM_DEF,STATIC_INIT,INSTANCE_INIT,CTOR_DEF"/>
 		</module>
 
 		<module name="OperatorWrap"/>
@@ -121,7 +126,8 @@
 		<module name="WhitespaceAfter"/>
 		<module name="WhitespaceAround">
 			<!-- Allow PLUS, MINUS, MUL, DIV as they may be more readable without spaces in some cases -->
-			<property name="tokens" value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV_ASSIGN,DO_WHILE,EQUAL,GE,GT,LAMBDA,LAND,LCURLY,LE,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,LITERAL_ASSERT,TYPE_EXTENSION_AND"/>
+			<property name="tokens"
+					  value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,COLON,DIV_ASSIGN,DO_WHILE,EQUAL,GE,GT,LAMBDA,LAND,LCURLY,LE,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,LITERAL_ASSERT,TYPE_EXTENSION_AND"/>
 		</module>
 		<module name="SingleSpaceSeparator"/>
 		<module name="GenericWhitespace"/>
@@ -155,7 +161,7 @@
 		<module name="PackageName">
 			<!-- require a package either in patchwork or forge -->
 			<property name="format"
-			value="^com\.patchworkmc|^net.minecraftforge"/>
+					  value="^com\.patchworkmc|^net.minecraftforge"/>
 		</module>
 
 		<!--<module name="InvalidJavadocPosition"/>-->
