@@ -12,6 +12,8 @@ pluginManagement {
 
 rootProject.name = "patchwork-api"
 
-include 'patchwork-loader'
-include 'patchwork-config'
 include 'patchwork-events-lifecycle'
+include 'patchwork-config'
+include 'patchwork-loader'
+include 'patchwork-registries'
+include 'patchwork-dispatcher'
