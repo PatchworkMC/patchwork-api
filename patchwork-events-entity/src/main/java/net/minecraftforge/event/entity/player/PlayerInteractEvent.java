@@ -291,11 +291,11 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * The server is not aware of when the client right clicks empty space with an empty hand, you will need to tell the server yourself.
 	 * This event cannot be canceled.
 	 */
-	public static class RightClickEmpty extends PlayerInteractEvent {
+	/** TODO public static class RightClickEmpty extends PlayerInteractEvent {
 		public RightClickEmpty(PlayerEntity player, Hand hand) {
 			super(player, hand, new BlockPos(player), null);
 		}
-	}
+	}*/
 
 	/**
 	 * This event is fired when a player left clicks while targeting a block.
