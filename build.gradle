@@ -56,8 +56,16 @@ allprojects {
 		modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
 		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
 
-		implementation "net.coderbot:patchwork-eventbus:0.1.0"
+		implementation "net.coderbot:patchwork-eventbus:0.1.2:all"
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+		// For EventBus
+		implementation 'org.ow2.asm:asm:6.2'
+		implementation 'org.ow2.asm:asm-commons:6.2'
+		implementation 'org.ow2.asm:asm-tree:6.2'
+		implementation 'org.apache.logging.log4j:log4j-api:2.11.+'
+		implementation 'com.google.code.findbugs:jsr305:3.0.2'
+		implementation 'net.jodah:typetools:0.6.0'
 	}
 
 	configurations {
@@ -204,6 +212,13 @@ task licenseFormatAll
 subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
+repositories {
+	flatDir {
+		dirs 'jars'
+	}
+	mavenCentral()
+}
+
 dependencies {
 	afterEvaluate {
 		subprojects.each {
@@ -211,6 +226,21 @@ dependencies {
 			include project("${it.name}:")
 		}
 	}
+
+	implementation 'org.apache.logging.log4j:log4j-core:2.10.0'
+
+	minecraft "com.mojang:minecraft:$Globals.mcVersion"
+	mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+	modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
+	modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
+
+	implementation 'com.electronwill.night-config:toml:3.6.0'
+
+	modCompile "lykrast:voyage:1.0.0"
+	modCompile "lemons:bunchofbiomes:1.0.3"
+	modCompile "bl4ckscor3:xptome:1.0.0"
+	modCompile "lothrazar:absentbydesign:1.0.3"
+	//modCompile "natamus:emc_1.14:1.0"
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()

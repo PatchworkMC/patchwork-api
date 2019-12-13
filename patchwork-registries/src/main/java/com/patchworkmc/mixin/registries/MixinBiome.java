@@ -4,11 +4,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 
 @Mixin(Biome.class)
 public class MixinBiome implements ExtendedForgeRegistryEntry<Biome> {
+	@Unique
 	private Identifier registryName;
 
 	@Override

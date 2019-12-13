@@ -4,11 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 
 @Mixin(Block.class)
 public class MixinBlock implements ExtendedForgeRegistryEntry<Block> {
+	@Unique
 	private Identifier registryName;
 
 	@Override

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-dispatcher",
+  "version": "${version}",
+
+  "name": "Patchwork Dispatcher",
+  "description": "Starts Patchwork mods",
+  "authors": [
+	"coderbot"
+  ],
+
+  "license": "LGPL-2.1-only",
+  "icon": "assets/modid/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+	"main": [
+	  "net.coderbot.patchwork.Patchwork"
+	]
+  },
+  "depends": {
+	"fabricloader": ">=0.4.0",
+	"fabric": "*",
+    "patchwork-registries": "*",
+    "patchwork-events-lifecycle": "*"
+  }
+}

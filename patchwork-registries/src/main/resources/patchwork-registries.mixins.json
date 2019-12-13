@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.registries",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  	"MixinBiome",
+	"MixinBlock",
+	"MixinFeature",
+	"MixinItem",
+	"MixinSurfaceBuilder"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

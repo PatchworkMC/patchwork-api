@@ -4,11 +4,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 
 @Mixin(SurfaceBuilder.class)
 public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBuilder> {
+	@Unique
 	private Identifier registryName;
 
 	@Override

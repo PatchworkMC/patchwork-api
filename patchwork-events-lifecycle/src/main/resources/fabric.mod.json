@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-events-lifecycle",
+  "name": "Patchwork Lifecycle Events",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.6.2",
+    "patchwork-fml": "*"
+  },
+  "description": "Implementation of the Forge Lifecycle Events."
+}
