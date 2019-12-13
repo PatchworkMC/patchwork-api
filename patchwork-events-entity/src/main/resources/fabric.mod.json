@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-events-entity",
+  "version": "${version}",
+
+  "name": "Patchwork Entity Events",
+  "description": "Provides an implementation of Minecraft Forge's Entity Events",
+  "authors": [
+	"coderbot"
+  ],
+  "license": "LGPL-2.1-only",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.patchworkmc.impl.event.EntityEvents"
+    ]
+  },
+  "depends": {
+	"fabricloader": ">=0.4.0",
+	"fabric": "*",
+    "patchwork-fml": "*"
+  }
+}

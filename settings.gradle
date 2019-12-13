@@ -17,3 +17,5 @@ include 'patchwork-fml'
 include 'patchwork-registries'
 include 'patchwork-dispatcher'
 include 'patchwork-biomes'
+include 'patchwork-events-entity'
+
