@@ -18,4 +18,4 @@ include 'patchwork-registries'
 include 'patchwork-dispatcher'
 include 'patchwork-biomes'
 include 'patchwork-events-entity'
-
+include 'patchwork-events-world'

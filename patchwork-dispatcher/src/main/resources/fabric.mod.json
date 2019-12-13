@@ -23,5 +23,8 @@
 	"fabric": "*",
     "patchwork-registries": "*",
     "patchwork-events-lifecycle": "*"
-  }
+  },
+  "mixins": [
+    "patchwork-dispatcher.mixins.json"
+  ]
 }

@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.extension",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  	"MixinStatusEffect"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

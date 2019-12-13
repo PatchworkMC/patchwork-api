@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-events-lifecycle",
-  "name": "Patchwork Lifecycle Events",
+  "id": "patchwork-events-world",
+  "name": "Patchwork World Events",
   "version": "${version}",
   "license": "LGPL-2.1-only",
   "contact": {
@@ -15,13 +15,8 @@
     "fabricloader": ">=0.6.2",
     "patchwork-fml": "*"
   },
-  "entrypoints": {
-    "main": [
-      "com.patchworkmc.impl.event.lifecycle.LifecycleEvents"
-    ]
-  },
   "mixins": [
-    "patchwork-events-lifecycle.mixins.json"
+    "patchwork-events-world.mixins.json"
   ],
-  "description": "Implementation of the Forge Lifecycle Events."
+  "description": "Implementation of the Forge World Events."
 }

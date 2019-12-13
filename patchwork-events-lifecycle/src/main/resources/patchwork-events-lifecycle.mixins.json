@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.event.lifecycle",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  	"MixinServerWorld"
+  ],
+  "client": [
+    "MixinClientWorld"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

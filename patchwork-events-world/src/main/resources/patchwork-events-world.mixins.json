@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.event.world",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  	"MixinThreadedAnvilChunkStorage"
+  ],
+  "injectors": {
+	"defaultRequire": 1
+  }
+}

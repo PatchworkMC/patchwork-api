@@ -193,29 +193,33 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 	/**
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
-	 * This event controls which of {@link net.minecraft.block.Block#onBlockActivated} and/or {@link net.minecraft.item.Item#onItemUse}
+	 * This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
 	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.
 	 * Canceling the event will cause none of the above three to be called
 	 * <p>
 	 * Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
 	 * <p>
 	 * There are various results to this event, see the getters below.
 	 * Note that handling things differently on the client vs server may cause desynchronizations!
 	 */
-	/* TODO @Cancelable
 	public static class RightClickBlock extends PlayerInteractEvent {
-		private Result useBlock = DEFAULT;
-		private Result useItem = DEFAULT;
+		private Result useBlock = Result.DEFAULT;
+		private Result useItem = Result.DEFAULT;
+
+		// For EventBus
+		public RightClickBlock() {
+			super();
+		}
 
 		public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
 			super(player, hand, pos, face);
 		}
 
 		/**
-		 * @return If {@link net.minecraft.block.Block#onBlockActivated} should be called
+		 * @return If {@link net.minecraft.block.Block#activate} should be called
 		 */
-		/* TODO public Result getUseBlock() {
+		public Result getUseBlock() {
 			return useBlock;
 		}
 
@@ -224,14 +228,14 @@ public class PlayerInteractEvent extends PlayerEvent {
 		 * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraft.item.Item#doesSneakBypassUse}).
 		 * ALLOW: Block will always be used, regardless of sneaking and doesSneakBypassUse.
 		 */
-		/* TODO public void setUseBlock(Result triggerBlock) {
+		public void setUseBlock(Result triggerBlock) {
 			this.useBlock = triggerBlock;
 		}
 
 		/**
-		 * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#onItemUse} should be called
+		 * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#use} should be called
 		 */
-		/* TODO public Result getUseItem() {
+		public Result getUseItem() {
 			return useItem;
 		}
 
@@ -240,27 +244,24 @@ public class PlayerInteractEvent extends PlayerEvent {
 		 * DEFAULT: The item will be used if the block fails.
 		 * ALLOW: The item will always be used.
 		 */
-		/* TODO public void setUseItem(Result triggerItem) {
+		public void setUseItem(Result triggerItem) {
 			this.useItem = triggerItem;
+		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
 		}
 
 		@Override
 		public void setCanceled(boolean canceled) {
 			super.setCanceled(canceled);
 			if (canceled) {
-				useBlock = DENY;
-				useItem = DENY;
+				useBlock = Result.DENY;
+				useItem = Result.DENY;
 			}
 		}
-	}*/
-		/*
-		public static ActionResultType onItemRightClick(PlayerEntity player, Hand hand)
-    {
-        PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.isCanceled() ? evt.getCancellationResult() : null;
-    }
-		 */
+	}
 
 	/**
 	 * This event is fired on both sides before the player triggers {@link net.minecraft.item.Item#onItemRightClick}.

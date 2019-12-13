@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.event.EntityEvents"
+      "com.patchworkmc.impl.event.entity.EntityEvents"
     ]
   },
   "depends": {
