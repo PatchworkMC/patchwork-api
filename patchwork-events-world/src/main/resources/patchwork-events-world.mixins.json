@@ -3,6 +3,7 @@
   "package": "com.patchworkmc.mixin.event.world",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinServerPlayerInteractionManager",
   	"MixinThreadedAnvilChunkStorage"
   ],
   "injectors": {
