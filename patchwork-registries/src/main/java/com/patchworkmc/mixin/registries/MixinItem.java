@@ -2,6 +2,7 @@ package com.patchworkmc.mixin.registries;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,7 +22,14 @@ public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
 	}
 
 	public Identifier getRegistryName() {
-		return registryName;
+		Identifier current = Registry.ITEM.getId((Item)(Object)this);
+		Identifier set = registryName;
+
+		if(set == null) {
+			set = Registry.ITEM.getDefaultId();
+		}
+
+		return current != Registry.ITEM.getDefaultId() ? current : set;
 	}
 
 	public Class<Item> getRegistryType() {

@@ -1,6 +1,7 @@
 package com.patchworkmc.mixin.registries;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +22,10 @@ public class MixinBiome implements ExtendedForgeRegistryEntry<Biome> {
 	}
 
 	public Identifier getRegistryName() {
-		return registryName;
+		Identifier current = Registry.BIOME.getId((Biome)(Object)this);
+		Identifier set = registryName;
+
+		return current != null ? current : set;
 	}
 
 	public Class<Biome> getRegistryType() {

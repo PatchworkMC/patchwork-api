@@ -242,6 +242,9 @@ dependencies {
 	modCompile "lothrazar:absentbydesign:1.0.3"
 	modCompile "natamus:emc_1.14:1.0"
 	modCompile "natamus:healingcf_1.14:1.7"
+	modCompile "natamus:ediblegs_1.14:1.0"
+	modCompile "natamus:doubledoors_1.14:1.2"
+	modCompile "natamus:betbeacpl_1.14:1.0"
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()

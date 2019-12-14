@@ -1,6 +1,7 @@
 package com.patchworkmc.mixin.registries;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +22,10 @@ public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBu
 	}
 
 	public Identifier getRegistryName() {
-		return registryName;
+		Identifier current = Registry.SURFACE_BUILDER.getId((SurfaceBuilder)(Object)this);
+		Identifier set = registryName;
+
+		return current != null ? current : set;
 	}
 
 	public Class<SurfaceBuilder> getRegistryType() {
