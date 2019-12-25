@@ -1,10 +1,13 @@
 package com.patchworkmc.impl.event.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.apache.logging.log4j.LogManager;
@@ -85,5 +88,9 @@ public class EntityEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(event);
 
 		return event.isCanceled() ? event.getCancellationResult() : null;
+	}
+
+	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
 	}
 }

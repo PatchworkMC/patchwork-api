@@ -3,6 +3,7 @@
   "package": "com.patchworkmc.mixin.event.entity",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinLivingEntity",
     "MixinPlayerEntity"
   ],
   "injectors": {
