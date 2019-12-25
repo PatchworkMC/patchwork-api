@@ -246,6 +246,7 @@ dependencies {
 	modCompile "natamus:doubledoors_1.14:1.2"
 	modCompile "natamus:betbeacpl_1.14:1.0"
 	modCompile "natamus:autodoors_1.14:1.3"
+	modCompile "natamus:inftrading_1.14:1.0"
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()

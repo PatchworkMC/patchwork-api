@@ -1,6 +1,9 @@
 package com.patchworkmc.impl.event.entity;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -17,7 +20,9 @@ public class EntityEvents implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
-			// TODO: Check for SPECTATOR game mode
+			if(player.isSpectator()) {
+				return ActionResult.PASS;
+			}
 
 			if (player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand).getItem())) {
 				return ActionResult.PASS;
@@ -39,7 +44,9 @@ public class EntityEvents implements ModInitializer {
 		});
 
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-			// TODO: Check for SPECTATOR game mode
+			if(player.isSpectator()) {
+				return ActionResult.PASS;
+			}
 
 			PlayerInteractEvent.RightClickBlock event = new PlayerInteractEvent.RightClickBlock(player, hand, hitResult.getBlockPos(), hitResult.getSide());
 
@@ -66,5 +73,17 @@ public class EntityEvents implements ModInitializer {
 
 			return ActionResult.PASS;
 		});
+
+		// TODO: Note: UseEntityCallback is closer to EntityInteractSpecific. We're on our own for EntityInteract.
+	}
+
+	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
+		PlayerInteractEvent.EntityInteract event = new PlayerInteractEvent.EntityInteract(player, hand, entity);
+
+		System.out.println(player.getEntityWorld().isClient + "|onInteractEntity");
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 }

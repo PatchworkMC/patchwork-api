@@ -19,5 +19,8 @@
 	"fabricloader": ">=0.4.0",
 	"fabric": "*",
     "patchwork-fml": "*"
-  }
+  },
+  "mixins": [
+    "patchwork-events-entity.mixins.json"
+  ]
 }

@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -35,7 +36,7 @@ import net.minecraftforge.fml.LogicalSide;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
- * All subclasses are fired on {@link MinecraftForge#EVENT_BUS}.
+ * All subclasses are fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  * See the individual documentation on each subevent for more details.
  **/
 public class PlayerInteractEvent extends PlayerEvent {
@@ -122,7 +123,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	}
 
 	/**
-	 * Set the EnumActionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
+	 * Set the {@link ActionResult} that will be returned to vanilla if the event is cancelled, instead of calling the relevant
 	 * method of the event.
 	 * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
 	 */
@@ -137,7 +138,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * The state of this event affects whether {@link Entity#applyPlayerInteraction} is called.
 	 * <p>
 	 * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
+	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
 	 */
 	/* TODO @Cancelable
 	public static class EntityInteractSpecific extends PlayerInteractEvent {
@@ -170,16 +171,22 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * This event is fired on both sides when the player right clicks an entity.
 	 * It is responsible for all general entity interactions.
 	 * <p>
-	 * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link EnumActionResult#SUCCESS}.
-	 * This event's state affects whether {@link Entity#processInitialInteract} and {@link net.minecraft.item.Item#itemInteractionForEntity} are called.
+	 * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link ActionResult#SUCCESS}.
+	 * This event's state affects whether {@link Entity#interact(PlayerEntity, Hand)} and {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} are called.
 	 * <p>
-	 * Let result be {@link EnumActionResult#SUCCESS} if {@link Entity#processInitialInteract} or {@link net.minecraft.item.Item#itemInteractionForEntity} return true,
+	 * Let result be {@link ActionResult#SUCCESS} if {@link Entity#interact(PlayerEntity, Hand)} or {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} return true,
 	 * or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
 	 */
-	/* TODO @Cancelable
 	public static class EntityInteract extends PlayerInteractEvent {
 		private final Entity target;
+
+		// For EventBus
+		public EntityInteract() {
+			super();
+
+			this.target = null;
+		}
 
 		public EntityInteract(PlayerEntity player, Hand hand, Entity target) {
 			super(player, hand, new BlockPos(target), null);
@@ -189,7 +196,12 @@ public class PlayerInteractEvent extends PlayerEvent {
 		public Entity getTarget() {
 			return target;
 		}
-	}*/
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
+	}
 
 	/**
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
@@ -264,10 +276,10 @@ public class PlayerInteractEvent extends PlayerEvent {
 	}
 
 	/**
-	 * This event is fired on both sides before the player triggers {@link net.minecraft.item.Item#onItemRightClick}.
+	 * This event is fired on both sides before the player triggers {@link net.minecraft.item.Item#use}.
 	 * Note that this is NOT fired if the player is targeting a block {@link RightClickBlock} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
 	 *
-	 * <p>Let result be the return value of {@link net.minecraft.item.Item#onItemRightClick}, or {@link #cancellationResult} if the event is cancelled.
+	 * <p>Let result be the return value of {@link net.minecraft.item.Item#use}, or {@link #cancellationResult} if the event is cancelled.
 	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then continue to other hands.</p>
 	 */
 	public static class RightClickItem extends PlayerInteractEvent {

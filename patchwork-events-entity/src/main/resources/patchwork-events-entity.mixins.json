@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.event.entity",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinPlayerEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
