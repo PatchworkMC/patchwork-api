@@ -1,5 +1,6 @@
 package com.patchworkmc.impl.event.lifecycle;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -19,5 +20,13 @@ public class LifecycleEvents implements ModInitializer {
 		TickEvent.WorldTickEvent event = new TickEvent.WorldTickEvent(side, phase, world);
 
 		MinecraftForge.EVENT_BUS.post(event);
+	}
+
+	public static void onPlayerPreTick(PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.START, player));
+	}
+
+	public static void onPlayerPostTick(PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
 	}
 }

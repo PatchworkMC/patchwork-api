@@ -19,6 +19,8 @@
 
 package net.minecraftforge.event;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
@@ -73,16 +75,22 @@ public class TickEvent extends Event {
 		}
 	}
 
-	/* TODO public static class PlayerTickEvent extends TickEvent {
+	public static class PlayerTickEvent extends TickEvent {
 		public final PlayerEntity player;
+
+		// For EventBus
+		public PlayerTickEvent() {
+			this(null, null);
+		}
 
 		public PlayerTickEvent(Phase phase, PlayerEntity player) {
 			super(Type.PLAYER, player instanceof ServerPlayerEntity ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+
 			this.player = player;
 		}
 	}
 
-	public static class RenderTickEvent extends TickEvent {
+	/* TODO public static class RenderTickEvent extends TickEvent {
 		public final float renderTickTime;
 
 		public RenderTickEvent(Phase phase, float renderTickTime) {
