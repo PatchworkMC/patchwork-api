@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-dispatcher",
+  "id": "patchwork-extensions",
   "version": "${version}",
 
-  "name": "Patchwork Dispatcher",
+  "name": "Patchwork Extensions",
   "description": "Starts Patchwork mods",
   "authors": [
 	"coderbot"
@@ -13,18 +13,13 @@
   "icon": "assets/patchwork-dispatcher/icon.png",
 
   "environment": "*",
-  "entrypoints": {
-	"main": [
-	  "net.coderbot.patchwork.Patchwork"
-	]
-  },
   "depends": {
 	"fabricloader": ">=0.4.0",
-	"fabric": "*",
-    "patchwork-fml": "*",
-    "patchwork-registries": "*",
-    "patchwork-events-lifecycle": "*"
+	"fabric": "*"
   },
+  "mixins": [
+    "patchwork-extensions.mixins.json"
+  ],
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
