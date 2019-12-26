@@ -213,7 +213,7 @@ public class BiomeDictionary {
 		while (!next.isEmpty()) {
 			Type type = next.remove();
 
-			for (Type sType : Type.byName.values()) {
+			for (Type sType : Type.BY_NAME.values()) {
 				if (sType.subTypes.contains(type) && supertypes.add(sType)) {
 					next.add(sType);
 				}
@@ -301,12 +301,16 @@ public class BiomeDictionary {
 		if (DEBUG) {
 			StringBuilder buf = new StringBuilder();
 			buf.append("BiomeDictionary:\n");
-			Type.byName.forEach((name, type) -> buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(b -> Registry.BIOME.getId(b).toString()).collect(Collectors.joining(", "))).append('\n'));
+			Type.BY_NAME.forEach((name, type) -> buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(b -> Registry.BIOME.getId(b).toString()).collect(Collectors.joining(", "))).append('\n'));
 			LOGGER.debug(buf.toString());
 		}
 	}
 
 	public static final class Type {
+		// NB: These fields *must* be at the top of the class, otherwise an ExceptionInInitializerError will result.
+		private static final Map<String, Type> BY_NAME = new HashMap<>();
+		private static final Collection<Type> ALL_TYPES = Collections.unmodifiableCollection(BY_NAME.values());
+
 		/*Temperature-based tags. Specifying neither implies a biome is temperate*/
 		public static final Type HOT = new Type("HOT");
 		public static final Type COLD = new Type("COLD");
@@ -348,8 +352,6 @@ public class BiomeDictionary {
 		public static final Type WASTELAND = new Type("WASTELAND");
 		public static final Type BEACH = new Type("BEACH");
 		public static final Type VOID = new Type("VOID");
-		private static final Map<String, Type> byName = new HashMap<>();
-		private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 		private final String name;
 		private final List<Type> subTypes;
 		private final Set<Biome> biomes = new HashSet<>();
@@ -359,7 +361,7 @@ public class BiomeDictionary {
 			this.name = name;
 			this.subTypes = ImmutableList.copyOf(subTypes);
 
-			byName.put(name, this);
+			BY_NAME.put(name, this);
 		}
 
 		/**
@@ -384,7 +386,7 @@ public class BiomeDictionary {
 		 */
 		public static Type getType(String name, Type... subTypes) {
 			name = name.toUpperCase();
-			Type type = byName.get(name);
+			Type type = BY_NAME.get(name);
 
 			if (type == null) {
 				type = new Type(name, subTypes);
@@ -397,7 +399,7 @@ public class BiomeDictionary {
 		 * @return An unmodifiable collection of all current biome types.
 		 */
 		public static Collection<Type> getAll() {
-			return allTypes;
+			return ALL_TYPES;
 		}
 
 		public static Type fromVanilla(Biome.Category category) {
