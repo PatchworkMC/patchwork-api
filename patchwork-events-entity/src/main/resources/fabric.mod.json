@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "patchwork-events-entity",
   "version": "${version}",
-
+  "icon": "assets/patchwork-events-entity/icon.png",
   "name": "Patchwork Entity Events",
   "description": "Provides an implementation of Minecraft Forge's Entity Events",
   "authors": [
@@ -22,5 +22,9 @@
   },
   "mixins": [
     "patchwork-events-entity.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }

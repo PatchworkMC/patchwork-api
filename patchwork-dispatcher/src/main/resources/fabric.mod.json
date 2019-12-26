@@ -10,7 +10,7 @@
   ],
 
   "license": "LGPL-2.1-only",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/patchwork-dispatcher/icon.png",
 
   "environment": "*",
   "entrypoints": {
@@ -26,5 +26,9 @@
   },
   "mixins": [
     "patchwork-dispatcher.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }

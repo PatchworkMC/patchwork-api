@@ -4,9 +4,10 @@
   "name": "Patchwork World Events",
   "version": "${version}",
   "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-events-world/icon.png",
   "contact": {
-    "issues": "https://github.com/PatchworkMC/patchwork/issues",
-    "sources": "https://github.com/PatchworkMC/patchwork"
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
   },
   "authors": [
     "PatchworkMC"
@@ -18,5 +19,9 @@
   "mixins": [
     "patchwork-events-world.mixins.json"
   ],
-  "description": "Implementation of the Forge World Events."
+  "description": "Implementation of the Forge World Events.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }
