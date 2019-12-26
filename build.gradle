@@ -234,7 +234,9 @@ dependencies {
 	modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
 	modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
 
-	implementation 'com.electronwill.night-config:toml:3.6.0'
+	implementation 'com.electronwill.night-config:toml:3.6.2'
+	include 'com.electronwill.night-config:core:3.6.2'
+	include 'com.electronwill.night-config:toml:3.6.2'
 
 	fileTree(dir: 'jars', include: '*.jar').each {
 		modCompileOnly name: "${it.name.replace(".jar", "")}"
