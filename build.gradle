@@ -239,8 +239,13 @@ dependencies {
 	include 'com.electronwill.night-config:toml:3.6.2'
 
 	fileTree(dir: 'jars', include: '*.jar').each {
-		modCompileOnly name: "${it.name.replace(".jar", "")}"
-		modRuntime name: "${it.name.replace(".jar", "")}"
+		String baseName = it.name.replace(".jar", "");
+		String name = "testmod:${baseName.replace("-", ":")}";
+
+		System.out.println("Found test mod: " + baseName + " -> " + name)
+
+		modCompileOnly name
+		modRuntime name
 	}
 }
 
