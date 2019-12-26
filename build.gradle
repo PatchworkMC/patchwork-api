@@ -56,7 +56,7 @@ allprojects {
 		modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
 		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
 
-		implementation "net.coderbot:patchwork-eventbus:0.1.2:all"
+		implementation 'com.github.PatchworkMC:EventBus:d5b038e199'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
 		// For EventBus
@@ -73,7 +73,7 @@ allprojects {
 	}
 
 	repositories {
-		mavenLocal()
+		maven { url 'https://jitpack.io' }
 	}
 
 	jar {
@@ -236,21 +236,7 @@ dependencies {
 
 	implementation 'com.electronwill.night-config:toml:3.6.0'
 
-	modCompile "lykrast:voyage:1.0.0"
-	modCompile "lemons:bunchofbiomes:1.0.3"
-	modCompile "bl4ckscor3:xptome:1.0.0"
-	modCompile "lothrazar:absentbydesign:1.0.3"
-	modCompile "natamus:emc_1.14:1.0"
-	modCompile "natamus:healingcf_1.14:1.7"
-	modCompile "natamus:ediblegs_1.14:1.0"
-	modCompile "natamus:doubledoors_1.14:1.2"
-	modCompile "natamus:betbeacpl_1.14:1.0"
-	modCompile "natamus:autodoors_1.14:1.3"
-	modCompile "natamus:inftrading_1.14:1.0"
-	modCompile "natamus:villagerdeathm_1.14:1.2"
-	modCompile "natamus:invtotem_1.14:1.0"
-	modCompile "natamus:vilnames_1.14:1.4"
-	modCompile "natamus:nhacampfire_1.14:1.5"
+	fileTree(dir: 'jars', include: '*.jar').each { modCompile name: "${it.name.replace(".jar", "")}" }
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
