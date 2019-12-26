@@ -249,6 +249,8 @@ dependencies {
 	modCompile "natamus:inftrading_1.14:1.0"
 	modCompile "natamus:villagerdeathm_1.14:1.2"
 	modCompile "natamus:invtotem_1.14:1.0"
+	modCompile "natamus:vilnames_1.14:1.4"
+	modCompile "natamus:nhacampfire_1.14:1.5"
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()

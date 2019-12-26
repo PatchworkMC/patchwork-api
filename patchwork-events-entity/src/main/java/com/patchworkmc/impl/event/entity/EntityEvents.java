@@ -6,7 +6,9 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -90,5 +92,9 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
 		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
+	}
+
+	public static boolean onEntityJoinWorld(Entity entity, World world) {
+		return MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, world));
 	}
 }

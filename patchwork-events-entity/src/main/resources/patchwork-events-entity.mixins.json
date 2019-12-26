@@ -4,7 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinLivingEntity",
-    "MixinPlayerEntity"
+    "MixinPlayerEntity",
+    "MixinServerWorld"
+  ],
+  "client": [
+    "MixinClientWorld"
   ],
   "injectors": {
     "defaultRequire": 1
