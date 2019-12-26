@@ -19,13 +19,14 @@
 
 package net.minecraftforge.common;
 
-import net.fabricmc.fabric.api.biomes.v1.FabricBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
-import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
+import java.util.Objects;
+
 import net.minecraft.util.WeightedPicker;
 import net.minecraft.world.biome.Biome;
 
-import java.util.Objects;
+import net.fabricmc.fabric.api.biomes.v1.FabricBiomes;
+import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
+import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
 
 public class BiomeManager {
 	public static void addSpawnBiome(Biome biome) {
@@ -46,16 +47,16 @@ public class BiomeManager {
 
 		private OverworldClimate getClimate() {
 			switch (this) {
-				case DESERT:
-					return OverworldClimate.DRY;
-				case WARM:
-					return OverworldClimate.TEMPERATE;
-				case COOL:
-					return OverworldClimate.COOL;
-				case ICY:
-					return OverworldClimate.SNOWY;
-				default:
-					throw new IllegalStateException("Someone's been tampering with the BiomeType enum!");
+			case DESERT:
+				return OverworldClimate.DRY;
+			case WARM:
+				return OverworldClimate.TEMPERATE;
+			case COOL:
+				return OverworldClimate.COOL;
+			case ICY:
+				return OverworldClimate.SNOWY;
+			default:
+				throw new IllegalStateException("Someone's been tampering with the BiomeType enum!");
 			}
 		}
 	}

@@ -19,19 +19,54 @@
 
 package net.minecraftforge.common;
 
+import static net.minecraftforge.common.BiomeDictionary.Type.BEACH;
+import static net.minecraftforge.common.BiomeDictionary.Type.COLD;
+import static net.minecraftforge.common.BiomeDictionary.Type.CONIFEROUS;
+import static net.minecraftforge.common.BiomeDictionary.Type.DENSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.DRY;
+import static net.minecraftforge.common.BiomeDictionary.Type.END;
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+import static net.minecraftforge.common.BiomeDictionary.Type.HILLS;
+import static net.minecraftforge.common.BiomeDictionary.Type.HOT;
+import static net.minecraftforge.common.BiomeDictionary.Type.JUNGLE;
+import static net.minecraftforge.common.BiomeDictionary.Type.MESA;
+import static net.minecraftforge.common.BiomeDictionary.Type.MOUNTAIN;
+import static net.minecraftforge.common.BiomeDictionary.Type.MUSHROOM;
+import static net.minecraftforge.common.BiomeDictionary.Type.NETHER;
+import static net.minecraftforge.common.BiomeDictionary.Type.OCEAN;
+import static net.minecraftforge.common.BiomeDictionary.Type.PLAINS;
+import static net.minecraftforge.common.BiomeDictionary.Type.RARE;
+import static net.minecraftforge.common.BiomeDictionary.Type.RIVER;
+import static net.minecraftforge.common.BiomeDictionary.Type.SANDY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SAVANNA;
+import static net.minecraftforge.common.BiomeDictionary.Type.SNOWY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPARSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPOOKY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SWAMP;
+import static net.minecraftforge.common.BiomeDictionary.Type.VOID;
+import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
+import static net.minecraftforge.common.BiomeDictionary.Type.WET;
+
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
 public class BiomeDictionary {
 	private static final boolean DEBUG = false;
@@ -43,7 +78,7 @@ public class BiomeDictionary {
 	}
 
 	/**
-	 * Adds the given types to the biome.
+	 * Adds the given {@link Type}s to the {@link Biome}.
 	 */
 	public static void addTypes(Biome biome, Type... types) {
 		Preconditions.checkArgument(Registry.BIOME.getId(biome) != null, "Cannot add types to unregistered biome %s", biome);
@@ -61,14 +96,14 @@ public class BiomeDictionary {
 	}
 
 	/**
-	 * Gets the set of biomes that have the given type.
+	 * Gets the set of {@link Biome} instances that have the given type.
 	 */
 	public static Set<Biome> getBiomes(Type type) {
 		return type.biomesUnmodifiable;
 	}
 
 	/**
-	 * Gets the set of types that have been added to the given biome.
+	 * Gets the set of types that have been added to the given {@link Biome}.
 	 */
 	public static Set<Type> getTypes(Biome biome) {
 		ensureHasTypes(biome);
@@ -77,9 +112,9 @@ public class BiomeDictionary {
 	}
 
 	/**
-	 * Checks if the two given biomes have types in common.
+	 * Checks if the two given {@link Biome} instances have types in common.
 	 *
-	 * @return returns true if a common type is found, false otherwise
+	 * @return <code>true</code> if a common type is found, <code>false</code> otherwise
 	 */
 	public static boolean areSimilar(Biome biomeA, Biome biomeB) {
 		for (Type type : getTypes(biomeA)) {
@@ -92,26 +127,28 @@ public class BiomeDictionary {
 	}
 
 	/**
-	 * Checks if the given type has been added to the given biome.
+	 * Checks if the given type has been added to the given {@link Biome}.
 	 */
 	public static boolean hasType(Biome biome, Type type) {
 		return getTypes(biome).contains(type);
 	}
 
 	/**
-	 * Checks if any type has been added to the given biome.
+	 * Checks if any type has been added to the given {@link Biome}.
 	 */
 	public static boolean hasAnyType(Biome biome) {
 		return !getBiomeInfo(biome).types.isEmpty();
 	}
 
 	/**
-	 * Automatically adds appropriate types to a given biome based on certain heuristics.
-	 * If a biome's types are requested and no types have been added to the biome so far, the biome's types
-	 * will be determined and added using this method.
+	 * Automatically adds appropriate types to a given {@link Biome} based on certain heuristics.
+	 *
+	 * <p>If a {@link Biome}'s types are requested and no types have been added to the {@link Biome} so far, its types
+	 * will be determined and added using this method.</p>
 	 */
 	public static void makeBestGuess(Biome biome) {
 		Type type = Type.fromVanilla(biome.getCategory());
+
 		if (type != null) {
 			BiomeDictionary.addTypes(biome, type);
 		}
@@ -159,7 +196,7 @@ public class BiomeDictionary {
 	}
 
 	/**
-	 * Ensure that at least one type has been added to the given biome.
+	 * Ensure that at least one type has been added to the given {@link Biome}.
 	 */
 	private static void ensureHasTypes(Biome biome) {
 		if (!hasAnyType(biome)) {
@@ -177,8 +214,9 @@ public class BiomeDictionary {
 			Type type = next.remove();
 
 			for (Type sType : Type.byName.values()) {
-				if (sType.subTypes.contains(type) && supertypes.add(sType))
+				if (sType.subTypes.contains(type) && supertypes.add(sType)) {
 					next.add(sType);
+				}
 			}
 		}
 
@@ -260,7 +298,6 @@ public class BiomeDictionary {
 		addTypes(Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, HILLS, RARE);
 		addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, MOUNTAIN, RARE);
 
-
 		if (DEBUG) {
 			StringBuilder buf = new StringBuilder();
 			buf.append("BiomeDictionary:\n");
@@ -270,9 +307,6 @@ public class BiomeDictionary {
 	}
 
 	public static final class Type {
-		private static final Map<String, Type> byName = new HashMap<>();
-		private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
-
 		/*Temperature-based tags. Specifying neither implies a biome is temperate*/
 		public static final Type HOT = new Type("HOT");
 		public static final Type COLD = new Type("COLD");
@@ -300,7 +334,7 @@ public class BiomeDictionary {
 		public static final Type RIVER = new Type("RIVER");
 		/**
 		 * A general tag for all water-based biomes. Shown as present if OCEAN or RIVER are.
-		 **/
+		 */
 		public static final Type WATER = new Type("WATER", OCEAN, RIVER);
 		/*Generic types which a biome can be*/
 		public static final Type MESA = new Type("MESA");
@@ -314,7 +348,8 @@ public class BiomeDictionary {
 		public static final Type WASTELAND = new Type("WASTELAND");
 		public static final Type BEACH = new Type("BEACH");
 		public static final Type VOID = new Type("VOID");
-
+		private static final Map<String, Type> byName = new HashMap<>();
+		private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 		private final String name;
 		private final List<Type> subTypes;
 		private final Set<Biome> biomes = new HashSet<>();
@@ -330,19 +365,22 @@ public class BiomeDictionary {
 		/**
 		 * Retrieves a Type instance by name,
 		 * if one does not exist already it creates one.
-		 * This can be used as intermediate measure for modders to
-		 * add their own Biome types.
-		 * <p>
-		 * There are <i>no</i> naming conventions besides:
-		 * <ul><li><b>Must</b> be all upper case (enforced by name.toUpper())</li>
-		 * <li><b>No</b> Special characters. {Unenforced, just don't be a pain, if it becomes a issue I WILL
-		 * make this RTE with no worry about backwards compatibility}</li></ul>
-		 * <p>
-		 * Note: For performance sake, the return value of this function SHOULD be cached.
-		 * Two calls with the same name SHOULD return the same value.
 		 *
-		 * @param name The name of this Type
-		 * @return An instance of Type for this name.
+		 * <p>This can be used as intermediate measure for modders to
+		 * add their own biome types.</p>
+		 *
+		 * <p>There are <i>no</i> naming conventions besides:
+		 * <ul>
+		 *     <li><b>Must</b> be all upper case (enforced by name.toUpper())</li>
+		 *     <li><b>No</b> Special characters. (Unenforced, just don't be a pain, if it becomes a issue I WILL
+		 * make this RTE with no worry about backwards compatibility)</li>
+		 * </ul></p>
+		 *
+		 * <p>Note: For performance's sake, the return value of this function SHOULD be cached.
+		 * Two calls with the same name SHOULD return the same value.</p>
+		 *
+		 * @param name The name of this {@link Type}
+		 * @return An instance of {@link Type} for this name.
 		 */
 		public static Type getType(String name, Type... subTypes) {
 			name = name.toUpperCase();
@@ -387,9 +425,7 @@ public class BiomeDictionary {
 	}
 
 	private static class BiomeInfo {
-
 		private final Set<Type> types = new HashSet<>();
 		private final Set<Type> typesUnmodifiable = Collections.unmodifiableSet(this.types);
-
 	}
 }
