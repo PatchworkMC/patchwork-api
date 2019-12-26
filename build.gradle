@@ -236,7 +236,10 @@ dependencies {
 
 	implementation 'com.electronwill.night-config:toml:3.6.0'
 
-	fileTree(dir: 'jars', include: '*.jar').each { modCompile name: "${it.name.replace(".jar", "")}" }
+	fileTree(dir: 'jars', include: '*.jar').each {
+		modCompileOnly name: "${it.name.replace(".jar", "")}"
+		modRuntime name: "${it.name.replace(".jar", "")}"
+	}
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
