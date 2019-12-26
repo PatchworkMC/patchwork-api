@@ -22,8 +22,6 @@ public class ObjectHolderRegistry {
 		Optional<T> existing = registry.getOrEmpty(identifier);
 
 		if (existing.isPresent()) {
-			System.out.println("Object is already loaded: " + identifier);
-
 			consumer.accept(existing.get());
 
 			return;
@@ -56,8 +54,6 @@ public class ObjectHolderRegistry {
 			T value = registry.get(identifier);
 
 			for (Consumer<T> consumer : consumers) {
-				System.out.println("Object loaded, sending to consumer " + consumer + ": " + identifier);
-
 				consumer.accept(value);
 			}
 		}

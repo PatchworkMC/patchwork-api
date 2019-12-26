@@ -83,8 +83,6 @@ public class EntityEvents implements ModInitializer {
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		PlayerInteractEvent.EntityInteract event = new PlayerInteractEvent.EntityInteract(player, hand, entity);
 
-		System.out.println(player.getEntityWorld().isClient + "|onInteractEntity");
-
 		MinecraftForge.EVENT_BUS.post(event);
 
 		return event.isCanceled() ? event.getCancellationResult() : null;
