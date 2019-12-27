@@ -212,7 +212,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.</p>
 	 *
 	 * <p>This event is cancellable.
-	 * Canceling the event will cause none of the above noted methods to be called.</p>
+	 * Cancelling the event will cause none of the above noted methods to be called.</p>
 	 *
 	 * <p>Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
 	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.</p>
@@ -322,7 +322,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
 
 	 * <p>This event is cancellable.
-	 * Canceling the event will cause none of the above noted methods to be called.</p>
+	 * Cancelling the event will cause none of the above noted methods to be called.</p>
 
 	 * There are various results to this event, see the getters below.
 	 *
