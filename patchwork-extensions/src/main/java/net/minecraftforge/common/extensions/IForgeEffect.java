@@ -33,62 +33,74 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 public interface IForgeEffect {
-
 	default StatusEffect getEffect() {
 		return (StatusEffect) this;
 	}
 
 	/**
-	 * If the Potion effect should be displayed in the players inventory
-	 * @param effect the active PotionEffect
+	 * Returns true if the {@link StatusEffectInstance} should be displayed in the player's inventory.
+	 *
+	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to display it (default), false to hide it.
 	 */
-	default boolean shouldRender(StatusEffectInstance effect) { return true; }
+	default boolean shouldRender(StatusEffectInstance effect) {
+		return true;
+	}
 
 	/**
-	 * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
-	 * @param effect the active PotionEffect
+	 * Returns true if the {@link StatusEffectInstance} text (name and duration) should be drawn when this {@link StatusEffect} is active.
+	 *
+	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to draw the standard text
 	 */
-	default boolean shouldRenderInvText(StatusEffectInstance effect) { return true; }
+	default boolean shouldRenderInvText(StatusEffectInstance effect) {
+		return true;
+	}
 
 	/**
-	 * If the Potion effect should be displayed in the player's ingame HUD
-	 * @param effect the active PotionEffect
+	 * Returns true if the {@link StatusEffectInstance} should be displayed in the player's {@link net.minecraft.client.gui.hud.InGameHud}.
+	 *
+	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to display it (default), false to hide it.
 	 */
-	default boolean shouldRenderHUD(StatusEffectInstance effect) { return true; }
+	default boolean shouldRenderHUD(StatusEffectInstance effect) {
+		return true;
+	}
 
 	/**
-	 * Called to draw the this Potion onto the player's inventory when it's active.
-	 * This can be used to e.g. render Potion icons from your own texture.
+	 * Called to draw the {@link StatusEffectInstance} onto the player's inventory when it's active.
+	 * This can be used to e.g. render {@link StatusEffect} icons from your own texture.
 	 *
-	 * @param effect the active PotionEffect
-	 * @param gui the gui instance
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param z the z level
+	 * @param effect the active {@link StatusEffectInstance}
+	 * @param gui    the gui instance
+	 * @param x      the x coordinate
+	 * @param y      the y coordinate
+	 * @param z      the z level
 	 */
 	@Environment(EnvType.CLIENT)
-	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, int x, int y, float z) { }
+	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, int x, int y, float z) {
+	}
 
 	/**
-	 * Called to draw the this Potion onto the player's ingame HUD when it's active.
-	 * This can be used to e.g. render Potion icons from your own texture.
-	 * @param effect the active PotionEffect
-	 * @param gui the gui instance
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param z the z level
-	 * @param alpha the alpha value, blinks when the potion is about to run out
+	 * Called to draw the {@link StatusEffectInstance} onto the player's {@link net.minecraft.client.gui.hud.InGameHud} when it's active.
+	 * This can be used to e.g. render {@link StatusEffect} icons from your own texture.
+	 *
+	 * @param effect the active {@link StatusEffectInstance}
+	 * @param gui    the gui instance
+	 * @param x      the x coordinate
+	 * @param y      the y coordinate
+	 * @param z      the z level
+	 * @param alpha  the alpha value, blinks when the {@link StatusEffect} is about to run out
 	 */
 	@Environment(EnvType.CLIENT)
-	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, int x, int y, float z, float alpha) { }
+	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, int x, int y, float z, float alpha) {
+	}
 
 	/**
-	 * Get a fresh list of items that can cure this Potion.
-	 * All new PotionEffects created from this Potion will call this to initialize the default curative items
-	 * @return A list of items that can cure this Potion
+	 * Returns a fresh list of items that can cure this {@link StatusEffect}.
+	 * All new {@link StatusEffectInstance}s created from this {@link StatusEffect} will call this to initialize the default curative items.
+	 *
+	 * @return A list of items that can cure this {@link StatusEffect}
 	 */
 	default List<ItemStack> getCurativeItems() {
 		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
@@ -97,12 +109,13 @@ public interface IForgeEffect {
 	}
 
 	/**
-	 * Used for determining {@code PotionEffect} sort order in GUIs.
-	 * Defaults to the {@code PotionEffect}'s liquid color.
-	 * @param potionEffect the {@code PotionEffect} instance containing the potion
-	 * @return a value used to sort {@code PotionEffect}s in GUIs
+	 * Used for determining {@link StatusEffectInstance} sort order in GUIs.
+	 * Defaults to the {@link StatusEffectInstance}'s liquid color.
+	 *
+	 * @param effect the {@link StatusEffectInstance} containing the {@link StatusEffect}
+	 * @return a value used to sort {@link StatusEffectInstance}s in GUIs
 	 */
-	default int getGuiSortColor(StatusEffectInstance potionEffect) {
+	default int getGuiSortColor(StatusEffectInstance effect) {
 		return getEffect().getColor();
 	}
 }
