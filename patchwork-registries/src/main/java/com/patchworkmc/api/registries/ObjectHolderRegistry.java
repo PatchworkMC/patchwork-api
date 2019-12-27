@@ -19,12 +19,17 @@
 
 package com.patchworkmc.api.registries;
 
-import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.*;
-import java.util.function.Consumer;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 import com.patchworkmc.impl.registries.RegistryClassMapping;
 
@@ -41,13 +46,13 @@ public class ObjectHolderRegistry {
 	public <T> void register(Class<T> clazz, String namespace, String name, Consumer<T> consumer) {
 		Identifier registryId = RegistryClassMapping.getIdentifier(clazz);
 
-		if(registryId == null) {
+		if (registryId == null) {
 			throw new IllegalArgumentException("Could not add ObjectHolderRegistry mapping for class with unknown registry: " + clazz);
 		}
 
-		Registry<T> registry = (Registry<T>)Registry.REGISTRIES.get(registryId);
+		Registry<T> registry = (Registry<T>) Registry.REGISTRIES.get(registryId);
 
-		if(registry == null) {
+		if (registry == null) {
 			throw new NullPointerException("Vanilla registry " + registryId + " is not registered???");
 		}
 

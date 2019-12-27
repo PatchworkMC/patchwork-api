@@ -19,10 +19,11 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.util.Identifier;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+
+import net.minecraft.util.Identifier;
 
 public class RegistryEvent<T> extends GenericEvent<T> {
 	// Required for post() to work

@@ -38,6 +38,6 @@ public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
 
 	@Override
 	public Class<V> getRegistryType() {
-		return (Class<V>)getClass();
+		return (Class<V>) getClass();
 	}
 }

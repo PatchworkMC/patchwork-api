@@ -44,7 +44,7 @@ import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 public class RegistryClassMapping {
 	private static final Map<Identifier, Class> ID_TO_CLASS = new HashMap<>();
 	private static final Map<Class, Identifier> CLASS_TO_ID = new HashMap<>();
-	
+
 	static {
 		register(new Identifier("minecraft", "block"), Block.class);
 		register(new Identifier("minecraft", "item"), Item.class);
@@ -103,7 +103,7 @@ public class RegistryClassMapping {
 
 		Class<?> superclass = clazz.getSuperclass();
 
-		if(superclass == null || superclass == Object.class) {
+		if (superclass == null || superclass == Object.class) {
 			return null;
 		} else {
 			return getIdentifier(superclass);
