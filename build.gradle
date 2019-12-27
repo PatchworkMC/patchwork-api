@@ -129,19 +129,19 @@ javadoc {
 }
 
 subprojects {
-	task remapMavenJar(type: Copy, dependsOn: remapJar) {
-		afterEvaluate {
-			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
-			into("${project.buildDir}/libs/")
-			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
-		}
-	}
+//	task remapMavenJar(type: Copy, dependsOn: remapJar) {
+//		afterEvaluate {
+//			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
+//			into("${project.buildDir}/libs/")
+//			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
+//		}
+//	}
 
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
 				artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-					builtBy remapMavenJar
+					builtBy remapJar
 				}
 				artifact(sourcesJar) {
 					builtBy remapSourcesJar
@@ -165,19 +165,19 @@ subprojects {
 	javadoc.enabled = false
 }
 
-task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
-	afterEvaluate {
-		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-		archiveName = "${archivesBaseName}-${version}-maven.jar"
-		addNestedDependencies = false
-	}
-}
+//task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+//	afterEvaluate {
+//		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+//		archiveName = "${archivesBaseName}-${version}-maven.jar"
+//		addNestedDependencies = false
+//	}
+//}
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-				builtBy remapMavenJar
+				builtBy remapJar
 			}
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar

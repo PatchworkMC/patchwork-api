@@ -24,6 +24,7 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: checkstyleMain
+
   license:
     runs-on: ubuntu-latest
     steps:
