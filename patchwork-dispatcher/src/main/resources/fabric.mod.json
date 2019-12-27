@@ -2,25 +2,22 @@
   "schemaVersion": 1,
   "id": "patchwork-dispatcher",
   "version": "${version}",
-
   "name": "Patchwork Dispatcher",
   "description": "Starts Patchwork mods",
   "authors": [
-	"coderbot"
+    "coderbot"
   ],
-
   "license": "LGPL-2.1-only",
   "icon": "assets/patchwork-dispatcher/icon.png",
-
   "environment": "*",
   "entrypoints": {
-	"main": [
-	  "com.patchworkmc.impl.Patchwork"
-	]
+    "main": [
+      "com.patchworkmc.impl.Patchwork"
+    ]
   },
   "depends": {
-	"fabricloader": ">=0.4.0",
-	"fabric": "*",
+    "fabricloader": ">=0.4.0",
+    "fabric": "*",
     "patchwork-fml": "*",
     "patchwork-registries": "*",
     "patchwork-events-lifecycle": "*"

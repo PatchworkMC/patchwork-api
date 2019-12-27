@@ -243,7 +243,7 @@ dependencies {
 		String version = "0.1.0";
 		int split = baseName.lastIndexOf('-');
 
-		if(split != -1) {
+		if (split != -1) {
 			version = baseName.substring(split + 1);
 			baseName = baseName.substring(0, split);
 		}
