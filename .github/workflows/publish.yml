@@ -32,7 +32,7 @@ jobs:
         run: rm ./build/libs/patchwork*/actions-dev.jar
       - name: Rename production jar
         run: mv ./build/libs/patchwork*/actions.jar ./build/libs/patchwork*/patchwork-api.jar
-      - uses: actions/release-action@v1.4.0
+      - uses: ncipollo/release-action@v1.4.0
         with:
           artifact: ./build/libs/patchwork*/patchwork-api.jar
           token: ${{ secrets.GITHUB_TOKEN }}
