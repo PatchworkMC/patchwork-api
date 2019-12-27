@@ -253,4 +253,5 @@ version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_
 
 logger.lifecycle("Building Patchwork: " + version)
 
-apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+// This line breaks every second Gradle command
+// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
