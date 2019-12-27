@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-shearing",
+  "name": "Patchwork Extensions Shearing",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-extensions-shearing/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.6.2",
+    "patchwork-fml": "*"
+  },
+  "mixins": [
+    "patchwork-extensions-shearing.mixins.json"
+  ],
+  "description": "Implementation of IShearable.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
