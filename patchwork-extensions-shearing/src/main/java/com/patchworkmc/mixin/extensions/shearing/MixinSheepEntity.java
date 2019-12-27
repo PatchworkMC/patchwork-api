@@ -67,6 +67,7 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 				ret.add(new ItemStack(DROPS.get(this.getColor())));
 			}
 		}
+
 		this.playSound(SoundEvents.ENTITY_SHEEP_SHEAR, 1.0F, 1.0F);
 		return ret;
 	}
@@ -74,12 +75,5 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 	@Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
 	protected void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<Boolean> info) {
 		info.setReturnValue(false);
-	}
-
-
-	@Nullable
-	@Override
-	public PassiveEntity createChild(PassiveEntity mate) {
-		return null;
 	}
 }

@@ -42,10 +42,10 @@ public class MixinShearsItem extends Item {
 			if (target.isShearable(stack, entity.world, pos)) {
 				List<ItemStack> drops = target.onSheared(stack, entity.world, pos, EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
 				Random rand = new Random();
-				drops.forEach(d -> {
-					ItemEntity ent = entity.dropStack(d, 1.0F);
+				for (ItemStack drop : drops) {
+					ItemEntity ent = entity.dropStack(drop, 1.0F);
 					ent.setVelocity(ent.getVelocity().add((rand.nextFloat() - rand.nextFloat()) * 0.1F, rand.nextFloat() * 0.05F, (rand.nextFloat() - rand.nextFloat()) * 0.1F));
-				});
+				}
 
 				stack.damage(1, entity, e -> e.sendToolBreakStatus(hand));
 			}

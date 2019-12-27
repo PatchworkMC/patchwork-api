@@ -35,8 +35,10 @@ import java.util.Random;
 public class MixinDispenserBehavior {
 	@Unique
 	protected boolean success;
+
 	/**
-	 * @reason Patch this class to drop stacks for any shearable entity.
+	 * @reason Patch this class to drop stacks for any shearable entity. An overwrite was required here as the mixin was
+	 * too complicated to write without one.
 	 * @author SuperCoder79
 	 */
 	@Overwrite
@@ -44,19 +46,19 @@ public class MixinDispenserBehavior {
 		World world = pointer.getWorld();
 		if (!world.isClient()) {
 			this.success = false;
-			BlockPos blockPos = pointer.getBlockPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
-			List<Entity> list = world.getEntities(Entity.class, new Box(blockPos));
+			BlockPos pos = pointer.getBlockPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
+			List<Entity> entities = world.getEntities(Entity.class, new Box(pos));
 
-			for (Entity entity : list) {
+			for (Entity entity : entities) {
 				if (entity instanceof IShearable) {
 					IShearable target = (IShearable) entity;
-					if (target.isShearable(stack, world, blockPos)) {
-						List<ItemStack> drops = target.onSheared(stack, world, blockPos, EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
+					if (target.isShearable(stack, world, pos)) {
+						List<ItemStack> drops = target.onSheared(stack, world, pos, EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
 						Random rand = new Random();
-						drops.forEach(d -> {
-							ItemEntity ent = entity.dropStack(d, 1.0F);
+						for (ItemStack drop : drops) {
+							ItemEntity ent = entity.dropStack(drop, 1.0F);
 							ent.setVelocity(ent.getVelocity().add((rand.nextFloat() - rand.nextFloat()) * 0.1F, rand.nextFloat() * 0.05F, (rand.nextFloat() - rand.nextFloat()) * 0.1F));
-						});
+						}
 						this.success = true;
 					}
 				}

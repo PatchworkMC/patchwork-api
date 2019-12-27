@@ -44,6 +44,7 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
 		List<ItemStack> ret = new ArrayList<>();
 		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double)(this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
+
 		if (!this.world.isClient) {
 			this.remove();
 
@@ -64,11 +65,5 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 			this.playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1.0F, 1.0F);
 		}
 		return ret;
-	}
-
-	@Nullable
-	@Override
-	public PassiveEntity createChild(PassiveEntity mate) {
-		return null;
 	}
 }

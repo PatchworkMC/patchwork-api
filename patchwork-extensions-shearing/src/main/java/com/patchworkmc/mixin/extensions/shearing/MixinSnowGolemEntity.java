@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Extends SnowGolemEntity to make it shearable if it has it's pumpkin. On shearing, the pumpkin will be gone.
+ * Extends SnowGolemEntity to make it shearable if it has its pumpkin. On shearing, the pumpkin will be gone.
  *
  * @author SuperCoder79
  */
@@ -39,10 +39,10 @@ public abstract class MixinSnowGolemEntity implements IShearable {
 	@Override
 	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
 		this.setHasPumpkin(false);
+
 		return new ArrayList<>();
    }
 
-   //TODO: fix this
 	@Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
 	protected void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<Boolean> info) {
 		info.setReturnValue(false);
