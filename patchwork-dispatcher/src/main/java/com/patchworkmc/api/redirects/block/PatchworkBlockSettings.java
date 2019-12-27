@@ -17,11 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.coderbot.patchwork.block;
+package com.patchworkmc.api.redirects.block;
 
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.sound.BlockSoundGroup;
+
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
 public class PatchworkBlockSettings {
 	public static Block.Settings sounds(Block.Settings settings, BlockSoundGroup sounds) {

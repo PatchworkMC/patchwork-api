@@ -17,9 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.coderbot.patchwork;
+package com.patchworkmc.api.redirects.itemgroup;
 
-public interface ForgeInitializer {
-	String getModId();
-	void onForgeInitialize();
+import net.minecraft.item.ItemGroup;
+import net.minecraft.util.Identifier;
+
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+
+public abstract class PatchworkItemGroup extends ItemGroup {
+	public PatchworkItemGroup(String name) {
+		super(getNewArrayIndex(), name);
+	}
+
+	private static int getNewArrayIndex() {
+		// Get a new slot in the array
+
+		FabricItemGroupBuilder.create(new Identifier("patchwork", "dummy")).build();
+
+		return GROUPS.length - 1;
+	}
 }
