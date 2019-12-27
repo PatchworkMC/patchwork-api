@@ -1,3 +1,4 @@
+
 plugins {
 	id 'java'
 	id 'eclipse'
@@ -6,15 +7,18 @@ plugins {
 	id 'fabric-loom' version '0.2.6-SNAPSHOT' apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
+	id 'com.matthewprenger.cursegradle' version "1.1.2"
 }
 
 def ENV = System.getenv()
 
 class Globals {
-	static def baseVersion = "0.1.0"
-	static def mcVersion = "1.14.4"
-	static def yarnVersion = "+build.15"
+	static def baseVersion = "0.4.25"
+	static def mcVersion = "1.15.1"
+	static def yarnVersion = "+build.1"
 }
+
+import org.apache.commons.codec.digest.DigestUtils
 
 def getSubprojectVersion(project, version) {
 	if (grgit == null) {
@@ -24,19 +28,20 @@ def getSubprojectVersion(project, version) {
 	if (latestCommits.isEmpty()) {
 		return version + "+uncommited"
 	} else {
-		return version + "+" + latestCommits.get(0).id.substring(0, 8)
+		return version + "+" + latestCommits.get(0).id.substring(0, 8) + DigestUtils.sha256Hex(Globals.mcVersion).substring(0, 2)
 	}
 }
 
-def getBranch() {
-	if (System.getenv().GIT_BRANCH) {
+def getBranch(){
+	if(System.getenv().GIT_BRANCH){
 		def branch = System.getenv().GIT_BRANCH
 		return branch.substring(branch.lastIndexOf("/") + 1)
 	}
 	if (grgit == null) {
 		return "unknown"
 	}
-	return grgit.branch.current().name
+	def branch = grgit.branch.current().name
+	return branch.substring(branch.lastIndexOf("/") + 1)
 }
 
 allprojects {
@@ -122,26 +127,26 @@ allprojects {
 
 javadoc {
 	options.memberLevel = "PACKAGE"
-	allprojects.each {
-		source(it.sourceSets.main.allJava.srcDirs)
+	allprojects.each{
+		source( it.sourceSets.main.allJava.srcDirs)
 	}
 	classpath = sourceSets.main.compileClasspath
 }
 
 subprojects {
-//	task remapMavenJar(type: Copy, dependsOn: remapJar) {
-//		afterEvaluate {
-//			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
-//			into("${project.buildDir}/libs/")
-//			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
-//		}
-//	}
+	task remapMavenJar(type: Copy, dependsOn: remapJar) {
+		afterEvaluate {
+			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
+			into("${project.buildDir}/libs/")
+			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
+		}
+	}
 
 	publishing {
 		publications {
 			mavenJava(MavenPublication) {
 				artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-					builtBy remapJar
+					builtBy remapMavenJar
 				}
 				artifact(sourcesJar) {
 					builtBy remapSourcesJar
@@ -165,19 +170,19 @@ subprojects {
 	javadoc.enabled = false
 }
 
-//task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
-//	afterEvaluate {
-//		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
-//		archiveName = "${archivesBaseName}-${version}-maven.jar"
-//		addNestedDependencies = false
-//	}
-//}
+task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
+	afterEvaluate {
+		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
+		archiveName = "${archivesBaseName}-${version}-maven.jar"
+		addNestedDependencies = false
+	}
+}
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-				builtBy remapJar
+				builtBy remapMavenJar
 			}
 			artifact(sourcesJar) {
 				builtBy remapSourcesJar
@@ -212,13 +217,6 @@ task licenseFormatAll
 subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
 subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
 
-repositories {
-	flatDir {
-		dirs 'jars'
-	}
-	mavenCentral()
-}
-
 dependencies {
 	afterEvaluate {
 		subprojects.each {
@@ -226,40 +224,32 @@ dependencies {
 			include project("${it.name}:")
 		}
 	}
-
-	implementation 'org.apache.logging.log4j:log4j-core:2.10.0'
-
-	minecraft "com.mojang:minecraft:$Globals.mcVersion"
-	mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-	modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
-	modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
-
-	implementation 'com.electronwill.night-config:toml:3.6.2'
-	include 'com.electronwill.night-config:core:3.6.2'
-	include 'com.electronwill.night-config:toml:3.6.2'
-
-	fileTree(dir: 'jars', include: '*.jar').each {
-		String baseName = it.name.replace(".jar", "");
-		String version = "0.1.0";
-		int split = baseName.lastIndexOf('-');
-
-		if (split != -1) {
-			version = baseName.substring(split + 1);
-			baseName = baseName.substring(0, split);
-		}
-
-		String name = "testmod:${baseName}:${version}";
-
-		System.out.println("Found test mod: " + it.name.replace(".jar", "") + " -> " + name)
-
-		modCompileOnly name
-		modRuntime name
-	}
 }
 
 version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 
-logger.lifecycle("Building Patchwork: " + version)
+logger.lifecycle("Building Fabric: " + version)
 
-// This line breaks every second Gradle command
-// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+curseforge {
+	if (project.hasProperty('curse_api_key')){
+		apiKey = project.getProperty('curse_api_key')
+	}
+	project {
+		id = '306612'
+		changelog = 'A changelog can be found at https://github.com/FabricMC/fabric/commits/master'
+		releaseType = 'beta'
+		addGameVersion '1.15'
+		addGameVersion '1.15.1'
+		mainArtifact(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")) {
+			displayName = "[$Globals.mcVersion] Fabric API $Globals.baseVersion build $ENV.BUILD_NUMBER"
+		}
+		afterEvaluate {
+			uploadTask.dependsOn("remapJar")
+		}
+	}
+	options{
+		forgeGradleIntegration = false
+	}
+}
+
+apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
