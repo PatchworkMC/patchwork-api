@@ -28,11 +28,7 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           arguments: remapJar
-      - name: Remove dev jar
-        run: rm ./build/libs/patchwork*/actions-dev.jar
-      - name: Rename production jar
-        run: mv ./build/libs/patchwork*/actions.jar ./build/libs/patchwork*/patchwork-api.jar
       - uses: ncipollo/release-action@v1.4.0
         with:
-          artifact: ./build/libs/patchwork*/patchwork-api.jar
+          artifacts: ./build/libs/patchwork*/
           token: ${{ secrets.GITHUB_TOKEN }}
