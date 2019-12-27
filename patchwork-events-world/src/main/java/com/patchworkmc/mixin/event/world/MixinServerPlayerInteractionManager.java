@@ -19,6 +19,14 @@
 
 package com.patchworkmc.mixin.event.world;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.network.packet.BlockEntityUpdateS2CPacket;
@@ -30,13 +38,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EmptyBlockView;
 import net.minecraft.world.GameMode;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class MixinServerPlayerInteractionManager {
@@ -52,6 +53,7 @@ public class MixinServerPlayerInteractionManager {
 		boolean preCancelEvent = false;
 
 		ItemStack itemstack = player.getMainHandStack();
+
 		if (!itemstack.isEmpty() && !itemstack.getItem().canMine(world.getBlockState(pos), world, pos, player)) {
 			preCancelEvent = true;
 		}
@@ -81,6 +83,7 @@ public class MixinServerPlayerInteractionManager {
 
 			// Update any block entity data for this block
 			BlockEntity entity = world.getBlockEntity(pos);
+
 			if (entity != null) {
 				BlockEntityUpdateS2CPacket packet = entity.toUpdatePacket();
 
@@ -90,7 +93,7 @@ public class MixinServerPlayerInteractionManager {
 			}
 
 			callback.setReturnValue(false);
-		} else if(event.getExpToDrop() != 0) {
+		} else if (event.getExpToDrop() != 0) {
 			// TODO: Drop experience
 			throw new UnsupportedOperationException("Cannot drop exp from a BreakEvent yet");
 		}
