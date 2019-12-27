@@ -19,24 +19,25 @@
 
 package net.minecraftforge.fml;
 
-import net.fabricmc.loader.api.FabricLoader;
+import java.util.concurrent.Callable;
+import java.util.function.Supplier;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
+import net.fabricmc.loader.api.FabricLoader;
 
 public final class DistExecutor {
 	private DistExecutor() {
 	}
 
 	/**
-	 * Run the callable in the supplier only on the specified {@link Dist}
+	 * Run the callable in the supplier only on the specified {@link Dist}.
 	 *
-	 * @param dist  The dist to run on
-	 * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate dist)
-	 * @param <T>   The return type from the callable
-	 * @return The callable's result
+	 * @param dist  The {@link Dist} to run on
+	 * @param toRun A {@link Supplier} of the {@link Callable} to run ({@link Supplier} wrapper to ensure classloading only on the appropriate dist)
+	 * @param <T>   The return type from the {@link Callable}
+	 * @return The {@link Callable}'s result
 	 */
 	public static <T> T callWhenOn(Dist dist, Supplier<Callable<T>> toRun) {
 		if (dist == FMLEnvironment.dist) {
@@ -46,6 +47,7 @@ public final class DistExecutor {
 				throw new RuntimeException(e);
 			}
 		}
+
 		return null;
 	}
 
@@ -57,12 +59,12 @@ public final class DistExecutor {
 
 	public static <T> T runForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
 		switch (FabricLoader.getInstance().getEnvironmentType()) {
-			case CLIENT:
-				return clientTarget.get().get();
-			case SERVER:
-				return serverTarget.get().get();
-			default:
-				throw new IllegalArgumentException("UNSIDED?");
+		case CLIENT:
+			return clientTarget.get().get();
+		case SERVER:
+			return serverTarget.get().get();
+		default:
+			throw new IllegalArgumentException("UNSIDED?");
 		}
 	}
 }
