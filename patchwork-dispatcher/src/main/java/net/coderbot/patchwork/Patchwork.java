@@ -40,6 +40,8 @@ import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
+
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
@@ -171,5 +173,7 @@ public class Patchwork implements ModInitializer {
 		dispatchRegistryEvents(mods);
 		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft"))); // TODO: One per modcontainer
 		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft"))); // TODO: Ditto
+
+		MinecraftForge.EVENT_BUS.start();
 	}
 }

@@ -1,12 +1,32 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2019.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
+
+import java.util.Objects;
+
+import net.minecraft.util.WeightedPicker;
+import net.minecraft.world.biome.Biome;
 
 import net.fabricmc.fabric.api.biomes.v1.FabricBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldClimate;
-import net.minecraft.util.WeightedPicker;
-import net.minecraft.world.biome.Biome;
-
-import java.util.Objects;
 
 public class BiomeManager {
 	public static void addSpawnBiome(Biome biome) {
@@ -27,16 +47,16 @@ public class BiomeManager {
 
 		private OverworldClimate getClimate() {
 			switch (this) {
-				case DESERT:
-					return OverworldClimate.DRY;
-				case WARM:
-					return OverworldClimate.TEMPERATE;
-				case COOL:
-					return OverworldClimate.COOL;
-				case ICY:
-					return OverworldClimate.SNOWY;
-				default:
-					throw new IllegalStateException("Someone's been tampering with the BiomeType enum!");
+			case DESERT:
+				return OverworldClimate.DRY;
+			case WARM:
+				return OverworldClimate.TEMPERATE;
+			case COOL:
+				return OverworldClimate.COOL;
+			case ICY:
+				return OverworldClimate.SNOWY;
+			default:
+				throw new IllegalStateException("Someone's been tampering with the BiomeType enum!");
 			}
 		}
 	}

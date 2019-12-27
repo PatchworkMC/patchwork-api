@@ -4,9 +4,10 @@
   "name": "Patchwork FML Interface",
   "version": "${version}",
   "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-fml/icon.png",
   "contact": {
-    "issues": "https://github.com/PatchworkMC/patchwork/issues",
-    "sources": "https://github.com/PatchworkMC/patchwork"
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
   },
   "authors": [
     "PatchworkMC"
@@ -14,5 +15,9 @@
   "depends": {
     "fabricloader": ">=0.6.2"
   },
-  "description": "Implementation of FML's mod-facing interface."
+  "description": "Implementation of FML's mod-facing interface.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }

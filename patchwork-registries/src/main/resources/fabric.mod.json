@@ -4,9 +4,10 @@
   "name": "Patchwork Registries",
   "version": "${version}",
   "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-registries/icon.png",
   "contact": {
-    "issues": "https://github.com/PatchworkMC/patchwork/issues",
-    "sources": "https://github.com/PatchworkMC/patchwork"
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
   },
   "authors": [
     "PatchworkMC"
@@ -18,5 +19,9 @@
   "description": "Implementation of the Forge Registry API.",
   "mixins": [
     "patchwork-registries.mixins.json"
-  ]
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }

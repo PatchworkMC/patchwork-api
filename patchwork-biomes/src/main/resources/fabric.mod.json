@@ -4,9 +4,10 @@
   "name": "Patchwork Biomes",
   "version": "${version}",
   "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-biomes/icon.png",
   "contact": {
-    "issues": "https://github.com/PatchworkMC/patchwork/issues",
-    "sources": "https://github.com/PatchworkMC/patchwork"
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
   },
   "authors": [
     "PatchworkMC"
@@ -15,5 +16,9 @@
     "fabricloader": ">=0.6.2",
     "patchwork-fml": "*"
   },
-  "description": "Implementation of the Forge Biomes API."
+  "description": "Implementation of the Forge Biomes API.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
 }
