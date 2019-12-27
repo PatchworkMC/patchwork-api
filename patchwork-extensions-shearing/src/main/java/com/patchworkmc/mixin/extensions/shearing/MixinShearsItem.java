@@ -40,8 +40,7 @@ public class MixinShearsItem extends Item {
 			IShearable target = (IShearable)entity;
 			BlockPos pos = entity.getBlockPos();
 			if (target.isShearable(stack, entity.world, pos)) {
-				List<ItemStack> drops = target.onSheared(stack, entity.world, pos,
-				EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
+				List<ItemStack> drops = target.onSheared(stack, entity.world, pos, EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
 				Random rand = new Random();
 				drops.forEach(d -> {
 					ItemEntity ent = entity.dropStack(d, 1.0F);
