@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,13 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraftforge.eventbus.api.Event;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.eventbus.api.Event;
 
 public class BlockEvent extends Event {
 	private final IWorld world;
@@ -55,12 +56,14 @@ public class BlockEvent extends Event {
 	}
 
 	/**
-	 * Event that is fired when an Block is about to be broken by a player
-	 * Canceling this event will prevent the Block from being broken.
+	 * This event is fired when an {@link net.minecraft.block.Block} is about to be broken by a player.
+	 *
+	 * <p>This event is cancellable.
+	 * Cancelling this event will prevent the {@link net.minecraft.block.Block} from being broken.</p>
 	 */
 	public static class BreakEvent extends BlockEvent {
 		/**
-		 * Reference to the Player who broke the block. If no player is available, use an EntityFakePlayer
+		 * Reference to the {@link PlayerEntity} who broke the block. If no player is available, use an {@link EntityFakePlayer}
 		 */
 		private final PlayerEntity player;
 		private int exp;
@@ -77,8 +80,10 @@ public class BlockEvent extends Event {
 			this.exp = 0;
 
 			// TODO: BlockState#getExpDrop
-			/*if (state == null || !ForgeHooks.canHarvestBlock(state, player, world, pos)) // Handle empty block or player unable to break block scenario
-			{
+
+			/*
+			// Handle empty block or player unable to break block scenario
+			if (state == null || !ForgeHooks.canHarvestBlock(state, player, world, pos)) {
 				this.exp = 0;
 			} else {
 				int bonusLevel = EnchantmentHelper.getLevel(Enchantments.FORTUNE, player.getHeldItemMainhand());
@@ -92,16 +97,16 @@ public class BlockEvent extends Event {
 		}
 
 		/**
-		 * Get the experience dropped by the block after the event has processed
+		 * Gets the experience dropped by the block after the event has processed.
 		 *
-		 * @return The experience to drop or 0 if the event was canceled
+		 * @return The experience to drop or 0 if the event was cancelled
 		 */
 		public int getExpToDrop() {
 			return this.isCanceled() ? 0 : exp;
 		}
 
 		/**
-		 * Set the amount of experience dropped by the block after the event has processed
+		 * Sets the amount of experience dropped by the block after the event has processed.
 		 *
 		 * @param exp 1 or higher to drop experience, else nothing will drop
 		 */

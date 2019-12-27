@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,11 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 /**
  * This event is fired when an {@link Entity} joins the world.
@@ -42,7 +43,7 @@ import net.minecraftforge.common.MinecraftForge;
  * If this event is canceled, the Entity is not added to the world.</p>
  *
  * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
- **/
+ */
 public class EntityJoinWorldEvent extends EntityEvent {
 	private final World world;
 

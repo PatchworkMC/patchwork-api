@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,9 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.eventbus.api.Event;
+
+import net.minecraft.entity.Entity;
 
 /**
  * EntityEvent is fired when an event involving any Entity occurs.
@@ -33,8 +31,8 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * <p>{@link #entity} contains the entity that caused this event to occur.</p>
  *
- * <p>All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.</p>
- **/
+ * <p>All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+ */
 public class EntityEvent extends Event {
 	private final Entity entity;
 
@@ -52,75 +50,69 @@ public class EntityEvent extends Event {
 	}
 
 	/**
-	 * EntityConstructing is fired when an Entity is being created. <br>
-	 * This event is fired within the constructor of the Entity.<br>
-	 * <br>
-	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
-	 * <br>
-	 * This event does not have a result. {@link HasResult}<br>
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
-	/* TODO public static class EntityConstructing extends EntityEvent
-	{
-		public EntityConstructing(Entity entity)
-		{
+	 * EntityConstructing is fired when an Entity is being created.
+	 *
+	 * <p>This event is fired within the constructor of the Entity.</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event does not have a result.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
+	/* TODO public static class EntityConstructing extends EntityEvent {
+		public EntityConstructing(Entity entity) {
 			super(entity);
 		}
 	}*/
 
 	/**
-	 * CanUpdate is fired when an Entity is being created. <br>
-	 * This event is fired whenever vanilla Minecraft determines that an entity<br>
-	 * cannot update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
-	 * <br>
-	 * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
-	 * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>
-	 * and the entity with then be updated.<br>
-	 * <br>
-	 * This event is not {@link Cancelable}.<br>
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
-	/* TODO public static class CanUpdate extends EntityEvent
-	{
+	 * <b>TODO: Forge never fires this event.</b>
+	 *
+	 * <p>{@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.</p>
+	 *
+	 * <p>If the modder decides that this Entity can be updated, they may change canUpdate to true,
+	 * and the entity will then be updated.</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
+	/* TODO public static class CanUpdate extends EntityEvent {
 		private boolean canUpdate = false;
-		public CanUpdate(Entity entity)
-		{
+
+		public CanUpdate(Entity entity) {
 			super(entity);
 		}
 
-		public boolean getCanUpdate()
-		{
+		public boolean getCanUpdate() {
 			return canUpdate;
 		}
 
-		public void setCanUpdate(boolean canUpdate)
-		{
+		public void setCanUpdate(boolean canUpdate) {
 			this.canUpdate = canUpdate;
 		}
 	}*/
 
 	/**
-	 * EnteringChunk is fired when an Entity enters a chunk. <br>
-	 * This event is fired whenever vanilla Minecraft determines that an entity <br>
-	 * is entering a chunk in {@link Chunk#addEntity(net.minecraft.entity.Entity)} <br>
-	 * <br>
-	 * This event is not {@link Cancelable}.<br>
-	 * <br>
-	 * This event does not have a result. {@link HasResult}
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
-	/* TODO public static class EnteringChunk extends EntityEvent
-	{
+	 * EnteringChunk is fired when an Entity enters a chunk.
+	 *
+	 * <p>This event is fired whenever vanilla Minecraft determines that an entity
+	 * is entering a chunk in {@link net.minecraft.world.chunk.Chunk#addEntity(net.minecraft.entity.Entity)}</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event does not have a result.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
+	/* TODO public static class EnteringChunk extends EntityEvent {
 		private int newChunkX;
 		private int newChunkZ;
 		private int oldChunkX;
 		private int oldChunkZ;
 
-		public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
-		{
+		public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
 			super(entity);
 			this.setNewChunkX(newChunkX);
 			this.setNewChunkZ(newChunkZ);
@@ -128,35 +120,57 @@ public class EntityEvent extends Event {
 			this.setOldChunkZ(oldChunkZ);
 		}
 
-		public int getNewChunkX() { return newChunkX; }
-		public void setNewChunkX(int newChunkX) { this.newChunkX = newChunkX; }
-		public int getNewChunkZ() { return newChunkZ; }
-		public void setNewChunkZ(int newChunkZ) { this.newChunkZ = newChunkZ; }
-		public int getOldChunkX() { return oldChunkX; }
-		public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
-		public int getOldChunkZ() { return oldChunkZ; }
-		public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+		public int getNewChunkX() {
+			return newChunkX;
+		}
+
+		public void setNewChunkX(int newChunkX) {
+			this.newChunkX = newChunkX;
+		}
+
+		public int getNewChunkZ() {
+			return newChunkZ;
+		}
+
+		public void setNewChunkZ(int newChunkZ) {
+			this.newChunkZ = newChunkZ;
+		}
+
+		public int getOldChunkX() {
+			return oldChunkX;
+		}
+
+		public void setOldChunkX(int oldChunkX) {
+			this.oldChunkX = oldChunkX;
+		}
+
+		public int getOldChunkZ() {
+			return oldChunkZ;
+		}
+
+		public void setOldChunkZ(int oldChunkZ) {
+			this.oldChunkZ = oldChunkZ;
+		}
 	}*/
 
 	/**
-	 * EyeHeight is fired when an Entity's eye height changes. <br>
-	 * This event is fired whenever the {@link EntityPose} changes, and in a few other hardcoded scenarios.<br>
-	 * <br>
-	 * This event cannot be cancelled.<br>
-	 * <br>
-	 * This event does not have a result.
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
-	/* TODO public static class EyeHeight extends EntityEvent
-	{
+	 * EyeHeight is fired when an Entity's eye height changes.
+	 *
+	 * <p>This event is fired whenever the {@link EntityPose} changes, and in a few other hardcoded scenarios.</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event does not have a result.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
+	/* TODO public static class EyeHeight extends EntityEvent {
 		private final EntityPose pose;
 		private final EntityDimensions size;
 		private final float oldHeight;
 		private float newHeight;
 
-		public EyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight)
-		{
+		public EyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
 			super(entity);
 			this.pose = pose;
 			this.size = size;
@@ -164,10 +178,24 @@ public class EntityEvent extends Event {
 			this.newHeight = defaultHeight;
 		}
 
-		public EntityPose getPose() { return pose; }
-		public EntityDimensions getSize() { return size; }
-		public float getOldHeight() { return oldHeight; }
-		public float getNewHeight() { return newHeight; }
-		public void setNewHeight(float newSize) { this.newHeight = newSize; }
+		public EntityPose getPose() {
+			return pose;
+		}
+
+		public EntityDimensions getSize() {
+			return size;
+		}
+
+		public float getOldHeight() {
+			return oldHeight;
+		}
+
+		public float getNewHeight() {
+			return newHeight;
+		}
+
+		public void setNewHeight(float newSize) {
+			this.newHeight = newSize;
+		}
 	}*/
 }

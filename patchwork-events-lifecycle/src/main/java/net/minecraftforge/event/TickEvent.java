@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,12 @@
 
 package net.minecraftforge.event;
 
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSide;
 
 public class TickEvent extends Event {
 	public final Type type;
@@ -40,6 +41,7 @@ public class TickEvent extends Event {
 		this.side = side;
 		this.phase = phase;
 	}
+
 	public enum Type {
 		WORLD, PLAYER, CLIENT, SERVER, RENDER;
 	}

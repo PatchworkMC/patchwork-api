@@ -241,9 +241,17 @@ dependencies {
 
 	fileTree(dir: 'jars', include: '*.jar').each {
 		String baseName = it.name.replace(".jar", "");
-		String name = "testmod:${baseName.replace("-", ":")}";
+		String version = "0.1.0";
+		int split = baseName.lastIndexOf('-');
 
-		System.out.println("Found test mod: " + baseName + " -> " + name)
+		if(split != -1) {
+			version = baseName.substring(split + 1);
+			baseName = baseName.substring(0, split);
+		}
+
+		String name = "testmod:${baseName}:${version}";
+
+		System.out.println("Found test mod: " + it.name.replace(".jar", "") + " -> " + name)
 
 		modCompileOnly name
 		modRuntime name
@@ -254,4 +262,5 @@ version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_
 
 logger.lifecycle("Building Patchwork: " + version)
 
-apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+// This line breaks every second Gradle command
+// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'

@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,16 +19,17 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
-import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Sets;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.util.Identifier;
 
 public class RegistryManager {
 	public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
@@ -73,10 +74,12 @@ public class RegistryManager {
 	public <V extends IForgeRegistryEntry<V>> Identifier updateLegacyName(Identifier legacyName) {
 		while (getRegistry(legacyName) == null) {
 			legacyName = legacyNames.get(legacyName);
+
 			if (legacyName == null) {
 				return null;
 			}
 		}
+
 		return legacyName;
 	}
 
@@ -95,6 +98,7 @@ public class RegistryManager {
 					.filter(e -> e.getValue().equals(key))
 					.forEach(e -> addLegacyName(e.getKey(), e.getValue()));
 		}
+
 		return getRegistry(key);
 	}*/
 
@@ -102,21 +106,30 @@ public class RegistryManager {
 		Set<Class<?>> parents = Sets.newHashSet();
 		findSuperTypes(builder.getType(), parents);
 		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
+
 		if (!overlappedTypes.isEmpty()) {
 			Class<?> foundType = overlappedTypes.iterator().next();
 			LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
 					foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
 			throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
 		}
+
 		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
 		registries.put(name, reg);
 		superTypes.put(builder.getType(), name);
-		if (builder.getSaveToDisc())
+
+		if (builder.getSaveToDisc()) {
 			this.persisted.add(name);
-		if (builder.getSync())
+		}
+
+		if (builder.getSync()) {
 			this.synced.add(name);
-		for (Identifier legacyName : builder.getLegacyNames())
+		}
+
+		for (Identifier legacyName : builder.getLegacyNames()) {
 			addLegacyName(legacyName, name);
+		}
+
 		return getRegistry(name);
 	}*/
 
@@ -132,10 +145,13 @@ public class RegistryManager {
 		if (type == null || type == Object.class) {
 			return;
 		}
+
 		types.add(type);
+
 		for (Class<?> interfac : type.getInterfaces()) {
 			findSuperTypes(interfac, types);
 		}
+
 		findSuperTypes(type.getSuperclass(), types);
 	}
 
@@ -146,7 +162,7 @@ public class RegistryManager {
 		return ret;
 	}*/
 
-	//Public for testing only
+	// Public for testing only
 	public void clean() {
 		this.persisted.clear();
 		this.synced.clear();

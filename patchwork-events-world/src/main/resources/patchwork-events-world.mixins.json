@@ -4,9 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinServerPlayerInteractionManager",
-  	"MixinThreadedAnvilChunkStorage"
+    "MixinThreadedAnvilChunkStorage"
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }

@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,11 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraftforge.eventbus.api.Event;
+
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
@@ -35,8 +36,8 @@ import net.minecraftforge.eventbus.api.Event;
  * The {@link #player}'s world may not be the same as the world of the chunk
  * when the player is teleporting to another dimension.<br>
  * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- **/
+ * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
+ */
 public class ChunkWatchEvent extends Event {
 	private final ServerWorld world;
 	private final ServerPlayerEntity player;
@@ -66,16 +67,17 @@ public class ChunkWatchEvent extends Event {
 	}
 
 	/**
-	 * ChunkWatchEvent.Watch is fired when an EntityPlayer begins watching a chunk.<br>
-	 * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
-	 * {@link net.minecraft.server.world.PlayerChunkWatchingManager#addPlayer(EntityPlayerMP)} and {@link PlayerChunkMapEntry#sendToPlayers()}. <br>
-	 * <br>
-	 * This event is not cancellable.<br>
-	 * <br>
-	 * This event does not have a result.
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
+	 * This event is fired when an EntityPlayer begins watching a chunk.
+	 *
+	 * <p>This event is fired when a {@link ChunkPos} is added to the watched chunks of an {@link ServerPlayerEntity} in
+	 * {@link net.minecraft.server.world.ThreadedAnvilChunkStorage#sendWatchPackets(ServerPlayerEntity, ChunkPos, net.minecraft.network.Packet[], boolean, boolean)}</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event does not have a result.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
 	public static class Watch extends ChunkWatchEvent {
 		// For EventBus
 		public Watch() {
@@ -88,16 +90,17 @@ public class ChunkWatchEvent extends Event {
 	}
 
 	/**
-	 * ChunkWatchEvent.UnWatch is fired when an EntityPlayer stops watching a chunk.<br>
-	 * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
-	 * {@link PlayerChunkMapEntry#removePlayer(EntityPlayerMP)}. <br>
-	 * <br>
-	 * This event is not cancellable.<br>
-	 * <br>
-	 * This event does not have a result.<br>
-	 * <br>
-	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
+	 * This event is fired when a {@link ServerPlayerEntity} stops watching a chunk.
+	 *
+	 * <p>This event is fired when a {@link ChunkPos} is removed the watched chunks of an {@link ServerPlayerEntity} in
+	 * {@link net.minecraft.server.world.ThreadedAnvilChunkStorage#sendWatchPackets(ServerPlayerEntity, ChunkPos, net.minecraft.network.Packet[], boolean, boolean)}</p>
+	 *
+	 * <p>This event is not cancellable.</p>
+	 *
+	 * <p>This event does not have a result.</p>
+	 *
+	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
+	 */
 	/* TODO public static class UnWatch extends ChunkWatchEvent {
 		public UnWatch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {
 			super(player, pos, world);

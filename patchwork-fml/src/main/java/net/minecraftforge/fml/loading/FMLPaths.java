@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,18 +19,18 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.fabricmc.loader.api.FabricLoader;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public enum FMLPaths
-{
+import net.fabricmc.loader.api.FabricLoader;
+
+public enum FMLPaths {
 	GAMEDIR(),
 	MODSDIR("mods"),
 	CONFIGDIR("config"),
@@ -55,19 +55,18 @@ public enum FMLPaths
 		this.isDirectory = isDir;
 	}
 
-	private Path computePath(String... path)
-	{
-		return Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
-	}
-
-	// TODO: Implementation Detail: public static void setup(IEnvironment env)
-
 	public static void loadAbsolutePaths(Path rootPath) {
 		throw new UnsupportedOperationException("Implementation detail");
 	}
 
+	// TODO: Implementation Detail: public static void setup(IEnvironment env)
+
 	public static Path getOrCreateGameRelativePath(Path path, String name) {
 		return FileUtils.getOrCreateDirectory(FMLPaths.GAMEDIR.get().resolve(path), name);
+	}
+
+	private Path computePath(String... path) {
+		return Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
 	}
 
 	public Path relative() {
@@ -84,7 +83,7 @@ public enum FMLPaths
 				FileUtils.getOrCreateDirectory(absolutePath, name());
 			}
 
-			LOGGER.debug(CORE,"Path {} is {}", this, absolutePath);
+			LOGGER.debug(CORE, "Path {} is {}", this, absolutePath);
 		}
 
 		return absolutePath;

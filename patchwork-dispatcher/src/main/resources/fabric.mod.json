@@ -15,7 +15,7 @@
   "environment": "*",
   "entrypoints": {
 	"main": [
-	  "net.coderbot.patchwork.Patchwork"
+	  "com.patchworkmc.impl.Patchwork"
 	]
   },
   "depends": {

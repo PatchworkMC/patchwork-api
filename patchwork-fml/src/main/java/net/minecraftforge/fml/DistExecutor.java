@@ -1,23 +1,43 @@
-package net.minecraftforge.fml;
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+package net.minecraftforge.fml;
 
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 public final class DistExecutor {
 	private DistExecutor() {
 	}
 
 	/**
-	 * Run the callable in the supplier only on the specified {@link Dist}
+	 * Run the callable in the supplier only on the specified {@link Dist}.
 	 *
-	 * @param dist  The dist to run on
-	 * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate dist)
-	 * @param <T>   The return type from the callable
-	 * @return The callable's result
+	 * @param dist  The {@link Dist} to run on
+	 * @param toRun A {@link Supplier} of the {@link Callable} to run ({@link Supplier} wrapper to ensure classloading only on the appropriate dist)
+	 * @param <T>   The return type from the {@link Callable}
+	 * @return The {@link Callable}'s result
 	 */
 	public static <T> T callWhenOn(Dist dist, Supplier<Callable<T>> toRun) {
 		if (dist == FMLEnvironment.dist) {
@@ -27,6 +47,7 @@ public final class DistExecutor {
 				throw new RuntimeException(e);
 			}
 		}
+
 		return null;
 	}
 
@@ -38,12 +59,12 @@ public final class DistExecutor {
 
 	public static <T> T runForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
 		switch (FabricLoader.getInstance().getEnvironmentType()) {
-			case CLIENT:
-				return clientTarget.get().get();
-			case SERVER:
-				return serverTarget.get().get();
-			default:
-				throw new IllegalArgumentException("UNSIDED?");
+		case CLIENT:
+			return clientTarget.get().get();
+		case SERVER:
+			return serverTarget.get().get();
+		default:
+			throw new IllegalArgumentException("UNSIDED?");
 		}
 	}
 }

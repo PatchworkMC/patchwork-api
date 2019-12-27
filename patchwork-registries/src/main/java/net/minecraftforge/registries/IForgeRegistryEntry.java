@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,32 +23,29 @@ import net.minecraft.util.Identifier;
 
 public interface IForgeRegistryEntry<V> {
 	/**
-	 * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
-	 * Otherwise it will return the name set in setRegistryName().
-	 * If neither are valid null is returned.
+	 * A unique {@link Identifier} for this entry, if this entry is registered already it will return it's official {@link Identifier}.
+	 * Otherwise it will return the name set in {@link #setRegistryName(Identifier)}. If neither are valid {@code null} is returned.
 	 *
-	 * @return Unique identifier or null.
+	 * @return the unique {@link Identifier} or {@code null}.
 	 */
 	Identifier getRegistryName();
 
 	/**
-	 * The supplied name will be prefixed with the currently active mod's modId.
-	 * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
-	 * <p>
-	 * If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.
-	 * <p>
-	 * Returns 'this' to allow for chaining.
+	 * The supplied {@link Identifier} will be prefixed with the currently active mod's modId.
+	 * If the supplied {@link Identifier} already has a prefix that is different, it will be used and a warning will be logged.
 	 *
-	 * @param name Unique registry name
-	 * @return This instance
+	 * <p>If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.</p>
+	 *
+	 * @param name the unique {@link Identifier}
+	 * @return this instance, to allow for chaining
 	 */
 	IForgeRegistryEntry setRegistryName(Identifier name);
 
 	/**
 	 * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one
-	 * registry per concrete class.
+	 * {@link net.minecraft.util.registry.Registry} per concrete {@link Class}.
 	 *
-	 * @return Root registry type.
+	 * @return the root registry type
 	 */
 	Class<V> getRegistryType();
 }
