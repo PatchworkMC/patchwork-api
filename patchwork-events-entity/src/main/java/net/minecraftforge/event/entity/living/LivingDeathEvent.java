@@ -19,12 +19,14 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraftforge.common.MinecraftForge;
 
 /**
  * LivingDeathEvent is fired when an Entity dies.
+ *
  * <p>This event is fired whenever an Entity dies in
  * {@link LivingEntity#onDeath(DamageSource)},
  * {@link net.minecraft.entity.player.PlayerEntity#onDeath(DamageSource)}, and
@@ -38,7 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
  * If this event is canceled, the Entity does not die.</p>
  *
  * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
- **/
+ */
 public class LivingDeathEvent extends LivingEvent {
 	private final DamageSource source;
 

@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import net.minecraftforge.fml.LogicalSide;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,13 +34,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.LogicalSide;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
  * All subclasses are fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  * See the individual documentation on each subevent for more details.
- **/
+ */
 public class PlayerInteractEvent extends PlayerEvent {
 	private final Hand hand;
 	private final BlockPos pos;
@@ -133,15 +134,15 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 	/**
 	 * This event is fired on both sides whenever a player right clicks an entity.
-	 * <p>
-	 * "Interact at" is an interact where the local vector (which part of the entity you clicked) is known.
-	 * The state of this event affects whether {@link Entity#applyPlayerInteraction} is called.
-	 * <p>
-	 * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
+	 *
+	 * <p>"Interact at" is an interact where the local vector (which part of the entity you clicked) is known.
+	 * The state of this event affects whether {@link Entity#interactAt(PlayerEntity, Vec3d, Hand)} is called.</p>
+	 *
+	 * <p>Let result be the return value of {@link Entity#interactAt(PlayerEntity, Vec3d, Hand)}, or {@link #cancellationResult} if the event is cancelled.</p>
+	 *
+	 * <p>If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link EntityInteract}.</p>
 	 */
-	/* TODO @Cancelable
-	public static class EntityInteractSpecific extends PlayerInteractEvent {
+	/* TODO public static class EntityInteractSpecific extends PlayerInteractEvent {
 		private final Vec3d localPos;
 		private final Entity target;
 
@@ -157,8 +158,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 		 * [-width / 2, width / 2] while Y values will be in the range [0, height]
 		 *
 		 * @return The local position
-		 */
-		/* TODO public Vec3d getLocalPos() {
+		TODO
+		public Vec3d getLocalPos() {
 			return localPos;
 		}
 
@@ -170,13 +171,14 @@ public class PlayerInteractEvent extends PlayerEvent {
 	/**
 	 * This event is fired on both sides when the player right clicks an entity.
 	 * It is responsible for all general entity interactions.
-	 * <p>
-	 * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link ActionResult#SUCCESS}.
-	 * This event's state affects whether {@link Entity#interact(PlayerEntity, Hand)} and {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} are called.
-	 * <p>
-	 * Let result be {@link ActionResult#SUCCESS} if {@link Entity#interact(PlayerEntity, Hand)} or {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} return true,
-	 * or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+	 *
+	 * <p>This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link ActionResult#SUCCESS}.
+	 * This event's state affects whether {@link Entity#interact(PlayerEntity, Hand)} and {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} are called.</p>
+	 *
+	 * <p>Let result be {@link ActionResult#SUCCESS} if {@link Entity#interact(PlayerEntity, Hand)} or {@link net.minecraft.item.Item#useOnEntity(ItemStack, PlayerEntity, LivingEntity, Hand)} return true,
+	 * or {@link #cancellationResult} if the event is cancelled.</p>
+	 *
+	 * <p>If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.</p>
 	 */
 	public static class EntityInteract extends PlayerInteractEvent {
 		private final Entity target;
@@ -205,15 +207,18 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 	/**
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
-	 * This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
-	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.
-	 * Canceling the event will cause none of the above three to be called
-	 * <p>
-	 * Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
-	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
-	 * <p>
-	 * There are various results to this event, see the getters below.
-	 * Note that handling things differently on the client vs server may cause desynchronizations!
+	 *
+	 * <p>This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
+	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.</p>
+	 *
+	 * <p>This event is cancellable.
+	 * Canceling the event will cause none of the above noted methods to be called.</p>
+	 *
+	 * <p>Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
+	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link RightClickItem}.</p>
+	 *
+	 * <p>There are various results to this event, see the getters below.
+	 * Note that handling things differently on the client vs server may cause desynchronizations!</p>
 	 */
 	public static class RightClickBlock extends PlayerInteractEvent {
 		private Result useBlock = Result.DEFAULT;
@@ -268,6 +273,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		@Override
 		public void setCanceled(boolean canceled) {
 			super.setCanceled(canceled);
+
 			if (canceled) {
 				useBlock = Result.DENY;
 				useItem = Result.DENY;
@@ -301,9 +307,10 @@ public class PlayerInteractEvent extends PlayerEvent {
 	/**
 	 * This event is fired on the client side when the player right clicks empty space with an empty hand.
 	 * The server is not aware of when the client right clicks empty space with an empty hand, you will need to tell the server yourself.
-	 * This event cannot be canceled.
+	 *
+	 * <p>This event is not cancellable.</p>
 	 */
-	/** TODO public static class RightClickEmpty extends PlayerInteractEvent {
+	/* TODO public static class RightClickEmpty extends PlayerInteractEvent {
 		public RightClickEmpty(PlayerEntity player, Hand hand) {
 			super(player, hand, new BlockPos(player), null);
 		}
@@ -311,20 +318,23 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 	/**
 	 * This event is fired when a player left clicks while targeting a block.
-	 * This event controls which of {@link net.minecraft.block.Block#onBlockClicked} and/or the item harvesting methods will be called
-	 * Canceling the event will cause none of the above noted methods to be called.
+	 *
+	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
+
+	 * <p>This event is cancellable.
+	 * Canceling the event will cause none of the above noted methods to be called.</p>
+
 	 * There are various results to this event, see the getters below.
-	 * <p>
-	 * Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
-	 * This is due to how vanilla calls the left click handler methods.
-	 * <p>
-	 * Also note that creative mode directly breaks the block without running any other logic.
-	 * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
+	 *
+	 * <p>Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
+	 * This is due to how vanilla calls the left click handler methods.</p>
+	 *
+	 * <p>Also note that creative mode directly breaks the block without running any other logic.
+	 * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.</p>
 	 */
-	/* TODO @Cancelable
-	public static class LeftClickBlock extends PlayerInteractEvent {
-		private Result useBlock = DEFAULT;
-		private Result useItem = DEFAULT;
+	/* TODO public static class LeftClickBlock extends PlayerInteractEvent {
+		private Result useBlock = Result.DEFAULT;
+		private Result useItem = Result.DEFAULT;
 
 		public LeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
 			super(player, Hand.MAIN_HAND, pos, face);
@@ -332,8 +342,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
-		 */
-		/* TODO public Result getUseBlock() {
+		TODO
+		public Result getUseBlock() {
 			return useBlock;
 		}
 
@@ -343,8 +353,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
-		 */
-		/* TODO public Result getUseItem() {
+		TODO
+		public Result getUseItem() {
 			return useItem;
 		}
 
@@ -353,8 +363,14 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		@Override
+		public boolean isCancelable() {
+			return true;
+		}
+
+		@Override
 		public void setCanceled(boolean canceled) {
 			super.setCanceled(canceled);
+
 			if (canceled) {
 				useBlock = DENY;
 				useItem = DENY;
@@ -365,7 +381,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 	/**
 	 * This event is fired on the client side when the player left clicks empty space with any ItemStack.
 	 * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
-	 * This event cannot be canceled.
+	 *
+	 * <p>This event is not cancellable.</p>
 	 */
 	/* TODO public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
