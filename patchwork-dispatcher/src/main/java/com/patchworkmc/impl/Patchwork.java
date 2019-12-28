@@ -100,7 +100,7 @@ public class Patchwork implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
-		List<String> modIds = new ArrayList<>();
+
 		// Construct forge mods
 
 		for (ForgeInitializer initializer : FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class)) {
@@ -114,7 +114,6 @@ public class Patchwork implements ModInitializer {
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 
 			mods.put(initializer, container);
-			modIds.add(initializer.getModId());
 		}
 
 		// Send initialization events
