@@ -3,12 +3,12 @@
   "id": "patchwork-extensions",
   "version": "${version}",
   "name": "Patchwork Extensions",
-  "description": "Starts Patchwork mods",
+  "description": "Implements the Minecraft Forge extensions API",
   "authors": [
     "coderbot"
   ],
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-dispatcher/icon.png",
+  "icon": "assets/patchwork-extensions/icon.png",
   "environment": "*",
   "depends": {
     "fabricloader": ">=0.4.0",
