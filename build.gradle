@@ -58,7 +58,7 @@ allprojects {
 		modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
 		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
 
-		implementation 'com.github.PatchworkMC:EventBus:d5b038e199'
+		implementation 'com.patchworkmc:patchwork-eventbus:0.1.2:all'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
 		// For EventBus
@@ -75,7 +75,7 @@ allprojects {
 	}
 
 	repositories {
-		maven {url 'https://jitpack.io'}
+		maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
 	}
 
 	jar {
@@ -270,6 +270,6 @@ dependencies {
 
 version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 
-logger.lifecycle("Building Fabric: " + version)
+logger.lifecycle("Building Patchwork: " + version)
 
 apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
