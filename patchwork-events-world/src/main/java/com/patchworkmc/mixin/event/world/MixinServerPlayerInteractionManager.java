@@ -61,7 +61,7 @@ public class MixinServerPlayerInteractionManager {
 		// method_21701 => canMine
 		// Isn't the function really canNotMine?
 
-		if (player.canMine(world, pos, gameMode)) {
+		if (player.method_21701(world, pos, gameMode)) {
 			preCancelEvent = true;
 		}
 
