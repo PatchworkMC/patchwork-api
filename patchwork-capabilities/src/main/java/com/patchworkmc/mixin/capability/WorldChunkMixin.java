@@ -19,6 +19,8 @@
 
 package com.patchworkmc.mixin.capability;
 
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -30,10 +32,11 @@ import com.patchworkmc.impl.capability.CapabilityProviderInterface;
 @Mixin(WorldChunk.class)
 public class WorldChunkMixin implements CapabilityProviderInterface {
 
-	private final CapabilityProvider provider = new BaseCapabilityProvider<>(WorldChunk.class, (WorldChunk) (Object) this);
+	private final CapabilityProvider<WorldChunk> provider = new BaseCapabilityProvider<>(WorldChunk.class, (WorldChunk) (Object) this);
 
+	@Nonnull
 	@Override
-	public CapabilityProvider getCapabilityProvider$impl() {
+	public CapabilityProvider<WorldChunk> getCapabilityProvider() {
 		return provider;
 	}
 }

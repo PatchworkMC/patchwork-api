@@ -19,6 +19,8 @@
 
 package com.patchworkmc.mixin.capability;
 
+import javax.annotation.Nonnull;
+
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
 import com.patchworkmc.impl.capability.CapabilityProviderInterface;
 import net.minecraft.block.entity.BlockEntity;
@@ -28,10 +30,11 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(BlockEntity.class)
 public class BlockEntityMixin implements CapabilityProviderInterface {
 
-	private final CapabilityProvider provider = new BaseCapabilityProvider<>(BlockEntity.class, (BlockEntity) (Object) this);
+	private final CapabilityProvider<BlockEntity> provider = new BaseCapabilityProvider<>(BlockEntity.class, (BlockEntity) (Object) this);
 
+	@Nonnull
 	@Override
-	public CapabilityProvider getCapabilityProvider$impl() {
+	public CapabilityProvider<BlockEntity> getCapabilityProvider() {
 		return provider;
 	}
 }

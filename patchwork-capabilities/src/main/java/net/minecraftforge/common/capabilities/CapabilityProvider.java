@@ -24,7 +24,9 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
@@ -33,8 +35,8 @@ import net.minecraft.util.math.Direction;
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B> implements ICapabilityProvider
 {
-    protected final @Nonnull Class<B> baseClass;
-    protected  @Nullable CapabilityDispatcher capabilities;
+    protected final Class<B> baseClass;
+    protected CapabilityDispatcher capabilities;
     private boolean valid = true;
 
     protected CapabilityProvider(Class<B> baseClass)
@@ -46,7 +48,9 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider
 
     public void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        throw new RuntimeException("No, I cant...");
+        AttachCapabilitiesEvent<B> event = new AttachCapabilitiesEvent<>(baseClass, (B) this);
+        MinecraftForge.EVENT_BUS.post(event);
+        capabilities = !event.getCapabilities().isEmpty() || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
     }
 
     public final @Nullable CapabilityDispatcher getCapabilities()

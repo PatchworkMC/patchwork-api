@@ -19,6 +19,8 @@
 
 package com.patchworkmc.mixin.capability;
 
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -30,10 +32,11 @@ import com.patchworkmc.impl.capability.CapabilityProviderInterface;
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements CapabilityProviderInterface {
 
-	private final CapabilityProvider provider = new BaseCapabilityProvider<>(ItemStack.class, (ItemStack) (Object) this);
+	private final CapabilityProvider<ItemStack> provider = new BaseCapabilityProvider<>(ItemStack.class, (ItemStack) (Object) this);
 
+	@Nonnull
 	@Override
-	public CapabilityProvider getCapabilityProvider$impl() {
+	public CapabilityProvider<ItemStack> getCapabilityProvider() {
 		return provider;
 	}
 }

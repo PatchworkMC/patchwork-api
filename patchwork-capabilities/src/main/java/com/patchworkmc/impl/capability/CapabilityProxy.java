@@ -19,23 +19,82 @@
 
 package com.patchworkmc.impl.capability;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.Direction;
 
 /**
- * Since some classes don't actually extend {@link CapabilityProvider}
+ * Accepts redirects to all of {@link CapabilityProvider CapabilityProvider's} public methods
  */
 public interface CapabilityProxy {
 
-	@SuppressWarnings("unchecked")
-	static <T> CapabilityProvider<T> getProvider(Object object) {
+	/**
+	 * Internal use only!
+	 */
+	static CapabilityProvider<?> getProvider(Object object) {
 		if (object == null) {
 			return null;
 		}
 
 		if (object instanceof CapabilityProviderInterface) {
-			return (CapabilityProvider<T>) ((CapabilityProviderInterface) object).getCapabilityProvider$impl();
+			return ((CapabilityProviderInterface) object).getCapabilityProvider();
 		}
 
-		return (CapabilityProvider<T>) object;
+		return (CapabilityProvider<?>) object;
+	}
+
+	static void gatherCapabilities(Object provider) {
+		getProvider(provider).gatherCapabilities();
+	}
+
+	static void gatherCapabilities(Object provider, @Nullable ICapabilityProvider parent) {
+		getProvider(provider).gatherCapabilities(parent);
+	}
+
+	static CapabilityDispatcher getCapabilities(Object provider) {
+		return getProvider(provider).getCapabilities();
+	}
+
+	static boolean areCapsCompatible(Object provider, CapabilityProvider<?> other) {
+		return getProvider(provider).areCapsCompatible((CapabilityProvider) other);
+	}
+
+	static boolean areCapsCompatible(Object provider, CapabilityDispatcher other) {
+		return getProvider(provider).areCapsCompatible(other);
+	}
+
+	@Nullable
+	static CompoundTag serializeCaps(Object provider) {
+		return getProvider(provider).serializeCaps();
+	}
+
+	static void deserializeCaps(Object provider, CompoundTag tag) {
+		getProvider(provider).deserializeCaps(tag);
+	}
+
+	static void invalidateCaps(Object provider) {
+		getProvider(provider).invalidateCaps();
+	}
+
+	static void reviveCaps(Object provider) {
+		getProvider(provider).reviveCaps();
+	}
+
+	@Nonnull
+	static <T> LazyOptional<T> getCapability(Object provider, @Nonnull Capability<T> cap, @Nullable Direction side) {
+		return getProvider(provider).getCapability(cap, side);
+	}
+
+	@Nonnull
+	static <T> LazyOptional<T> getCapability(Object provider, @Nonnull Capability<T> cap) {
+		return getProvider(provider).getCapability(cap);
 	}
 }

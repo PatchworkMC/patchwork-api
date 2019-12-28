@@ -15,5 +15,8 @@ MinecraftForge offers a capability API
 * Still need to implement `@CapabilityInject`
 
 ## Patcher
-* Right before `INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)???`,
-  place an `INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy getProvider (Ljava/lang/Object;)Lnet/minecraftforge/common/capabilities/CapabilityProvider; true`
+Redirect all instance calls to `CapabilityProvider` to static interface calls to `CapabilityProxy`
+```
+INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)??? false
+ -> INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy ??? (???)??? true
+```

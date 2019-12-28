@@ -29,5 +29,5 @@ import net.minecraftforge.common.capabilities.CapabilityProvider;
 public interface CapabilityProviderInterface {
 
 	@Nonnull
-	CapabilityProvider getCapabilityProvider$impl();
+	CapabilityProvider<?> getCapabilityProvider();
 }
