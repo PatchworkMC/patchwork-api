@@ -28,9 +28,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -98,7 +101,7 @@ public class Patchwork implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
-
+		List<String> modIds = new ArrayList<>();
 		// Construct forge mods
 
 		for (ForgeInitializer initializer : FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class)) {
@@ -112,13 +115,19 @@ public class Patchwork implements ModInitializer {
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 
 			mods.put(initializer, container);
+			modIds.add(initializer.getModId());
 		}
 
+		// Init ModList
+		ModList.create(modIds);
 		// Send initialization events
 
 		dispatchRegistryEvents(mods);
-		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft"))); // TODO: One per modcontainer
-		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft"))); // TODO: Ditto
+		// TODO: One per modcontainer
+		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft")));
+		dispatch(mods, new InterModEnqueueEvent(new ModContainer("minecraft")));
+		dispatch(mods, new InterModProcessEvent(new ModContainer("minecraft")));
+		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft")));
 
 		MinecraftForge.EVENT_BUS.start();
 	}

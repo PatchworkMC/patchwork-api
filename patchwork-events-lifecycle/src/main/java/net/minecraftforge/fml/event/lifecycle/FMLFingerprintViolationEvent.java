@@ -31,10 +31,15 @@ import com.google.common.collect.ImmutableSet;
  * <p>TODO: Patchwork will never fire this event. All jars that pass through patchwork are modified sweepingly.</p>
  */
 public class FMLFingerprintViolationEvent extends ModLifecycleEvent {
-	private final boolean isDirectory;
-	private final Set<String> fingerprints;
-	private final File source;
-	private final String expectedFingerprint;
+	private boolean isDirectory;
+	private Set<String> fingerprints;
+	private File source;
+	private String expectedFingerprint;
+
+	// For EventBus
+	public FMLFingerprintViolationEvent() {
+		super();
+	}
 
 	public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint) {
 		super(null);

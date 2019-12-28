@@ -17,31 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml;
+package net.minecraftforge.fml.event.lifecycle;
 
-import java.util.List;
+import net.minecraftforge.fml.ModContainer;
 
-public class ModList {
-	private static ModList INSTANCE;
-	private List<String> mods;
-
-	//Patchwork: signature changed to just have a list of modids
-	private ModList(List<String> mods) {
-		this.mods = mods;
+/**
+ * This is the third of four commonly called events during mod lifecycle startup.
+ *
+ * Called before {@link InterModProcessEvent}
+ * Called after {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent}
+ *
+ *
+ * Enqueue {@link net.minecraftforge.fml.InterModComms} messages to other mods with this event.
+ *
+ * This is a parallel dispatch event.
+ */
+public class InterModEnqueueEvent extends ModLifecycleEvent {
+	// For EventBus
+	public InterModEnqueueEvent() {
+		super();
 	}
 
-	public static ModList get() {
-		return INSTANCE;
+	public InterModEnqueueEvent(final ModContainer container) {
+		super(container);
 	}
-
-	//Patchwork: method does not exist in Forge
-	public static ModList create(List<String> mods) {
-		INSTANCE = new ModList(mods);
-		return INSTANCE;
-	}
-
-	public boolean isLoaded(String modId) {
-		return this.mods.contains(modId);
-	}
-
 }
