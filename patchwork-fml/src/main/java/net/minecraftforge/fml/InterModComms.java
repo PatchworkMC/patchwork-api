@@ -48,21 +48,21 @@ public class InterModComms {
 		 * @return The modid of the sender. This is supplied by the caller, or by the active mod container context.
 		 * Consider it unreliable.
 		 */
-		public final String getSenderModId() {
+		public String getSenderModId() {
 			return this.senderModId;
 		}
 
 		/**
 		 * @return The modid being sent to.
 		 */
-		public final String getModId() {
+		public String getModId() {
 			return this.modId;
 		}
 
 		/**
 		 * @return The method being sent to.
 		 */
-		public final String getMethod() {
+		public String getMethod() {
 			return this.method;
 		}
 
@@ -71,7 +71,7 @@ public class InterModComms {
 		 * @return A {@link Supplier} of the message.
 		 */
 		@SuppressWarnings("unchecked")
-		public final <T> Supplier<T> getMessageSupplier() {
+		public <T> Supplier<T> getMessageSupplier() {
 			return (Supplier<T>) this.thing;
 		}
 	}
@@ -90,6 +90,7 @@ public class InterModComms {
 		if (!ModList.get().isLoaded(modId)) {
 			return false;
 		}
+
 		containerQueues.computeIfAbsent(modId, k -> new ConcurrentLinkedQueue<>()).add(new IMCMessage(ModLoadingContext.get().getActiveContainer().getModId(), modId, method, thing));
 		return true;
 	}
@@ -107,6 +108,7 @@ public class InterModComms {
 		if (!ModList.get().isLoaded(modId)) {
 			return false;
 		}
+
 		containerQueues.computeIfAbsent(modId, k -> new ConcurrentLinkedQueue<>()).add(new IMCMessage(senderModId, modId, method, thing));
 		return true;
 	}
@@ -120,9 +122,11 @@ public class InterModComms {
 	 */
 	public static Stream<IMCMessage> getMessages(final String modId, final Predicate<String> methodMatcher) {
 		ConcurrentLinkedQueue<IMCMessage> queue = containerQueues.get(modId);
+
 		if (queue == null) {
 			return Stream.empty();
 		}
+
 		return StreamSupport.stream(new QueueFilteringSpliterator(queue, methodMatcher), false);
 	}
 
@@ -141,7 +145,7 @@ public class InterModComms {
 		private final Predicate<String> methodFilter;
 		private final Iterator<IMCMessage> iterator;
 
-		public QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
+		private QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
 			this.queue = queue;
 			this.iterator = queue.iterator();
 			this.methodFilter = methodFilter;
@@ -160,13 +164,17 @@ public class InterModComms {
 		@Override
 		public boolean tryAdvance(final Consumer<? super IMCMessage> action) {
 			IMCMessage next;
+
 			do {
 				if (!iterator.hasNext()) {
 					return false;
 				}
+
 				next = this.iterator.next();
 			}
+
 			while (!methodFilter.test(next.method));
+
 			action.accept(next);
 			this.iterator.remove();
 			return true;
@@ -176,6 +184,5 @@ public class InterModComms {
 		public Spliterator<IMCMessage> trySplit() {
 			return null;
 		}
-
 	}
 }

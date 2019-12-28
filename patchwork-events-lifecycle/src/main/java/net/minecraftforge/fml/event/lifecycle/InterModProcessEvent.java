@@ -26,12 +26,12 @@ import net.minecraftforge.fml.ModContainer;
 /**
  * This is the fourth of four commonly called events during mod lifecycle startup.
  *
- * Called after {@link InterModEnqueueEvent}
+ * <p>Called after {@link InterModEnqueueEvent}
  *
- * Retrieve {@link net.minecraftforge.fml.InterModComms} {@link net.minecraftforge.fml.InterModComms.IMCMessage} suppliers
+ * <p>Retrieve {@link net.minecraftforge.fml.InterModComms} {@link net.minecraftforge.fml.InterModComms.IMCMessage} suppliers
  * and process them as you wish with this event.
  *
- * This is a parallel dispatch event.
+ * <p>This is a parallel dispatch event.
  *
  * @see #getIMCStream()
  * @see #getIMCStream(Predicate)
