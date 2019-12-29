@@ -23,23 +23,31 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 
 import com.patchworkmc.impl.event.entity.EntityEvents;
 
-// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
-@Mixin({LivingEntity.class, PlayerEntity.class, ServerPlayerEntity.class})
+@Mixin(LivingEntity.class)
 public class MixinLivingEntity {
+	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
 	private void hookDeath(DamageSource source, CallbackInfo callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
 		if (EntityEvents.onLivingDeath(entity, source)) {
 			callback.cancel();
+		}
+	}
+
+	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
+	private void hookDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		if (EntityEvents.onLivingAttack(entity, source, amount)) {
+			callback.setReturnValue(false);
 		}
 	}
 }

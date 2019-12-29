@@ -5,10 +5,13 @@
   "mixins": [
     "MixinLivingEntity",
     "MixinPlayerEntity",
+    "MixinServerPlayerEntity",
     "MixinServerWorld"
   ],
   "client": [
-    "MixinClientWorld"
+    "MixinClientWorld",
+    "MixinClientPlayerEntity",
+    "MixinOtherClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

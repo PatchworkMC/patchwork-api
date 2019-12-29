@@ -21,6 +21,7 @@ package com.patchworkmc.impl.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -56,6 +57,10 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onEntityJoinWorld(Entity entity, World world) {
 		return MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, world));
+	}
+
+	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float damage) {
+		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
 
 	@Override
