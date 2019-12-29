@@ -22,5 +22,5 @@ package net.minecraftforge.common.capabilities;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
-// This call exists just in case mods use this
+// This class exists just in case mods use this
 public interface ICapabilitySerializable<T extends Tag> extends ICapabilityProvider, INBTSerializable<T> { }

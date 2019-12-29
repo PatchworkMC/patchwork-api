@@ -19,7 +19,7 @@
   "mixins": [
     "patchwork-capabilities.mixins.json"
   ],
-  "description": "Implementation of the Forge Capabilities",
+  "description": "Implementation of the Forge Capabilities API",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

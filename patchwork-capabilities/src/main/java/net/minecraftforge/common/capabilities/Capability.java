@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
  */
 public class Capability<T>
 {
-    public static interface IStorage<T>
+    public interface IStorage<T>
     {
         /**
          * Serialize the capability instance to a {@link Tag}.
@@ -55,15 +55,15 @@ public class Capability<T>
          * Review the API docs for more info.
          *
          * @param capability The capability being stored.
-         * @param instance An instance of that capabilities interface.
+         * @param instance An instance of that capability's interface.
          * @param side The side of the object the instance is associated with.
-         * @return a NBT holding the data. Null if no data needs to be stored.
+         * @return A {@link Tag} holding the data. Null if no data needs to be stored.
          */
         @Nullable
         Tag writeNBT(Capability<T> capability, T instance, Direction side);
 
         /**
-         * Read the capability instance from a NBT tag.
+         * Read the capability instance from a {@link Tag}.
          *
          * This allows for a central implementation of saving the data.
          *
@@ -96,8 +96,7 @@ public class Capability<T>
     public IStorage<T> getStorage() { return storage; }
     
     /**
-     * Quick access to the IStorage's readNBT. 
-     * See {@link IStorage#readNBT(Capability, Object, Direction, Tag)}  for documentation.
+     * Quick access to {@link IStorage#readNBT(Capability, Object, Direction, Tag)}
      */
     public void readNBT(T instance, Direction side, Tag nbt)
     {
@@ -105,8 +104,7 @@ public class Capability<T>
     }
     
     /**
-     * Quick access to the IStorage's writeNBT. 
-     * See {@link IStorage#writeNBT(Capability, Object, Direction)} for documentation.
+     * Quick access to {@link IStorage#writeNBT(Capability, Object, Direction)}
      */
     @Nullable
     public Tag writeNBT(T instance, Direction side)
@@ -119,7 +117,7 @@ public class Capability<T>
      *
      * If it important to note that if you want to use the default storage
      * you may be required to use this exact implementation.
-     * Refer to the owning API of the Capability in question.
+     * Refer to the owning API of the {@link Capability} in question.
      *
      * @return A NEW instance of the default implementation.
      */

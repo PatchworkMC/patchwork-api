@@ -27,36 +27,37 @@ import net.minecraft.util.math.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Map;
 
 /**
- * A high-speed implementation of a capability delegator.
- * This is used to wrap the results of the AttachCapabilitiesEvent.
+ * A high-speed implementation of a {@link Capability} delegator.
+ * This is used to wrap the results of the {@link net.minecraftforge.event.AttachCapabilitiesEvent}.
  * It is HIGHLY recommended that you DO NOT use this approach unless
- * you MUST delegate to multiple providers instead just implement y
- * our handlers using normal if statements.
+ * you MUST delegate to multiple providers instead just implementing
+ * your handlers using normal if statements.
  *
  * Internally the handlers are baked into arrays for fast iteration.
- * The Identifiers will be used for the NBT Key when serializing.
+ * The {@link Identifier} will be used for the NBT Key when serializing.
  */
 @ParametersAreNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider
 {
-    private ICapabilityProvider[] caps;
-    private INBTSerializable<Tag>[] writers;
-    private String[] names;
+    private final ICapabilityProvider[] caps;
+    private final INBTSerializable<Tag>[] writers;
+    private final String[] names;
     private final List<Runnable> listeners;
 
-    public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> list, List<Runnable> listeners)
+    public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> providers, List<Runnable> listeners)
     {
-        this(list, listeners, null);
+        this(providers, listeners, null);
     }
 
     @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> list, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
+    public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> providers, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
         List<INBTSerializable<Tag>> lstWriters = Lists.newArrayList();
@@ -73,7 +74,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
             }
         }
 
-        for (Map.Entry<Identifier, ICapabilityProvider> entry : list.entrySet())
+        for (Map.Entry<Identifier, ICapabilityProvider> entry : providers.entrySet())
         {
             ICapabilityProvider prov = entry.getValue();
             lstCaps.add(prov);
@@ -90,6 +91,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     }
 
 
+    @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
     {

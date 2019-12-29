@@ -2,7 +2,7 @@
 MinecraftForge offers a capability API
 
 ## TODO
-* Move the `net.minecraftforge.common.util` and `mcp` packages to another sub-project
+* Move the `net.minecraftforge.common.util` package to another sub-project
 * Still need to implement special cases for
   * [ChestBlockEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/tileentity/ChestTileEntity.java.patch#L34-L43)
   * [LockableContainerBlockEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/tileentity/LockableTileEntity.java.patch#L13-L19)
@@ -13,6 +13,9 @@ MinecraftForge offers a capability API
   * [StorageMinecartEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java.patch#L44-L49)
   * [PlayerEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/entity/player/PlayerEntity.java.patch#L497-L505)
 * Still need to implement `@CapabilityInject`
+* `ClientWorldMixin` and `ServerWorldMixin` depend on `IForgeDimension`
+* `ClientWorldMixin` and `ServerWorldMixin` depend on `IForgeItem`
+* `EntityMixin` needs to loose capabilities when the Entity is killed, and data is not kept
 
 ## Patcher
 Redirect all instance calls to `CapabilityProvider` to static interface calls to `CapabilityProxy`

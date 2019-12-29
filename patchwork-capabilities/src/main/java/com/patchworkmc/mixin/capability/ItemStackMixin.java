@@ -45,14 +45,17 @@ public class ItemStackMixin implements CapabilityProviderHolder {
 		return provider;
 	}
 
-	@Inject(method = "<init>", at = @At("RETURN"))
+	@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;I)V", at = @At("RETURN"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		// TODO: Parent
-		provider.gatherCapabilities();
+		// TODO: IForgeItem when?
+		provider.gatherCapabilities(null);
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("RETURN"))
 	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
+		// TODO: IForgeItem when?
+		provider.gatherCapabilities(null);
+
 		if (tag.containsKey("ForgeCaps")) {
 			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
 		}

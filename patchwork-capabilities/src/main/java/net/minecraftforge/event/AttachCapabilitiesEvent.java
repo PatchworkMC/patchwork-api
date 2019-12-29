@@ -45,6 +45,11 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 	private final List<Runnable> listeners = Lists.newArrayList();
 	private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
 
+	// For EventBus
+	public AttachCapabilitiesEvent() {
+		this(null, null);
+	}
+
 	public AttachCapabilitiesEvent(Class<T> type, T obj)
 	{
 		super(type);
@@ -75,7 +80,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 	}
 
 	/**
-	 * A unmodifiable view of the capabilities that will be attached to this object.
+	 * @return An unmodifiable view of the capabilities that will be attached to this object.
 	 */
 	public Map<Identifier, ICapabilityProvider> getCapabilities()
 	{
@@ -84,7 +89,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
 
 	/**
 	 * Adds a callback that is fired when the attached object is invalidated.
-	 * Such as a Entity/TileEntity being removed from world.
+	 * Such as an {@link net.minecraft.entity.Entity} or a {@link net.minecraft.block.entity.BlockEntity} being removed from world.
 	 * All attached providers should invalidate all of their held capability instances.
 	 */
 	public void addListener(Runnable listener)

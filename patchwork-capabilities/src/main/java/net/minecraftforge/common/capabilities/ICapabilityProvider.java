@@ -28,15 +28,15 @@ import net.minecraftforge.common.util.LazyOptional;
 public interface ICapabilityProvider
 {
     /**
-     * Retrieves the Optional handler for the capability requested on the specific side.
+     * Retrieves the {@link LazyOptional optional} handler for the capability requested on the specific side.
      * The return value <strong>CAN</strong> be the same for multiple faces.
-     * Modders are encouraged to cache this value, using the listener capabilities of the Optional to
+     * Modders are encouraged to cache this value, using the listener capabilities of the optional to
      * be notified if the requested capability get lost.
      *
-     * @param capability The capability to check
-     * @param direction The Side to check from,
+     * @param capability The {@link Capability capability} to check
+     * @param direction The {@link Direction direction} to check from,
      *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
-     * @return The requested an optional holding the requested capability.
+     * @return The requested a {@link LazyOptional optional} holding the requested capability.
      */
     @Nonnull <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final @Nullable Direction direction);
 
