@@ -22,7 +22,7 @@ package net.minecraftforge.fml;
 import net.fabricmc.loader.FabricLoader;
 
 public class ModList {
-	//Patchwork: initalize directly because there's no args
+	// Patchwork: initalize directly because there's no args
 	private static ModList INSTANCE = new ModList();
 
 	public static ModList get() {
@@ -30,6 +30,7 @@ public class ModList {
 	}
 
 	public boolean isLoaded(String modId) {
+		// Patchwork: use Fabric Loader lookup instead of an internal one
 		return FabricLoader.INSTANCE.isModLoaded(modId);
 	}
 }

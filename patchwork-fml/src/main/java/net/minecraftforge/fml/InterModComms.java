@@ -163,17 +163,15 @@ public class InterModComms {
 
 		@Override
 		public boolean tryAdvance(final Consumer<? super IMCMessage> action) {
-			IMCMessage next;
-
-			do {
-				if (!iterator.hasNext()) {
-					return false;
-				}
-
-				next = this.iterator.next();
+			if (!iterator.hasNext()) {
+				return false;
 			}
 
-			while (!methodFilter.test(next.method));
+			IMCMessage next = iterator.next();
+
+			while (iterator.hasNext() && !methodFilter.test(next.method)) {
+				next = iterator.next();
+			}
 
 			action.accept(next);
 			this.iterator.remove();
@@ -182,7 +180,7 @@ public class InterModComms {
 
 		@Override
 		public Spliterator<IMCMessage> trySplit() {
-			return null;
+			throw new UnsupportedOperationException("forge behavior is return null, report this to Patchwork!");
 		}
 	}
 }
