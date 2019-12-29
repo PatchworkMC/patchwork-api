@@ -31,6 +31,8 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -115,10 +117,12 @@ public class Patchwork implements ModInitializer {
 		}
 
 		// Send initialization events
-
 		dispatchRegistryEvents(mods);
-		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft"))); // TODO: One per modcontainer
-		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft"))); // TODO: Ditto
+		// TODO: One per modcontainer
+		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft")));
+		dispatch(mods, new InterModEnqueueEvent(new ModContainer("minecraft")));
+		dispatch(mods, new InterModProcessEvent(new ModContainer("minecraft")));
+		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft")));
 
 		MinecraftForge.EVENT_BUS.start();
 	}
