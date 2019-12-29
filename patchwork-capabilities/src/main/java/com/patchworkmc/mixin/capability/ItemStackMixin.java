@@ -23,14 +23,19 @@ import javax.annotation.Nonnull;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
-import com.patchworkmc.impl.capability.CapabilityProviderInterface;
+import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(ItemStack.class)
-public class ItemStackMixin implements CapabilityProviderInterface {
+public class ItemStackMixin implements CapabilityProviderHolder {
 
 	private final CapabilityProvider<ItemStack> provider = new BaseCapabilityProvider<>(ItemStack.class, (ItemStack) (Object) this);
 
@@ -38,5 +43,27 @@ public class ItemStackMixin implements CapabilityProviderInterface {
 	@Override
 	public CapabilityProvider<ItemStack> getCapabilityProvider() {
 		return provider;
+	}
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void initializeCapabilities(CallbackInfo callbackInfo) {
+		// TODO: Parent
+		provider.gatherCapabilities();
+	}
+
+	@Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("RETURN"))
+	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
+		if (tag.containsKey("ForgeCaps")) {
+			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
+		}
+	}
+
+	@Inject(method = "toTag", at = @At(value = "RETURN"))
+	private void serializeCapabilities(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
+		CompoundTag compoundTag = provider.serializeCaps();
+
+		if (compoundTag != null && !compoundTag.isEmpty()) {
+			tag.put("ForgeCaps", compoundTag);
+		}
 	}
 }

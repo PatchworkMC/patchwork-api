@@ -44,8 +44,8 @@ public interface CapabilityProxy {
 			return null;
 		}
 
-		if (object instanceof CapabilityProviderInterface) {
-			return ((CapabilityProviderInterface) object).getCapabilityProvider();
+		if (object instanceof CapabilityProviderHolder) {
+			return ((CapabilityProviderHolder) object).getCapabilityProvider();
 		}
 
 		return (CapabilityProvider<?>) object;

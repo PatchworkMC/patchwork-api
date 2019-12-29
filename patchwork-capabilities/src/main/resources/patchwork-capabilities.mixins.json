@@ -4,10 +4,15 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "BlockEntityMixin",
+    "ChunkSerializerMixin",
     "EntityMixin",
     "ItemStackMixin",
+    "ServerWorldMixin",
     "WorldChunkMixin",
     "WorldMixin"
+  ],
+  "client": [
+    "ClientWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1

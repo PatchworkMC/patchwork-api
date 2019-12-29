@@ -23,14 +23,20 @@ import javax.annotation.Nonnull;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
 
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
-import com.patchworkmc.impl.capability.CapabilityProviderInterface;
+import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
+// TODO: Invalidate capabilities when the entity is killed
 @Mixin(Entity.class)
-public class EntityMixin implements CapabilityProviderInterface {
+public class EntityMixin implements CapabilityProviderHolder {
 
 	private final CapabilityProvider<Entity> provider = new BaseCapabilityProvider<>(Entity.class, (Entity) (Object) this);
 
@@ -38,5 +44,26 @@ public class EntityMixin implements CapabilityProviderInterface {
 	@Override
 	public CapabilityProvider<Entity> getCapabilityProvider() {
 		return provider;
+	}
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void initializeCapabilities(CallbackInfo callbackInfo) {
+		provider.gatherCapabilities();
+	}
+
+	@Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V"))
+	private void serializeCapabilities(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
+		CompoundTag compoundTag = provider.serializeCaps();
+
+		if (compoundTag != null) {
+			tag.put("ForgeCaps", compoundTag);
+		}
+	}
+
+	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V"))
+	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
+		if (tag.containsKey("ForgeCaps", 10)) {
+			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
+		}
 	}
 }

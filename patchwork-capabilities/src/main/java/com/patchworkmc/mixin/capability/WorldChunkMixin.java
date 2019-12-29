@@ -23,14 +23,17 @@ import javax.annotation.Nonnull;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.chunk.WorldChunk;
 
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
-import com.patchworkmc.impl.capability.CapabilityProviderInterface;
+import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(WorldChunk.class)
-public class WorldChunkMixin implements CapabilityProviderInterface {
+public class WorldChunkMixin implements CapabilityProviderHolder {
 
 	private final CapabilityProvider<WorldChunk> provider = new BaseCapabilityProvider<>(WorldChunk.class, (WorldChunk) (Object) this);
 
@@ -38,5 +41,10 @@ public class WorldChunkMixin implements CapabilityProviderInterface {
 	@Override
 	public CapabilityProvider<WorldChunk> getCapabilityProvider() {
 		return provider;
+	}
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void initializeCapabilities(CallbackInfo callbackInfo) {
+		provider.gatherCapabilities();
 	}
 }

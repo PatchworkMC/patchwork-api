@@ -27,10 +27,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraft.world.World;
 
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
-import com.patchworkmc.impl.capability.CapabilityProviderInterface;
+import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(World.class)
-public class WorldMixin implements CapabilityProviderInterface {
+public class WorldMixin implements CapabilityProviderHolder {
 
 	private final CapabilityProvider<World> provider = new BaseCapabilityProvider<>(World.class, (World) (Object) this);
 

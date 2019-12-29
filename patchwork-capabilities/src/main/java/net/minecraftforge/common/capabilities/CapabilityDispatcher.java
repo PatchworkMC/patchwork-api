@@ -20,7 +20,6 @@
 package net.minecraftforge.common.capabilities;
 
 import com.google.common.collect.Lists;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.Identifier;
@@ -41,10 +40,9 @@ import java.util.Map;
  * our handlers using normal if statements.
  *
  * Internally the handlers are baked into arrays for fast iteration.
- * The ResourceLocations will be used for the NBT Key when serializing.
+ * The Identifiers will be used for the NBT Key when serializing.
  */
 @ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;

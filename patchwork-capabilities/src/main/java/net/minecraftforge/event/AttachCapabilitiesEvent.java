@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraft.util.Identifier;
 
 /**
- * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
+ * Fired whenever an object with Capabilities support (currently {@link net.minecraft.block.entity.BlockEntity block entities}, {@link net.minecraft.item.Item items}, and {@link javax.swing.text.html.parser.Entity entities})
  * is created. Allowing for the attachment of arbitrary capability providers.
  *
  * Please note that as this is fired for ALL object creations efficient code is recommended.

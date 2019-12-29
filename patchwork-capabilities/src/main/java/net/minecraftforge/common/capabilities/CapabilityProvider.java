@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -31,7 +30,6 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
 
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B> implements ICapabilityProvider
 {

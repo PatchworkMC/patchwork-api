@@ -33,16 +33,16 @@ import javax.annotation.Nullable;
 /**
  * This is the core holder object Capabilities.
  * Each capability will have ONE instance of this class,
- * and it will the the one passed into the ICapabilityProvider functions.
+ * and it will the the one passed into the {@link ICapabilityProvider} functions.
  *
- * The CapabilityManager is in charge of creating this class.
+ * The {@link CapabilityManager} is in charge of creating this class.
  */
 public class Capability<T>
 {
     public static interface IStorage<T>
     {
         /**
-         * Serialize the capability instance to a NBTTag.
+         * Serialize the capability instance to a {@link Tag}.
          * This allows for a central implementation of saving the data.
          *
          * It is important to note that it is up to the API defining
@@ -54,7 +54,7 @@ public class Capability<T>
          *
          * Review the API docs for more info.
          *
-         * @param capability The Capability being stored.
+         * @param capability The capability being stored.
          * @param instance An instance of that capabilities interface.
          * @param side The side of the object the instance is associated with.
          * @return a NBT holding the data. Null if no data needs to be stored.
@@ -74,12 +74,12 @@ public class Capability<T>
          * implementations MAY require that the 'instance' be an instance
          * of the 'default' implementation.
          *
-         * Review the API docs for more info.         *
+         * Review the API docs for more info.
          *
-         * @param capability The Capability being stored.
-         * @param instance An instance of that capabilities interface.
+         * @param capability The capability being stored.
+         * @param instance An instance of that capability's interface.
          * @param side The side of the object the instance is associated with.
-         * @param nbt A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+         * @param nbt A tag holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
          */
         void readNBT(Capability<T> capability, T instance, Direction side, Tag nbt);
     }
