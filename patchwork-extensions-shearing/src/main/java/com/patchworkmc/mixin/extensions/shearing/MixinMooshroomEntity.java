@@ -1,10 +1,34 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package com.patchworkmc.mixin.extensions.shearing;
 
-import net.minecraft.block.Blocks;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraftforge.common.IShearable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -13,13 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IShearable;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Patches MooshroomEntity to allow shearing when the mooshroom is an adult, dropping mushrooms. This patch cancels the vanilla shearing code.
@@ -43,7 +60,7 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 	@Override
 	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
 		List<ItemStack> ret = new ArrayList<>();
-		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double)(this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
+		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double) (this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
 
 		if (!this.world.isClient) {
 			this.remove();
@@ -52,18 +69,20 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 			entityCow.setPositionAndAngles(this.x, this.y, this.z, this.yaw, this.pitch);
 			entityCow.setHealth(this.getHealth());
 			entityCow.field_6283 = this.field_6283;
+
 			if (this.hasCustomName()) {
 				entityCow.setCustomName(this.getCustomName());
 			}
 
-			((ServerWorld)this.world).loadEntity(entityCow);
+			((ServerWorld) this.world).loadEntity(entityCow);
 
-			for(int i = 0; i < 5; ++i) { //Fixes forge bug where shearing brown mooshrooms always drop red mushrooms
+			for (int i = 0; i < 5; ++i) { //Fixes forge bug where shearing brown mooshrooms always drop red mushrooms
 				ret.add(new ItemStack(this.getMooshroomType().getMushroomState().getBlock()));
 			}
 
 			this.playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1.0F, 1.0F);
 		}
+
 		return ret;
 	}
 }
