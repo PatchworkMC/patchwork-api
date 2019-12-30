@@ -19,7 +19,6 @@
 
 package com.patchworkmc.impl.event.entity;
 
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -34,6 +33,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -56,9 +56,11 @@ public class EntityEvents implements ModInitializer {
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
 		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
 	}
+
 	public static boolean onLivingUpdateEvent(LivingEntity entity) {
 		return MinecraftForge.EVENT_BUS.post(new LivingEvent.LivingUpdateEvent(entity));
 	}
+
 	public static boolean onEntityJoinWorld(Entity entity, World world) {
 		return MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, world));
 	}
@@ -67,6 +69,7 @@ public class EntityEvents implements ModInitializer {
 	public static boolean onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
 		return MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
+
 	@Override
 	public void onInitialize() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {

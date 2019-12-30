@@ -28,11 +28,11 @@ import net.minecraftforge.eventbus.api.Event;
  * if the parent screen is not an instance of GuiConfig or if the configID field has been set for
  * the GuiConfig screen.
  *
- * Listeners for this event should use OnConfigChanged or PostConfigChanged and check for a specific mod ID.
+ * <p>Listeners for this event should use OnConfigChanged or PostConfigChanged and check for a specific mod ID.
  * For best results the listener should refresh any objects/fields that are set based on the mod's config
- * and should serialize the modified config.
+ * and should serialize the modified config.</p>
  *
- * TODO: These events will never be fired by Patchwork (until a ModMenu integration?)
+ * <p>TODO: These events will never be fired by Patchwork (until a ModMenu integration?)</p>
  * @author bspkrs
  */
 public class ConfigChangedEvent extends Event {

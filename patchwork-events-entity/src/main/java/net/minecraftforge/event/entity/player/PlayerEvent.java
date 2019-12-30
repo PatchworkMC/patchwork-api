@@ -65,8 +65,7 @@ public class PlayerEvent extends LivingEvent {
 	 * Called on the server at the end of PlayerManager handling the connection.
 	 */
 	public static class PlayerLoggedInEvent extends PlayerEvent {
-		public PlayerLoggedInEvent(PlayerEntity player)
-		{
+		public PlayerLoggedInEvent(PlayerEntity player) {
 			super(player);
 		}
 	}
