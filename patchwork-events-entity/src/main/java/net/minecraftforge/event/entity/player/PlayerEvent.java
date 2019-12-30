@@ -70,6 +70,7 @@ public class PlayerEvent extends LivingEvent {
 		public PlayerLoggedInEvent() {
 			super(null);
 		}
+
 		public PlayerLoggedInEvent(PlayerEntity player) {
 			super(player);
 		}

@@ -66,6 +66,7 @@ public class LivingEvent extends EntityEvent {
 		public LivingUpdateEvent() {
 			super(null);
 		}
+
 		public LivingUpdateEvent(LivingEntity entity) {
 			super(entity);
 		}
