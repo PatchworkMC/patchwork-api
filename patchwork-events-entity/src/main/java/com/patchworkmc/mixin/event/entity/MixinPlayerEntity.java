@@ -19,9 +19,12 @@
 
 package com.patchworkmc.mixin.event.entity;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
@@ -33,6 +36,16 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(PlayerEntity.class)
 public class MixinPlayerEntity {
+	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
+	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
+	private void hookDeath(DamageSource source, CallbackInfo callback) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		if (EntityEvents.onLivingDeath(entity, source)) {
+			callback.cancel();
+		}
+	}
+
 	@Inject(method = "interact", at = @At("HEAD"), cancellable = true)
 	private void hookInteractEntity(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> callback) {
 		PlayerEntity player = (PlayerEntity) (Object) this;

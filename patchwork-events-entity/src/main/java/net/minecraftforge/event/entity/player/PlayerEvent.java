@@ -61,6 +61,16 @@ public class PlayerEvent extends LivingEvent {
 		return playerEntity;
 	}
 
+	/**
+	 * Called on the server at the end of PlayerManager handling the connection.
+	 */
+	public static class PlayerLoggedInEvent extends PlayerEvent {
+		public PlayerLoggedInEvent(PlayerEntity player)
+		{
+			super(player);
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
@@ -73,8 +83,7 @@ public class PlayerEvent extends LivingEvent {
 	Visibility
 	ItemPickupEvent
 	ItemCraftedEvent
-	ItemSmeltedEvent
-	PlayerLoggedInEvent
+	ItemSmeltedEventLogg
 	PlayerLoggedOutEvent
 	PlayerRespawnEvent
 	PlayerChangedDimensionEvent*/
