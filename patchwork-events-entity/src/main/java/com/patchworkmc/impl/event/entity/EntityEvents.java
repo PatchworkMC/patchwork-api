@@ -66,8 +66,8 @@ public class EntityEvents implements ModInitializer {
 	}
 
 	// PlayerEvents
-	public static boolean onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
-		return MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
+	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity {
-	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
 	private void hookDeath(DamageSource source, CallbackInfo callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;

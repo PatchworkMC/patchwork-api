@@ -62,8 +62,12 @@ public class LivingEvent extends EntityEvent {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class LivingUpdateEvent extends LivingEvent {
-		public LivingUpdateEvent(LivingEntity e) {
-			super(e);
+		// For EventBus
+		public LivingUpdateEvent() {
+			super(null);
+		}
+		public LivingUpdateEvent(LivingEntity entity) {
+			super(entity);
 		}
 
 		@Override

@@ -24,11 +24,9 @@ import javax.annotation.Nullable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * These events are posted from the GuiConfig screen when the done button is pressed. The events are only posted
- * if the parent screen is not an instance of GuiConfig or if the configID field has been set for
- * the GuiConfig screen.
+ * These events are posted from the config screen when the done button is pressed.
  *
- * <p>Listeners for this event should use OnConfigChanged or PostConfigChanged and check for a specific mod ID.
+ * <p>Listeners for this event should use {@link OnConfigChangedEvent} or {@link PostConfigChangedEvent} and check for a specific mod ID.
  * For best results the listener should refresh any objects/fields that are set based on the mod's config
  * and should serialize the modified config.</p>
  *
@@ -63,6 +61,7 @@ public class ConfigChangedEvent extends Event {
 
 	/**
 	 * Whether or not a world is currently running.
+	 * TODO: does this mean a physical server running on the client, or if the client is currently in *any* world?
 	 */
 	public boolean isWorldRunning() {
 		return isWorldRunning;
@@ -76,7 +75,7 @@ public class ConfigChangedEvent extends Event {
 	}
 
 	/**
-	 * A String identifier for this ConfigChangedEvent.
+	 * A String identifier referring to the specific config that was changed.
 	 */
 	@Nullable
 	public String getConfigID() {
@@ -85,11 +84,7 @@ public class ConfigChangedEvent extends Event {
 
 	/**
 	 * This event is intended to be consumed by the mod whose config has been changed. It fires when the Done button
-	 * has been clicked on a GuiConfig screen and the following conditions are met:<br/>
-	 * - at least one config element has been changed<br/>
-	 * - one of these 2 conditions are met:<br/>
-	 *      1) the parent screen is null or is not an instance of GuiConfig<br/>
-	 *      2) the configID field has been set to a non-null value for the GuiConfig screen<br/><br/>
+	 * has been clicked on the config screen and at least one element has been changed.
 	 * Modders should check the modID field of the event to ensure they are only acting on their own config screen's event!
 	 */
 	public static class OnConfigChangedEvent extends ConfigChangedEvent {

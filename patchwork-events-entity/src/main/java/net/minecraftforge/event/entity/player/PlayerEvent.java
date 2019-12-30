@@ -62,9 +62,14 @@ public class PlayerEvent extends LivingEvent {
 	}
 
 	/**
-	 * Called on the server at the end of PlayerManager handling the connection.
+	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
+	 * when the player has finished logging in.
 	 */
 	public static class PlayerLoggedInEvent extends PlayerEvent {
+		// For EventBus
+		public PlayerLoggedInEvent() {
+			super(null);
+		}
 		public PlayerLoggedInEvent(PlayerEntity player) {
 			super(player);
 		}
@@ -82,7 +87,7 @@ public class PlayerEvent extends LivingEvent {
 	Visibility
 	ItemPickupEvent
 	ItemCraftedEvent
-	ItemSmeltedEventLogg
+	ItemSmeltedEvent
 	PlayerLoggedOutEvent
 	PlayerRespawnEvent
 	PlayerChangedDimensionEvent*/
