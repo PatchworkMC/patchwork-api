@@ -44,7 +44,7 @@ import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
 /**
- * Patches SheepEntity to allow shearing, dropping wool. This patch cancels the vanilla shearing code.
+ * Patches {@link SheepEntity} to use {@link IShearable} for dropping wool. This patch cancels the vanilla shearing code.
  *
  * @author SuperCoder79
  */
