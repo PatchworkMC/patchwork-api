@@ -56,7 +56,7 @@ public interface IShearable {
 	 * This is called for both client, and server.
 	 * The object should perform all actions related to being sheared,
 	 * except for dropping of the items, and removal of the block.
-	 * As those are handled by ItemShears itself.
+	 * Those functions are handled by {@link net.minecraft.item.ShearsItem} itself.
 	 *
 	 * <p>Returns a list of items that resulted from the shearing process.
 	 *
