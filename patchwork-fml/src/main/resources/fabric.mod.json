@@ -15,6 +15,11 @@
   "depends": {
     "fabricloader": ">=0.6.2"
   },
+  "entrypoints": {
+    "main": [
+      "com.patchworkmc.impl.fml.PatchworkFML"
+    ]
+  },
   "description": "Implementation of FML's mod-facing interface.",
   "custom": {
     "modmenu:api": true,
