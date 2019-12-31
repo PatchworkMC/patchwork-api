@@ -5,6 +5,7 @@ import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
@@ -57,5 +58,10 @@ public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQuer
 	@Override
 	public LoginQueryResponseC2SPacket getThis() {
 		return (LoginQueryResponseC2SPacket) (Object) this;
+	}
+	@SuppressWarnings("PublicStaticMixinMember")
+	@Invoker("<init>")
+	public static LoginQueryResponseC2SPacket create() {
+		throw new AssertionError("Mixin not applied");
 	}
 }

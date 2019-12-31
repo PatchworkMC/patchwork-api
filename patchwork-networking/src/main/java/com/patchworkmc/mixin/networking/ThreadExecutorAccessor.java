@@ -9,6 +9,6 @@ import net.minecraft.util.ThreadExecutor;
 
 @Mixin(ThreadExecutor.class)
 public interface ThreadExecutorAccessor {
-	@Invoker
+	@Invoker("executeFuture")
 	public CompletableFuture<Void> executeFuture(Runnable runnable);
 }

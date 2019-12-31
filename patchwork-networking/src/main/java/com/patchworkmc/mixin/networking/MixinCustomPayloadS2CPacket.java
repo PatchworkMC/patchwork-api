@@ -4,6 +4,7 @@ import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
@@ -56,5 +57,11 @@ public class MixinCustomPayloadS2CPacket implements ICustomPacket<CustomPayloadS
 	@Override
 	public CustomPayloadS2CPacket getThis() {
 		return (CustomPayloadS2CPacket) (Object) this;
+	}
+
+	@SuppressWarnings("PublicStaticMixinMember")
+	@Invoker("<init>")
+	public static CustomPayloadS2CPacket create() {
+		throw new AssertionError("Mixin not applied");
 	}
 }
