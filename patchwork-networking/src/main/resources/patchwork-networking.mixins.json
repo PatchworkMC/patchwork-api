@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.networking",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ClientConnectionAccessor",
+    "ThreadExecutorAccessor",
+    "MixinCustomPayloadC2SPacket",
+    "MixinCustomPayloadS2CPacket",
+    "MixinLoginQueryRequestS2CPacket",
+    "MixinLoginQueryResponseC2SPacket"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

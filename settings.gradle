@@ -20,3 +20,5 @@ include 'patchwork-events-world'
 include 'patchwork-extensions'
 include 'patchwork-fml'
 include 'patchwork-registries'
+include 'patchwork-networking'
+
