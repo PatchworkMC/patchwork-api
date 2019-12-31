@@ -22,29 +22,31 @@ package net.minecraftforge.common.capabilities;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.util.math.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
-public interface ICapabilityProvider
-{
-    /**
-     * Retrieves the {@link LazyOptional optional} handler for the capability requested on the specific side.
-     * The return value <strong>CAN</strong> be the same for multiple faces.
-     * Modders are encouraged to cache this value, using the listener capabilities of the optional to
-     * be notified if the requested capability get lost.
-     *
-     * @param capability The {@link Capability capability} to check
-     * @param direction The {@link Direction direction} to check from,
-     *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
-     * @return The requested a {@link LazyOptional optional} holding the requested capability.
-     */
-    @Nonnull <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> capability, final @Nullable Direction direction);
+import net.minecraft.util.math.Direction;
 
-    /*
-     * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
-     * This should never be OVERRIDDEN, modders should only ever implement the sided version.
-     */
-    @Nonnull default <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap) {
-        return getCapability(cap, null);
-    }
+public interface ICapabilityProvider {
+	/**
+	 * Retrieves the {@link LazyOptional optional} handler for the capability requested on the specific side.
+	 * The return value <strong>CAN</strong> be the same for multiple faces.
+	 * Modders are encouraged to cache this value, using the listener capabilities of the optional to
+	 * be notified if the requested capability get lost.
+	 *
+	 * @param capability The {@link Capability capability} to check
+	 * @param direction  The {@link Direction direction} to check from,
+	 *                   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
+	 * @return The requested a {@link LazyOptional optional} holding the requested capability.
+	 */
+	@Nonnull
+	<T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction direction);
+
+	/*
+	 * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
+	 * This should never be OVERRIDDEN, modders should only ever implement the sided version.
+	 */
+	@Nonnull
+	default <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap) {
+		return getCapability(cap, null);
+	}
 }

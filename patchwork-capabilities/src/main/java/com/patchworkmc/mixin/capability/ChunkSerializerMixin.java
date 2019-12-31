@@ -52,7 +52,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(ChunkSerializer.class)
 public class ChunkSerializerMixin {
-
 	@Redirect(method = "deserialize", at = @At(value = "NEW", target = "net/minecraft/world/chunk/WorldChunk"))
 	private static WorldChunk newWorldChunk(
 			World newWorld, ChunkPos newChunkPos, Biome[] newBiomes, UpgradeData newUpgradeData, TickScheduler<Block> newTickScheduler, TickScheduler<Fluid> newTickScheduler2, long newL, @Nullable ChunkSection[] newChunkSections, @Nullable Consumer<WorldChunk> newConsumer,

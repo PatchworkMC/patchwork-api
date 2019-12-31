@@ -25,11 +25,10 @@ import javax.annotation.Nonnull;
 
 /**
  * Equivalent to {@link Predicate}, except with nonnull contract.
- * 
+ *
  * @see Predicate
  */
 @FunctionalInterface
-public interface NonNullPredicate<T>
-{
-    boolean test(@Nonnull T t);
+public interface NonNullPredicate<T> {
+	boolean test(@Nonnull T t);
 }

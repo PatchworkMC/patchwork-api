@@ -21,11 +21,6 @@ package com.patchworkmc.mixin.capability;
 
 import javax.annotation.Nonnull;
 
-import com.patchworkmc.impl.capability.BaseCapabilityProvider;
-import com.patchworkmc.impl.capability.CapabilityProviderHolder;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.CompoundTag;
-
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,9 +28,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.CompoundTag;
+
+import com.patchworkmc.impl.capability.BaseCapabilityProvider;
+import com.patchworkmc.impl.capability.CapabilityProviderHolder;
+
 @Mixin(BlockEntity.class)
 public class BlockEntityMixin implements CapabilityProviderHolder {
-
 	private final CapabilityProvider<BlockEntity> provider = new BaseCapabilityProvider<>(BlockEntity.class, (BlockEntity) (Object) this);
 
 	@Nonnull

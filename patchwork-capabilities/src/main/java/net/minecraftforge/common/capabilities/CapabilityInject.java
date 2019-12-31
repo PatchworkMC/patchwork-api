@@ -30,33 +30,32 @@ import java.lang.annotation.Target;
  * That field must be static and be able to hold a instance
  * of 'Capability'
  *
- * Example:
- * <pre>
- * {@literal @}CapabilityInject(IExampleCapability.class)
- * private static final Capability<IExampleCapability> TEST_CAP = null;
- * </pre>
+ * <p>Example:
+ * <blockquote>
+ * {@literal @}CapabilityInject(IExampleCapability.class)<br>
+ * private static final Capability&lt;IExampleCapability&gt; TEST_CAP = null;
+ * </blockquote>
  *
- * When placed on a METHOD, the method will be invoked once the
+ * <p>When placed on a METHOD, the method will be invoked once the
  * capability is registered. This allows you to have a 'enable features'
  * callback. It MUST have one parameter of type 'Capability;
  *
- * Example:
- * <pre>
+ * <p>Example:
+ * <blockquote>
  * {@literal @}CapabilityInject(IExampleCapability.class)
- * private static void capRegistered(Capability<IExampleCapability> cap) {}
- * </pre>
+ * private static void capRegistered(Capability&lt;IExampleCapability&gt; cap) {}
+ * </blockquote>
  *
  * <b>Warning</b>: Capability injections are run in the thread that the capablity is registered.
  * Due to parallel mod loading, this can potentially be off of the main thread.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface CapabilityInject
-{
-    /**
-     * The capability interface to listen for registration.
-     * Note:
-     *   When reading annotations, DO NOT call this function as it will cause a hard dependency on the class.
-     */
-    Class<?> value();
+public @interface CapabilityInject {
+	/**
+	 * The capability interface to listen for registration.
+	 * Note:
+	 * When reading annotations, DO NOT call this function as it will cause a hard dependency on the class.
+	 */
+	Class<?> value();
 }

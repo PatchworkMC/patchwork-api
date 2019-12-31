@@ -20,6 +20,8 @@ MinecraftForge offers a capability API
 ## Patcher
 Redirect all instance calls to `CapabilityProvider` to static interface calls to `CapabilityProxy`
 ```
-INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)??? false
- -> INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy ??? (???)??? true
+INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)???
+ -> INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy ??? (???)??? (itf)
 ```
+`CapabilityInject` on methods require a synthetic bridge method to be created, which is an event listener
+for `CapabilityRegisteredEvent`. `CapabilityInject` for fields also requires a synthetic bridge, where the field is assigned

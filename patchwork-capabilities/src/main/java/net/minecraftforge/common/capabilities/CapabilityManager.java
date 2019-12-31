@@ -32,45 +32,42 @@ import org.apache.logging.log4j.MarkerManager;
 
 import com.patchworkmc.api.capability.CapabilityRegisteredEvent;
 
-public enum CapabilityManager
-{
-    INSTANCE;
+public enum CapabilityManager {
+	INSTANCE;
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker CAPABILITIES = MarkerManager.getMarker("Capabilities");
+	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Marker CAPABILITIES = MarkerManager.getMarker("Capabilities");
 
-    private final Map<String, Capability<?>> providers = new HashMap<>();
+	private final Map<String, Capability<?>> providers = new HashMap<>();
 
-    /**
-     * Registers a capability to be consumed by others.
-     * APIs who define the capability should call this.
-     * To retrieve the Capability instance, use the @CapabilityInject annotation.
-     * This method is safe to call during parallel mod loading.
-     *
-     * @param type The Interface to be registered
-     * @param storage A default implementation of the storage handler.
-     * @param factory A Factory that will produce new instances of the default implementation.
-     */
-    public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
-    {
-        Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
-        Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
-        String realName = type.getName();
-        Capability<T> cap;
+	/**
+	 * Registers a capability to be consumed by others.
+	 * APIs who define the capability should call this.
+	 * To retrieve the Capability instance, use the @CapabilityInject annotation.
+	 * This method is safe to call during parallel mod loading.
+	 *
+	 * @param type    The Interface to be registered
+	 * @param storage A default implementation of the storage handler.
+	 * @param factory A Factory that will produce new instances of the default implementation.
+	 */
+	public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory) {
+		Objects.requireNonNull(type, "Attempted to register a capability with invalid type");
+		Objects.requireNonNull(storage, "Attempted to register a capability with no storage implementation");
+		Objects.requireNonNull(factory, "Attempted to register a capability with no default implementation factory");
+		String realName = type.getName();
+		Capability<T> cap;
 
-        synchronized (providers)
-        {
-            if (providers.containsKey(realName)) {
-                LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : " + realName);
-            }
+		synchronized (providers) {
+			if (providers.containsKey(realName)) {
+				LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times : {}", realName);
+				throw new IllegalArgumentException("Cannot register a capability implementation multiple times : " + realName);
+			}
 
-            cap = new Capability<>(realName, storage, factory);
-            providers.put(realName, cap);
-        }
+			cap = new Capability<>(realName, storage, factory);
+			providers.put(realName, cap);
+		}
 
-        CapabilityRegisteredEvent<T> event = new CapabilityRegisteredEvent<>(type, cap);
-        MinecraftForge.EVENT_BUS.post(event);
-    }
+		CapabilityRegisteredEvent<T> event = new CapabilityRegisteredEvent<>(type, cap);
+		MinecraftForge.EVENT_BUS.post(event);
+	}
 }

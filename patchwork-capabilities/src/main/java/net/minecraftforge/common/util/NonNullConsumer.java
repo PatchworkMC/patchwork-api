@@ -25,11 +25,10 @@ import javax.annotation.Nonnull;
 
 /**
  * Equivalent to {@link Consumer}, except with nonnull contract.
- * 
+ *
  * @see Consumer
  */
 @FunctionalInterface
-public interface NonNullConsumer<T>
-{
-    void accept(@Nonnull T t);
+public interface NonNullConsumer<T> {
+	void accept(@Nonnull T t);
 }

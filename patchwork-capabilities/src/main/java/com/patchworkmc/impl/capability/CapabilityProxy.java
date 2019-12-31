@@ -32,10 +32,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
 
 /**
- * Accepts redirects to all of {@link CapabilityProvider CapabilityProvider's} public methods
+ * Accepts redirects to all of {@link CapabilityProvider CapabilityProvider's} public methods.
  */
 public interface CapabilityProxy {
-
 	/**
 	 * Internal use only!
 	 */

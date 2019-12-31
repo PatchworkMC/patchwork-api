@@ -21,134 +21,128 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.concurrent.Callable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.base.Throwables;
+import net.minecraftforge.common.util.LazyOptional;
 
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
-import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This is the core holder object Capabilities.
  * Each capability will have ONE instance of this class,
  * and it will the the one passed into the {@link ICapabilityProvider} functions.
  *
- * The {@link CapabilityManager} is in charge of creating this class.
+ * <p>The {@link CapabilityManager} is in charge of creating this class.
  */
-public class Capability<T>
-{
-    public interface IStorage<T>
-    {
-        /**
-         * Serialize the capability instance to a {@link Tag}.
-         * This allows for a central implementation of saving the data.
-         *
-         * It is important to note that it is up to the API defining
-         * the capability what requirements the 'instance' value must have.
-         *
-         * Due to the possibility of manipulating internal data, some
-         * implementations MAY require that the 'instance' be an instance
-         * of the 'default' implementation.
-         *
-         * Review the API docs for more info.
-         *
-         * @param capability The capability being stored.
-         * @param instance An instance of that capability's interface.
-         * @param side The side of the object the instance is associated with.
-         * @return A {@link Tag} holding the data. Null if no data needs to be stored.
-         */
-        @Nullable
-        Tag writeNBT(Capability<T> capability, T instance, Direction side);
+public class Capability<T> {
+	public interface IStorage<T> {
+		/**
+		 * Serialize the capability instance to a {@link Tag}.
+		 * This allows for a central implementation of saving the data.
+		 *
+		 * <p>It is important to note that it is up to the API defining
+		 * the capability what requirements the 'instance' value must have.
+		 *
+		 * <p>Due to the possibility of manipulating internal data, some
+		 * implementations MAY require that the 'instance' be an instance
+		 * of the 'default' implementation.
+		 *
+		 * <p>Review the API docs for more info.
+		 *
+		 * @param capability The capability being stored.
+		 * @param instance   An instance of that capability's interface.
+		 * @param side       The side of the object the instance is associated with.
+		 * @return A {@link Tag} holding the data. Null if no data needs to be stored.
+		 */
+		@Nullable
+		Tag writeNBT(Capability<T> capability, T instance, Direction side);
 
-        /**
-         * Read the capability instance from a {@link Tag}.
-         *
-         * This allows for a central implementation of saving the data.
-         *
-         * It is important to note that it is up to the API defining
-         * the capability what requirements the 'instance' value must have.
-         *
-         * Due to the possibility of manipulating internal data, some
-         * implementations MAY require that the 'instance' be an instance
-         * of the 'default' implementation.
-         *
-         * Review the API docs for more info.
-         *
-         * @param capability The capability being stored.
-         * @param instance An instance of that capability's interface.
-         * @param side The side of the object the instance is associated with.
-         * @param nbt A tag holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
-         */
-        void readNBT(Capability<T> capability, T instance, Direction side, Tag nbt);
-    }
+		/**
+		 * Read the capability instance from a {@link Tag}.
+		 *
+		 * <p>This allows for a central implementation of saving the data.
+		 *
+		 * <p>It is important to note that it is up to the API defining
+		 * the capability what requirements the 'instance' value must have.
+		 *
+		 * <p>Due to the possibility of manipulating internal data, some
+		 * implementations MAY require that the 'instance' be an instance
+		 * of the 'default' implementation.
+		 *
+		 * <p>Review the API docs for more info.
+		 *
+		 * @param capability The capability being stored.
+		 * @param instance   An instance of that capability's interface.
+		 * @param side       The side of the object the instance is associated with.
+		 * @param nbt        A tag holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+		 */
+		void readNBT(Capability<T> capability, T instance, Direction side, Tag nbt);
+	}
 
-    /**
-     * @return The unique name of this capability, typically this is
-     * the fully qualified class name for the target interface.
-     */
-    public String getName() { return name; }
+	/**
+	 * @return The unique name of this capability, typically this is
+	 * the fully qualified class name for the target interface.
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
-     */
-    public IStorage<T> getStorage() { return storage; }
-    
-    /**
-     * Quick access to {@link IStorage#readNBT(Capability, Object, Direction, Tag)}
-     */
-    public void readNBT(T instance, Direction side, Tag nbt)
-    {
-    	storage.readNBT(this, instance, side, nbt); 
-    }
-    
-    /**
-     * Quick access to {@link IStorage#writeNBT(Capability, Object, Direction)}
-     */
-    @Nullable
-    public Tag writeNBT(T instance, Direction side)
-    {
-    	return storage.writeNBT(this, instance, side);
-    }
+	/**
+	 * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
+	 */
+	public IStorage<T> getStorage() {
+		return storage;
+	}
 
-    /**
-     * A NEW instance of the default implementation.
-     *
-     * If it important to note that if you want to use the default storage
-     * you may be required to use this exact implementation.
-     * Refer to the owning API of the {@link Capability} in question.
-     *
-     * @return A NEW instance of the default implementation.
-     */
-    @Nullable
-    public T getDefaultInstance()
-    {
-        try
-        {
-            return this.factory.call();
-        }
-        catch (Exception e)
-        {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst)
-    {
-        return this == toCheck ? inst.cast() : LazyOptional.empty();
-    }
+	/**
+	 * Quick access to {@link IStorage#readNBT(Capability, Object, Direction, Tag)}.
+	 */
+	public void readNBT(T instance, Direction side, Tag nbt) {
+		storage.readNBT(this, instance, side, nbt);
+	}
 
-    // INTERNAL
-    private final String name;
-    private final IStorage<T> storage;
-    private final Callable<? extends T> factory;
+	/**
+	 * Quick access to {@link IStorage#writeNBT(Capability, Object, Direction)}.
+	 */
+	@Nullable
+	public Tag writeNBT(T instance, Direction side) {
+		return storage.writeNBT(this, instance, side);
+	}
 
-    Capability(String name, IStorage<T> storage, Callable<? extends T> factory)
-    {
-        this.name = name;
-        this.storage = storage;
-        this.factory = factory;
-    }
+	/**
+	 * A NEW instance of the default implementation.
+	 *
+	 * <p>If it important to note that if you want to use the default storage
+	 * you may be required to use this exact implementation.
+	 * Refer to the owning API of the {@link Capability} in question.
+	 *
+	 * @return A NEW instance of the default implementation.
+	 */
+	@Nullable
+	public T getDefaultInstance() {
+		try {
+			return this.factory.call();
+		} catch (Exception e) {
+			Throwables.throwIfUnchecked(e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst) {
+		return this == toCheck ? inst.cast() : LazyOptional.empty();
+	}
+
+	// INTERNAL
+	private final String name;
+	private final IStorage<T> storage;
+	private final Callable<? extends T> factory;
+
+	Capability(String name, IStorage<T> storage, Callable<? extends T> factory) {
+		this.name = name;
+		this.storage = storage;
+		this.factory = factory;
+	}
 }

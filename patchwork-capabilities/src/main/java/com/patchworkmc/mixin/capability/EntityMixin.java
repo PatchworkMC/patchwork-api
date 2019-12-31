@@ -37,7 +37,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 // TODO: Invalidate capabilities when the entity is killed
 @Mixin(Entity.class)
 public class EntityMixin implements CapabilityProviderHolder {
-
 	private final CapabilityProvider<Entity> provider = new BaseCapabilityProvider<>(Entity.class, (Entity) (Object) this);
 
 	@Nonnull

@@ -25,12 +25,11 @@ import javax.annotation.Nonnull;
 
 /**
  * Equivalent to {@link Function}, except with nonnull contract.
- * 
+ *
  * @see Function
  */
 @FunctionalInterface
-public interface NonNullFunction<T, R>
-{
-    @Nonnull
-    R apply(@Nonnull T t);
+public interface NonNullFunction<T, R> {
+	@Nonnull
+	R apply(@Nonnull T t);
 }

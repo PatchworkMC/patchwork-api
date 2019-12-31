@@ -36,7 +36,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements CapabilityProviderHolder {
-
 	private final CapabilityProvider<ItemStack> provider = new BaseCapabilityProvider<>(ItemStack.class, (ItemStack) (Object) this);
 
 	@Nonnull

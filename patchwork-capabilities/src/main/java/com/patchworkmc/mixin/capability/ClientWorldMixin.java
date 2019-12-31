@@ -31,7 +31,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 // World would have CapabilityProviderHolder implemented if the mixin was applied
 @Mixin(ClientWorld.class)
 public abstract class ClientWorldMixin implements CapabilityProviderHolder {
-
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
 		// TODO: IForgeDimension when?

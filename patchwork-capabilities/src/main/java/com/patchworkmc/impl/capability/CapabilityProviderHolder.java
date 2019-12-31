@@ -24,10 +24,9 @@ import javax.annotation.Nonnull;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 
 /**
- * A holder for {@link CapabilityProvider}, since some classes cannot directly extend {@link CapabilityProvider}
+ * A holder for {@link CapabilityProvider}, since some classes cannot directly extend {@link CapabilityProvider}.
  */
 public interface CapabilityProviderHolder {
-
 	@Nonnull
 	CapabilityProvider<?> getCapabilityProvider();
 }

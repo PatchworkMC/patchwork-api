@@ -31,7 +31,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(World.class)
 public class WorldMixin implements CapabilityProviderHolder {
-
 	private final CapabilityProvider<World> provider = new BaseCapabilityProvider<>(World.class, (World) (Object) this);
 
 	@Nonnull

@@ -34,7 +34,6 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(WorldChunk.class)
 public class WorldChunkMixin implements CapabilityProviderHolder {
-
 	private final CapabilityProvider<WorldChunk> provider = new BaseCapabilityProvider<>(WorldChunk.class, (WorldChunk) (Object) this);
 
 	@Nonnull

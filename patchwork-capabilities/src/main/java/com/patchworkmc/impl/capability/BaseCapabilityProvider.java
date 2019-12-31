@@ -28,7 +28,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-
 	private final T provider;
 
 	public BaseCapabilityProvider(Class<T> baseClass, T provider) {
