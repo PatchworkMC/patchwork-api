@@ -24,13 +24,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.patchworkmc.api.capability.CapabilityRegisteredEvent;
+import com.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
 public enum CapabilityManager {
 	INSTANCE;
@@ -67,7 +66,6 @@ public enum CapabilityManager {
 			providers.put(realName, cap);
 		}
 
-		CapabilityRegisteredEvent<T> event = new CapabilityRegisteredEvent<>(type, cap);
-		MinecraftForge.EVENT_BUS.post(event);
+		CapabilityRegisteredCallback.event(type).invoker().onCapabilityRegistered(cap);
 	}
 }

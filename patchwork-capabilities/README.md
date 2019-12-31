@@ -23,5 +23,5 @@ Redirect all instance calls to `CapabilityProvider` to static interface calls to
 INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)???
  -> INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy ??? (???)??? (itf)
 ```
-`CapabilityInject` on methods require a synthetic bridge method to be created, which is an event listener
-for `CapabilityRegisteredEvent`. `CapabilityInject` for fields also requires a synthetic bridge, where the field is assigned
+`CapabilityInject` on methods require a `CapabilityRegisteredCallback` to be registered. `CapabilityInject` for fields
+requires a bridge callback method to be created, where the field is assigned from.

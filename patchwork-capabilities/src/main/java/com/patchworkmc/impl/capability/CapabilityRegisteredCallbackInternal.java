@@ -1,0 +1,63 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package com.patchworkmc.impl.capability;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+
+import com.patchworkmc.api.capability.CapabilityRegisteredCallback;
+
+public class CapabilityRegisteredCallbackInternal {
+	private static final Logger LOGGER = LogManager.getLogger(CapabilityRegisteredCallback.class);
+	@SuppressWarnings("rawtypes")
+	private static final Map<Class<?>, Event> CALLBACKS = new IdentityHashMap<>();
+
+	@SuppressWarnings("unchecked")
+	public static <C> Event<CapabilityRegisteredCallback<C>> getOrCreateEvent(Class<C> type) {
+		return (Event<CapabilityRegisteredCallback<C>>) CALLBACKS.computeIfAbsent(type, $ -> EventFactory.createArrayBacked(CapabilityRegisteredCallback.class, capability -> { }, callbacks -> capability -> {
+			Throwable thr = null;
+
+			for (CapabilityRegisteredCallback<C> callback : callbacks) {
+				try {
+					callback.onCapabilityRegistered(capability);
+				} catch (Throwable throwable) {
+					if (thr == null) {
+						thr = throwable;
+					} else {
+						Throwable suppressed = new Throwable();
+						suppressed.addSuppressed(thr);
+						suppressed.addSuppressed(throwable);
+						thr = suppressed;
+					}
+				}
+			}
+
+			if (thr != null) {
+				LOGGER.error("An uncaught exception was thrown while processing a CapabilityRegisteredCallback<{}>", type.getName(), thr);
+			}
+		}));
+	}
+}
