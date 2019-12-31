@@ -1,5 +1,11 @@
 package net.minecraftforge.fml.network.simple;
 
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -9,16 +15,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import net.minecraft.util.PacketByteBuf;
 
-public class IndexedMessageCodec
-{
+public class IndexedMessageCodec {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker SIMPLENET = MarkerManager.getMarker("SIMPLENET");
 	private final Short2ObjectArrayMap<MessageHandler<?>> indicies = new Short2ObjectArrayMap<>();
@@ -28,8 +27,28 @@ public class IndexedMessageCodec
 	public IndexedMessageCodec() {
 		this(null);
 	}
+
 	public IndexedMessageCodec(final NetworkInstance instance) {
 		this.networkInstance = instance;
+	}
+
+	private static <M> void tryDecode(PacketByteBuf payload, Supplier<NetworkEvent.Context> context, int payloadIndex, MessageHandler<M> codec) {
+		codec.decoder.map(d -> d.apply(payload)).
+			map(p -> {
+				// Only run the loginIndex function for payloadIndexed packets (login)
+				if (payloadIndex != Integer.MIN_VALUE) {
+					codec.getLoginIndexSetter().ifPresent(f -> f.accept(p, payloadIndex));
+				}
+				return p;
+			}).ifPresent(m -> codec.messageConsumer.accept(m, context));
+	}
+
+	private static <M> int tryEncode(PacketByteBuf target, M message, MessageHandler<M> codec) {
+		codec.encoder.ifPresent(encoder -> {
+			target.writeByte(codec.index & 0xff);
+			encoder.accept(message, target);
+		});
+		return codec.loginIndexGetter.orElse(m -> Integer.MIN_VALUE).apply(message);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -42,85 +61,12 @@ public class IndexedMessageCodec
 		return (MessageHandler<MSG>) indicies.get(i);
 	}
 
-	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	class MessageHandler<MSG>
-	{
-		private final Optional<BiConsumer<MSG, PacketByteBuf>> encoder;
-		private final Optional<Function<PacketByteBuf, MSG>> decoder;
-		private final int index;
-		private final BiConsumer<MSG,Supplier<NetworkEvent.Context>> messageConsumer;
-		private final Class<MSG> messageType;
-		private Optional<BiConsumer<MSG, Integer>> loginIndexSetter;
-		private Optional<Function<MSG, Integer>> loginIndexGetter;
-
-		public MessageHandler(int index, Class<MSG> messageType, BiConsumer<MSG, PacketByteBuf> encoder, Function<PacketByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer)
-		{
-			this.index = index;
-			this.messageType = messageType;
-			this.encoder = Optional.ofNullable(encoder);
-			this.decoder = Optional.ofNullable(decoder);
-			this.messageConsumer = messageConsumer;
-			this.loginIndexGetter = Optional.empty();
-			this.loginIndexSetter = Optional.empty();
-			indicies.put((short)(index & 0xff), this);
-			types.put(messageType, this);
-		}
-
-		void setLoginIndexSetter(BiConsumer<MSG, Integer> loginIndexSetter)
-		{
-			this.loginIndexSetter = Optional.of(loginIndexSetter);
-		}
-
-		Optional<BiConsumer<MSG, Integer>> getLoginIndexSetter() {
-			return this.loginIndexSetter;
-		}
-
-		void setLoginIndexGetter(Function<MSG, Integer> loginIndexGetter) {
-			this.loginIndexGetter = Optional.of(loginIndexGetter);
-		}
-
-		public Optional<Function<MSG, Integer>> getLoginIndexGetter() {
-			return this.loginIndexGetter;
-		}
-
-		MSG newInstance() {
-			try {
-				return messageType.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				LOGGER.error("Invalid login message", e);
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	private static <M> void tryDecode(PacketByteBuf payload, Supplier<NetworkEvent.Context> context, int payloadIndex, MessageHandler<M> codec)
-	{
-		codec.decoder.map(d->d.apply(payload)).
-			map(p->{
-				// Only run the loginIndex function for payloadIndexed packets (login)
-				if (payloadIndex != Integer.MIN_VALUE)
-				{
-					codec.getLoginIndexSetter().ifPresent(f-> f.accept(p, payloadIndex));
-				}
-				return p;
-			}).ifPresent(m->codec.messageConsumer.accept(m, context));
-	}
-
-	private static <M> int tryEncode(PacketByteBuf target, M message, MessageHandler<M> codec) {
-		codec.encoder.ifPresent(encoder->{
-			target.writeByte(codec.index & 0xff);
-			encoder.accept(message, target);
-		});
-		return codec.loginIndexGetter.orElse(m -> Integer.MIN_VALUE).apply(message);
-	}
-
-	public <MSG> int build(MSG message, PacketByteBuf target)
-	{
+	public <MSG> int build(MSG message, PacketByteBuf target) {
 		@SuppressWarnings("unchecked")
-		MessageHandler<MSG> messageHandler = (MessageHandler<MSG>)types.get(message.getClass());
+		MessageHandler<MSG> messageHandler = (MessageHandler<MSG>) types.get(message.getClass());
 		if (messageHandler == null) {
 			LOGGER.error(SIMPLENET, "Received invalid message {} on channel {}", message.getClass().getName(), Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
-			throw new IllegalArgumentException("Invalid message "+message.getClass().getName());
+			throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
 		}
 		return tryEncode(target, message, messageHandler);
 	}
@@ -141,5 +87,53 @@ public class IndexedMessageCodec
 
 	<MSG> MessageHandler<MSG> addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketByteBuf> encoder, Function<PacketByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
 		return new MessageHandler<>(index, messageType, encoder, decoder, messageConsumer);
+	}
+
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	class MessageHandler<MSG> {
+		private final Optional<BiConsumer<MSG, PacketByteBuf>> encoder;
+		private final Optional<Function<PacketByteBuf, MSG>> decoder;
+		private final int index;
+		private final BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer;
+		private final Class<MSG> messageType;
+		private Optional<BiConsumer<MSG, Integer>> loginIndexSetter;
+		private Optional<Function<MSG, Integer>> loginIndexGetter;
+
+		public MessageHandler(int index, Class<MSG> messageType, BiConsumer<MSG, PacketByteBuf> encoder, Function<PacketByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
+			this.index = index;
+			this.messageType = messageType;
+			this.encoder = Optional.ofNullable(encoder);
+			this.decoder = Optional.ofNullable(decoder);
+			this.messageConsumer = messageConsumer;
+			this.loginIndexGetter = Optional.empty();
+			this.loginIndexSetter = Optional.empty();
+			indicies.put((short) (index & 0xff), this);
+			types.put(messageType, this);
+		}
+
+		Optional<BiConsumer<MSG, Integer>> getLoginIndexSetter() {
+			return this.loginIndexSetter;
+		}
+
+		void setLoginIndexSetter(BiConsumer<MSG, Integer> loginIndexSetter) {
+			this.loginIndexSetter = Optional.of(loginIndexSetter);
+		}
+
+		public Optional<Function<MSG, Integer>> getLoginIndexGetter() {
+			return this.loginIndexGetter;
+		}
+
+		void setLoginIndexGetter(Function<MSG, Integer> loginIndexGetter) {
+			this.loginIndexGetter = Optional.of(loginIndexGetter);
+		}
+
+		MSG newInstance() {
+			try {
+				return messageType.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				LOGGER.error("Invalid login message", e);
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

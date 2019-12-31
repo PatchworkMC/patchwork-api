@@ -27,30 +27,25 @@ import net.minecraft.util.PacketByteBuf;
 /**
  * The network registry. Tracks channels on behalf of mods.
  */
-public class NetworkRegistry
-{
+public class NetworkRegistry {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
-
-	private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
-
 	/**
 	 * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks
 	 * this channel.
 	 */
 	@SuppressWarnings("RedundantStringConstructorCall")
 	public static String ABSENT = new String("ABSENT \uD83E\uDD14");
-
 	@SuppressWarnings("RedundantStringConstructorCall")
-	public static String ACCEPTVANILLA  = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+	public static String ACCEPTVANILLA = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+	private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+	private static boolean lock = false;
 
-	public static List<String> getServerNonVanillaNetworkMods()
-	{
+	public static List<String> getServerNonVanillaNetworkMods() {
 		return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
 	}
 
-	public static List<String> getClientNonVanillaNetworkMods()
-	{
+	public static List<String> getClientNonVanillaNetworkMods() {
 		return listRejectedVanillaMods(NetworkInstance::tryServerVersionOnClient);
 	}
 
@@ -61,7 +56,6 @@ public class NetworkRegistry
 	public static boolean canConnectToVanillaServer() {
 		return instances.isEmpty() || getClientNonVanillaNetworkMods().isEmpty();
 	}
-
 
 	/**
 	 * Create a new {@link SimpleChannel}.
@@ -93,7 +87,6 @@ public class NetworkRegistry
 		return new EventNetworkChannel(createInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
 	}
 
-
 	/**
 	 * Creates the internal {@link NetworkInstance} that tracks the channel data.
 	 * @param name registry name
@@ -103,15 +96,14 @@ public class NetworkRegistry
 	 * @return The {@link NetworkInstance}
 	 * @throws IllegalArgumentException if the name already exists
 	 */
-	private static NetworkInstance createInstance(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
-	{
-		if(lock) {
+	private static NetworkInstance createInstance(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+		if (lock) {
 			LOGGER.error(NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
 			throw new IllegalArgumentException("Registration of network channels is locked");
 		}
 		if (instances.containsKey(name)) {
 			LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
-			throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
+			throw new IllegalArgumentException("NetworkDirection Channel {" + name + "} already registered");
 		}
 		final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
 		instances.put(name, networkInstance);
@@ -124,8 +116,7 @@ public class NetworkRegistry
 	 * @param identifier The network instance to lookup
 	 * @return The {@link Optional} {@link NetworkInstance}
 	 */
-	static Optional<NetworkInstance> findTarget(Identifier identifier)
-	{
+	static Optional<NetworkInstance> findTarget(Identifier identifier) {
 		return Optional.ofNullable(instances.get(identifier));
 	}
 
@@ -147,7 +138,7 @@ public class NetworkRegistry
 	 */
 	static Map<Identifier, Pair<String, Boolean>> buildChannelVersionsForListPing() {
 		return instances.entrySet().stream().
-			map( p -> Pair.of(p.getKey(), Pair.of(p.getValue().getNetworkProtocolVersion(), p.getValue().tryClientVersionOnServer(ABSENT)))).
+			map(p -> Pair.of(p.getKey(), Pair.of(p.getValue().getNetworkProtocolVersion(), p.getValue().tryClientVersionOnServer(ABSENT)))).
 			filter(p -> !p.getLeft().getNamespace().equals("fml")).
 			collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 	}
@@ -159,7 +150,7 @@ public class NetworkRegistry
 				final boolean test = testFunction.apply(ni, incomingVersion);
 				LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
 				return Pair.of(ni.getChannelName(), test);
-			}).filter(p->!p.getRight()).collect(Collectors.toList());
+			}).filter(p -> !p.getRight()).collect(Collectors.toList());
 
 		if (!results.isEmpty()) {
 			LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
@@ -169,6 +160,7 @@ public class NetworkRegistry
 		LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
 		return Collections.emptyList();
 	}
+
 	/**
 	 * Validate the channels from the server on the client. Tests the client predicates against the server
 	 * supplied network protocol version.
@@ -205,7 +197,7 @@ public class NetworkRegistry
 				final boolean test = testFunction.apply(ni, incomingVersion);
 				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
 				return Pair.of(ni.getChannelName(), test);
-			}).filter(p->!p.getRight()).collect(Collectors.toList());
+			}).filter(p -> !p.getRight()).collect(Collectors.toList());
 
 		if (!results.isEmpty()) {
 			LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
@@ -225,9 +217,11 @@ public class NetworkRegistry
 	 * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT
 	 */
 	static List<LoginPayload> gatherLoginPayloads(final NetworkDirection direction, boolean isLocal) {
-		if (direction!=NetworkDirection.LOGIN_TO_CLIENT) return Collections.emptyList();
+		if (direction != NetworkDirection.LOGIN_TO_CLIENT) {
+			return Collections.emptyList();
+		}
 		List<LoginPayload> gatheredPayloads = new ArrayList<>();
-		instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads, isLocal));
+		instances.values().forEach(ni -> ni.dispatchGatherLogin(gatheredPayloads, isLocal));
 		return gatheredPayloads;
 	}
 
@@ -241,7 +235,7 @@ public class NetworkRegistry
 				handled.add(ni.getChannelName());
 				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
 				return Pair.of(ni.getChannelName(), test);
-			}).filter(p->!p.getRight()).collect(Collectors.toList());
+			}).filter(p -> !p.getRight()).collect(Collectors.toList());
 		final List<Identifier> missingButRequired = incoming.entrySet().stream().
 			filter(p -> !p.getKey().getNamespace().equals("fml")).
 			filter(p -> !p.getValue().getRight()).
@@ -254,7 +248,7 @@ public class NetworkRegistry
 				results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
 			return false;
 		}
-		if(!missingButRequired.isEmpty()){
+		if (!missingButRequired.isEmpty()) {
 			LOGGER.error(NETREGISTRY, "The server is likely to require channel [{}] to be present, yet we don't have it",
 				missingButRequired);
 			return false;
@@ -263,13 +257,12 @@ public class NetworkRegistry
 		return true;
 	}
 
-	private static boolean lock = false;
-	public boolean isLocked(){
-		return lock;
+	public static void lock() {
+		lock = true;
 	}
 
-	public static void lock() {
-		lock=true;
+	public boolean isLocked() {
+		return lock;
 	}
 
 	/**
@@ -324,8 +317,7 @@ public class NetworkRegistry
 		 * @param channelName The name of the channel
 		 * @return the channel builder
 		 */
-		public static ChannelBuilder named(Identifier channelName)
-		{
+		public static ChannelBuilder named(Identifier channelName) {
 			ChannelBuilder builder = new ChannelBuilder();
 			builder.channelName = channelName;
 			return builder;
@@ -340,8 +332,7 @@ public class NetworkRegistry
 		 * @param networkProtocolVersion A supplier of strings for network protocol version testing
 		 * @return the channel builder
 		 */
-		public ChannelBuilder networkProtocolVersion(Supplier<String> networkProtocolVersion)
-		{
+		public ChannelBuilder networkProtocolVersion(Supplier<String> networkProtocolVersion) {
 			this.networkProtocolVersion = networkProtocolVersion;
 			return this;
 		}
@@ -353,8 +344,7 @@ public class NetworkRegistry
 		 * @param clientAcceptedVersions A predicate for testing
 		 * @return the channel builder
 		 */
-		public ChannelBuilder clientAcceptedVersions(Predicate<String> clientAcceptedVersions)
-		{
+		public ChannelBuilder clientAcceptedVersions(Predicate<String> clientAcceptedVersions) {
 			this.clientAcceptedVersions = clientAcceptedVersions;
 			return this;
 		}
@@ -366,8 +356,7 @@ public class NetworkRegistry
 		 * @param serverAcceptedVersions A predicate for testing
 		 * @return the channel builder
 		 */
-		public ChannelBuilder serverAcceptedVersions(Predicate<String> serverAcceptedVersions)
-		{
+		public ChannelBuilder serverAcceptedVersions(Predicate<String> serverAcceptedVersions) {
 			this.serverAcceptedVersions = serverAcceptedVersions;
 			return this;
 		}

@@ -1,14 +1,5 @@
 package net.minecraftforge.fml.network.simple;
 
-import io.netty.buffer.Unpooled;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.Packet;
-import net.minecraft.util.PacketByteBuf;
-import net.minecraftforge.fml.network.*;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,13 +10,24 @@ import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import io.netty.buffer.Unpooled;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkInstance;
+import net.minecraftforge.fml.network.PacketDistributor;
+import org.apache.commons.lang3.tuple.Pair;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Packet;
+import net.minecraft.util.PacketByteBuf;
+
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class SimpleChannel
-{
+public class SimpleChannel {
 	private final NetworkInstance instance;
 	private final IndexedMessageCodec indexedCodec;
 	private final Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeConsumer;
-	private List<Function<Boolean, ? extends List<? extends Pair<String,?>>>> loginPackets;
+	private List<Function<Boolean, ? extends List<? extends Pair<String, ?>>>> loginPackets;
 
 	public SimpleChannel(NetworkInstance instance) {
 		this(instance, Optional.empty());
@@ -45,18 +47,18 @@ public class SimpleChannel
 	}
 
 	private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
-		loginPackets.forEach(packetGenerator->{
-			packetGenerator.apply(gatherEvent.isLocal()).forEach(p->{
+		loginPackets.forEach(packetGenerator -> {
+			packetGenerator.apply(gatherEvent.isLocal()).forEach(p -> {
 				PacketByteBuf pb = new PacketByteBuf(Unpooled.buffer());
 				this.indexedCodec.build(p.getRight(), pb);
 				gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft());
 			});
 		});
 	}
-	private void networkEventListener(final NetworkEvent networkEvent)
-	{
+
+	private void networkEventListener(final NetworkEvent networkEvent) {
 		if (networkEvent instanceof NetworkEvent.ChannelRegistrationChangeEvent) {
-			this.registryChangeConsumer.ifPresent(l->l.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent)));
+			this.registryChangeConsumer.ifPresent(l -> l.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent)));
 		} else {
 			this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
 		}
@@ -65,23 +67,22 @@ public class SimpleChannel
 	public <MSG> int encodeMessage(MSG message, final PacketByteBuf target) {
 		return this.indexedCodec.build(message, target);
 	}
+
 	public <MSG> IndexedMessageCodec.MessageHandler<MSG> registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketByteBuf> encoder, Function<PacketByteBuf, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
 		return this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer);
 	}
 
-	private <MSG> Pair<PacketByteBuf,Integer> toBuffer(MSG msg) {
+	private <MSG> Pair<PacketByteBuf, Integer> toBuffer(MSG msg) {
 		final PacketByteBuf bufIn = new PacketByteBuf(Unpooled.buffer());
 		int index = encodeMessage(msg, bufIn);
 		return Pair.of(bufIn, index);
 	}
 
-	public <MSG> void sendToServer(MSG message)
-	{
+	public <MSG> void sendToServer(MSG message) {
 		sendTo(message, MinecraftClient.getInstance().getNetworkHandler().getConnection(), NetworkDirection.PLAY_TO_SERVER);
 	}
 
-	public <MSG> void sendTo(MSG message, ClientConnection manager, NetworkDirection direction)
-	{
+	public <MSG> void sendTo(MSG message, ClientConnection manager, NetworkDirection direction) {
 		manager.send(toVanillaPacket(message, direction));
 	}
 
@@ -100,13 +101,11 @@ public class SimpleChannel
 		target.send(toVanillaPacket(message, target.getDirection()));
 	}
 
-	public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction)
-	{
+	public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction) {
 		return direction.buildPacket(toBuffer(message), instance.getChannelName()).getThis();
 	}
 
-	public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context)
-	{
+	public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context) {
 		context.getPacketDispatcher().sendPacket(instance.getChannelName(), toBuffer(msgToReply).getLeft());
 	}
 
@@ -122,7 +121,7 @@ public class SimpleChannel
 		return MessageBuilder.forType(this, type, id);
 	}
 
-	public static class MessageBuilder<MSG>  {
+	public static class MessageBuilder<MSG> {
 		private SimpleChannel channel;
 		private Class<MSG> type;
 		private int id;
@@ -157,18 +156,17 @@ public class SimpleChannel
 			return this;
 		}
 
-		public MessageBuilder<MSG> buildLoginPacketList(Function<Boolean, List<Pair<String,MSG>>> loginPacketGenerators) {
+		public MessageBuilder<MSG> buildLoginPacketList(Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators) {
 			this.loginPacketGenerators = loginPacketGenerators;
 			return this;
 		}
 
-		public MessageBuilder<MSG> markAsLoginPacket()
-		{
+		public MessageBuilder<MSG> markAsLoginPacket() {
 			this.loginPacketGenerators = (isLocal) -> {
 				try {
 					return Collections.singletonList(Pair.of(type.getName(), type.newInstance()));
 				} catch (InstantiationException | IllegalAccessException e) {
-					throw new RuntimeException("Inaccessible no-arg constructor for message "+type.getName(), e);
+					throw new RuntimeException("Inaccessible no-arg constructor for message " + type.getName(), e);
 				}
 			};
 			return this;
@@ -177,10 +175,6 @@ public class SimpleChannel
 		public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
 			this.consumer = consumer;
 			return this;
-		}
-
-		public interface ToBooleanBiFunction<T, U> {
-			boolean applyAsBool(T first, U second);
 		}
 
 		/**
@@ -210,6 +204,10 @@ public class SimpleChannel
 			if (this.loginPacketGenerators != null) {
 				this.channel.loginPackets.add(this.loginPacketGenerators);
 			}
+		}
+
+		public interface ToBooleanBiFunction<T, U> {
+			boolean applyAsBool(T first, U second);
 		}
 	}
 }

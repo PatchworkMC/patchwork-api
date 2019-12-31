@@ -13,21 +13,13 @@ import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.util.Identifier;
 
-public class NetworkInstance
-{
-	public Identifier getChannelName()
-	{
-		return channelName;
-	}
-
+public class NetworkInstance {
 	private final Identifier channelName;
 	private final String networkProtocolVersion;
 	private final Predicate<String> clientAcceptedVersions;
 	private final Predicate<String> serverAcceptedVersions;
 	private final IEventBus networkEventBus;
-
-	NetworkInstance(Identifier channelName, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
-	{
+	NetworkInstance(Identifier channelName, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
 		this.channelName = channelName;
 		this.networkProtocolVersion = networkProtocolVersion.get();
 		this.clientAcceptedVersions = clientAcceptedVersions;
@@ -35,18 +27,19 @@ public class NetworkInstance
 		this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
 	}
 
-	private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
-	{
+	public Identifier getChannelName() {
+		return channelName;
+	}
+
+	private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
 
 	}
 
-	public <T extends NetworkEvent> void addListener(Consumer<T> eventListener)
-	{
+	public <T extends NetworkEvent> void addListener(Consumer<T> eventListener) {
 		this.networkEventBus.addListener(eventListener);
 	}
 
-	public void addGatherListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> eventListener)
-	{
+	public void addGatherListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> eventListener) {
 		this.networkEventBus.addListener(eventListener);
 	}
 
@@ -58,8 +51,7 @@ public class NetworkInstance
 		this.networkEventBus.unregister(object);
 	}
 
-	boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final ClientConnection manager)
-	{
+	boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final ClientConnection manager) {
 		final NetworkEvent.Context context = new NetworkEvent.Context(manager, side, packet.getIndex());
 		this.networkEventBus.post(side.getEvent(packet, () -> context));
 		return context.getPacketHandled();

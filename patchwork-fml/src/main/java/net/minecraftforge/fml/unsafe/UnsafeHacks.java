@@ -10,78 +10,67 @@ import sun.misc.Unsafe;
 /**
  * @deprecated Use mixins instead!!!
  */
-public class UnsafeHacks
-{
+public class UnsafeHacks {
 	private static final Unsafe UNSAFE;
-	static
-	{
-		try
-		{
+
+	static {
+		try {
 			final Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
 			theUnsafe.setAccessible(true);
-			UNSAFE = (Unsafe)theUnsafe.get(null);
-		}
-		catch (IllegalAccessException | NoSuchFieldException e)
-		{
+			UNSAFE = (Unsafe) theUnsafe.get(null);
+		} catch (IllegalAccessException | NoSuchFieldException e) {
 			throw new RuntimeException("BARF!", e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public static <T> T newInstance(Class<T> clazz)
-	{
-		try
-		{
+	public static <T> T newInstance(Class<T> clazz) {
+		try {
 			return (T) UNSAFE.allocateInstance(clazz);
-		}
-		catch (InstantiationException e)
-		{
+		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public static <T> T getField(Field field, Object object)
-	{
+	public static <T> T getField(Field field, Object object) {
 		final long l = UNSAFE.objectFieldOffset(field);
 		return (T) UNSAFE.getObject(object, l);
 	}
+
 	@Deprecated
-	public static void setField(Field data, Object object, Object value)
-	{
+	public static void setField(Field data, Object object, Object value) {
 		long offset = UNSAFE.objectFieldOffset(data);
 		UNSAFE.putObject(object, offset, value);
 	}
+
 	@Deprecated
-	public static int getIntField(Field f, Object obj)
-	{
+	public static int getIntField(Field f, Object obj) {
 		long offset = UNSAFE.objectFieldOffset(f);
 		return UNSAFE.getInt(obj, offset);
 	}
+
 	@Deprecated
-	public static void setIntField(Field data, Object object, int value)
-	{
+	public static void setIntField(Field data, Object object, int value) {
 		long offset = UNSAFE.objectFieldOffset(data);
 		UNSAFE.putInt(object, offset, value);
 	}
+
 	@Deprecated
 	// Make sure we don't crash if any future versions change field names
-	private static Optional<Field> findField(Class<?> clazz, String name)
-	{
-		for (Field f : clazz.getDeclaredFields())
-		{
-			if (f.getName().equals(name))
-			{
+	private static Optional<Field> findField(Class<?> clazz, String name) {
+		for (Field f : clazz.getDeclaredFields()) {
+			if (f.getName().equals(name)) {
 				return Optional.of(f);
 			}
 		}
 		return Optional.empty();
 	}
+
 	@Deprecated
-	public static void cleanEnumCache(Class<? extends Enum<?>> enumClass) throws Exception
-	{
+	public static void cleanEnumCache(Class<? extends Enum<?>> enumClass) throws Exception {
 		findField(Class.class, "enumConstantDirectory").ifPresent(f -> setField(f, enumClass, null));
 		findField(Class.class, "enumConstants").ifPresent(f -> setField(f, enumClass, null));
 	}

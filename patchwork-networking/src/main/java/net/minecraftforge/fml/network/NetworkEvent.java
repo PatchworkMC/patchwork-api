@@ -1,9 +1,14 @@
 package net.minecraftforge.fml.network;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSidedProvider;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.PacketListener;
@@ -12,31 +17,22 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.ThreadExecutor;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSidedProvider;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 import com.patchworkmc.mixin.networking.ClientConnectionAccessor;
 import com.patchworkmc.mixin.networking.ThreadExecutorAccessor;
 
-public class NetworkEvent extends Event
-{
+public class NetworkEvent extends Event {
 	private final PacketByteBuf payload;
 	private final Supplier<Context> source;
 	private final int loginIndex;
 
-	private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source)
-	{
+	private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 		this.payload = payload.getInternalData();
 		this.source = source;
 		this.loginIndex = payload.getIndex();
 	}
 
-	private NetworkEvent(final PacketByteBuf payload, final Supplier<Context> source, final int loginIndex)
-	{
+	private NetworkEvent(final PacketByteBuf payload, final Supplier<Context> source, final int loginIndex) {
 		this.payload = payload;
 		this.source = source;
 		this.loginIndex = loginIndex;
@@ -48,43 +44,42 @@ public class NetworkEvent extends Event
 		this.loginIndex = -1;
 	}
 
-	public PacketByteBuf getPayload()
-	{
+	public PacketByteBuf getPayload() {
 		return payload;
 	}
 
-	public Supplier<Context> getSource()
-	{
+	public Supplier<Context> getSource() {
 		return source;
 	}
 
-	public int getLoginIndex()
-	{
+	public int getLoginIndex() {
 		return loginIndex;
 	}
 
-	public static class ServerCustomPayloadEvent extends NetworkEvent
-	{
+	public enum RegistrationChangeType {
+		REGISTER, UNREGISTER;
+	}
+
+	public static class ServerCustomPayloadEvent extends NetworkEvent {
 		ServerCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
-	public static class ClientCustomPayloadEvent extends NetworkEvent
-	{
+
+	public static class ClientCustomPayloadEvent extends NetworkEvent {
 		ClientCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
+
 	public static class ServerCustomPayloadLoginEvent extends ServerCustomPayloadEvent {
-		ServerCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
-		{
+		ServerCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
 
 	public static class ClientCustomPayloadLoginEvent extends ClientCustomPayloadEvent {
-		ClientCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
-		{
+		ClientCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
@@ -113,10 +108,6 @@ public class NetworkEvent extends Event
 		}
 	}
 
-	public enum RegistrationChangeType {
-		REGISTER, UNREGISTER;
-	}
-
 	/**
 	 * Fired when the channel registration (see minecraft custom channel documentation) changes. Note the payload
 	 * is not exposed. This fires to the resource location that owns the channel, when it's registration changes state.
@@ -136,11 +127,11 @@ public class NetworkEvent extends Event
 			return this.changeType;
 		}
 	}
+
 	/**
 	 * Context for {@link NetworkEvent}
 	 */
-	public static class Context
-	{
+	public static class Context {
 		/**
 		 * The {@link ClientConnection} for this message.
 		 */
@@ -157,8 +148,7 @@ public class NetworkEvent extends Event
 		private final PacketDispatcher packetDispatcher;
 		private boolean packetHandled;
 
-		Context(ClientConnection netHandler, NetworkDirection networkDirection, int index)
-		{
+		Context(ClientConnection netHandler, NetworkDirection networkDirection, int index) {
 			this(netHandler, networkDirection, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, networkDirection.reply()::buildPacket));
 		}
 
@@ -180,13 +170,12 @@ public class NetworkEvent extends Event
 			return ((ClientConnectionAccessor) clientConnection).getChannel().attr(key);
 		}
 
-		public void setPacketHandled(boolean packetHandled) {
-			this.packetHandled = packetHandled;
+		public boolean getPacketHandled() {
+			return packetHandled;
 		}
 
-		public boolean getPacketHandled()
-		{
-			return packetHandled;
+		public void setPacketHandled(boolean packetHandled) {
+			this.packetHandled = packetHandled;
 		}
 
 		public CompletableFuture<Void> enqueueWork(Runnable runnable) {
@@ -206,16 +195,15 @@ public class NetworkEvent extends Event
 		 * When available, gets the sender for packets that are sent from a client to the server.
 		 */
 		@Nullable
-		public ServerPlayerEntity getSender()
-		{
+		public ServerPlayerEntity getSender() {
 			PacketListener packet = clientConnection.getPacketListener();
-			if (packet instanceof ServerPlayNetworkHandler)
-			{
+			if (packet instanceof ServerPlayNetworkHandler) {
 				ServerPlayNetworkHandler netHandlerPlayServer = (ServerPlayNetworkHandler) packet;
 				return netHandlerPlayServer.player;
 			}
 			return null;
 		}
+
 		// Patchwork: MCP name in public method
 		public ClientConnection getNetworkManager() {
 			return clientConnection;

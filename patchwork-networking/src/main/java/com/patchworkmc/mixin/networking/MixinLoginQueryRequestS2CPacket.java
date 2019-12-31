@@ -5,7 +5,6 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
 import net.minecraft.client.network.packet.LoginQueryRequestS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -32,23 +31,23 @@ public class MixinLoginQueryRequestS2CPacket implements ICustomPacket<LoginQuery
 	}
 
 	@Override
-	public int getIndex() {
-		return queryId;
-	}
-
-	@Override
-	public void setData(PacketByteBuf data) {
-		this.payload = data;
-	}
-
-	@Override
 	public void setName(Identifier channelName) {
 		this.channel = channelName;
 	}
 
 	@Override
+	public int getIndex() {
+		return queryId;
+	}
+
+	@Override
 	public void setIndex(int index) {
 		this.queryId = index;
+	}
+
+	@Override
+	public void setData(PacketByteBuf data) {
+		this.payload = data;
 	}
 
 	@Override

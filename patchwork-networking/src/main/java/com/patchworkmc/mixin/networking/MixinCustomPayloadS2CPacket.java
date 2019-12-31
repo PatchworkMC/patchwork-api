@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.client.network.packet.CustomPayloadS2CPacket;
-import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
@@ -29,24 +28,24 @@ public class MixinCustomPayloadS2CPacket implements ICustomPacket<CustomPayloadS
 	}
 
 	@Override
+	public void setName(Identifier channelName) {
+		this.channel = channelName;
+	}
+
+	@Override
 	public int getIndex() {
 		// Forge: return Integer.MIN_VALUE if there is no 'int' field in the class
 		return Integer.MIN_VALUE;
 	}
 
 	@Override
-	public void setData(PacketByteBuf data) {
-		this.data = data;
-	}
-
-	@Override
-	public void setName(Identifier channelName) {
-		this.channel = channelName;
-	}
-
-	@Override
 	public void setIndex(int index) {
 		// Forge: NO-OP if there is no 'int' field in the class
+	}
+
+	@Override
+	public void setData(PacketByteBuf data) {
+		this.data = data;
 	}
 
 	@Override

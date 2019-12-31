@@ -19,15 +19,20 @@ public interface ICustomPacket<T extends Packet<?>> {
 	 * Get the channel name
 	 */
 	Identifier getName();
-	int getIndex();
-	void setData(PacketByteBuf buffer);
 
 	/**
 	 * Set the channel name
 	 * @param channelName
 	 */
 	void setName(Identifier channelName);
+
+	int getIndex();
+
 	void setIndex(int index);
+
+	void setData(PacketByteBuf buffer);
+
 	NetworkDirection getDirection();
+
 	T getThis();
 }

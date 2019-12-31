@@ -6,8 +6,6 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.client.network.packet.LoginQueryRequestS2CPacket;
-import net.minecraft.client.network.packet.QueryResponseS2CPacket;
 import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -16,7 +14,6 @@ import net.minecraft.util.PacketByteBuf;
 public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQueryResponseC2SPacket> {
 	@Shadow
 	private PacketByteBuf response;
-
 
 	@Shadow
 	private int queryId;
@@ -33,23 +30,23 @@ public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQuer
 	}
 
 	@Override
-	public int getIndex() {
-		return queryId;
-	}
-
-	@Override
-	public void setData(PacketByteBuf data) {
-		this.response = data;
-	}
-
-	@Override
 	public void setName(Identifier channelName) {
 		// Forge: NO-OP if there is no channel
 	}
 
 	@Override
+	public int getIndex() {
+		return queryId;
+	}
+
+	@Override
 	public void setIndex(int index) {
 		this.queryId = index;
+	}
+
+	@Override
+	public void setData(PacketByteBuf data) {
+		this.response = data;
 	}
 
 	@Override
