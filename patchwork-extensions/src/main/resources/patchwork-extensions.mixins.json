@@ -3,9 +3,9 @@
   "package": "com.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-  	"MixinStatusEffect"
+    "MixinStatusEffect"
   ],
   "injectors": {
-	"defaultRequire": 1
+    "defaultRequire": 1
   }
 }

@@ -19,11 +19,12 @@
 
 package net.minecraftforge.event;
 
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.LogicalSide;
 
 public class TickEvent extends Event {
 	public final Type type;
@@ -40,6 +41,7 @@ public class TickEvent extends Event {
 		this.side = side;
 		this.phase = phase;
 	}
+
 	public enum Type {
 		WORLD, PLAYER, CLIENT, SERVER, RENDER;
 	}

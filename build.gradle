@@ -6,12 +6,13 @@ plugins {
 	id 'fabric-loom' version '0.2.6-SNAPSHOT' apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
+	id 'com.jfrog.bintray' version '1.8.4'
 }
 
 def ENV = System.getenv()
 
 class Globals {
-	static def baseVersion = "0.1.0"
+	static def baseVersion = "0.1.1"
 	static def mcVersion = "1.14.4"
 	static def yarnVersion = "+build.15"
 }
@@ -36,7 +37,8 @@ def getBranch() {
 	if (grgit == null) {
 		return "unknown"
 	}
-	return grgit.branch.current().name
+	def branch = grgit.branch.current().name
+	return branch.substring(branch.lastIndexOf("/") + 1)
 }
 
 allprojects {
@@ -56,7 +58,7 @@ allprojects {
 		modCompile "net.fabricmc:fabric-loader:0.7.2+build.174"
 		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
 
-		implementation 'com.github.PatchworkMC:EventBus:d5b038e199'
+		implementation 'com.patchworkmc:patchwork-eventbus:0.1.2:all'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
 		// For EventBus
@@ -73,7 +75,7 @@ allprojects {
 	}
 
 	repositories {
-		maven { url 'https://jitpack.io' }
+		maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
 	}
 
 	jar {
@@ -133,7 +135,7 @@ subprojects {
 		afterEvaluate {
 			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
 			into("${project.buildDir}/libs/")
-			rename { String fn -> "$archivesBaseName-${version}-maven.jar" }
+			rename {String fn -> "$archivesBaseName-${version}-maven.jar"}
 		}
 	}
 
@@ -172,7 +174,31 @@ task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
 		addNestedDependencies = false
 	}
 }
+bintray {
+	user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
+	key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.getenv('bintray_key')
+	publish = true
+	override = true
+	publications = ['mavenJava']
+	pkg {
+		repo = project.bintrayRepo
+		name = project.name
+		user = bintray.user
+		userOrg = project.repoOwner
+		licenses = [project.codeLicense]
+		desc = project.description
+		websiteUrl = "https://github.com/${project.repoOwner}/${project.repoName}"
+		issueTrackerUrl = "https://github.com/${project.repoOwner}/${project.repoName}/issues"
+		vcsUrl = "https://github.com/${project.repoOwner}/${project.repoName}.git"
+		publicDownloadNumbers = true
 
+		githubRepo = "${project.repoOwner}/${project.repoName}"
+		version {
+			name = project.version
+			released = new Date()
+		}
+	}
+}
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
@@ -194,31 +220,17 @@ publishing {
 			}
 		}
 	}
-
-	repositories {
-		maven {
-			url "http://mavenupload.modmuss50.me/"
-			if (project.hasProperty('mavenPass')) {
-				credentials {
-					username 'buildslave'
-					password project.getProperty('mavenPass')
-				}
-			}
-		}
-	}
 }
 
 task licenseFormatAll
-subprojects { p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat") }
-subprojects.each { remapJar.dependsOn("${it.path}:remapJar") }
-
+subprojects {p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat")}
+subprojects.each {remapJar.dependsOn("${it.path}:remapJar")}
 repositories {
 	flatDir {
 		dirs 'jars'
 	}
 	mavenCentral()
 }
-
 dependencies {
 	afterEvaluate {
 		subprojects.each {
@@ -226,7 +238,6 @@ dependencies {
 			include project("${it.name}:")
 		}
 	}
-
 	implementation 'org.apache.logging.log4j:log4j-core:2.10.0'
 
 	minecraft "com.mojang:minecraft:$Globals.mcVersion"
@@ -239,16 +250,16 @@ dependencies {
 	include 'com.electronwill.night-config:toml:3.6.2'
 
 	fileTree(dir: 'jars', include: '*.jar').each {
-		String baseName = it.name.replace(".jar", "");
-		String version = "0.1.0";
-		int split = baseName.lastIndexOf('-');
+		String baseName = it.name.replace(".jar", "")
+		String version = "0.1.0"
+		int split = baseName.lastIndexOf('-')
 
-		if(split != -1) {
-			version = baseName.substring(split + 1);
-			baseName = baseName.substring(0, split);
+		if (split != -1) {
+			version = baseName.substring(split + 1)
+			baseName = baseName.substring(0, split)
 		}
 
-		String name = "testmod:${baseName}:${version}";
+		String name = "testmod:${baseName}:${version}"
 
 		System.out.println("Found test mod: " + it.name.replace(".jar", "") + " -> " + name)
 
@@ -257,9 +268,8 @@ dependencies {
 	}
 }
 
-version = Globals.baseVersion + "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
+version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 
 logger.lifecycle("Building Patchwork: " + version)
 
-// This line breaks every second Gradle command
-// apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'

@@ -29,14 +29,13 @@ import net.fabricmc.api.EnvType;
  *     <li>{@link #CLIENT} is the <em>client</em> distribution, it contains
  *     the game client, and has code to render a viewport into a game world.</li>
  *     <li>{@link #DEDICATED_SERVER} is the <em>dedicated server</em> distribution,
- *     it contains a server, which can simulate the world and communicates via network.</li>
+ *     it contains a server, which can simulate the world and communicates via the network.</li>
  * </ul>
  */
 public enum Dist {
-
 	/**
 	 * The client distribution. This is the game client players can purchase and play.
-	 * It contains the graphics and other rendering to present a viewport into the game world.
+	 * It contains graphics and other rendering to present a viewport into the game world.
 	 */
 	CLIENT,
 	/**
@@ -55,14 +54,14 @@ public enum Dist {
 	}
 
 	/**
-	 * @return If this marks a dedicated server.
+	 * @return {@code true} if this marks a dedicated server.
 	 */
 	public boolean isDedicatedServer() {
 		return !isClient();
 	}
 
 	/**
-	 * @return if this marks a client.
+	 * @return {@code true} if this marks a client.
 	 */
 	public boolean isClient() {
 		return this == CLIENT;

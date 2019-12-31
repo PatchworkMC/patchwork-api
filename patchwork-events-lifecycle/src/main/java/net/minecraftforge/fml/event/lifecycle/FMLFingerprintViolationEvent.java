@@ -36,6 +36,15 @@ public class FMLFingerprintViolationEvent extends ModLifecycleEvent {
 	private final File source;
 	private final String expectedFingerprint;
 
+	// For EventBus
+	public FMLFingerprintViolationEvent() {
+		super();
+		this.isDirectory = false;
+		this.fingerprints = null;
+		this.source = null;
+		this.expectedFingerprint = null;
+	}
+
 	public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint) {
 		super(null);
 		this.isDirectory = isDirectory;

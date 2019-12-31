@@ -19,26 +19,28 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+
 /**
- * LivingDeathEvent is fired when an Entity dies.
- * <p>This event is fired whenever an Entity dies in
+ * LivingDeathEvent is fired when a {@link LivingEntity} dies.
+ *
+ * <p>This event is fired whenever a {@link LivingEntity} dies in
  * {@link LivingEntity#onDeath(DamageSource)},
  * {@link net.minecraft.entity.player.PlayerEntity#onDeath(DamageSource)}, and
  * {@link net.minecraft.server.network.ServerPlayerEntity#onDeath(DamageSource)}.</p>
  *
  * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingDeath(LivingEntity, DamageSource)}.</p>
  *
- * <p>{@link #source} contains the DamageSource that caused the entity to die.</p>
+ * <p>{@link #source} contains the {@link DamageSource} that caused the {@link LivingEntity} to die.</p>
  *
  * <p>This event is cancellable.
- * If this event is canceled, the Entity does not die.</p>
+ * If this event is canceled, the {@link LivingEntity} does not die.</p>
  *
  * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
- **/
+ */
 public class LivingDeathEvent extends LivingEvent {
 	private final DamageSource source;
 

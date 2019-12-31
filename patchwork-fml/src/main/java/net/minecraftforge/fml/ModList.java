@@ -17,31 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.api.redirects.itemgroup;
+package net.minecraftforge.fml;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Identifier;
+import net.fabricmc.loader.api.FabricLoader;
 
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+public class ModList {
+	// Patchwork: initalize directly because there's no args
+	private static ModList INSTANCE = new ModList();
 
-public abstract class PatchworkItemGroup extends ItemGroup {
-	public PatchworkItemGroup(String name) {
-		super(getNewArrayIndex(), name);
+	public static ModList get() {
+		return INSTANCE;
 	}
 
-	private static int getNewArrayIndex() {
-		// Get a new slot in the array
-
-		FabricItemGroupBuilder.create(new Identifier("patchwork", "dummy")).build();
-
-		return GROUPS.length - 1;
+	public boolean isLoaded(String modId) {
+		// Patchwork: use Fabric Loader lookup instead of an internal one
+		return FabricLoader.getInstance().isModLoaded(modId);
 	}
-
-	/*// Note: uncomment this in dev
-	public net.minecraft.item.ItemStack createIcon() {
-		return method_7750();
-	}
-
-	// TODO: Missing required classpath information in remapper!
-	public abstract net.minecraft.item.ItemStack method_7750();*/
 }

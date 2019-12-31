@@ -19,11 +19,11 @@
 
 package net.minecraftforge.registries;
 
-import net.minecraft.util.Identifier;
-
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import net.minecraft.util.Identifier;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -61,10 +61,10 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 	 * Retrieve the slave map of type T from the registry.
 	 * Slave maps are maps which are dependent on registry content in some way.
 	 *
-	 * @param slaveMapName The name of the slavemap
+	 * @param slaveMapName The name of the slave map
 	 * @param type         The type
 	 * @param <T>          Type to return
-	 * @return The slavemap if present
+	 * @return The slave map if present
 	 */
 	<T> T getSlaveMap(Identifier slaveMapName, Class<T> type);
 
@@ -112,9 +112,6 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 		V createDummy(Identifier key);
 	}
 
-	/**
-	 *
-	 */
 	interface MissingFactory<V extends IForgeRegistryEntry<V>> {
 		V createMissing(Identifier key, boolean isNetwork);
 	}
