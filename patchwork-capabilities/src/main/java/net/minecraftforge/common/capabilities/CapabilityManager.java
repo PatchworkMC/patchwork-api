@@ -19,26 +19,27 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.objectweb.asm.Type;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
+import com.patchworkmc.api.capability.CapabilityRegisteredEvent;
 
 public enum CapabilityManager
 {
     INSTANCE;
-    private static final Marker CAPABILITIES = MarkerManager.getMarker("Capabilities");
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Type CAP_INJECT = Type.getType(CapabilityInject.class);
+    private static final Marker CAPABILITIES = MarkerManager.getMarker("Capabilities");
+
+    private final Map<String, Capability<?>> providers = new HashMap<>();
 
     /**
      * Registers a capability to be consumed by others.
@@ -55,24 +56,21 @@ public enum CapabilityManager
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
         Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
         Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
-        String realName = type.getName().intern();
+        String realName = type.getName();
         Capability<T> cap;
 
         synchronized (providers)
         {
             if (providers.containsKey(realName)) {
-                LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times : {}", realName);
+                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : " + realName);
             }
 
             cap = new Capability<>(realName, storage, factory);
             providers.put(realName, cap);
         }
 
-        callbacks.getOrDefault(realName, Collections.emptyList()).forEach(func -> func.apply(cap));
+        CapabilityRegisteredEvent<T> event = new CapabilityRegisteredEvent<>(type, cap);
+        MinecraftForge.EVENT_BUS.post(event);
     }
-
-    // INTERNAL
-    private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
-    private volatile IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks;
 }

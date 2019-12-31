@@ -4,5 +4,6 @@ version = getSubprojectVersion(project, "0.1.0")
 dependencies {
 	compile project(path: ':patchwork-fml', configuration: 'dev')
 	compile project(path: ':patchwork-registries', configuration: 'dev')
+	compile project(path: ':patchwork-capabilities', configuration: 'dev')
 	compile project(path: ':patchwork-events-lifecycle', configuration: 'dev')
 }
