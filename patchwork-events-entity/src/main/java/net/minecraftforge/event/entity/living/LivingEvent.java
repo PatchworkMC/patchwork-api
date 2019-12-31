@@ -64,7 +64,7 @@ public class LivingEvent extends EntityEvent {
 	public static class LivingUpdateEvent extends LivingEvent {
 		// For EventBus
 		public LivingUpdateEvent() {
-			super(null);
+			super();
 		}
 
 		public LivingUpdateEvent(LivingEntity entity) {
