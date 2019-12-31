@@ -14,7 +14,7 @@ MinecraftForge offers a capability API
   * [PlayerEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/entity/player/PlayerEntity.java.patch#L497-L505)
 * Still need to implement `@CapabilityInject`
 * `ClientWorldMixin` and `ServerWorldMixin` depend on `IForgeDimension`
-* `ClientWorldMixin` and `ServerWorldMixin` depend on `IForgeItem`
+* `ItemStackMixin` depend on `IForgeItem`
 * `EntityMixin` needs to loose capabilities when the Entity is killed, and data is not kept
 
 ## Patcher
