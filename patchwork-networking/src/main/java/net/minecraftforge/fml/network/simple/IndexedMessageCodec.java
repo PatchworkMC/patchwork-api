@@ -35,13 +35,18 @@ public class IndexedMessageCodec {
 	}
 
 	private static <M> void tryDecode(PacketByteBuf payload, Supplier<NetworkEvent.Context> context, int payloadIndex, MessageHandler<M> codec) {
-		if(codec.decoder == null) return;
-		Function<PacketByteBuf, M> decoder = codec.decoder;
-		M magicPacket = decoder.apply(payload);
-		if(payloadIndex != Integer.MIN_VALUE && codec.getLoginIndexSetter() != null) {
-			codec.getLoginIndexSetter().accept(magicPacket, payloadIndex);
+		if(codec.decoder == null) {
+			return;
 		}
-		codec.messageConsumer.accept(magicPacket, context);
+
+		Function<PacketByteBuf, M> decoder = codec.decoder;
+		M message = decoder.apply(payload);
+
+		if(payloadIndex != Integer.MIN_VALUE && codec.getLoginIndexSetter() != null) {
+			codec.getLoginIndexSetter().accept(message, payloadIndex);
+		}
+
+		codec.messageConsumer.accept(message, context);
 	}
 
 	private static <M> int tryEncode(PacketByteBuf target, M message, MessageHandler<M> codec) {
