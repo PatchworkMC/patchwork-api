@@ -60,7 +60,7 @@ public interface IShearable {
 	 *
 	 * <p>Returns a list of items that resulted from the shearing process.
 	 *
-	 * <p>For entities, they should trust there internal location information
+	 * <p>For entities, they should trust their internal location information
 	 * over the values passed into this function.</p>
 	 *
 	 * @param item    The {@link ItemStack} that is being used, may be empty.
