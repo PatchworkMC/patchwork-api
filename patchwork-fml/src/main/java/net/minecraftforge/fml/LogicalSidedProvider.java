@@ -13,9 +13,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import com.patchworkmc.impl.fml.PatchworkFML;
 
 public enum LogicalSidedProvider {
-	WORKQUEUE((c) -> c.get(), (s) -> s.get()),
-	INSTANCE((c) -> c.get(), (s) -> s.get()),
-	CLIENTWORLD((c) -> Optional.<World>of(c.get().world), (s) -> Optional.<World>empty());
+	WORKQUEUE(Supplier::get, Supplier::get),
+	INSTANCE(Supplier::get, Supplier::get),
+	/**
+	 * @deprecated "this is pretty dubious" - coderbot
+	 */
+	@Deprecated
+	CLIENTWORLD(c -> Optional.<World>of(c.get().world), s -> Optional.<World>empty());
 	private static Supplier<MinecraftClient> client;
 	private static Supplier<MinecraftServer> server;
 

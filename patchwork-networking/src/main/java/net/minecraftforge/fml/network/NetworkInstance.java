@@ -32,7 +32,7 @@ public class NetworkInstance {
 	}
 
 	private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
-
+		// Forge: NO-OP
 	}
 
 	public <T extends NetworkEvent> void addListener(Consumer<T> eventListener) {

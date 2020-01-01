@@ -1,6 +1,5 @@
 package com.patchworkmc.mixin.networking;
 
-import net.minecraftforge.fml.network.FMLLoginWrapper;
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;

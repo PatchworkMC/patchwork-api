@@ -125,31 +125,31 @@ public class PacketDistributor<T> {
 	}
 
 	private Consumer<Packet<?>> playerListPointConsumer(final Supplier<TargetPoint> targetPointSupplier) {
-		return p -> {
+		return packet -> {
 			final TargetPoint tp = targetPointSupplier.get();
-			getServer().getPlayerManager().sendToAround(tp.excluded, tp.x, tp.y, tp.z, tp.r2, tp.dim, p);
+			getServer().getPlayerManager().sendToAround(tp.excluded, tp.x, tp.y, tp.z, tp.r2, tp.dim, packet);
 		};
 	}
 
 	private Consumer<Packet<?>> trackingEntity(final Supplier<Entity> entitySupplier) {
-		return p -> {
+		return packet -> {
 			final Entity entity = entitySupplier.get();
-			((ServerChunkManager) entity.getEntityWorld().getChunkManager()).sendToOtherNearbyPlayers(entity, p);
+			((ServerChunkManager) entity.getEntityWorld().getChunkManager()).sendToOtherNearbyPlayers(entity, packet);
 		};
 	}
 
 	private Consumer<Packet<?>> trackingEntityAndSelf(final Supplier<Entity> entitySupplier) {
-		return p -> {
+		return packet -> {
 			final Entity entity = entitySupplier.get();
-			((ServerChunkManager) entity.getEntityWorld().getChunkManager()).sendToNearbyPlayers(entity, p);
+			((ServerChunkManager) entity.getEntityWorld().getChunkManager()).sendToNearbyPlayers(entity, packet);
 		};
 	}
 
 	private Consumer<Packet<?>> trackingChunk(final Supplier<WorldChunk> chunkPosSupplier) {
-		return p -> {
+		return packet -> {
 			final WorldChunk chunk = chunkPosSupplier.get();
 			((ServerChunkManager) chunk.getWorld().getChunkManager()).threadedAnvilChunkStorage.getPlayersWatchingChunk(chunk.getPos(), false)
-				.forEach(e -> e.networkHandler.sendPacket(p));
+				.forEach(e -> e.networkHandler.sendPacket(packet));
 		};
 	}
 

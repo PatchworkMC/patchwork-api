@@ -196,9 +196,9 @@ public class NetworkEvent extends Event {
 		 */
 		@Nullable
 		public ServerPlayerEntity getSender() {
-			PacketListener packet = clientConnection.getPacketListener();
-			if (packet instanceof ServerPlayNetworkHandler) {
-				ServerPlayNetworkHandler netHandlerPlayServer = (ServerPlayNetworkHandler) packet;
+			PacketListener listener = clientConnection.getPacketListener();
+			if (listener instanceof ServerPlayNetworkHandler) {
+				ServerPlayNetworkHandler netHandlerPlayServer = (ServerPlayNetworkHandler) listener;
 				return netHandlerPlayServer.player;
 			}
 			return null;
