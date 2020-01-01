@@ -19,13 +19,10 @@
 
 package com.patchworkmc.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -35,54 +32,18 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import com.patchworkmc.api.ForgeInitializer;
-import com.patchworkmc.impl.registries.RegistryClassMapping;
+import com.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
-
-	private static void dispatchRegistryEvents(Map<ForgeInitializer, FMLModContainer> mods) {
-		// verify supers
-
-		List<Identifier> registries = new ArrayList<>(Registry.REGISTRIES.getIds());
-
-		registries.remove(Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.remove(Registry.REGISTRIES.getId(Registry.ITEM));
-
-		registries.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
-
-		registries.add(0, Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.add(1, Registry.REGISTRIES.getId(Registry.ITEM));
-
-		LOGGER.info("Dispatching registry events for: " + registries);
-
-		for (Identifier identifier : registries) {
-			Registry registry = Registry.REGISTRIES.get(identifier);
-			Class superType = RegistryClassMapping.getClass(identifier);
-
-			ForgeRegistry forgeRegistry = new ForgeRegistry(identifier, registry, superType);
-
-			// Note: this checks to see if supers is correct
-			/*for(Map.Entry<Identifier, Object> entry: (Set<Map.Entry<Identifier, Object>>)forgeRegistry.getEntries()) {
-				if(!superType.isAssignableFrom(entry.getValue().getClass())) {
-					System.err.println("Bad registry type for " + identifier + " (" + entry.getKey() + ")");
-					throw new RuntimeException();
-				}
-			}*/
-
-			dispatch(mods, new RegistryEvent.Register(forgeRegistry));
-		}
-	}
 
 	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Event event) {
 		for (Map.Entry<ForgeInitializer, FMLModContainer> entry : mods.entrySet()) {
@@ -99,6 +60,8 @@ public class Patchwork implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ForgeRegistries.init();
+
 		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
 
 		// Construct forge mods
@@ -117,7 +80,8 @@ public class Patchwork implements ModInitializer {
 		}
 
 		// Send initialization events
-		dispatchRegistryEvents(mods);
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+
 		// TODO: One per modcontainer
 		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft")));
 		dispatch(mods, new InterModEnqueueEvent(new ModContainer("minecraft")));

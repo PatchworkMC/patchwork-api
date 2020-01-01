@@ -29,6 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -152,11 +154,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 	}
 
 	@Override
-	public <T> T getSlaveMap(Identifier slaveMapName, Class<T> type) {
-		return null;
-	}
-
-	@Override
+	@Nonnull
 	public Iterator<V> iterator() {
 		return vanilla.stream().iterator();
 	}
@@ -186,6 +184,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		}
 
 		@Override
+		@SuppressWarnings("rawtypes")
 		public boolean equals(Object o) {
 			if (o == this) {
 				return true;
