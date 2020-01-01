@@ -49,7 +49,9 @@ public class MixinShearsItem extends Item {
 
 	@Override
 	public boolean useOnEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity entity, Hand hand) {
-		if (entity.world.isClient) return false;
+		if (entity.world.isClient) {
+			return false;
+		}
 
 		if (entity instanceof IShearable) {
 			IShearable target = (IShearable) entity;

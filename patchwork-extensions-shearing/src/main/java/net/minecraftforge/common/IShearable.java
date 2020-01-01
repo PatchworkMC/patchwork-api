@@ -30,13 +30,10 @@ import net.minecraft.world.ViewableWorld;
 /**
  * This allows for mods to create their own Shear-like items
  * and have them interact with entities without extra work.
- * Also, if your block/entity supports the Shears, this allows you
+ * Also, if your block/entity supports shears, this allows you
  * to support mod-shears as well.
  */
-//TODO Change to World, not IWorldReader and make Implementor responsible for removing itself from the world.
-//Better mimics vanilla behavior and allows more control for the user.
-
-@Deprecated //TODO: Reevaluate the entire thing, loot from blocks is now a loot table. So this is just a marker now.
+@Deprecated
 public interface IShearable {
 	/**
 	 * Checks if the object is currently shearable.

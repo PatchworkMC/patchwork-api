@@ -25,6 +25,7 @@ import java.util.Map;
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -74,23 +75,28 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 
 	@Override
 	public List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {
-		List<ItemStack> ret = new java.util.ArrayList<>();
+		List<ItemStack> drops = new java.util.ArrayList<>();
 
 		if (!this.world.isClient) {
 			this.setSheared(true);
-			int i = 1 + this.random.nextInt(3);
+			int count = 1 + this.random.nextInt(3);
 
-			for (int j = 0; j < i; ++j) {
-				ret.add(new ItemStack(DROPS.get(this.getColor())));
+			for (int i = 0; i < count; ++i) {
+				drops.add(new ItemStack(DROPS.get(this.getColor())));
 			}
 		}
 
 		this.playSound(SoundEvents.ENTITY_SHEEP_SHEAR, 1.0F, 1.0F);
-		return ret;
+		return drops;
 	}
 
-	@Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-	protected void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<Boolean> info) {
-		info.setReturnValue(false);
+	/**
+	 * @reason The original patch only required a cancellation at the HEAD, but @Overwrite was chosen to make
+	 * mod incompatibility easier to find.
+	 * @author SuperCoder79
+	 */
+	@Overwrite
+	public boolean interactMob(PlayerEntity player, Hand hand) {
+		return false;
 	}
 }
