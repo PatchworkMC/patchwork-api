@@ -58,7 +58,7 @@ public interface IShearable {
 	 * except for dropping of the items, and removal of the block.
 	 * Those functions are handled by {@link net.minecraft.item.ShearsItem} itself.
 	 *
-	 * <p>Returns a list of items that resulted from the shearing process.
+	 * <p>Returns a list of items to be dropped as a result of the shearing process.</p>
 	 *
 	 * <p>For entities, they should trust their internal location information
 	 * over the values passed into this function.</p>
