@@ -58,7 +58,7 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 
 	@Override
 	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
-		List<ItemStack> ret = new ArrayList<>();
+		List<ItemStack> drops = new ArrayList<>();
 		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double) (this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
 
 		if (!this.world.isClient) {
@@ -76,12 +76,12 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 			this.world.spawnEntity(cow);
 
 			for (int i = 0; i < 5; ++i) { //Fixes forge bug where shearing brown mooshrooms always drop red mushrooms
-				ret.add(new ItemStack(this.getMooshroomType().getMushroomState().getBlock()));
+				drops.add(new ItemStack(this.getMooshroomType().getMushroomState().getBlock()));
 			}
 
 			this.playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1.0F, 1.0F);
 		}
 
-		return ret;
+		return drops;
 	}
 }
