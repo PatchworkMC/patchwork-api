@@ -63,7 +63,7 @@ public interface IShearable {
 	 * <p>For entities, they should trust there internal location information
 	 * over the values passed into this function.</p>
 	 *
-	 * @param item    The ItemStack that is being used, may be empty.
+	 * @param item    The {@link ItemStack} that is being used, may be empty.
 	 * @param world   The current world.
 	 * @param pos     If this is a block, the block's position in world.
 	 * @param fortune The fortune level of the shears being used.
