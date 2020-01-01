@@ -23,35 +23,34 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
 /**
- * LivingAttackEvent is fired when a living Entity is attacked.
+ * <p>LivingHurtEvent is fired when an Entity is set to be hurt.
+ * This event is fired whenever an Entity is hurt in
+ * {@link LivingEntity#applyDamage(DamageSource, float)} and
+ * {@link net.minecraft.entity.player.PlayerEntity#applyDamage(DamageSource, float)}.</p>
  *
- * <p>This event is fired whenever a {@link LivingEntity} is attacked in
- * {@link LivingEntity#damage(DamageSource, float)} and
- * {@link net.minecraft.entity.player.PlayerEntity#damage(DamageSource, float)}.</p>
+ * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingHurt(LivingEntity, DamageSource, float)}.</p>
  *
- * <p>This event is fired via the {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingAttack(EntityLivingBase, DamageSource, float)}.</p>
- *
- * <p>{@link #source} contains the {@link DamageSource} of the attack.
- * {@link #amount} contains the amount of damage dealt to the entity.</p>
+ * <p>{@link #source} contains the {@link DamageSource} that caused this {@link LivingEntity} to be hurt.
+ * {@link #amount} contains the amount of damage dealt to the {@link LivingEntity} that was hurt.</p>
  *
  * <p>This event is cancellable.
- * If this event is canceled, the {@link LivingEntity} does not take attack damage.</p>
+ * If this event is canceled, the Entity is not hurt.</p>
  *
  * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
  */
-public class LivingAttackEvent extends LivingEvent {
+public class LivingHurtEvent extends LivingEvent {
 	private final DamageSource source;
-	private final float damage;
-
-	public LivingAttackEvent() {
+	private float amount;
+	// For EventBus
+	public LivingHurtEvent() {
 		this.source = null;
-		this.damage = 0f;
+		this.amount = 0;
 	}
 
-	public LivingAttackEvent(LivingEntity entity, DamageSource source, float damage) {
+	public LivingHurtEvent(LivingEntity entity, DamageSource source, float amount) {
 		super(entity);
 		this.source = source;
-		this.damage = damage;
+		this.amount = amount;
 	}
 
 	public DamageSource getSource() {
@@ -59,7 +58,11 @@ public class LivingAttackEvent extends LivingEvent {
 	}
 
 	public float getAmount() {
-		return damage;
+		return amount;
+	}
+
+	public void setAmount(float amount) {
+		this.amount = amount;
 	}
 
 	@Override
