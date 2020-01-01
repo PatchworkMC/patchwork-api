@@ -21,7 +21,7 @@ public class PacketDispatcher {
 	}
 
 	private PacketDispatcher() {
-
+		// NO-OP; cannot call package-private constructor due to Java limitations
 	}
 
 	public void sendPacket(Identifier identifier, PacketByteBuf buffer) {
@@ -29,20 +29,20 @@ public class PacketDispatcher {
 	}
 
 	static class NetworkManagerDispatcher extends PacketDispatcher {
-		private final ClientConnection manager;
+		private final ClientConnection connection;
 		private final int packetIndex;
 		private final BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier;
 
-		NetworkManagerDispatcher(ClientConnection manager, int packetIndex, BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier) {
-			super(this::dispatchPacket);
-			this.manager = manager;
+		NetworkManagerDispatcher(ClientConnection connection, int packetIndex, BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier) {
+			super();
+			this.connection = connection;
 			this.packetIndex = packetIndex;
 			this.customPacketSupplier = customPacketSupplier;
 		}
 
-		private void dispatchPacket(final Identifier resourceLocation, final PacketByteBuf buffer) {
-			final ICustomPacket<?> packet = this.customPacketSupplier.apply(Pair.of(buffer, packetIndex), resourceLocation);
-			this.manager.send(packet.getThis());
+		private void dispatchPacket(final Identifier connection, final PacketByteBuf buffer) {
+			final ICustomPacket<?> packet = this.customPacketSupplier.apply(Pair.of(buffer, packetIndex), connection);
+			this.connection.send(packet.getThis());
 		}
 	}
 }

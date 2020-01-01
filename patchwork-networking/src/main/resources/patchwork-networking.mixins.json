@@ -4,11 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ClientConnectionAccessor",
-    "ThreadExecutorAccessor",
     "MixinCustomPayloadC2SPacket",
     "MixinCustomPayloadS2CPacket",
     "MixinLoginQueryRequestS2CPacket",
     "MixinLoginQueryResponseC2SPacket",
+    "ThreadExecutorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
