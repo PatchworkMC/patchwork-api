@@ -62,6 +62,7 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 		List<ItemStack> ret = new ArrayList<>();
 		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double) (this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
 
+		
 		if (!this.world.isClient) {
 			this.remove();
 

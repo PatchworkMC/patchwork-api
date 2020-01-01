@@ -38,7 +38,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.ViewableWorld;
 
 /**
- * Extends SnowGolemEntity to make it shearable if it has its pumpkin. On shearing, the pumpkin will be gone.
+ * Patches {@link SnowGolemEntity} to use {@link IShearable} for removing its pumpkin. The pumpkin will not be dropped as an item. This patch cancels the vanilla shearing code.
  *
  * @author SuperCoder79
  */

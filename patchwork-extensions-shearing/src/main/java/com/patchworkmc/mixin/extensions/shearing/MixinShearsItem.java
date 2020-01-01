@@ -37,7 +37,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * Patch ShearsItem to allow it to shear any IShearable.
+ * Patch {@link ShearsItem} to allow it to shear any {@link IShearable}.
  *
  * @author SuperCoder79
  */
