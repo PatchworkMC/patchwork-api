@@ -31,7 +31,6 @@ import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -62,20 +61,19 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 		List<ItemStack> ret = new ArrayList<>();
 		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double) (this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
 
-		
 		if (!this.world.isClient) {
 			this.remove();
 
-			CowEntity entityCow = EntityType.COW.create(this.world);
-			entityCow.setPositionAndAngles(this.x, this.y, this.z, this.yaw, this.pitch);
-			entityCow.setHealth(this.getHealth());
-			entityCow.field_6283 = this.field_6283;
+			CowEntity cow = EntityType.COW.create(this.world);
+			cow.setPositionAndAngles(this.x, this.y, this.z, this.yaw, this.pitch);
+			cow.setHealth(this.getHealth());
+			cow.field_6283 = this.field_6283;
 
 			if (this.hasCustomName()) {
-				entityCow.setCustomName(this.getCustomName());
+				cow.setCustomName(this.getCustomName());
 			}
 
-			((ServerWorld) this.world).loadEntity(entityCow);
+			this.world.spawnEntity(cow);
 
 			for (int i = 0; i < 5; ++i) { //Fixes forge bug where shearing brown mooshrooms always drop red mushrooms
 				ret.add(new ItemStack(this.getMooshroomType().getMushroomState().getBlock()));
