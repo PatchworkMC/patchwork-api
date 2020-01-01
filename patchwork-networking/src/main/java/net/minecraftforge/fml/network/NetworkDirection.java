@@ -70,7 +70,6 @@ public enum NetworkDirection {
 
 	public LogicalSide getReceptionSide() { return reply().logicalSide; }
 
-	;
 
 	public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketByteBuf, Integer> packetData, Identifier channelName) {
 		ICustomPacket<T> packet = null;
