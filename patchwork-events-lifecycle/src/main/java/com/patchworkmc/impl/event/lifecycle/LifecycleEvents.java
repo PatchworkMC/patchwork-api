@@ -22,11 +22,15 @@ package com.patchworkmc.impl.event.lifecycle;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 
 public class LifecycleEvents implements ModInitializer {
@@ -45,8 +49,33 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
 	}
 
+	public static void handleServerStarting(final MinecraftServer server) {
+		// TODO: Forge loads language data here. I haven't found any mods that use this behavior.
+
+		if (MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server))) {
+			throw new UnsupportedOperationException("FMLServerStartingEvent is not cancellable!");
+		}
+	}
+
+	public static void handleServerStarted(final MinecraftServer server) {
+		MinecraftForge.EVENT_BUS.post(new FMLServerStartedEvent(server));
+	}
+
 	@Override
 	public void onInitialize() {
 		WorldTickCallback.EVENT.register(world -> fireWorldTickEvent(TickEvent.Phase.END, world));
+
+		ServerStartCallback.EVENT.register(server -> {
+			String motdBefore = server.getServerMotd();
+			handleServerStarted(server);
+			String motdAfter = server.getServerMotd();
+
+			if (!motdBefore.equals(motdAfter)) {
+				// TODO: If a mod tries to set the server's motd field here, behavior may differ.
+				// I'm leaving this here because I haven't found any mods that actually do this.
+
+				throw new UnsupportedOperationException("A mod tried to set the server's motd during handling FMLServerStartedEvent, this isn't implemented yet.");
+			}
+		});
 	}
 }
