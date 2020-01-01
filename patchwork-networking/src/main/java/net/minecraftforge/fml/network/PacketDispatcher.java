@@ -34,8 +34,7 @@ public class PacketDispatcher {
 		private final BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier;
 
 		NetworkManagerDispatcher(ClientConnection manager, int packetIndex, BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier) {
-			super();
-			this.packetSink = this::dispatchPacket;
+			super(this::dispatchPacket);
 			this.manager = manager;
 			this.packetIndex = packetIndex;
 			this.customPacketSupplier = customPacketSupplier;

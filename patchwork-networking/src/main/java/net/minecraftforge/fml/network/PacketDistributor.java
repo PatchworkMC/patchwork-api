@@ -57,13 +57,13 @@ public class PacketDistributor<T> {
 	 */
 	public static final PacketDistributor<Void> SERVER = new PacketDistributor<>(PacketDistributor::clientToServer, NetworkDirection.PLAY_TO_SERVER);
 	/**
-	 * Send to all tracking the Entity in the Supplier
+	 * Send to all tracking the {@link Entity} in the Supplier
 	 * <br/>
 	 * {@link #with(Supplier)} Entity
 	 */
 	public static final PacketDistributor<Entity> TRACKING_ENTITY = new PacketDistributor<>(PacketDistributor::trackingEntity, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to all tracking the Entity and Player in the Supplier
+	 * Send to all tracking the {@link Entity} and {@link Player} in the Supplier
 	 * <br/>
 	 * {@link #with(Supplier)} Entity
 	 */
@@ -75,9 +75,9 @@ public class PacketDistributor<T> {
 	 */
 	public static final PacketDistributor<WorldChunk> TRACKING_CHUNK = new PacketDistributor<>(PacketDistributor::trackingChunk, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to the supplied list of NetworkManager instances in the Supplier
+	 * Send to the supplied list of {@link ClientConnection} instances in the Supplier
 	 * <br/>
-	 * {@link #with(Supplier)} List of NetworkManager
+	 * {@link #with(Supplier)} List of {@link ClientConnection}
 	 */
 	public static final PacketDistributor<List<ClientConnection>> NMLIST = new PacketDistributor<>(PacketDistributor::networkManagerList, NetworkDirection.PLAY_TO_CLIENT);
 	private final BiFunction<PacketDistributor<T>, Supplier<T>, Consumer<Packet<?>>> functor;
@@ -153,8 +153,8 @@ public class PacketDistributor<T> {
 		};
 	}
 
-	private Consumer<Packet<?>> networkManagerList(final Supplier<List<ClientConnection>> nmListSupplier) {
-		return p -> nmListSupplier.get().forEach(nm -> nm.send(p));
+	private Consumer<Packet<?>> networkManagerList(final Supplier<List<ClientConnection>> connections) {
+		return packet -> connections.get().forEach(connection -> connection.send(p));
 	}
 
 	private MinecraftServer getServer() {
@@ -173,7 +173,7 @@ public class PacketDistributor<T> {
 		/**
 		 * A target point with excluded entity
 		 *
-		 * @param excluded Entity to exclude
+		 * @param excluded the {@link ServerPlayerEntity} to exclude
 		 * @param x X
 		 * @param y Y
 		 * @param z Z
@@ -190,7 +190,7 @@ public class PacketDistributor<T> {
 		}
 
 		/**
-		 * A target point without excluded entity
+		 * A target point that does not exclude any entities
 		 * @param x X
 		 * @param y Y
 		 * @param z Z
@@ -207,7 +207,7 @@ public class PacketDistributor<T> {
 		}
 
 		/**
-		 * Helper to build a TargetPoint without excluded Entity
+		 * Helper to build a target point that does not exclude any entities
 		 * @param x X
 		 * @param y Y
 		 * @param z Z
