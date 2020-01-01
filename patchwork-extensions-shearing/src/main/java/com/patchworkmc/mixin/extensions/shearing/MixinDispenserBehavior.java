@@ -40,7 +40,7 @@ import net.minecraft.world.World;
 
 /**
  * Patches the inner class containing the logic for dispensers when using shears, to allow them to shear any
- * IShearable entity.
+ * {@link IShearable} entity.
  *
  * @author SuperCoder79
  */
