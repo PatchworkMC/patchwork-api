@@ -5,6 +5,8 @@
   "mixins": [
     "MixinLivingEntity",
     "MixinPlayerEntity",
+    "MixinPlayerManager",
+    "MixinServerPlayerEntity",
     "MixinServerWorld"
   ],
   "client": [

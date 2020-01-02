@@ -23,54 +23,21 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import com.patchworkmc.impl.event.entity.EntityEvents;
 
-@Mixin(PlayerEntity.class)
-public class MixinPlayerEntity {
-	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
+@Mixin(ServerPlayerEntity.class)
+public class MixinServerPlayerEntity {
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
 	private void hookDeath(DamageSource source, CallbackInfo callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
 		if (EntityEvents.onLivingDeath(entity, source)) {
 			callback.cancel();
-		}
-	}
-
-	@Inject(method = "interact", at = @At("HEAD"), cancellable = true)
-	private void hookInteractEntity(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> callback) {
-		PlayerEntity player = (PlayerEntity) (Object) this;
-
-		if (player.isSpectator()) {
-			return;
-		}
-
-		int tries = 1;
-
-		if (player.getEntityWorld().isClient) {
-			// TODO: Mimicking a stupid forge bug. They fire this *twice* on the client for some reason.
-			// I don't know why. It's hooked in ClientPlayerInteractionManager and in PlayerEntity.
-			// ClientPlayerInteractionManager just calls directly into PlayerEntity's version.
-
-			tries = 2;
-		}
-
-		for (int i = 0; i < tries; i++) {
-			ActionResult result = EntityEvents.onInteractEntity(player, entity, hand);
-
-			if (result != null) {
-				callback.setReturnValue(result);
-				return;
-			}
 		}
 	}
 }

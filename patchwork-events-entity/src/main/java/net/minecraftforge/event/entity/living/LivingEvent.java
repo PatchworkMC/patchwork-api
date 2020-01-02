@@ -54,25 +54,28 @@ public class LivingEvent extends EntityEvent {
 	 * <p>This event is fired whenever an Entity is updated in
 	 * {@link LivingEntity#tick()}.</p>
 	 *
-	 * <p>This event is fired in {@link net.minecraftforge.common.ForgeHooks#onLivingUpdate(LivingEntity)}.</p>
-	 *
 	 * <p>This event is cancellable.
 	 * If this event is canceled, the Entity does not update.</p>
 	 *
-	 * <p>This event is not cancellable.</p>
+	 * <p>This event does not have a result.</p>
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class LivingUpdateEvent extends LivingEvent {
-		public LivingUpdateEvent(LivingEntity e) {
-			super(e);
+	public static class LivingUpdateEvent extends LivingEvent {
+		// For EventBus
+		public LivingUpdateEvent() {
+			super();
+		}
+
+		public LivingUpdateEvent(LivingEntity entity) {
+			super(entity);
 		}
 
 		@Override
 		public boolean isCancelable() {
 			return true;
 		}
-	}*/
+	}
 
 	/**
 	 * LivingJumpEvent is fired when an Entity jumps.

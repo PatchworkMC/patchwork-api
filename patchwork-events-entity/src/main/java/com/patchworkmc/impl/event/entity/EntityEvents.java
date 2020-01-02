@@ -22,6 +22,8 @@ package com.patchworkmc.impl.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +33,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
@@ -54,8 +57,17 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
 	}
 
+	public static boolean onLivingUpdateEvent(LivingEntity entity) {
+		return MinecraftForge.EVENT_BUS.post(new LivingEvent.LivingUpdateEvent(entity));
+	}
+
 	public static boolean onEntityJoinWorld(Entity entity, World world) {
 		return MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, world));
+	}
+
+	// PlayerEvents
+	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
 
 	@Override

@@ -17,10 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.registries;
+package net.minecraftforge.fml.event.server;
 
-import net.minecraft.util.Identifier;
+import net.minecraftforge.eventbus.api.Event;
 
-public interface IForgeRegistryInternal<V extends IForgeRegistryEntry<V>> extends IForgeRegistry<V> {
-	void setSlaveMap(Identifier name, Object obj);
+import net.minecraft.server.MinecraftServer;
+
+public class ServerLifecycleEvent extends Event {
+	protected final MinecraftServer server;
+
+	// For Eventbus
+	public ServerLifecycleEvent() {
+		super();
+
+		server = null;
+	}
+
+	public ServerLifecycleEvent(MinecraftServer server) {
+		this.server = server;
+	}
+
+	public MinecraftServer getServer() {
+		return server;
+	}
 }

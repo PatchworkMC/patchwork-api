@@ -61,6 +61,21 @@ public class PlayerEvent extends LivingEvent {
 		return playerEntity;
 	}
 
+	/**
+	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
+	 * when the player has finished logging in.
+	 */
+	public static class PlayerLoggedInEvent extends PlayerEvent {
+		// For EventBus
+		public PlayerLoggedInEvent() {
+			super(null);
+		}
+
+		public PlayerLoggedInEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
@@ -74,7 +89,6 @@ public class PlayerEvent extends LivingEvent {
 	ItemPickupEvent
 	ItemCraftedEvent
 	ItemSmeltedEvent
-	PlayerLoggedInEvent
 	PlayerLoggedOutEvent
 	PlayerRespawnEvent
 	PlayerChangedDimensionEvent*/
