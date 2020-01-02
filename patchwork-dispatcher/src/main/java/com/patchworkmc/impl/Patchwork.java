@@ -25,9 +25,12 @@ import java.util.function.Function;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
@@ -36,6 +39,8 @@ import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.minecraft.client.MinecraftClient;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -51,10 +56,7 @@ public class Patchwork implements ModInitializer {
 	}
 
 	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Function<ModContainer, Event> provider) {
-		for (Map.Entry<ForgeInitializer, FMLModContainer> entry : mods.entrySet()) {
-			ForgeInitializer initializer = entry.getKey();
-
-			FMLModContainer container = new FMLModContainer(initializer.getModId());
+		for (FMLModContainer container : mods.values()) {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			container.getEventBus().post(provider.apply(container));
@@ -88,6 +90,19 @@ public class Patchwork implements ModInitializer {
 
 		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 		dispatch(mods, FMLCommonSetupEvent::new);
+		DistExecutor.runForDist(
+				() -> () -> {
+					dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
+
+					return "void isn't a valid return value...";
+				},
+				() -> () -> {
+					// TODO: Get the server, the LogicalSidedProvider that's needed for this to be done easily will be merged in the networking PR
+					dispatch(mods, container -> new FMLDedicatedServerSetupEvent(null, container));
+
+					return "void isn't a valid return value...";
+				}
+		);
 		dispatch(mods, InterModEnqueueEvent::new);
 		dispatch(mods, InterModProcessEvent::new);
 		dispatch(mods, FMLLoadCompleteEvent::new);
