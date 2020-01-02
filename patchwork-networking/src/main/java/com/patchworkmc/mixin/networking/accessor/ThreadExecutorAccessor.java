@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.networking;
+package com.patchworkmc.mixin.networking.accessor;
 
 import java.util.concurrent.CompletableFuture;
 

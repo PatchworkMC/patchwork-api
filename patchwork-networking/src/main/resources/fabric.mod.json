@@ -17,7 +17,9 @@
     "patchwork-fml": "*"
   },
   "mixins": [
-    "patchwork-networking.mixins.json"
+    "patchwork-networking.accessor.mixins.json",
+    "patchwork-networking.handler.mixins.json",
+    "patchwork-networking.packet.mixins.json"
   ],
   "description": "Implementation of the Forge Networking API.",
   "custom": {

@@ -18,8 +18,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.ThreadExecutor;
 
-import com.patchworkmc.mixin.networking.ClientConnectionAccessor;
-import com.patchworkmc.mixin.networking.ThreadExecutorAccessor;
+import com.patchworkmc.mixin.networking.accessor.ClientConnectionAccessor;
+import com.patchworkmc.mixin.networking.accessor.ThreadExecutorAccessor;
 
 public class NetworkEvent extends Event {
 	private final PacketByteBuf payload;

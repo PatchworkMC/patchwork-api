@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.networking;
+package com.patchworkmc.mixin.networking.accessor;
 
 import io.netty.channel.Channel;
 import org.spongepowered.asm.mixin.Mixin;

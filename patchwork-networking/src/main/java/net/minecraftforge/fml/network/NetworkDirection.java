@@ -18,10 +18,10 @@ import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-import com.patchworkmc.mixin.networking.MixinCustomPayloadC2SPacket;
-import com.patchworkmc.mixin.networking.MixinCustomPayloadS2CPacket;
-import com.patchworkmc.mixin.networking.MixinLoginQueryRequestS2CPacket;
-import com.patchworkmc.mixin.networking.MixinLoginQueryResponseC2SPacket;
+import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadC2SPacket;
+import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadS2CPacket;
+import com.patchworkmc.mixin.networking.packet.MixinLoginQueryRequestS2CPacket;
+import com.patchworkmc.mixin.networking.packet.MixinLoginQueryResponseC2SPacket;
 
 public enum NetworkDirection {
 	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, CustomPayloadC2SPacket.class, 1),

@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.networking;
+package com.patchworkmc.mixin.networking.packet;
 
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;

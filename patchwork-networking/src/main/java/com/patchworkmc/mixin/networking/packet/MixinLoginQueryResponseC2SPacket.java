@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.networking;
+package com.patchworkmc.mixin.networking.packet;
 
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -26,7 +26,7 @@ public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQuer
 	@Override
 	public Identifier getName() {
 		// Forge: return FMLLoginWrapper.WRAPPER if there is no channel
-		return FMLLoginWrapper.WRAPPER;
+		return new Identifier("fml:loginwrapper");
 	}
 
 	@Override
