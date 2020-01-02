@@ -211,7 +211,7 @@ public class NetworkEvent extends Event {
 		}
 
 		public <T> Attribute<T> attr(AttributeKey<T> key) {
-			return ((ClientConnectionAccessor) clientConnection).getChannel().attr(key);
+			return ((ClientConnectionAccessor) clientConnection).patchwork$getChannel().attr(key);
 		}
 
 		public boolean getPacketHandled() {
@@ -228,7 +228,7 @@ public class NetworkEvent extends Event {
 			// Same logic as ThreadTaskExecutor#runImmediately without the join
 			if (!executor.isOnThread()) {
 				// Use the internal method so thread check isn't done twice
-				return ((ThreadExecutorAccessor) executor).executeFuture(runnable);
+				return ((ThreadExecutorAccessor) executor).patchwork$executeFuture(runnable);
 			} else {
 				runnable.run();
 				return CompletableFuture.completedFuture(null);

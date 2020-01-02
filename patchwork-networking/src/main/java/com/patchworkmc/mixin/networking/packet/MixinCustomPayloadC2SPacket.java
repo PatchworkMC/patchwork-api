@@ -20,7 +20,7 @@ public class MixinCustomPayloadC2SPacket implements ICustomPacket<CustomPayloadC
 
 	@Override
 	public PacketByteBuf getInternalData() {
-		return data;
+		return new PacketByteBuf(this.data.copy());
 	}
 
 	@Override

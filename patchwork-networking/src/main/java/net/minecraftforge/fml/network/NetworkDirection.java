@@ -22,10 +22,6 @@ import com.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
 import com.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
 import com.patchworkmc.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
 import com.patchworkmc.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
-import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadC2SPacket;
-import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadS2CPacket;
-import com.patchworkmc.mixin.networking.packet.MixinLoginQueryRequestS2CPacket;
-import com.patchworkmc.mixin.networking.packet.MixinLoginQueryResponseC2SPacket;
 
 public enum NetworkDirection {
 	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, CustomPayloadC2SPacket.class, 1),
@@ -79,13 +75,13 @@ public enum NetworkDirection {
 		ICustomPacket<T> packet = null;
 		Class<? extends Packet> packetClass = getPacketClass();
 		if(packetClass.equals(CustomPayloadC2SPacket.class)) {
-			packet = (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.create();
+			packet = (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.patchwork$create();
 		} else if (packetClass.equals(CustomPayloadS2CPacket.class)) {
-			packet = (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.create();
+			packet = (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.patchwork$create();
 		} else if (packetClass.equals(LoginQueryRequestS2CPacket.class)) {
-			packet = (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.create();
+			packet = (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
 		} else if (packetClass.equals(LoginQueryResponseC2SPacket.class)) {
-			packet = (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.create();
+			packet = (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
 		}
 		packet.setName(channelName);
 		packet.setData(packetData.getLeft());

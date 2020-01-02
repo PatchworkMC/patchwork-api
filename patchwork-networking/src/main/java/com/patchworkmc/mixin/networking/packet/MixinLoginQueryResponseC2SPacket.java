@@ -20,7 +20,7 @@ public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQuer
 
 	@Override
 	public PacketByteBuf getInternalData() {
-		return response;
+		return new PacketByteBuf(this.response.copy());
 	}
 
 	@Override

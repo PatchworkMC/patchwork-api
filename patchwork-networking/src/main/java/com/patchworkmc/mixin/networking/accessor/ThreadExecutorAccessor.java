@@ -10,5 +10,5 @@ import net.minecraft.util.ThreadExecutor;
 @Mixin(ThreadExecutor.class)
 public interface ThreadExecutorAccessor {
 	@Invoker("executeFuture")
-	public CompletableFuture<Void> executeFuture(Runnable runnable);
+	public CompletableFuture<Void> patchwork$executeFuture(Runnable runnable);
 }

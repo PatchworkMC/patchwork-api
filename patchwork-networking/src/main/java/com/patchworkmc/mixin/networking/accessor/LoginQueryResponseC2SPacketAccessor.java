@@ -9,7 +9,7 @@ import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 public interface LoginQueryResponseC2SPacketAccessor {
 	@SuppressWarnings("PublicStaticMixinMember")
 	@Invoker("<init>")
-	public static LoginQueryResponseC2SPacket create() {
+	public static LoginQueryResponseC2SPacket patchwork$create() {
 		throw new AssertionError("Mixin not applied");
 	}
 }

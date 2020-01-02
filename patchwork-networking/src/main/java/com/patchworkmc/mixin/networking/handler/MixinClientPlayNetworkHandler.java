@@ -22,7 +22,7 @@ public abstract class MixinClientPlayNetworkHandler {
 	public abstract ClientConnection getConnection();
 
 	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
-	private void hookCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo callback) {
+	private void patchwork$hookCustomPayload(CustomPayloadS2CPacket packet, CallbackInfo callback) {
 		if(NetworkHooks.onCustomPayload((ICustomPacket<?>) packet, getConnection())) {
 			callback.cancel();
 		}

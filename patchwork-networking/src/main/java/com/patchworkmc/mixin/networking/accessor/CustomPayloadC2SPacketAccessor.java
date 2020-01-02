@@ -9,7 +9,7 @@ import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 public interface CustomPayloadC2SPacketAccessor {
 	@SuppressWarnings("PublicStaticMixinMember")
 	@Invoker("<init>")
-	public static CustomPayloadC2SPacket create() {
+	public static CustomPayloadC2SPacket patchwork$create() {
 		throw new AssertionError("Mixin not applied");
 	}
 }

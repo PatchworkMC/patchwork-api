@@ -9,7 +9,7 @@ import net.minecraft.client.network.packet.LoginQueryRequestS2CPacket;
 public interface LoginQueryRequestS2CPacketAccessor {
 	@SuppressWarnings("PublicStaticMixinMember")
 	@Invoker("<init>")
-	public static LoginQueryRequestS2CPacket create() {
+	public static LoginQueryRequestS2CPacket patchwork$create() {
 		throw new AssertionError("Mixin not applied");
 	}
 }

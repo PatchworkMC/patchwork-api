@@ -10,7 +10,7 @@ public interface CustomPayloadS2CPacketAccessor {
 
 	@SuppressWarnings("PublicStaticMixinMember")
 	@Invoker("<init>")
-	public static CustomPayloadS2CPacket create() {
+	public static CustomPayloadS2CPacket patchwork$create() {
 		throw new AssertionError("Mixin not applied");
 	}
 }
