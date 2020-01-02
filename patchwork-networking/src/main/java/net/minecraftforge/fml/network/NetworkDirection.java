@@ -18,6 +18,10 @@ import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
+import com.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
+import com.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
+import com.patchworkmc.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
+import com.patchworkmc.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
 import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadC2SPacket;
 import com.patchworkmc.mixin.networking.packet.MixinCustomPayloadS2CPacket;
 import com.patchworkmc.mixin.networking.packet.MixinLoginQueryRequestS2CPacket;
@@ -75,13 +79,13 @@ public enum NetworkDirection {
 		ICustomPacket<T> packet = null;
 		Class<? extends Packet> packetClass = getPacketClass();
 		if(packetClass.equals(CustomPayloadC2SPacket.class)) {
-			packet = (ICustomPacket<T>) MixinCustomPayloadC2SPacket.create();
+			packet = (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.create();
 		} else if (packetClass.equals(CustomPayloadS2CPacket.class)) {
-			packet = (ICustomPacket<T>) MixinCustomPayloadS2CPacket.create();
+			packet = (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.create();
 		} else if (packetClass.equals(LoginQueryRequestS2CPacket.class)) {
-			packet = (ICustomPacket<T>) MixinLoginQueryRequestS2CPacket.create();
+			packet = (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.create();
 		} else if (packetClass.equals(LoginQueryResponseC2SPacket.class)) {
-			packet = (ICustomPacket<T>) MixinLoginQueryResponseC2SPacket.create();
+			packet = (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.create();
 		}
 		packet.setName(channelName);
 		packet.setData(packetData.getLeft());

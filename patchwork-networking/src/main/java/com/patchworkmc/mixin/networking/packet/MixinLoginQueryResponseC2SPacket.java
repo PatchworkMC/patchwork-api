@@ -51,16 +51,11 @@ public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQuer
 
 	@Override
 	public NetworkDirection getDirection() {
-		return NetworkDirection.LOGIN_TO_CLIENT;
+		return NetworkDirection.LOGIN_TO_SERVER;
 	}
 
 	@Override
 	public LoginQueryResponseC2SPacket getThis() {
 		return (LoginQueryResponseC2SPacket) (Object) this;
-	}
-	@SuppressWarnings("PublicStaticMixinMember")
-	@Invoker("<init>")
-	public static LoginQueryResponseC2SPacket create() {
-		throw new AssertionError("Mixin not applied");
 	}
 }

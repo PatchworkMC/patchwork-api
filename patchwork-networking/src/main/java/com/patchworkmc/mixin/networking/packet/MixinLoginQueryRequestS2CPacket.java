@@ -60,10 +60,4 @@ public class MixinLoginQueryRequestS2CPacket implements ICustomPacket<LoginQuery
 	public LoginQueryRequestS2CPacket getThis() {
 		return (LoginQueryRequestS2CPacket) (Object) this;
 	}
-
-	@SuppressWarnings("PublicStaticMixinMember")
-	@Invoker("<init>")
-	public static LoginQueryRequestS2CPacket create() {
-		throw new AssertionError("Mixin not applied");
-	}
 }

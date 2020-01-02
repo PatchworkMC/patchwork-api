@@ -58,10 +58,4 @@ public class MixinCustomPayloadC2SPacket implements ICustomPacket<CustomPayloadC
 	public CustomPayloadC2SPacket getThis() {
 		return (CustomPayloadC2SPacket) (Object) this;
 	}
-
-	@SuppressWarnings("PublicStaticMixinMember")
-	@Invoker("<init>")
-	public static CustomPayloadC2SPacket create() {
-		throw new AssertionError("Mixin not applied");
-	}
 }
