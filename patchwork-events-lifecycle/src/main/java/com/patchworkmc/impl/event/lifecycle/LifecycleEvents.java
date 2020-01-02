@@ -71,7 +71,10 @@ public class LifecycleEvents implements ModInitializer {
 			String motdAfter = server.getServerMotd();
 
 			if (!motdBefore.equals(motdAfter)) {
-				// TODO: If a mod tries to set the server's motd field here, behavior may differ.
+				// TODO: If a mod tries to set the server's motd field here, behavior may differ,
+				// because of differences between where ServerStartCallback and FMLServerStartedEvent are fired.
+				// Technically, if a mod set the motd in the event on Forge, it would become part of the metadata
+				// but, ServerStartCallback happens a few calls after that, once the motd has already been set in the metadata
 				// I'm leaving this here because I haven't found any mods that actually do this.
 
 				throw new UnsupportedOperationException("A mod tried to set the server's motd during handling FMLServerStartedEvent, this isn't implemented yet.");
