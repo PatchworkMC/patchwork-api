@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.network;
 
 import java.util.List;
@@ -20,7 +39,7 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
 
 /**
- * Means to distribute packets in various ways
+ * Means to distribute packets in various ways.
  *
  * @see net.minecraftforge.fml.network.simple.SimpleChannel#send(PacketTarget, Object)
  *
@@ -28,55 +47,55 @@ import net.minecraft.world.dimension.DimensionType;
  */
 public class PacketDistributor<T> {
 	/**
-	 * Send to the player specified in the {@link Supplier}
+	 * Send to the player specified in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} Player</p>
 	 */
 	public static final PacketDistributor<ServerPlayerEntity> PLAYER = new PacketDistributor<>(PacketDistributor::playerConsumer, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to everyone in the dimension specified in the {@link Supplier}
+	 * Send to everyone in the dimension specified in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} DimensionType</p>
 	 */
 	public static final PacketDistributor<DimensionType> DIMENSION = new PacketDistributor<>(PacketDistributor::playerListDimConsumer, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to everyone near the {@link TargetPoint} specified in the {@link Supplier}
+	 * Send to everyone near the {@link TargetPoint} specified in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} TargetPoint</p>
 	 */
 	public static final PacketDistributor<TargetPoint> NEAR = new PacketDistributor<>(PacketDistributor::playerListPointConsumer, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to everyone
+	 * Send to everyone.
 	 *
 	 * <p>{@link #noArg()}</p>
 	 */
 	public static final PacketDistributor<Void> ALL = new PacketDistributor<>(PacketDistributor::playerListAll, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to the server (CLIENT to SERVER)
+	 * Send to the server (CLIENT to SERVER).
 	 *
 	 * <p>{@link #noArg()}</p>
 	 */
 	public static final PacketDistributor<Void> SERVER = new PacketDistributor<>(PacketDistributor::clientToServer, NetworkDirection.PLAY_TO_SERVER);
 	/**
-	 * Send to all tracking the {@link Entity} in the {@link Supplier}
+	 * Send to all tracking the {@link Entity} in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} Entity</p>
 	 */
 	public static final PacketDistributor<Entity> TRACKING_ENTITY = new PacketDistributor<>(PacketDistributor::trackingEntity, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to all tracking the {@link Entity} and {@link PlayerEntity} in the {@link Supplier}
+	 * Send to all tracking the {@link Entity} and {@link PlayerEntity} in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} Entity</p>
 	 */
 	public static final PacketDistributor<Entity> TRACKING_ENTITY_AND_SELF = new PacketDistributor<>(PacketDistributor::trackingEntityAndSelf, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to all tracking the {@link WorldChunk} in the {@link Supplier}
+	 * Send to all tracking the {@link WorldChunk} in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} Chunk</p>
 	 */
 	public static final PacketDistributor<WorldChunk> TRACKING_CHUNK = new PacketDistributor<>(PacketDistributor::trackingChunk, NetworkDirection.PLAY_TO_CLIENT);
 	/**
-	 * Send to the supplied list of {@link ClientConnection} instances in the {@link Supplier}
+	 * Send to the supplied list of {@link ClientConnection} instances in the {@link Supplier}.
 	 *
 	 * <p>{@link #with(Supplier)} List of {@link ClientConnection}</p>
 	 */
@@ -109,6 +128,7 @@ public class PacketDistributor<T> {
 		return new PacketTarget(functor.apply(this, () -> null), this);
 	}
 
+	// CHECKSTYLE.OFF: Indentation - lambda returns are broken
 	private Consumer<Packet<?>> playerConsumer(final Supplier<ServerPlayerEntity> player) {
 		return packet -> player.get().networkHandler.client.send(packet);
 	}
@@ -162,8 +182,8 @@ public class PacketDistributor<T> {
 		return LogicalSidedProvider.INSTANCE.get(LogicalSide.SERVER);
 	}
 
+	// CHECKSTYLE.ON: Indentation
 	public static final class TargetPoint {
-
 		private final ServerPlayerEntity excluded;
 		private final double x;
 		private final double y;
@@ -172,7 +192,7 @@ public class PacketDistributor<T> {
 		private final DimensionType dim;
 
 		/**
-		 * A target point with excluded entity
+		 * A target point with excluded entity.
 		 *
 		 * @param excluded the {@link ServerPlayerEntity} to exclude
 		 * @param x X
@@ -191,7 +211,7 @@ public class PacketDistributor<T> {
 		}
 
 		/**
-		 * A target point that does not exclude any entities
+		 * A target point that does not exclude any entities.
 		 * @param x X
 		 * @param y Y
 		 * @param z Z
@@ -208,7 +228,7 @@ public class PacketDistributor<T> {
 		}
 
 		/**
-		 * Helper to build a target point that does not exclude any entities
+		 * Helper to build a target point that does not exclude any entities.
 		 * @param x X
 		 * @param y Y
 		 * @param z Z
@@ -220,11 +240,10 @@ public class PacketDistributor<T> {
 			TargetPoint tp = new TargetPoint(x, y, z, r2, dim);
 			return () -> tp;
 		}
-
 	}
 
 	/**
-	 * A Distributor curried with a specific value instance, for actual dispatch
+	 * A Distributor curried with a specific value instance, for actual dispatch.
 	 *
 	 * @see net.minecraftforge.fml.network.simple.SimpleChannel#send(PacketTarget, Object)
 	 *
@@ -245,6 +264,5 @@ public class PacketDistributor<T> {
 		public NetworkDirection getDirection() {
 			return this.direction;
 		}
-
 	}
 }

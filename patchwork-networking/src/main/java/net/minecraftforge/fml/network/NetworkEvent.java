@@ -1,8 +1,28 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.network;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import io.netty.util.Attribute;
@@ -33,6 +53,7 @@ public class NetworkEvent extends Event {
 		this.source = null;
 		this.loginIndex = -1;
 	}
+
 	private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 		this.payload = payload.getInternalData();
 		this.source = source;
@@ -150,8 +171,8 @@ public class NetworkEvent extends Event {
 	 * Fired when the channel registration (see minecraft custom channel documentation) changes. Note the payload
 	 * is not exposed. This fires to the {@link Identifier} that owns the channel, when it's registration changes state.
 	 *
-	 * It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
-	 * It just directly dispatches upon receipt.
+	 * <p>It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
+	 * It just directly dispatches upon receipt.</p>
 	 */
 	public static class ChannelRegistrationChangeEvent extends NetworkEvent {
 		private final RegistrationChangeType changeType;
@@ -173,7 +194,7 @@ public class NetworkEvent extends Event {
 	}
 
 	/**
-	 * Context for {@link NetworkEvent}
+	 * Context for {@link NetworkEvent}.
 	 */
 	public static class Context {
 		/**
@@ -224,6 +245,7 @@ public class NetworkEvent extends Event {
 
 		public CompletableFuture<Void> enqueueWork(Runnable runnable) {
 			ThreadExecutor<?> executor = LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
+
 			// Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
 			// Same logic as ThreadTaskExecutor#runImmediately without the join
 			if (!executor.isOnThread()) {
@@ -241,10 +263,12 @@ public class NetworkEvent extends Event {
 		@Nullable
 		public ServerPlayerEntity getSender() {
 			PacketListener listener = clientConnection.getPacketListener();
+
 			if (listener instanceof ServerPlayNetworkHandler) {
 				ServerPlayNetworkHandler netHandlerPlayServer = (ServerPlayNetworkHandler) listener;
 				return netHandlerPlayServer.player;
 			}
+
 			return null;
 		}
 

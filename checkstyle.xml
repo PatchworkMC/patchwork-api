@@ -170,5 +170,11 @@
 		<module name="AtclauseOrder">
 			<property name="tagOrder" value="@param,@return,@throws,@deprecated"/>
 		</module>
+        <!--Some checks are broken (*ahem* lambda returns)-->
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
+        </module>
 	</module>
 </module>

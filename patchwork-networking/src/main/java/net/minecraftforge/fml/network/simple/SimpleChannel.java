@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.network.simple;
 
 import java.util.ArrayList;
@@ -190,15 +209,19 @@ public class SimpleChannel {
 
 		public void add() {
 			final IndexedMessageCodec.MessageHandler<M> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
+
 			if (this.loginIndexSetter != null) {
 				message.setLoginIndexSetter(this.loginIndexSetter);
 			}
+
 			if (this.loginIndexGetter != null) {
 				if (!IntSupplier.class.isAssignableFrom(this.type)) {
 					throw new IllegalArgumentException("Login packet type that does not supply an index as an IntSupplier");
 				}
+
 				message.setLoginIndexGetter(this.loginIndexGetter);
 			}
+
 			if (this.loginPacketGenerators != null) {
 				this.channel.loginPackets.add(this.loginPacketGenerators);
 			}

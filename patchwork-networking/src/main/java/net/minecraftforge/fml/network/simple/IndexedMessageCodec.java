@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.network.simple;
 
 import java.util.Objects;
@@ -35,14 +54,14 @@ public class IndexedMessageCodec {
 	}
 
 	private static <M> void tryDecode(PacketByteBuf payload, Supplier<NetworkEvent.Context> context, int payloadIndex, MessageHandler<M> codec) {
-		if(codec.decoder == null) {
+		if (codec.decoder == null) {
 			return;
 		}
 
 		Function<PacketByteBuf, M> decoder = codec.decoder;
 		M message = decoder.apply(payload);
 
-		if(payloadIndex != Integer.MIN_VALUE && codec.getLoginIndexSetter() != null) {
+		if (payloadIndex != Integer.MIN_VALUE && codec.getLoginIndexSetter() != null) {
 			codec.getLoginIndexSetter().accept(message, payloadIndex);
 		}
 
@@ -50,11 +69,12 @@ public class IndexedMessageCodec {
 	}
 
 	private static <M> int tryEncode(PacketByteBuf target, M message, MessageHandler<M> codec) {
-		if(codec.encoder != null) {
+		if (codec.encoder != null) {
 			target.writeByte(codec.index & 0xff);
 			codec.encoder.accept(message, target);
 		}
-		if(codec.loginIndexGetter != null) {
+
+		if (codec.loginIndexGetter != null) {
 			return codec.loginIndexGetter.apply(message);
 		} else {
 			return Integer.MIN_VALUE;
@@ -74,10 +94,12 @@ public class IndexedMessageCodec {
 	public <M> int build(M message, PacketByteBuf target) {
 		@SuppressWarnings("unchecked")
 		MessageHandler<M> codec = (MessageHandler<M>) types.get(message.getClass());
+
 		if (codec == null) {
 			LOGGER.error(SIMPLENET, "Received invalid message {} on channel {}", message.getClass().getName(), Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
 			throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
 		}
+
 		return tryEncode(target, message, codec);
 	}
 
@@ -86,18 +108,22 @@ public class IndexedMessageCodec {
 			LOGGER.error(SIMPLENET, "Received empty payload on channel {}", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
 			return;
 		}
+
 		short discriminator = payload.readUnsignedByte();
 		final MessageHandler<?> messageHandler = indices.get(discriminator);
+
 		if (messageHandler == null) {
 			LOGGER.error(SIMPLENET, "Received invalid discriminator byte {} on channel {}", discriminator, Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
 			return;
 		}
+
 		tryDecode(payload, context, payloadIndex, messageHandler);
 	}
 
 	<M> MessageHandler<M> addCodecIndex(int index, Class<M> messageType, BiConsumer<M, PacketByteBuf> encoder, Function<PacketByteBuf, M> decoder, BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
 		return new MessageHandler<>(index, messageType, encoder, decoder, messageConsumer);
 	}
+
 	// Patchwork: Strip a bunch of unnessisary Optionals
 	// Public methods are left alone.
 	class MessageHandler<M> {
@@ -111,7 +137,7 @@ public class IndexedMessageCodec {
 		@Nullable
 		private Function<M, Integer> loginIndexGetter;
 
-		public MessageHandler(int index, Class<M> messageType, BiConsumer<M, PacketByteBuf> encoder, Function<PacketByteBuf, M> decoder, BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
+		MessageHandler(int index, Class<M> messageType, BiConsumer<M, PacketByteBuf> encoder, Function<PacketByteBuf, M> decoder, BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
 			this.index = index;
 			this.messageType = messageType;
 			this.encoder = encoder;
@@ -122,6 +148,7 @@ public class IndexedMessageCodec {
 			indices.put((short) (index & 0xff), this);
 			types.put(messageType, this);
 		}
+
 		@Nullable
 		BiConsumer<M, Integer> getLoginIndexSetter() {
 			return this.loginIndexSetter;
