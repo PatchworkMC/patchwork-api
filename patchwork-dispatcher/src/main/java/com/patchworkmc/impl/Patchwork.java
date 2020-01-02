@@ -21,6 +21,7 @@ package com.patchworkmc.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -46,13 +47,17 @@ public class Patchwork implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
 
 	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Event event) {
+		dispatch(mods, container -> event);
+	}
+
+	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Function<ModContainer, Event> provider) {
 		for (Map.Entry<ForgeInitializer, FMLModContainer> entry : mods.entrySet()) {
 			ForgeInitializer initializer = entry.getKey();
-			FMLModContainer container = entry.getValue();
 
-			ModLoadingContext.get().setActiveContainer(new ModContainer(initializer.getModId()), new FMLJavaModLoadingContext(container));
+			FMLModContainer container = new FMLModContainer(initializer.getModId());
+			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
-			container.getEventBus().post(event);
+			container.getEventBus().post(provider.apply(container));
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 		}
@@ -67,10 +72,10 @@ public class Patchwork implements ModInitializer {
 		// Construct forge mods
 
 		for (ForgeInitializer initializer : FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class)) {
-			LOGGER.info("Constructing Forge mod: " + initializer);
+			LOGGER.info("Constructing Forge mod: " + initializer.getModId());
 
-			FMLModContainer container = new FMLModContainer();
-			ModLoadingContext.get().setActiveContainer(new ModContainer(initializer.getModId()), new FMLJavaModLoadingContext(container));
+			FMLModContainer container = new FMLModContainer(initializer.getModId());
+			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			initializer.onForgeInitialize();
 
@@ -80,13 +85,12 @@ public class Patchwork implements ModInitializer {
 		}
 
 		// Send initialization events
-		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 
-		// TODO: One per modcontainer
-		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft")));
-		dispatch(mods, new InterModEnqueueEvent(new ModContainer("minecraft")));
-		dispatch(mods, new InterModProcessEvent(new ModContainer("minecraft")));
-		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft")));
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+		dispatch(mods, FMLCommonSetupEvent::new);
+		dispatch(mods, InterModEnqueueEvent::new);
+		dispatch(mods, InterModProcessEvent::new);
+		dispatch(mods, FMLLoadCompleteEvent::new);
 
 		MinecraftForge.EVENT_BUS.start();
 	}
