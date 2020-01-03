@@ -24,9 +24,9 @@ import java.util.List;
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.dispenser.FallibleItemDispenserBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPointer;
@@ -43,10 +43,7 @@ import com.patchworkmc.impl.extensions.shearing.Shearables;
  * @author SuperCoder79
  */
 @Mixin(targets = "net/minecraft/block/dispenser/DispenserBehavior$13")
-public class MixinDispenserBehavior {
-	@Shadow
-	protected boolean success;
-
+public class MixinDispenserBehavior extends FallibleItemDispenserBehavior {
 	/**
 	 * @reason Patch this class to drop stacks for any shearable entity. An overwrite was required here as the mixin was
 	 * too complicated to write without one.
