@@ -19,15 +19,9 @@
 
 package com.patchworkmc.mixin.extensions.shearing;
 
-import java.util.List;
-import java.util.Random;
-
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -35,6 +29,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShearsItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+
+import com.patchworkmc.impl.extensions.shearing.Shearables;
 
 /**
  * Patch {@link ShearsItem} to allow it to shear any {@link IShearable}.
@@ -58,15 +54,7 @@ public class MixinShearsItem extends Item {
 			BlockPos pos = entity.getBlockPos();
 
 			if (target.isShearable(stack, entity.world, pos)) {
-				List<ItemStack> drops = target.onSheared(stack, entity.world, pos, EnchantmentHelper.getLevel(Enchantments.FORTUNE, stack));
-				Random rand = new Random();
-
-				for (ItemStack drop : drops) {
-					ItemEntity ent = entity.dropStack(drop, 1.0F);
-					ent.setVelocity(ent.getVelocity().add((rand.nextFloat() - rand.nextFloat()) * 0.1F, rand.nextFloat() * 0.05F, (rand.nextFloat() - rand.nextFloat()) * 0.1F));
-				}
-
-				stack.damage(1, entity, e -> e.sendToolBreakStatus(hand));
+				Shearables.shearEntity(stack, entity.world, pos, target);
 			}
 
 			return true;
