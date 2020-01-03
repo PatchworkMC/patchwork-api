@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDispenserBehavior",
+    "MixinDispenserBlock",
     "MixinMooshroomEntity",
     "MixinShearableBlock",
     "MixinShearsItem",
