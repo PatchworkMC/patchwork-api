@@ -24,19 +24,16 @@ import java.util.List;
 
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.entity.passive.SnowGolemEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.ViewableWorld;
 
 /**
- * Patches {@link SnowGolemEntity} to use {@link IShearable} for removing its pumpkin. The pumpkin will not be dropped as an item. This patch cancels the vanilla shearing code.
+ * Patches {@link SnowGolemEntity} to allow using {@link IShearable} for removing its pumpkin. The pumpkin will not be dropped as an item.
  *
  * @author SuperCoder79
  */
@@ -58,15 +55,5 @@ public abstract class MixinSnowGolemEntity implements IShearable {
 		this.setHasPumpkin(false);
 
 		return new ArrayList<>();
-	}
-
-	/**
-	 * @reason The original patch only required a cancellation at the HEAD, but @Overwrite was chosen to make
-	 * mod incompatibility easier to find.
-	 * @author SuperCoder79
-	 */
-	@Overwrite
-	public boolean interactMob(PlayerEntity player, Hand hand) {
-		return false;
 	}
 }

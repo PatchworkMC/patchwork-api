@@ -25,25 +25,22 @@ import java.util.Map;
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
 /**
- * Patches {@link SheepEntity} to use {@link IShearable} for dropping wool. This patch cancels the vanilla shearing code.
+ * Patches {@link SheepEntity} to allow using {@link IShearable} for dropping wool.
  *
  * @author SuperCoder79
  */
@@ -88,15 +85,5 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 
 		this.playSound(SoundEvents.ENTITY_SHEEP_SHEAR, 1.0F, 1.0F);
 		return drops;
-	}
-
-	/**
-	 * @reason The original patch only required a cancellation at the HEAD, but @Overwrite was chosen to make
-	 * mod incompatibility easier to find.
-	 * @author SuperCoder79
-	 */
-	@Overwrite
-	public boolean interactMob(PlayerEntity player, Hand hand) {
-		return false;
 	}
 }

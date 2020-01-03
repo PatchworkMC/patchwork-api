@@ -22,10 +22,12 @@ package com.patchworkmc.mixin.extensions.shearing;
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.ShearsItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +49,15 @@ public class MixinShearsItem extends Item {
 	public boolean useOnEntity(ItemStack stack, PlayerEntity playerIn, LivingEntity entity, Hand hand) {
 		if (entity.world.isClient) {
 			return false;
+		}
+
+		// Avoid duplicating vanilla interactions
+		if (this == Items.SHEARS) {
+			EntityType<?> type = entity.getType();
+
+			if (type == EntityType.MOOSHROOM || type == EntityType.SHEEP || type == EntityType.SNOW_GOLEM) {
+				return false;
+			}
 		}
 
 		if (entity instanceof IShearable) {

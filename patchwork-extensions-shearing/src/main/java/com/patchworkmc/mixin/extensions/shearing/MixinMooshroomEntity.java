@@ -39,7 +39,7 @@ import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
 /**
- * Patches MooshroomEntity to allow shearing when the mooshroom is an adult, dropping mushrooms. This patch cancels the vanilla shearing code.
+ * Patches {@link MooshroomEntity} to allow using {@link IShearable} for shearing the mooshroom when it is an adult, dropping mushrooms.
  *
  * @author SuperCoder79
  */
