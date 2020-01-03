@@ -31,7 +31,7 @@ import net.minecraft.block.SeagrassBlock;
 import net.minecraft.block.VineBlock;
 
 /**
- * Patches blocks to extend {@link IShearable}.
+ * Patches blocks to implement {@link IShearable}.
  *
  * @author SuperCoder79
  */

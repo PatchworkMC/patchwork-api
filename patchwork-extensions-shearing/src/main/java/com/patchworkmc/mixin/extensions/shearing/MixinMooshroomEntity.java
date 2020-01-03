@@ -26,6 +26,7 @@ import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.passive.MooshroomEntity;
@@ -52,7 +53,7 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 	}
 
 	@Override
-	public boolean isShearable(ItemStack item, ViewableWorld world, net.minecraft.util.math.BlockPos pos) {
+	public boolean isShearable(ItemStack item, ViewableWorld world, BlockPos pos) {
 		return this.getBreedingAge() >= 0;
 	}
 
@@ -74,9 +75,11 @@ public abstract class MixinMooshroomEntity extends CowEntity implements IShearab
 			}
 
 			this.world.spawnEntity(cow);
+			Block mushroom = this.getMooshroomType().getMushroomState().getBlock();
 
-			for (int i = 0; i < 5; ++i) { //Fixes forge bug where shearing brown mooshrooms always drop red mushrooms
-				drops.add(new ItemStack(this.getMooshroomType().getMushroomState().getBlock()));
+			// TODO: Fixes forge bug where shearing brown mooshrooms always drop red mushrooms (Fixed in 1.15)
+			for (int i = 0; i < 5; ++i) {
+				drops.add(new ItemStack(mushroom));
 			}
 
 			this.playSound(SoundEvents.ENTITY_MOOSHROOM_SHEAR, 1.0F, 1.0F);

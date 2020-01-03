@@ -37,11 +37,11 @@ public abstract class PatchworkItemGroup extends ItemGroup {
 		return GROUPS.length - 1;
 	}
 
-	/*// Note: uncomment this in dev
+	// Note: uncomment this in dev
 	public net.minecraft.item.ItemStack createIcon() {
 		return method_7750();
 	}
 
 	// TODO: Missing required classpath information in remapper!
-	public abstract net.minecraft.item.ItemStack method_7750();*/
+	public abstract net.minecraft.item.ItemStack method_7750();
 }

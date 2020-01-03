@@ -31,18 +31,19 @@ import net.minecraft.world.ViewableWorld;
  * This allows for mods to create their own Shear-like items
  * and have them interact with entities without extra work.
  * Also, if your block/entity supports shears, this allows you
- * to support mod-shears as well.
+ * to support modded shears as well.
  */
 @Deprecated
 public interface IShearable {
 	/**
 	 * Checks if the object is currently shearable.
-	 * Example: Sheep return false when they have no wool
+	 *
+	 * <p>Example: Sheep return false when they have no wool.</p>
 	 *
 	 * @param item  The {@link ItemStack} that is being used, may be empty.
 	 * @param world The current world.
 	 * @param pos   The current position in the world of the target block or entity.
-	 * @return If this block/entity is shearable, and if {@link #onSheared} should be called.
+	 * @return {@code true} if this block/entity is shearable, and if {@link #onSheared} should be called.
 	 */
 	default boolean isShearable(ItemStack item, ViewableWorld world, BlockPos pos) {
 		return true;
@@ -50,12 +51,11 @@ public interface IShearable {
 
 	/**
 	 * Performs the shear function on this object.
-	 * This is called on both the client and the server.
+	 *
+	 * <p>This is called on both the client and the server.
 	 * The object should perform all actions related to being sheared,
 	 * except for dropping of the items, and removal of the block.
-	 * Those functions are handled by {@link net.minecraft.item.ShearsItem} itself.
-	 *
-	 * <p>Returns a list of items to be dropped as a result of the shearing process.</p>
+	 * Those functions are handled by {@link net.minecraft.item.ShearsItem} itself.</p>
 	 *
 	 * <p>For entities, they should trust their internal location information
 	 * over the values passed into this function.</p>
@@ -64,7 +64,7 @@ public interface IShearable {
 	 * @param world   The current world.
 	 * @param pos     If this is a block, the block's position in world.
 	 * @param fortune The fortune level of the shears being used.
-	 * @return A List containing all items from this shearing. May be empty.
+	 * @return a list of items to be dropped as a result of the shearing process.
 	 */
 	default List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
 		return DefaultedList.of();

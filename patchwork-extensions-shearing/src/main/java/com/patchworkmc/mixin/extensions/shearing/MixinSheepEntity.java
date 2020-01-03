@@ -38,6 +38,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
@@ -71,15 +72,17 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 	}
 
 	@Override
-	public List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
 		List<ItemStack> drops = new java.util.ArrayList<>();
 
 		if (!this.world.isClient) {
 			this.setSheared(true);
-			int count = 1 + this.random.nextInt(3);
 
-			for (int i = 0; i < count; ++i) {
-				drops.add(new ItemStack(DROPS.get(this.getColor())));
+			int count = 1 + this.random.nextInt(3);
+			ItemConvertible wool = DROPS.get(this.getColor());
+
+			for (int i = 0; i < count; i++) {
+				drops.add(new ItemStack(wool));
 			}
 		}
 
