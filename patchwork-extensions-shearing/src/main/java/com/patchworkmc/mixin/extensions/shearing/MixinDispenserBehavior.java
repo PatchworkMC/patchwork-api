@@ -23,11 +23,14 @@ import java.util.List;
 
 import net.minecraftforge.common.IShearable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
@@ -44,20 +47,21 @@ import com.patchworkmc.impl.extensions.shearing.Shearables;
  */
 @Mixin(targets = "net/minecraft/block/dispenser/DispenserBehavior$13")
 public class MixinDispenserBehavior extends FallibleItemDispenserBehavior {
+	private static final String DISPENSE_SILENTLY = "net/minecraft/block/dispenser/ItemDispenserBehavior.dispenseSilently(Lnet/minecraft/util/math/BlockPointer;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;";
+
 	/**
-	 * @reason Patch this class to drop stacks for any shearable entity. An overwrite was required here as the mixin was
-	 * too complicated to write without one.
+	 * Shears non-sheep entities that implement {@link IShearable}. The vanilla code will handle sheep entities.
+	 *
 	 * @author SuperCoder79
 	 */
-	@Overwrite
-	public ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+	@Inject(method = DISPENSE_SILENTLY, at = @At("RETURN"))
+	private void onDispenseSilently(BlockPointer pointer, ItemStack stack, CallbackInfoReturnable<ItemStack> callback) {
 		World world = pointer.getWorld();
 
 		if (!world.isClient()) {
-			this.success = false;
 			BlockPos pos = pointer.getBlockPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
 			List<Entity> entities = world.getEntities(Entity.class, new Box(pos),
-					entity -> !entity.isSpectator() && entity instanceof IShearable
+					entity -> !entity.isSpectator() && entity instanceof IShearable && entity.getType() != EntityType.SHEEP
 			);
 
 			for (Entity entity : entities) {
@@ -72,7 +76,10 @@ public class MixinDispenserBehavior extends FallibleItemDispenserBehavior {
 				this.success = true;
 			}
 		}
+	}
 
-		return stack;
+	@Inject(method = DISPENSE_SILENTLY, at = @At(value = "INVOKE", target = "net/minecraft/entity/passive/SheepEntity.dropItems()V"))
+	private void assertThatThisIsTheShearingDispenserAction(BlockPointer pointer, ItemStack stack, CallbackInfoReturnable<ItemStack> callback) {
+		// Make sure that the anonymous class numbers didn't move around by checking for a SheepEntity reference.
 	}
 }
