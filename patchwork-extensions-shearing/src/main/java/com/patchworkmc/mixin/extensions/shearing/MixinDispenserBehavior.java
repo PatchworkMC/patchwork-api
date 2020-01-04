@@ -47,7 +47,7 @@ import com.patchworkmc.impl.extensions.shearing.Shearables;
  */
 @Mixin(targets = "net/minecraft/block/dispenser/DispenserBehavior$13")
 public class MixinDispenserBehavior extends FallibleItemDispenserBehavior {
-	private static final String DISPENSE_SILENTLY = "net/minecraft/block/dispenser/ItemDispenserBehavior.dispenseSilently(Lnet/minecraft/util/math/BlockPointer;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;";
+	private static final String DISPENSE_SILENTLY = "net/minecraft/block/dispenser/DispenserBehavior$13.dispenseSilently(Lnet/minecraft/util/math/BlockPointer;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;";
 
 	/**
 	 * Shears non-sheep entities that implement {@link IShearable}. The vanilla code will handle sheep entities.
