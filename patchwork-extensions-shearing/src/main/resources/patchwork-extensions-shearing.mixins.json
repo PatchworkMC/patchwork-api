@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.extensions.shearing",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinDispenserBehavior",
+    "MixinMooshroomEntity",
+    "MixinShearableBlock",
+    "MixinShearsItem",
+    "MixinSheepEntity",
+    "MixinSnowGolemEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
