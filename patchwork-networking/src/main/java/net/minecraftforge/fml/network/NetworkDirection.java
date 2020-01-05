@@ -94,7 +94,7 @@ public enum NetworkDirection {
 	@Nonnull
 	@SuppressWarnings("unchecked")
 	private <T extends Packet<?>> ICustomPacket<T> construct() {
-		switch(this) {
+		switch (this) {
 		case PLAY_TO_SERVER:
 			return (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.patchwork$create();
 		case PLAY_TO_CLIENT:
