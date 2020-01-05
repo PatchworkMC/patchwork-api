@@ -267,8 +267,8 @@ public class NetworkEvent extends Event {
 			PacketListener listener = clientConnection.getPacketListener();
 
 			if (listener instanceof ServerPlayNetworkHandler) {
-				ServerPlayNetworkHandler netHandlerPlayServer = (ServerPlayNetworkHandler) listener;
-				return netHandlerPlayServer.player;
+				ServerPlayNetworkHandler handler = (ServerPlayNetworkHandler) listener;
+				return handler.player;
 			}
 
 			return null;

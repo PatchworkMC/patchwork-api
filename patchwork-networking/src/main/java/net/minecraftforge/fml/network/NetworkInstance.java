@@ -51,7 +51,7 @@ public class NetworkInstance {
 		return channelName;
 	}
 
-	private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
+	private void handleError(IEventBus bus, Event event, IEventListener[] listeners, int i, Throwable throwable) {
 		// Forge: NO-OP
 	}
 
