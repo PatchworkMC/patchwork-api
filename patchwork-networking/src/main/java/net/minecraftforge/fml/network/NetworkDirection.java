@@ -62,8 +62,8 @@ public enum NetworkDirection {
 		return NetworkDirection.values()[this.otherWay];
 	}
 
-	public NetworkEvent getEvent(final ICustomPacket<?> buffer, final Supplier<NetworkEvent.Context> manager) {
-		return this.eventSupplier.apply(buffer, manager);
+	public NetworkEvent getEvent(final ICustomPacket<?> buffer, final Supplier<NetworkEvent.Context> context) {
+		return this.eventSupplier.apply(buffer, context);
 	}
 
 	@Nonnull

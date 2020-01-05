@@ -235,7 +235,7 @@ public class NetworkRegistry {
 	}
 
 	/**
-	 * Retrieve the {@link LoginPayload} list for dispatch during {@link FMLHandshakeHandler#tickLogin(NetworkManager)} handling.
+	 * Retrieve the {@link LoginPayload} list for dispatch during {@link FMLHandshakeHandler#tickLogin(net.minecraft.network.ClientConnection)} handling.
 	 * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkInstance}.
 	 *
 	 * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT

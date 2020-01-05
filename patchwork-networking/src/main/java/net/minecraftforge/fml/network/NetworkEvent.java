@@ -215,8 +215,8 @@ public class NetworkEvent extends Event {
 		private final PacketDispatcher packetDispatcher;
 		private boolean packetHandled;
 
-		Context(ClientConnection netHandler, NetworkDirection networkDirection, int index) {
-			this(netHandler, networkDirection, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, networkDirection.reply()::buildPacket));
+		Context(ClientConnection connection, NetworkDirection networkDirection, int index) {
+			this(connection, networkDirection, new PacketDispatcher.ClientConnectionDispatcher(connection, index, networkDirection.reply()::buildPacket));
 		}
 
 		Context(ClientConnection clientConnection, NetworkDirection networkDirection, PacketDispatcher dispatcher) {

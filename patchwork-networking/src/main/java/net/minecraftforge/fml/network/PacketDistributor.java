@@ -99,7 +99,7 @@ public class PacketDistributor<T> {
 	 *
 	 * <p>{@link #with(Supplier)} List of {@link ClientConnection}</p>
 	 */
-	public static final PacketDistributor<List<ClientConnection>> NMLIST = new PacketDistributor<>(PacketDistributor::networkManagerList, NetworkDirection.PLAY_TO_CLIENT);
+	public static final PacketDistributor<List<ClientConnection>> NMLIST = new PacketDistributor<>(PacketDistributor::connectionList, NetworkDirection.PLAY_TO_CLIENT);
 	private final BiFunction<PacketDistributor<T>, Supplier<T>, Consumer<Packet<?>>> functor;
 	private final NetworkDirection direction;
 
@@ -174,7 +174,7 @@ public class PacketDistributor<T> {
 		};
 	}
 
-	private Consumer<Packet<?>> networkManagerList(final Supplier<List<ClientConnection>> connections) {
+	private Consumer<Packet<?>> connectionList(final Supplier<List<ClientConnection>> connections) {
 		return packet -> connections.get().forEach(connection -> connection.send(packet));
 	}
 

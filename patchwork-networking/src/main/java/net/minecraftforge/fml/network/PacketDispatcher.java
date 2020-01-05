@@ -47,12 +47,12 @@ public class PacketDispatcher {
 		packetSink.accept(identifier, buffer);
 	}
 
-	static class NetworkManagerDispatcher extends PacketDispatcher {
+	static class ClientConnectionDispatcher extends PacketDispatcher {
 		private final ClientConnection connection;
 		private final int packetIndex;
 		private final BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier;
 
-		NetworkManagerDispatcher(ClientConnection connection, int packetIndex, BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier) {
+		ClientConnectionDispatcher(ClientConnection connection, int packetIndex, BiFunction<Pair<PacketByteBuf, Integer>, Identifier, ICustomPacket<?>> customPacketSupplier) {
 			super();
 			this.connection = connection;
 			this.packetIndex = packetIndex;
