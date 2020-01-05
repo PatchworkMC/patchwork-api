@@ -168,8 +168,10 @@ public class NetworkEvent extends Event {
 	}
 
 	/**
-	 * Fired when the channel registration (see minecraft custom channel documentation) changes. Note the payload
-	 * is not exposed. This fires to the {@link Identifier} that owns the channel, when it's registration changes state.
+	 * Fired when the channel registration (see
+	 * <a href="https://dinnerbone.com/blog/2012/01/13/minecraft-plugin-channels-messaging/">minecraft custom channel
+	 * documentation</a>) changes. Note the payload is not exposed. This fires to the {@link Identifier} that owns the
+	 * channel, when its registration changes state.
 	 *
 	 * <p>It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
 	 * It just directly dispatches upon receipt.</p>
@@ -208,7 +210,7 @@ public class NetworkEvent extends Event {
 		private final NetworkDirection networkDirection;
 
 		/**
-		 * The packet dispatcher for this event. Sends back to the origin.
+		 * The dispatcher for this event. Sends back to the origin.
 		 */
 		private final PacketDispatcher packetDispatcher;
 		private boolean packetHandled;
