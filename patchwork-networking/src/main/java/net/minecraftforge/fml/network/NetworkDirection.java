@@ -20,12 +20,11 @@
 package net.minecraftforge.fml.network;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.LogicalSide;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,38 +42,22 @@ import com.patchworkmc.mixin.networking.accessor.LoginQueryRequestS2CPacketAcces
 import com.patchworkmc.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
 
 public enum NetworkDirection {
-	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, CustomPayloadC2SPacket.class, 1),
-	PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, CustomPayloadS2CPacket.class, 0),
-	LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadLoginEvent::new, LogicalSide.CLIENT, LoginQueryResponseC2SPacket.class, 3),
-	LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadLoginEvent::new, LogicalSide.SERVER, LoginQueryRequestS2CPacket.class, 2);
-
-	private static final Reference2ReferenceArrayMap<Class<? extends Packet>, NetworkDirection> packetLookup;
-
-	static {
-		packetLookup = Stream.of(values())
-			.collect(Collectors.toMap(NetworkDirection::getPacketClass, Function.identity(), (m1, m2) -> m1, Reference2ReferenceArrayMap::new));
-	}
+	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, 1),
+	PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, 0),
+	LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadLoginEvent::new, LogicalSide.CLIENT, 3),
+	LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadLoginEvent::new, LogicalSide.SERVER, 2);
 
 	private final BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier;
 	private final LogicalSide logicalSide;
-	private final Class<? extends Packet> packetClass;
 	private final int otherWay;
 
-	NetworkDirection(BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide, Class<? extends Packet> clazz, int i) {
-		this.eventSupplier = eventSupplier;
-		this.logicalSide = logicalSide;
-		this.packetClass = clazz;
+	NetworkDirection(BiFunction<ICustomPacket<?>, Supplier<NetworkEvent.Context>, NetworkEvent> supplier, LogicalSide side, int i) {
+		this.eventSupplier = supplier;
+		this.logicalSide = side;
 		this.otherWay = i;
 	}
 
-	public static <T extends ICustomPacket<?>> NetworkDirection directionFor(Class<T> customPacket) {
-		return packetLookup.get(customPacket);
-	}
-
-	private Class<? extends Packet> getPacketClass() {
-		return packetClass;
-	}
-
+	@Nonnull
 	public NetworkDirection reply() {
 		return NetworkDirection.values()[this.otherWay];
 	}
@@ -83,31 +66,56 @@ public enum NetworkDirection {
 		return this.eventSupplier.apply(buffer, manager);
 	}
 
+	@Nonnull
 	public LogicalSide getOriginationSide() {
 		return logicalSide;
 	}
 
+	@Nonnull
 	public LogicalSide getReceptionSide() {
 		return reply().logicalSide;
 	}
 
-	public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketByteBuf, Integer> packetData, Identifier channelName) {
-		ICustomPacket<T> packet = null;
-		Class<? extends Packet> packetClass = getPacketClass();
-
-		if (packetClass.equals(CustomPayloadC2SPacket.class)) {
-			packet = (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.patchwork$create();
-		} else if (packetClass.equals(CustomPayloadS2CPacket.class)) {
-			packet = (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.patchwork$create();
-		} else if (packetClass.equals(LoginQueryRequestS2CPacket.class)) {
-			packet = (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
-		} else if (packetClass.equals(LoginQueryResponseC2SPacket.class)) {
-			packet = (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
+	@Nullable
+	public static NetworkDirection directionFor(Class<? extends Packet<?>> clazz) {
+		if (clazz.equals(CustomPayloadC2SPacket.class)) {
+			return PLAY_TO_SERVER;
+		} else if (clazz.equals(CustomPayloadS2CPacket.class)) {
+			return PLAY_TO_CLIENT;
+		} else if (clazz.equals(LoginQueryResponseC2SPacket.class)) {
+			return LOGIN_TO_SERVER;
+		} else if (clazz.equals(LoginQueryRequestS2CPacket.class)) {
+			return LOGIN_TO_CLIENT;
+		} else {
+			return null;
 		}
+	}
+
+	@Nonnull
+	@SuppressWarnings("unchecked")
+	private <T extends Packet<?>> ICustomPacket<T> construct() {
+		switch(this) {
+		case PLAY_TO_SERVER:
+			return (ICustomPacket<T>) CustomPayloadC2SPacketAccessor.patchwork$create();
+		case PLAY_TO_CLIENT:
+			return (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.patchwork$create();
+		case LOGIN_TO_SERVER:
+			return (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
+		case LOGIN_TO_CLIENT:
+			return (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
+		default:
+			throw new IllegalStateException("Unexpected NetworkDirection " + this + ", someone's been tampering with enums!");
+		}
+	}
+
+	@Nonnull
+	public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketByteBuf, Integer> packetData, Identifier channelName) {
+		ICustomPacket<T> packet = construct();
 
 		packet.setName(channelName);
 		packet.setData(packetData.getLeft());
 		packet.setIndex(packetData.getRight());
+
 		return packet;
 	}
 }
