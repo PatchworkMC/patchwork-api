@@ -71,9 +71,12 @@ public class NetworkInstance {
 		this.networkEventBus.unregister(object);
 	}
 
-	boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final ClientConnection manager) {
-		final NetworkEvent.Context context = new NetworkEvent.Context(manager, side, packet.getIndex());
+	boolean dispatch(final ICustomPacket<?> packet, final ClientConnection connection) {
+		NetworkDirection side = packet.getDirection();
+
+		final NetworkEvent.Context context = new NetworkEvent.Context(connection, packet.getDirection(), packet.getIndex());
 		this.networkEventBus.post(side.getEvent(packet, () -> context));
+
 		return context.getPacketHandled();
 	}
 

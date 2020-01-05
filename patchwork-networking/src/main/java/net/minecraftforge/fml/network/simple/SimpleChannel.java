@@ -99,8 +99,8 @@ public class SimpleChannel {
 		sendTo(message, MinecraftClient.getInstance().getNetworkHandler().getConnection(), NetworkDirection.PLAY_TO_SERVER);
 	}
 
-	public <M> void sendTo(M message, ClientConnection manager, NetworkDirection direction) {
-		manager.send(toVanillaPacket(message, direction));
+	public <M> void sendTo(M message, ClientConnection connection, NetworkDirection direction) {
+		connection.send(toVanillaPacket(message, direction));
 	}
 
 	/**

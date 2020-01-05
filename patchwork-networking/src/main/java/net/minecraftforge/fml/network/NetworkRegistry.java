@@ -25,12 +25,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import net.minecraftforge.fml.network.event.EventNetworkChannel;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -135,10 +136,11 @@ public class NetworkRegistry {
 	 * Find the {@link NetworkInstance}, if possible.
 	 *
 	 * @param identifier The network instance to lookup
-	 * @return The {@link Optional} {@link NetworkInstance}
+	 * @return The {@link Nullable} {@link NetworkInstance}
 	 */
-	static Optional<NetworkInstance> findTarget(Identifier identifier) {
-		return Optional.ofNullable(instances.get(identifier));
+	@Nullable
+	static NetworkInstance findTarget(Identifier identifier) {
+		return instances.get(identifier);
 	}
 
 	/**
