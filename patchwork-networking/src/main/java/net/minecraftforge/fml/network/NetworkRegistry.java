@@ -54,10 +54,8 @@ public class NetworkRegistry {
 	 * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks
 	 * this channel.
 	 */
-	@SuppressWarnings("RedundantStringConstructorCall")
-	public static String ABSENT = new String("ABSENT \uD83E\uDD14");
-	@SuppressWarnings("RedundantStringConstructorCall")
-	public static String ACCEPTVANILLA = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+	public static final String ABSENT = "ABSENT \uD83E\uDD14";
+	public static final String ACCEPTVANILLA = "ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93";
 	private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
 	private static boolean lock = false;
 
@@ -118,13 +116,13 @@ public class NetworkRegistry {
 	 */
 	private static NetworkInstance createInstance(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
 		if (lock) {
-			LOGGER.error(NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
+			LOGGER.error(NETREGISTRY, "Attempted to register channel {} to a locked NetworkRegistry, the registry phase is over", name);
 			throw new IllegalArgumentException("Registration of network channels is locked");
 		}
 
 		if (instances.containsKey(name)) {
-			LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
-			throw new IllegalArgumentException("NetworkDirection Channel {" + name + "} already registered");
+			LOGGER.error(NETREGISTRY, "Attempted to register a channel with the name {}, but there is already a channel registered with that name.", name);
+			throw new IllegalArgumentException("Channel {" + name + "} already registered");
 		}
 
 		final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
@@ -135,7 +133,7 @@ public class NetworkRegistry {
 	/**
 	 * Find the {@link NetworkInstance}, if possible.
 	 *
-	 * @param identifier The network instance to lookup
+	 * @param identifier The {@link Identifier} of the network instance to lookup
 	 * @return The {@link Nullable} {@link NetworkInstance}
 	 */
 	@Nullable
