@@ -22,20 +22,15 @@ package net.minecraftforge.fml.network;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
 import net.minecraftforge.fml.network.event.EventNetworkChannel;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -43,6 +38,8 @@ import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
+
+import com.patchworkmc.impl.networking.NetworkVersionManager;
 
 /**
  * The network registry. Tracks channels on behalf of mods.
@@ -54,17 +51,19 @@ public class NetworkRegistry {
 	 * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks
 	 * this channel.
 	 */
-	public static final String ABSENT = "ABSENT \uD83E\uDD14";
-	public static final String ACCEPTVANILLA = "ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93";
+	public static final String ABSENT = NetworkVersionManager.ABSENT;
+	public static final String ACCEPTVANILLA = NetworkVersionManager.ACCEPTVANILLA;
+
 	private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+	private static NetworkVersionManager versionManager = new NetworkVersionManager(instances.values());
 	private static boolean lock = false;
 
 	public static List<String> getServerNonVanillaNetworkMods() {
-		return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
+		return versionManager.getServerNonVanillaNetworkMods();
 	}
 
 	public static List<String> getClientNonVanillaNetworkMods() {
-		return listRejectedVanillaMods(NetworkInstance::tryServerVersionOnClient);
+		return versionManager.getClientNonVanillaNetworkMods();
 	}
 
 	public static boolean acceptsVanillaClientConnections() {
@@ -127,6 +126,7 @@ public class NetworkRegistry {
 
 		final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
 		instances.put(name, networkInstance);
+
 		return networkInstance;
 	}
 
@@ -142,97 +142,6 @@ public class NetworkRegistry {
 	}
 
 	/**
-	 * Construct the Map representation of the channel list, for use during login handshaking.
-	 *
-	 * @see FMLHandshakeMessages.S2CModList
-	 * @see FMLHandshakeMessages.C2SModListReply
-	 */
-	static Map<Identifier, String> buildChannelVersions() {
-		return instances.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getNetworkProtocolVersion()));
-	}
-
-	/**
-	 * Construct the Map representation of the channel list, for the client to check against during list ping.
-	 *
-	 * @see FMLHandshakeMessages.S2CModList
-	 * @see FMLHandshakeMessages.C2SModListReply
-	 */
-	static Map<Identifier, Pair<String, Boolean>> buildChannelVersionsForListPing() {
-		return instances.entrySet().stream()
-			.map(p -> Pair.of(p.getKey(), Pair.of(p.getValue().getNetworkProtocolVersion(), p.getValue().tryClientVersionOnServer(ABSENT))))
-			.filter(p -> !p.getLeft().getNamespace().equals("fml"))
-			.collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-	}
-
-	static List<String> listRejectedVanillaMods(BiFunction<NetworkInstance, String, Boolean> testFunction) {
-		final List<Pair<Identifier, Boolean>> results = instances.values().stream()
-				.map(ni -> {
-					final String incomingVersion = ACCEPTVANILLA;
-					final boolean test = testFunction.apply(ni, incomingVersion);
-					LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
-					return Pair.of(ni.getChannelName(), test);
-				}).filter(p -> !p.getRight()).collect(Collectors.toList());
-
-		if (!results.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
-					results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
-			return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());
-		}
-
-		LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
-		return Collections.emptyList();
-	}
-
-	/**
-	 * Validate the channels from the server on the client. Tests the client predicates against the server
-	 * supplied network protocol version.
-	 *
-	 * @param channels An @{@link Map} of name->version pairs for testing
-	 * @return true if all channels accept themselves
-	 */
-	static boolean validateClientChannels(final Map<Identifier, String> channels) {
-		return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
-	}
-
-	/**
-	 * Validate the channels from the client on the server. Tests the server predicates against the client
-	 * supplied network protocol version.
-	 * @param channels An @{@link Map} of name->version pairs for testing
-	 * @return true if all channels accept themselves
-	 */
-	static boolean validateServerChannels(final Map<Identifier, String> channels) {
-		return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
-	}
-
-	/**
-	 * Tests if the map matches with the supplied predicate tester.
-	 *
-	 * @param incoming An @{@link Map} of name->version pairs for testing
-	 * @param originName A label for use in logging (where the version pairs came from)
-	 * @param testFunction The test function to use for testing
-	 * @return true if all channels accept themselves
-	 */
-	private static boolean validateChannels(final Map<Identifier, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
-		final List<Pair<Identifier, Boolean>> results = instances.values().stream()
-				.map(ni -> {
-					final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
-					final boolean test = testFunction.apply(ni, incomingVersion);
-					LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
-					return Pair.of(ni.getChannelName(), test);
-				}).filter(p -> !p.getRight()).collect(Collectors.toList());
-
-		if (!results.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
-					results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")),
-					originName);
-			return false;
-		}
-
-		LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", originName);
-		return true;
-	}
-
-	/**
 	 * Retrieve the {@link LoginPayload} list for dispatch during {@link FMLHandshakeHandler#tickLogin(net.minecraft.network.ClientConnection)} handling.
 	 * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkInstance}.
 	 *
@@ -245,42 +154,9 @@ public class NetworkRegistry {
 		}
 
 		List<LoginPayload> gatheredPayloads = new ArrayList<>();
-		instances.values().forEach(ni -> ni.dispatchGatherLogin(gatheredPayloads, isLocal));
+		instances.values().forEach(instance -> instance.dispatchGatherLogin(gatheredPayloads, isLocal));
+
 		return gatheredPayloads;
-	}
-
-	public static boolean checkListPingCompatibilityForClient(Map<Identifier, Pair<String, Boolean>> incoming) {
-		Set<Identifier> handled = new HashSet<>();
-		final List<Pair<Identifier, Boolean>> results = instances.values().stream()
-				.filter(p -> !p.getChannelName().getNamespace().equals("fml"))
-					.map(ni -> {
-						final Pair<String, Boolean> incomingVersion = incoming.getOrDefault(ni.getChannelName(), Pair.of(ABSENT, true));
-						final boolean test = ni.tryServerVersionOnClient(incomingVersion.getLeft());
-						handled.add(ni.getChannelName());
-						LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
-						return Pair.of(ni.getChannelName(), test);
-					}).filter(p -> !p.getRight()).collect(Collectors.toList());
-		final List<Identifier> missingButRequired = incoming.entrySet().stream()
-				.filter(p -> !p.getKey().getNamespace().equals("fml"))
-				.filter(p -> !p.getValue().getRight())
-				.filter(p -> !handled.contains(p.getKey()))
-				.map(Map.Entry::getKey)
-				.collect(Collectors.toList());
-
-		if (!results.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "Channels [{}] rejected their server side version number during listping",
-					results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
-			return false;
-		}
-
-		if (!missingButRequired.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "The server is likely to require channel [{}] to be present, yet we don't have it",
-					missingButRequired);
-			return false;
-		}
-
-		LOGGER.debug(NETREGISTRY, "Accepting channel list during listping");
-		return true;
 	}
 
 	public static void lock() {

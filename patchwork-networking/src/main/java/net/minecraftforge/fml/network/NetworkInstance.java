@@ -32,7 +32,10 @@ import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.util.Identifier;
 
-public class NetworkInstance {
+import com.patchworkmc.api.networking.Channel;
+import com.patchworkmc.impl.networking.VersionedChannel;
+
+public class NetworkInstance implements Channel, VersionedChannel {
 	private final Identifier channelName;
 	private final String networkProtocolVersion;
 	private final Predicate<String> clientAcceptedVersions;
@@ -47,6 +50,7 @@ public class NetworkInstance {
 		this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
 	}
 
+	@Override
 	public Identifier getChannelName() {
 		return channelName;
 	}
@@ -80,18 +84,6 @@ public class NetworkInstance {
 		return context.getPacketHandled();
 	}
 
-	String getNetworkProtocolVersion() {
-		return networkProtocolVersion;
-	}
-
-	boolean tryServerVersionOnClient(final String serverVersion) {
-		return this.clientAcceptedVersions.test(serverVersion);
-	}
-
-	boolean tryClientVersionOnServer(final String clientVersion) {
-		return this.serverAcceptedVersions.test(clientVersion);
-	}
-
 	void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
 		this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList, isLocal));
 	}
@@ -100,7 +92,24 @@ public class NetworkInstance {
 		this.networkEventBus.post(loginPayloadEvent);
 	}
 
-	void dispatchEvent(final NetworkEvent networkEvent) {
-		this.networkEventBus.post(networkEvent);
+	void dispatchChannelRegistrationChange(final NetworkEvent.ChannelRegistrationChangeEvent registrationChangeEvent) {
+		this.networkEventBus.post(registrationChangeEvent);
+	}
+
+	// VersionedChannel implementations
+
+	@Override
+	public String getNetworkProtocolVersion() {
+		return networkProtocolVersion;
+	}
+
+	@Override
+	public boolean tryServerVersionOnClient(final String serverVersion) {
+		return this.clientAcceptedVersions.test(serverVersion);
+	}
+
+	@Override
+	public boolean tryClientVersionOnServer(final String clientVersion) {
+		return this.serverAcceptedVersions.test(clientVersion);
 	}
 }
