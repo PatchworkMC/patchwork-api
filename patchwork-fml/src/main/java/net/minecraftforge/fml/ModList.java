@@ -31,6 +31,6 @@ public class ModList {
 
 	public boolean isLoaded(String modId) {
 		// Patchwork: use Fabric Loader lookup instead of an internal one
-		return FabricLoader.getInstance().isModLoaded(modId);
+		return FabricLoader.getInstance().isDevelopmentEnvironment() || FabricLoader.getInstance().isModLoaded(modId);
 	}
 }
