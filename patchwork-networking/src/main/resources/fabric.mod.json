@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-networking",
+  "name": "Patchwork Networking",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-networking/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.6.2",
+    "patchwork-fml": "*"
+  },
+  "mixins": [
+    "patchwork-networking.accessor.mixins.json",
+    "patchwork-networking.handler.mixins.json",
+    "patchwork-networking.packet.mixins.json"
+  ],
+  "description": "Implementation of the Forge Networking API.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
