@@ -81,18 +81,17 @@ public class IndexedMessageCodec {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <M> MessageHandler<M> findMessageType(final M msgToReply) {
-		return (MessageHandler<M>) types.get(msgToReply.getClass());
+	public <M> MessageHandler<M> findMessageType(final M message) {
+		return (MessageHandler<M>) types.get(message.getClass());
 	}
 
 	@SuppressWarnings("unchecked")
-	<M> MessageHandler<M> findIndex(final short i) {
-		return (MessageHandler<M>) indices.get(i);
+	<M> MessageHandler<M> findIndex(final short index) {
+		return (MessageHandler<M>) indices.get(index);
 	}
 
 	public <M> int build(M message, PacketByteBuf target) {
-		@SuppressWarnings("unchecked")
-		MessageHandler<M> codec = (MessageHandler<M>) types.get(message.getClass());
+		MessageHandler<M> codec = findMessageType(message);
 
 		if (codec == null) {
 			LOGGER.error(SIMPLENET, "Received invalid message {} on channel {}", message.getClass().getName(), channelName);

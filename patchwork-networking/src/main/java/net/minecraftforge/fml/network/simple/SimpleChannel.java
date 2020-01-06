@@ -83,9 +83,9 @@ public class SimpleChannel {
 		return this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer);
 	}
 
-	private <M> Pair<PacketByteBuf, Integer> toBuffer(M msg) {
+	private <M> Pair<PacketByteBuf, Integer> toBuffer(M message) {
 		final PacketByteBuf bufIn = new PacketByteBuf(Unpooled.buffer());
-		int index = encodeMessage(msg, bufIn);
+		int index = encodeMessage(message, bufIn);
 		return Pair.of(bufIn, index);
 	}
 
@@ -194,9 +194,9 @@ public class SimpleChannel {
 		 * @return this
 		 */
 		public MessageBuilder<M> consumer(ToBooleanBiFunction<M, Supplier<NetworkEvent.Context>> handler) {
-			this.consumer = (msg, ctx) -> {
-				boolean handled = handler.applyAsBool(msg, ctx);
-				ctx.get().setPacketHandled(handled);
+			this.consumer = (message, context) -> {
+				boolean handled = handler.applyAsBool(message, context);
+				context.get().setPacketHandled(handled);
 			};
 			return this;
 		}

@@ -128,6 +128,7 @@ public class PacketDistributor<T> {
 		return new PacketTarget(functor.apply(this, () -> null), this);
 	}
 
+	// TODO: Fix Checkstyle on lambda returns
 	// CHECKSTYLE.OFF: Indentation - lambda returns are broken
 	private Consumer<Packet<?>> playerConsumer(final Supplier<ServerPlayerEntity> player) {
 		return packet -> player.get().networkHandler.client.send(packet);
@@ -145,10 +146,10 @@ public class PacketDistributor<T> {
 		return packet -> MinecraftClient.getInstance().getNetworkHandler().sendPacket(packet);
 	}
 
-	private Consumer<Packet<?>> playerListPointConsumer(final Supplier<TargetPoint> point) {
+	private Consumer<Packet<?>> playerListPointConsumer(final Supplier<TargetPoint> pointSupplier) {
 		return packet -> {
-			final TargetPoint tp = point.get();
-			getServer().getPlayerManager().sendToAround(tp.excluded, tp.x, tp.y, tp.z, tp.r2, tp.dim, packet);
+			final TargetPoint point = pointSupplier.get();
+			getServer().getPlayerManager().sendToAround(point.excluded, point.x, point.y, point.z, point.radius, point.dim, packet);
 		};
 	}
 
@@ -188,65 +189,46 @@ public class PacketDistributor<T> {
 		private final double x;
 		private final double y;
 		private final double z;
-		private final double r2;
+		private final double radius;
 		private final DimensionType dim;
 
 		/**
-		 * A target point with excluded entity.
-		 *
-		 * @param excluded the {@link ServerPlayerEntity} to exclude
-		 * @param x X
-		 * @param y Y
-		 * @param z Z
-		 * @param r2 Radius
-		 * @param dim DimensionType
+		 * A target point that excludes the provided player entity.
 		 */
-		public TargetPoint(final ServerPlayerEntity excluded, final double x, final double y, final double z, final double r2, final DimensionType dim) {
+		public TargetPoint(final ServerPlayerEntity excluded, final double x, final double y, final double z, final double radius, final DimensionType dim) {
 			this.excluded = excluded;
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.r2 = r2;
+			this.radius = radius;
 			this.dim = dim;
 		}
 
 		/**
 		 * A target point that does not exclude any entities.
-		 * @param x X
-		 * @param y Y
-		 * @param z Z
-		 * @param r2 Radius
-		 * @param dim DimensionType
 		 */
-		public TargetPoint(final double x, final double y, final double z, final double r2, final DimensionType dim) {
+		public TargetPoint(final double x, final double y, final double z, final double radius, final DimensionType dim) {
 			this.excluded = null;
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.r2 = r2;
+			this.radius = radius;
 			this.dim = dim;
 		}
 
 		/**
 		 * Helper to build a target point that does not exclude any entities.
-		 * @param x X
-		 * @param y Y
-		 * @param z Z
-		 * @param r2 Radius
-		 * @param dim DimensionType
-		 * @return A TargetPoint supplier
 		 */
-		public static Supplier<TargetPoint> p(double x, double y, double z, double r2, DimensionType dim) {
-			TargetPoint tp = new TargetPoint(x, y, z, r2, dim);
-			return () -> tp;
+		public static Supplier<TargetPoint> p(double x, double y, double z, double radius, DimensionType dim) {
+			TargetPoint point = new TargetPoint(x, y, z, radius, dim);
+			return () -> point;
 		}
 	}
 
 	/**
-	 * A Distributor curried with a specific value instance, for actual dispatch.
+	 * A {@link PacketDistributor} curried with a specific value instance. Can be used for packet dispatch.
 	 *
 	 * @see net.minecraftforge.fml.network.simple.SimpleChannel#send(PacketTarget, Object)
-	 *
 	 */
 	public static class PacketTarget {
 		private final Consumer<Packet<?>> packetConsumer;

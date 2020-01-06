@@ -37,7 +37,7 @@ public abstract class MixinServerLoginNetworkHandler {
 	public abstract ClientConnection getConnection();
 
 	@Inject(method = "onQueryResponse", at = @At("HEAD"), cancellable = true)
-	private void patchwork$hookCustomPayload(LoginQueryResponseC2SPacket packet, CallbackInfo callback) {
+	private void patchwork$hookQueryResponse(LoginQueryResponseC2SPacket packet, CallbackInfo callback) {
 		if (NetworkHooks.onCustomPayload((ICustomPacket<?>) packet, getConnection())) {
 			callback.cancel();
 		}
