@@ -99,10 +99,10 @@ public enum NetworkDirection {
 			return (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.patchwork$create();
 		case LOGIN_TO_SERVER:
 			throw new UnsupportedOperationException("login packets are not supported");
-			// return (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
+			// TODO: return (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
 		case LOGIN_TO_CLIENT:
 			throw new UnsupportedOperationException("login packets are not supported");
-			// return (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
+			// TODO: return (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
 		default:
 			throw new IllegalStateException("Unexpected NetworkDirection " + this + ", someone's been tampering with enums!");
 		}

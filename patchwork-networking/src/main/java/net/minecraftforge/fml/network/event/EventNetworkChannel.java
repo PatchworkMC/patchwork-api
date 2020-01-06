@@ -39,6 +39,9 @@ public class EventNetworkChannel {
 		channel.setPacketListener(this::packetListener);
 		channel.setRegistrationChangeListener(networkEventBus::post);
 		channel.setGatherLoginPayloadsListener(networkEventBus::post);
+
+		// TODO: Login packet stuff, registration change listeners
+		throw new UnsupportedOperationException("Registration change / gather login payload events aren't supported");
 	}
 
 	private void handleError(IEventBus bus, Event event, IEventListener[] listeners, int i, Throwable throwable) {

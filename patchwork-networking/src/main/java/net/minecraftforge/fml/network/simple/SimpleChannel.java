@@ -217,6 +217,9 @@ public class SimpleChannel {
 
 			if (this.loginPacketGenerators != null) {
 				this.channel.loginPackets.add((Function<Boolean, List<Pair<String, ?>>>) (Object) this.loginPacketGenerators);
+
+				// TODO: Login packet stuff
+				throw new UnsupportedOperationException("Login packet generators are unsupported");
 			}
 		}
 
