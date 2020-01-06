@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.commons.lang3.tuple.Pair;
@@ -137,67 +136,97 @@ public final class NetworkVersionManager {
 			final String incomingVersion = incoming.apply(channel.getChannelName());
 			final boolean accepted = predicate.test(channel, incomingVersion != null ? incomingVersion : NetworkRegistry.ABSENT);
 
-			if (origin == Origin.VANILLA) {
-				LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", channel.getChannelName(), accepted ? "ACCEPTED" : "REJECTED");
-			} else {
-				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", channel.getChannelName(), incomingVersion, origin, accepted ? "ACCEPTED" : "REJECTED");
-			}
-
 			if (!accepted) {
 				rejected.add(channel.getChannelName().toString());
+			}
+
+			final String status = accepted ? "ACCEPTED" : "REJECTED";
+
+			switch (origin) {
+			case VANILLA:
+				LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", channel.getChannelName(), status);
+				break;
+			case PING:
+				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", channel.getChannelName(), incomingVersion, status);
+				break;
+			case SERVER:
+			case CLIENT:
+				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", channel.getChannelName(), incomingVersion, origin, status);
 			}
 		}
 
 		if (!rejected.isEmpty()) {
-			if (origin == Origin.VANILLA) {
+			switch (origin) {
+			case VANILLA:
 				LOGGER.error(NETREGISTRY, "Channels {} rejected vanilla connections", rejected);
-			} else {
+				break;
+			case PING:
+				LOGGER.error(NETREGISTRY, "Channels {} rejected their server side version number during listping", rejected);
+				break;
+			case SERVER:
+			case CLIENT:
 				LOGGER.error(NETREGISTRY, "Channels {} rejected their {} version number", rejected, origin);
 			}
 
 			return rejected;
 		}
 
-		LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", origin);
+		if (origin != Origin.PING) {
+			LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", origin);
+		}
 
 		return Collections.emptyList();
 	}
 
 	public boolean checkListPingCompatibilityForClient(Map<Identifier, Pair<String, Boolean>> incoming) {
-		Set<Identifier> handled = new HashSet<>();
-		final List<Pair<Identifier, Boolean>> results = StreamSupport.stream(channels.spliterator(), false)
-				.filter(p -> !p.getChannelName().getNamespace().equals("fml"))
-				.map(ni -> {
-					final Pair<String, Boolean> incomingVersion = incoming.getOrDefault(ni.getChannelName(), Pair.of(ABSENT, true));
-					final boolean test = ni.tryServerVersionOnClient(incomingVersion.getLeft());
-					handled.add(ni.getChannelName());
-					LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
-					return Pair.of(ni.getChannelName(), test);
-				}).filter(p -> !p.getRight()).collect(Collectors.toList());
-		final List<Identifier> missingButRequired = incoming.entrySet().stream()
-				.filter(p -> !p.getKey().getNamespace().equals("fml"))
-				.filter(p -> !p.getValue().getRight())
-				.filter(p -> !handled.contains(p.getKey()))
-				.map(Map.Entry::getKey)
-				.collect(Collectors.toList());
+		// TODO: don't mutate map here, modify the call site instead
+		incoming.keySet().removeIf(name -> name.getNamespace().equals("fml"));
 
-		if (!results.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "Channels [{}] rejected their server side version number during listping",
-					results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+		List<String> rejected = validateChannels(identifier -> {
+			Pair<String, Boolean> entry = incoming.get(identifier);
+
+			return entry != null ? entry.getLeft() : null;
+		}, Origin.PING, VersionedChannel::tryServerVersionOnClient);
+
+		if (!rejected.isEmpty()) {
 			return false;
 		}
 
+		Set<Identifier> handled = new HashSet<>();
+		List<Identifier> missingButRequired = new ArrayList<>();
+
+		for (NamedChannel channel: channels) {
+			handled.add(channel.getChannelName());
+		}
+
+		for (Map.Entry<Identifier, Pair<String, Boolean>> entry : incoming.entrySet()) {
+			Identifier channelName = entry.getKey();
+			boolean required = entry.getValue().getRight();
+
+			if (!required || handled.contains(channelName)) {
+				continue;
+			}
+
+			missingButRequired.add(channelName);
+		}
+
 		if (!missingButRequired.isEmpty()) {
-			LOGGER.error(NETREGISTRY, "The server is likely to require channel [{}] to be present, yet we don't have it",
+			LOGGER.error(NETREGISTRY, "The server is likely to require the channels {} to be present, yet we don't have them",
 					missingButRequired);
 			return false;
 		}
 
 		LOGGER.debug(NETREGISTRY, "Accepting channel list during listping");
+
 		return true;
 	}
 
 	public enum Origin {
-		CLIENT, SERVER, VANILLA
+		CLIENT, SERVER, VANILLA,
+
+		/**
+		 * Server list ping response from server.
+		 */
+		PING
 	}
 }
