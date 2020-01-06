@@ -22,12 +22,13 @@ package net.minecraftforge.fml.network.simple;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -41,28 +42,25 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.util.PacketByteBuf;
 
-// TODO: refactor to not use magic optionals
 public class SimpleChannel {
 	private final NetworkInstance instance;
 	private final IndexedMessageCodec indexedCodec;
-	private final Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeConsumer;
+	@Nullable
+	private final Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeConsumer;
 	private List<Function<Boolean, ? extends List<? extends Pair<String, ?>>>> loginPackets;
 
 	public SimpleChannel(NetworkInstance instance) {
-		this(instance, Optional.empty());
+		this(instance, null);
 	}
 
-	private SimpleChannel(NetworkInstance instance, Optional<Consumer<NetworkEvent.ChannelRegistrationChangeEvent>> registryChangeNotify) {
+	public SimpleChannel(NetworkInstance instance, @Nullable Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeNotify) {
 		this.instance = instance;
 		this.indexedCodec = new IndexedMessageCodec(instance);
 		this.loginPackets = new ArrayList<>();
+
 		instance.addListener(this::networkEventListener);
 		instance.addGatherListener(this::networkLoginGather);
 		this.registryChangeConsumer = registryChangeNotify;
-	}
-
-	public SimpleChannel(NetworkInstance instance, Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeNotify) {
-		this(instance, Optional.of(registryChangeNotify));
 	}
 
 	private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
@@ -75,7 +73,9 @@ public class SimpleChannel {
 
 	private void networkEventListener(final NetworkEvent networkEvent) {
 		if (networkEvent instanceof NetworkEvent.ChannelRegistrationChangeEvent) {
-			this.registryChangeConsumer.ifPresent(l -> l.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent)));
+			if (this.registryChangeConsumer != null) {
+				this.registryChangeConsumer.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent));
+			}
 		} else {
 			this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
 		}
