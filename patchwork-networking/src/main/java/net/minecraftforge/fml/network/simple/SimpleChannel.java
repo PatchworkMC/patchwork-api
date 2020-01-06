@@ -23,61 +23,54 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
-
 import io.netty.buffer.Unpooled;
+import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkInstance;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
+import com.patchworkmc.impl.networking.ListenableChannel;
+
 public class SimpleChannel {
-	private final NetworkInstance instance;
+	private final Identifier channelName;
 	private final IndexedMessageCodec indexedCodec;
-	@Nullable
-	private final Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeConsumer;
-	private List<Function<Boolean, ? extends List<? extends Pair<String, ?>>>> loginPackets;
+	private List<Function<Boolean, List<Pair<String, ?>>>> loginPackets;
 
-	public SimpleChannel(NetworkInstance instance) {
-		this(instance, null);
-	}
-
-	public SimpleChannel(NetworkInstance instance, @Nullable Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registryChangeNotify) {
-		this.instance = instance;
-		this.indexedCodec = new IndexedMessageCodec(instance);
+	public SimpleChannel(Identifier name, ListenableChannel channel) {
+		this.channelName = name;
+		this.indexedCodec = new IndexedMessageCodec(channelName);
 		this.loginPackets = new ArrayList<>();
 
-		instance.addListener(this::networkEventListener);
-		instance.addGatherListener(this::networkLoginGather);
-		this.registryChangeConsumer = registryChangeNotify;
+		channel.setPacketListener(this::packetListener);
+		channel.setGatherLoginPayloadsListener(this::networkLoginGather);
+	}
+
+	private void packetListener(ICustomPacket<?> packet, NetworkEvent.Context context) {
+		this.indexedCodec.consume(packet.getInternalData(), packet.getIndex(), context);
 	}
 
 	private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
-		loginPackets.forEach(packetGenerator -> packetGenerator.apply(gatherEvent.isLocal()).forEach(pair -> {
-			PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
-			this.indexedCodec.build(pair.getRight(), buffer);
-			gatherEvent.add(buffer, this.instance.getChannelName(), pair.getLeft());
-		}));
-	}
+		for (Function<Boolean, List<Pair<String, ?>>> packetGenerator: loginPackets) {
+			List<Pair<String, ?>> packets = packetGenerator.apply(gatherEvent.isLocal());
 
-	private void networkEventListener(final NetworkEvent networkEvent) {
-		if (networkEvent instanceof NetworkEvent.ChannelRegistrationChangeEvent) {
-			if (this.registryChangeConsumer != null) {
-				this.registryChangeConsumer.accept(((NetworkEvent.ChannelRegistrationChangeEvent) networkEvent));
+			for (Pair<String, ?> pair: packets) {
+				PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+
+				this.indexedCodec.build(pair.getRight(), buffer);
+
+				gatherEvent.add(buffer, this.channelName, pair.getLeft());
 			}
-		} else {
-			this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
 		}
 	}
 
@@ -119,11 +112,11 @@ public class SimpleChannel {
 	}
 
 	public <M> Packet<?> toVanillaPacket(M message, NetworkDirection direction) {
-		return direction.buildPacket(toBuffer(message), instance.getChannelName()).getThis();
+		return direction.buildPacket(toBuffer(message), channelName).getThis();
 	}
 
 	public <M> void reply(M msgToReply, NetworkEvent.Context context) {
-		context.getPacketDispatcher().sendPacket(instance.getChannelName(), toBuffer(msgToReply).getLeft());
+		context.getPacketDispatcher().sendPacket(channelName, toBuffer(msgToReply).getLeft());
 	}
 
 	/**
@@ -223,7 +216,7 @@ public class SimpleChannel {
 			}
 
 			if (this.loginPacketGenerators != null) {
-				this.channel.loginPackets.add(this.loginPacketGenerators);
+				this.channel.loginPackets.add((Function<Boolean, List<Pair<String, ?>>>) (Object) this.loginPacketGenerators);
 			}
 		}
 

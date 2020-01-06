@@ -17,24 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.network;
+package com.patchworkmc.impl.networking;
 
-import net.minecraft.network.ClientConnection;
+import net.minecraft.util.Identifier;
 
-import com.patchworkmc.impl.networking.NetworkChannel;
-
-public class NetworkHooks {
-	public static boolean onCustomPayload(final ICustomPacket<?> packet, final ClientConnection connection) {
-		NetworkChannel target = NetworkRegistry.findTarget(packet.getName());
-
-		if (target == null) {
-			return false;
-		}
-
-		final NetworkEvent.Context context = new NetworkEvent.Context(connection, packet.getDirection(), packet.getIndex());
-
-		target.onPacket(packet, context);
-
-		return context.getPacketHandled();
-	}
+public interface NamedChannel {
+	Identifier getChannelName();
 }

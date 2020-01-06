@@ -39,6 +39,8 @@ import org.apache.logging.log4j.MarkerManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
+import com.patchworkmc.impl.networking.ListenableChannel;
+import com.patchworkmc.impl.networking.NetworkChannel;
 import com.patchworkmc.impl.networking.NetworkVersionManager;
 
 /**
@@ -54,8 +56,8 @@ public class NetworkRegistry {
 	public static final String ABSENT = NetworkVersionManager.ABSENT;
 	public static final String ACCEPTVANILLA = NetworkVersionManager.ACCEPTVANILLA;
 
-	private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
-	private static NetworkVersionManager versionManager = new NetworkVersionManager(instances.values());
+	private static Map<Identifier, NetworkChannel> channels = Collections.synchronizedMap(new HashMap<>());
+	private static NetworkVersionManager versionManager = new NetworkVersionManager(channels.values());
 	private static boolean lock = false;
 
 	public static List<String> getServerNonVanillaNetworkMods() {
@@ -67,11 +69,11 @@ public class NetworkRegistry {
 	}
 
 	public static boolean acceptsVanillaClientConnections() {
-		return instances.isEmpty() || getServerNonVanillaNetworkMods().isEmpty();
+		return channels.isEmpty() || getServerNonVanillaNetworkMods().isEmpty();
 	}
 
 	public static boolean canConnectToVanillaServer() {
-		return instances.isEmpty() || getClientNonVanillaNetworkMods().isEmpty();
+		return channels.isEmpty() || getClientNonVanillaNetworkMods().isEmpty();
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class NetworkRegistry {
 	 * @see ChannelBuilder#newSimpleChannel(Identifier, Supplier, Predicate, Predicate)
 	 */
 	public static SimpleChannel newSimpleChannel(final Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
-		return new SimpleChannel(createInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
+		return new SimpleChannel(name, createChannel(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
 	}
 
 	/**
@@ -101,49 +103,49 @@ public class NetworkRegistry {
 	 * @see ChannelBuilder#newEventChannel(Identifier, Supplier, Predicate, Predicate)
 	 */
 	public static EventNetworkChannel newEventChannel(final Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
-		return new EventNetworkChannel(createInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
+		return new EventNetworkChannel(createChannel(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
 	}
 
 	/**
-	 * Creates the internal {@link NetworkInstance} that tracks the channel data.
+	 * Creates the internal {@link NetworkChannel} that tracks the channel data.
 	 * @param name registry name
 	 * @param networkProtocolVersion The protocol version string
 	 * @param clientAcceptedVersions The client accepted predicate
 	 * @param serverAcceptedVersions The server accepted predicate
-	 * @return The {@link NetworkInstance}
+	 * @return The {@link ListenableChannel} for hooking up listeners to the created channel.
 	 * @throws IllegalArgumentException if the name already exists
 	 */
-	private static NetworkInstance createInstance(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+	private static ListenableChannel createChannel(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
 		if (lock) {
 			LOGGER.error(NETREGISTRY, "Attempted to register channel {} to a locked NetworkRegistry, the registry phase is over", name);
 			throw new IllegalArgumentException("Registration of network channels is locked");
 		}
 
-		if (instances.containsKey(name)) {
+		if (channels.containsKey(name)) {
 			LOGGER.error(NETREGISTRY, "Attempted to register a channel with the name {}, but there is already a channel registered with that name.", name);
 			throw new IllegalArgumentException("Channel {" + name + "} already registered");
 		}
 
-		final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
-		instances.put(name, networkInstance);
+		final NetworkChannel channel = new NetworkChannel(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
+		channels.put(name, channel);
 
-		return networkInstance;
+		return channel;
 	}
 
 	/**
-	 * Find the {@link NetworkInstance}, if possible.
+	 * Find the {@link NetworkChannel}, if possible.
 	 *
-	 * @param identifier The {@link Identifier} of the network instance to lookup
-	 * @return The {@link Nullable} {@link NetworkInstance}
+	 * @param identifier The {@link Identifier} of the network channel to lookup
+	 * @return The {@link Nullable} {@link NetworkChannel}
 	 */
 	@Nullable
-	static NetworkInstance findTarget(Identifier identifier) {
-		return instances.get(identifier);
+	static NetworkChannel findTarget(Identifier identifier) {
+		return channels.get(identifier);
 	}
 
 	/**
 	 * Retrieve the {@link LoginPayload} list for dispatch during {@link FMLHandshakeHandler#tickLogin(net.minecraft.network.ClientConnection)} handling.
-	 * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkInstance}.
+	 * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkChannel}.
 	 *
 	 * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT
 	 * 	 * @return The {@link LoginPayload} list
@@ -154,7 +156,10 @@ public class NetworkRegistry {
 		}
 
 		List<LoginPayload> gatheredPayloads = new ArrayList<>();
-		instances.values().forEach(instance -> instance.dispatchGatherLogin(gatheredPayloads, isLocal));
+
+		for (NetworkChannel channel: channels.values()) {
+			channel.onGatherLoginPayloads(new NetworkEvent.GatherLoginPayloadsEvent(gatheredPayloads, isLocal));
+		}
 
 		return gatheredPayloads;
 	}
@@ -264,11 +269,11 @@ public class NetworkRegistry {
 		}
 
 		/**
-		 * Create the network instance.
-		 * @return the {@link NetworkInstance}
+		 * Create the network channel.
+		 * @return the {@link ListenableChannel} allowing registration of listeners
 		 */
-		private NetworkInstance createNetworkInstance() {
-			return createInstance(channelName, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
+		private ListenableChannel createNetworkChannel() {
+			return createChannel(channelName, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
 		}
 
 		/**
@@ -277,7 +282,7 @@ public class NetworkRegistry {
 		 * @return A new {@link SimpleChannel}
 		 */
 		public SimpleChannel simpleChannel() {
-			return new SimpleChannel(createNetworkInstance());
+			return new SimpleChannel(channelName, createNetworkChannel());
 		}
 
 		/**
@@ -285,7 +290,7 @@ public class NetworkRegistry {
 		 * @return A new {@link EventNetworkChannel}
 		 */
 		public EventNetworkChannel eventNetworkChannel() {
-			return new EventNetworkChannel(createNetworkInstance());
+			return new EventNetworkChannel(createNetworkChannel());
 		}
 	}
 }

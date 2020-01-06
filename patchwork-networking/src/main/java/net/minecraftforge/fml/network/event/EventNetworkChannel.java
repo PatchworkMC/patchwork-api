@@ -21,25 +21,43 @@ package net.minecraftforge.fml.network.event;
 
 import java.util.function.Consumer;
 
+import net.minecraftforge.eventbus.api.BusBuilder;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkInstance;
+
+import com.patchworkmc.impl.networking.ListenableChannel;
 
 public class EventNetworkChannel {
-	private final NetworkInstance instance;
+	private final IEventBus networkEventBus;
 
-	public EventNetworkChannel(NetworkInstance instance) {
-		this.instance = instance;
+	public EventNetworkChannel(ListenableChannel channel) {
+		this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
+
+		channel.setPacketListener(this::packetListener);
+		channel.setRegistrationChangeListener(networkEventBus::post);
+		channel.setGatherLoginPayloadsListener(networkEventBus::post);
+	}
+
+	private void handleError(IEventBus bus, Event event, IEventListener[] listeners, int i, Throwable throwable) {
+		// Forge: NO-OP
+	}
+
+	private void packetListener(final ICustomPacket<?> packet, final NetworkEvent.Context context) {
+		this.networkEventBus.post(packet.getDirection().getEvent(packet, () -> context));
 	}
 
 	public <T extends NetworkEvent> void addListener(Consumer<T> eventListener) {
-		instance.addListener(eventListener);
+		this.networkEventBus.addListener(eventListener);
 	}
 
 	public void registerObject(Object object) {
-		instance.registerObject(object);
+		this.networkEventBus.register(object);
 	}
 
 	public void unregisterObject(Object object) {
-		instance.unregisterObject(object);
+		this.networkEventBus.unregister(object);
 	}
 }
