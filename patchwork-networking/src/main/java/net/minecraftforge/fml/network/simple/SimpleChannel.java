@@ -31,6 +31,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -60,16 +61,16 @@ public class SimpleChannel {
 		this.indexedCodec.consume(packet.getInternalData(), packet.getIndex(), context);
 	}
 
-	private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
+	private void networkLoginGather(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
 		for (Function<Boolean, List<Pair<String, ?>>> packetGenerator: loginPackets) {
-			List<Pair<String, ?>> packets = packetGenerator.apply(gatherEvent.isLocal());
+			List<Pair<String, ?>> packets = packetGenerator.apply(isLocal);
 
 			for (Pair<String, ?> pair: packets) {
 				PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
 
 				this.indexedCodec.build(pair.getRight(), buffer);
 
-				gatherEvent.add(buffer, this.channelName, pair.getLeft());
+				payloads.add(new NetworkRegistry.LoginPayload(buffer, this.channelName, pair.getLeft()));
 			}
 		}
 	}

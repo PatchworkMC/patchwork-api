@@ -19,6 +19,7 @@
 
 package com.patchworkmc.impl.networking;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -26,6 +27,7 @@ import java.util.function.Supplier;
 
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
 
 import net.minecraft.util.Identifier;
 
@@ -34,7 +36,7 @@ public class NetworkChannel implements NamedChannel, ListenableChannel, Versione
 
 	private BiConsumer<ICustomPacket<?>, NetworkEvent.Context> packetListener;
 	private Consumer<NetworkEvent.ChannelRegistrationChangeEvent> registrationChangeListener;
-	private Consumer<NetworkEvent.GatherLoginPayloadsEvent> gatherLoginPayloadsListener;
+	private BiConsumer<List<NetworkRegistry.LoginPayload>, Boolean> gatherLoginPayloadsListener;
 
 	private final String networkProtocolVersion;
 	private final Predicate<String> clientAcceptedVersions;
@@ -63,7 +65,7 @@ public class NetworkChannel implements NamedChannel, ListenableChannel, Versione
 	}
 
 	@Override
-	public void setGatherLoginPayloadsListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> listener) {
+	public void setGatherLoginPayloadsListener(BiConsumer<List<NetworkRegistry.LoginPayload>, Boolean> listener) {
 		this.gatherLoginPayloadsListener = listener;
 	}
 
@@ -79,9 +81,9 @@ public class NetworkChannel implements NamedChannel, ListenableChannel, Versione
 		}
 	}
 
-	public void onGatherLoginPayloads(NetworkEvent.GatherLoginPayloadsEvent event) {
+	public void onGatherLoginPayloads(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
 		if (gatherLoginPayloadsListener != null) {
-			gatherLoginPayloadsListener.accept(event);
+			gatherLoginPayloadsListener.accept(payloads, isLocal);
 		}
 	}
 

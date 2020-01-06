@@ -158,7 +158,7 @@ public class NetworkRegistry {
 		List<LoginPayload> gatheredPayloads = new ArrayList<>();
 
 		for (NetworkChannel channel: channels.values()) {
-			channel.onGatherLoginPayloads(new NetworkEvent.GatherLoginPayloadsEvent(gatheredPayloads, isLocal));
+			channel.onGatherLoginPayloads(gatheredPayloads, isLocal);
 		}
 
 		return gatheredPayloads;

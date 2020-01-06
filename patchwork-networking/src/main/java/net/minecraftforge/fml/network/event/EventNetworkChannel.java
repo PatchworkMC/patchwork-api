@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network.event;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -27,6 +28,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
 
 import com.patchworkmc.impl.networking.ListenableChannel;
 
@@ -38,7 +40,7 @@ public class EventNetworkChannel {
 
 		channel.setPacketListener(this::packetListener);
 		channel.setRegistrationChangeListener(networkEventBus::post);
-		channel.setGatherLoginPayloadsListener(networkEventBus::post);
+		channel.setGatherLoginPayloadsListener(this::gatherLoginPayloadsListener);
 
 		// TODO: Login packet stuff, registration change listeners
 		throw new UnsupportedOperationException("Registration change / gather login payload events aren't supported");
@@ -50,6 +52,10 @@ public class EventNetworkChannel {
 
 	private void packetListener(final ICustomPacket<?> packet, final NetworkEvent.Context context) {
 		this.networkEventBus.post(packet.getDirection().getEvent(packet, () -> context));
+	}
+
+	private void gatherLoginPayloadsListener(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
+		this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(payloads, isLocal));
 	}
 
 	public <T extends NetworkEvent> void addListener(Consumer<T> eventListener) {

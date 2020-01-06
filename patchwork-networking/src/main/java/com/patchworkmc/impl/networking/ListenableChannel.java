@@ -19,14 +19,16 @@
 
 package com.patchworkmc.impl.networking;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
 
 public interface ListenableChannel {
 	void setPacketListener(BiConsumer<ICustomPacket<?>, NetworkEvent.Context> listener);
 	void setRegistrationChangeListener(Consumer<NetworkEvent.ChannelRegistrationChangeEvent> listener);
-	void setGatherLoginPayloadsListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> listener);
+	void setGatherLoginPayloadsListener(BiConsumer<List<NetworkRegistry.LoginPayload>, Boolean> listener);
 }
