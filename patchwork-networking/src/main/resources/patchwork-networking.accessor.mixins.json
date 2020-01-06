@@ -6,8 +6,8 @@
     "ClientConnectionAccessor",
     "CustomPayloadC2SPacketAccessor",
     "CustomPayloadS2CPacketAccessor",
-    "LoginQueryRequestS2CPacketAccessor",
-    "LoginQueryResponseC2SPacketAccessor",
+//    "LoginQueryRequestS2CPacketAccessor",
+//    "LoginQueryResponseC2SPacketAccessor",
     "ThreadExecutorAccessor"
   ],
   "injectors": {

@@ -38,8 +38,6 @@ import net.minecraft.util.PacketByteBuf;
 
 import com.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
 import com.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
-import com.patchworkmc.mixin.networking.accessor.LoginQueryRequestS2CPacketAccessor;
-import com.patchworkmc.mixin.networking.accessor.LoginQueryResponseC2SPacketAccessor;
 
 public enum NetworkDirection {
 	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, 1),
@@ -100,9 +98,11 @@ public enum NetworkDirection {
 		case PLAY_TO_CLIENT:
 			return (ICustomPacket<T>) CustomPayloadS2CPacketAccessor.patchwork$create();
 		case LOGIN_TO_SERVER:
-			return (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
+			throw new UnsupportedOperationException("login packets are not supported");
+			// return (ICustomPacket<T>) LoginQueryResponseC2SPacketAccessor.patchwork$create();
 		case LOGIN_TO_CLIENT:
-			return (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
+			throw new UnsupportedOperationException("login packets are not supported");
+			// return (ICustomPacket<T>) LoginQueryRequestS2CPacketAccessor.patchwork$create();
 		default:
 			throw new IllegalStateException("Unexpected NetworkDirection " + this + ", someone's been tampering with enums!");
 		}
