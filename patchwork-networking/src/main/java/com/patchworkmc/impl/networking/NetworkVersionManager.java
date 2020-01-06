@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2019, 2019
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package com.patchworkmc.impl.networking;
 
 import java.util.ArrayList;
@@ -63,7 +82,7 @@ public final class NetworkVersionManager {
 		for (VersionedChannel channel: channels) {
 			Identifier name = channel.getChannelName();
 
-			if(name.getNamespace().equals("fml")) {
+			if (name.getNamespace().equals("fml")) {
 				continue;
 			}
 
@@ -119,19 +138,19 @@ public final class NetworkVersionManager {
 			final String incomingVersion = incoming.apply(channel.getChannelName());
 			final boolean accepted = predicate.test(channel, incomingVersion != null ? incomingVersion : NetworkRegistry.ABSENT);
 
-			if(origin == Origin.VANILLA) {
+			if (origin == Origin.VANILLA) {
 				LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", channel.getChannelName(), accepted ? "ACCEPTED" : "REJECTED");
 			} else {
 				LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", channel.getChannelName(), incomingVersion, origin, accepted ? "ACCEPTED" : "REJECTED");
 			}
 
-			if(!accepted) {
+			if (!accepted) {
 				rejected.add(channel.getChannelName().toString());
 			}
 		}
 
 		if (!rejected.isEmpty()) {
-			if(origin == Origin.VANILLA) {
+			if (origin == Origin.VANILLA) {
 				LOGGER.error(NETREGISTRY, "Channels {} rejected vanilla connections", rejected);
 			} else {
 				LOGGER.error(NETREGISTRY, "Channels {} rejected their {} version number", rejected, origin);
