@@ -29,9 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,7 +82,7 @@ public final class NetworkVersionManager {
 				continue;
 			}
 
-			Pair<String, Boolean> version = Pair.of(channel.getNetworkProtocolVersion(), channel.tryClientVersionOnServer(NetworkRegistry.ABSENT));
+			Pair<String, Boolean> version = Pair.of(channel.getNetworkProtocolVersion(), channel.tryClientVersionOnServer(ABSENT));
 
 			channelVersions.put(name, version);
 		}
@@ -93,11 +91,11 @@ public final class NetworkVersionManager {
 	}
 
 	public List<String> getServerNonVanillaNetworkMods() {
-		return validateChannels(identifier -> NetworkRegistry.ACCEPTVANILLA, Origin.VANILLA, VersionedChannel::tryClientVersionOnServer);
+		return validateChannels(identifier -> ACCEPTVANILLA, Origin.VANILLA, VersionedChannel::tryClientVersionOnServer);
 	}
 
 	public List<String> getClientNonVanillaNetworkMods() {
-		return validateChannels(identifier -> NetworkRegistry.ACCEPTVANILLA, Origin.VANILLA, VersionedChannel::tryServerVersionOnClient);
+		return validateChannels(identifier -> ACCEPTVANILLA, Origin.VANILLA, VersionedChannel::tryServerVersionOnClient);
 	}
 
 	/**
@@ -133,8 +131,13 @@ public final class NetworkVersionManager {
 		List<String> rejected = new ArrayList<>();
 
 		for (VersionedChannel channel: channels) {
+			if (origin == Origin.PING && channel.getChannelName().getNamespace().equals("fml")) {
+				// FML channels are not checked during the ping process.
+				continue;
+			}
+
 			final String incomingVersion = incoming.apply(channel.getChannelName());
-			final boolean accepted = predicate.test(channel, incomingVersion != null ? incomingVersion : NetworkRegistry.ABSENT);
+			final boolean accepted = predicate.test(channel, incomingVersion != null ? incomingVersion : ABSENT);
 
 			if (!accepted) {
 				rejected.add(channel.getChannelName().toString());
@@ -179,9 +182,6 @@ public final class NetworkVersionManager {
 	}
 
 	public boolean checkListPingCompatibilityForClient(Map<Identifier, Pair<String, Boolean>> incoming) {
-		// TODO: don't mutate map here, modify the call site instead
-		incoming.keySet().removeIf(name -> name.getNamespace().equals("fml"));
-
 		List<String> rejected = validateChannels(identifier -> {
 			Pair<String, Boolean> entry = incoming.get(identifier);
 
@@ -203,7 +203,8 @@ public final class NetworkVersionManager {
 			Identifier channelName = entry.getKey();
 			boolean required = entry.getValue().getRight();
 
-			if (!required || handled.contains(channelName)) {
+			// We're looking for required and non FML channels that do not exist in our list of channels.
+			if (!required || channelName.getNamespace().equals("fml") || handled.contains(channelName)) {
 				continue;
 			}
 
