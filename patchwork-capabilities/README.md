@@ -13,9 +13,8 @@ MinecraftForge offers a capability API
   * [StorageMinecartEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java.patch#L44-L49)
   * [PlayerEntity](https://github.com/MinecraftForge/MinecraftForge/blob/d28cd0352b6b0fe86e062f29e681c3b14572c6d5/patches/minecraft/net/minecraft/entity/player/PlayerEntity.java.patch#L497-L505)
 * Still need to implement `@CapabilityInject`
-* `ClientWorldMixin` and `ServerWorldMixin` depend on `IForgeDimension`
-* `ItemStackMixin` depend on `IForgeItem`
-* `EntityMixin` needs to loose capabilities when the Entity is killed, and data is not kept
+* `ClientWorldMixin` and `ServerWorldMixin` requires the dimension API (`IForgeDimension`)
+* `ItemStackMixin` requires the item API (`IForgeItem`)
 
 ## Patcher
 Redirect all instance calls to `CapabilityProvider` to static interface calls to `CapabilityProxy`

@@ -47,7 +47,7 @@ import net.minecraft.util.math.Direction;
  */
 @ParametersAreNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider {
-	private final ICapabilityProvider[] caps;
+	private final ICapabilityProvider[] providers;
 	private final INBTSerializable<Tag>[] writers;
 	private final String[] names;
 	private final List<Runnable> listeners;
@@ -83,7 +83,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 			}
 		}
 
-		caps = lstCaps.toArray(new ICapabilityProvider[0]);
+		this.providers = lstCaps.toArray(new ICapabilityProvider[0]);
 		writers = lstWriters.toArray(new INBTSerializable[0]);
 		names = lstNames.toArray(new String[0]);
 	}
@@ -91,15 +91,15 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-		for (ICapabilityProvider c : caps) {
-			LazyOptional<T> ret = c.getCapability(cap, side);
+		for (ICapabilityProvider provider : providers) {
+			LazyOptional<T> ret = provider.getCapability(cap, side);
 
 			//noinspection ConstantConditions
 			if (ret == null) {
 				throw new RuntimeException(
 						String.format(
 								"Provider %s.getCapability() returned null; return LazyOptional.empty() instead!",
-								c.getClass().getTypeName()
+								provider.getClass().getTypeName()
 						)
 				);
 			}
@@ -114,20 +114,20 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 
 	@Override
 	public CompoundTag serializeNBT() {
-		CompoundTag nbt = new CompoundTag();
+		CompoundTag tag = new CompoundTag();
 
 		for (int x = 0; x < writers.length; x++) {
-			nbt.put(names[x], writers[x].serializeNBT());
+			tag.put(names[x], writers[x].serializeNBT());
 		}
 
-		return nbt;
+		return tag;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(CompoundTag tag) {
 		for (int x = 0; x < writers.length; x++) {
-			if (nbt.containsKey(names[x])) {
-				writers[x].deserializeNBT(nbt.getTag(names[x]));
+			if (tag.containsKey(names[x])) {
+				writers[x].deserializeNBT(tag.getTag(names[x]));
 			}
 		}
 	}

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -38,6 +39,9 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 @Mixin(Entity.class)
 public class EntityMixin implements CapabilityProviderHolder {
 	private final CapabilityProvider<Entity> provider = new BaseCapabilityProvider<>(Entity.class, (Entity) (Object) this);
+
+	@Shadow
+	private boolean removed;
 
 	@Nonnull
 	@Override
@@ -63,6 +67,21 @@ public class EntityMixin implements CapabilityProviderHolder {
 	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
 		if (tag.containsKey("ForgeCaps")) {
 			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
+		}
+	}
+
+	@Inject(method = "remove", at = @At("RETURN"))
+	private void onRemoved(CallbackInfo callback) {
+		remove(false);
+	}
+
+	// "well, my approach is that if that becomes an issue, we'll fix it"
+	//  - coderbot, Patchwork Lead
+	public void remove(boolean keep) {
+		removed = true;
+
+		if (!keep) {
+			provider.invalidateCaps();
 		}
 	}
 }

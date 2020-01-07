@@ -28,12 +28,12 @@ import net.minecraft.server.world.ServerWorld;
 
 import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
-// World would have CapabilityProviderHolder implemented if the mixin was applied
+// World implements CapabilityProviderHolder already because of WorldMixin
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin implements CapabilityProviderHolder {
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		// TODO: IForgeDimension when?
+		// TODO: Requires Dimension API (IForgeDimension)
 		getCapabilityProvider().gatherCapabilities(null);
 	}
 }
