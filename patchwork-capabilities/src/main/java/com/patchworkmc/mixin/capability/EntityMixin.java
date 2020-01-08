@@ -35,13 +35,12 @@ import net.minecraft.nbt.CompoundTag;
 import com.patchworkmc.impl.capability.BaseCapabilityProvider;
 import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 
-// TODO: Invalidate capabilities when the entity is killed
 @Mixin(Entity.class)
 public class EntityMixin implements CapabilityProviderHolder {
 	private final CapabilityProvider<Entity> provider = new BaseCapabilityProvider<>(Entity.class, (Entity) (Object) this);
 
 	@Shadow
-	private boolean removed;
+	public boolean removed;
 
 	@Nonnull
 	@Override
@@ -72,7 +71,7 @@ public class EntityMixin implements CapabilityProviderHolder {
 
 	@Inject(method = "remove", at = @At("RETURN"))
 	private void onRemoved(CallbackInfo callback) {
-		remove(false);
+		provider.invalidateCaps();
 	}
 
 	// "well, my approach is that if that becomes an issue, we'll fix it"

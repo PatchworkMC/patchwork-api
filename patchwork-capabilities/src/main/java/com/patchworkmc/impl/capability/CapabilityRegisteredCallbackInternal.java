@@ -38,25 +38,20 @@ public class CapabilityRegisteredCallbackInternal {
 	@SuppressWarnings("unchecked")
 	public static <C> Event<CapabilityRegisteredCallback<C>> getOrCreateEvent(Class<C> type) {
 		return (Event<CapabilityRegisteredCallback<C>>) CALLBACKS.computeIfAbsent(type, $ -> EventFactory.createArrayBacked(CapabilityRegisteredCallback.class, capability -> { }, callbacks -> capability -> {
-			Throwable thr = null;
+			boolean error = false;
+			Throwable throwable = new Throwable();
 
 			for (CapabilityRegisteredCallback<C> callback : callbacks) {
 				try {
 					callback.onCapabilityRegistered(capability);
-				} catch (Throwable throwable) {
-					if (thr == null) {
-						thr = throwable;
-					} else {
-						Throwable suppressed = new Throwable();
-						suppressed.addSuppressed(thr);
-						suppressed.addSuppressed(throwable);
-						thr = suppressed;
-					}
+				} catch (Throwable thr) {
+					error = true;
+					throwable.addSuppressed(thr);
 				}
 			}
 
-			if (thr != null) {
-				LOGGER.error("An uncaught exception was thrown while processing a CapabilityRegisteredCallback<{}>", type.getName(), thr);
+			if (error) {
+				LOGGER.error("An uncaught exception was thrown while processing a CapabilityRegisteredCallback<{}>", type.getName(), throwable);
 			}
 		}));
 	}

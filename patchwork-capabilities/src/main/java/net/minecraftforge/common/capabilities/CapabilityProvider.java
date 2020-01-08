@@ -100,7 +100,7 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider {
 	}
 
 	public void reviveCaps() {
-		this.valid = true; // Stupid players don't copy the entity when transporting across worlds.
+		this.valid = true; // Players don't copy the entity when transporting across worlds.
 	}
 
 	@Override
