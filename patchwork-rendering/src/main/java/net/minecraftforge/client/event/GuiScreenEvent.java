@@ -55,7 +55,7 @@ public class GuiScreenEvent extends Event {
 	}
 
 	/**
-	 * The GuiScreen object generating this event.
+	 * The Screen object generating this event.
 	 */
 	public Screen getGui() {
 		return gui;
@@ -94,13 +94,13 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires just after initializing {@link Screen#minecraft}, {@link Screen#font},
-		 * {@link Screen#width}, and {@link Screen#height}.<br/><br/>
+		 * <p>This event fires just after initializing {@link Screen#minecraft}, {@link Screen#font},
+		 * {@link Screen#width}, and {@link Screen#height}.</p>
 		 *
-		 * <p>If canceled the following lines are skipped in {@link Screen#init(net.minecraft.client.MinecraftClient, int, int)}:<br/>
-		 * {@code this.buttonList.clear();}<br/>
+		 * <p>If canceled the following lines are skipped in {@link Screen#init(net.minecraft.client.MinecraftClient, int, int)}:</p>
+		 * {@code this.buttons.clear();}<br/>
 		 * {@code this.children.clear();}<br/>
-		 * {@code this.initGui();}<br/>
+		 * {@code this.init();}<br/>
 		 */
 		public static class Pre extends InitGuiEvent {
 			// For EventBus
@@ -119,7 +119,7 @@ public class GuiScreenEvent extends Event {
 
 		/**
 		 * This event fires right after {@link Screen#init()}.
-		 * This is a good place to alter a GuiScreen's component layout if desired.
+		 * This is a good place to alter a Screen's component layout if desired.
 		 */
 		public static class Post extends InitGuiEvent {
 			// For EventBus
@@ -288,8 +288,8 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires after {@link GuiScreen#actionPerformed(GuiButton)} provided that the active
-		 * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.
+		 * This event fires after {@link Screen#actionPerformed(GuiButton)} provided that the active
+		 * screen has not been changed as a result of {@link Screen#actionPerformed(GuiButton)}.
 		 */
 		public static class Post extends ActionPerformedEvent {
 			// For EventBus
@@ -344,7 +344,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when a mouse click is detected for a GuiScreen, before it is handled.
+		 * This event fires when a mouse click is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#mouseClicked(double, double, int)}.
 		 */
 		public static class Pre extends MouseClickedEvent {
@@ -400,7 +400,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when a mouse release is detected for a GuiScreen, before it is handled.
+		 * This event fires when a mouse release is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#mouseReleased(double, double, int)}.
 		 */
 		public static class Pre extends MouseReleasedEvent {
@@ -468,7 +468,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when a mouse drag is detected for a GuiScreen, before it is handled.
+		 * This event fires when a mouse drag is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#mouseDragged(double, double, int, double, double)}.
 		 */
 		public static class Pre extends MouseDragEvent {
@@ -524,7 +524,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
+		 * This event fires when a mouse scroll is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#mouseScrolled(double)}.
 		 */
 		public static class Pre extends MouseScrollEvent {
@@ -625,7 +625,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+		 * This event fires when keyboard input is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#keyPressed(int, int, int)}.
 		 */
 		public static class Pre extends KeyboardKeyPressedEvent {
@@ -673,7 +673,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+		 * This event fires when keyboard input is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#keyReleased(int, int, int)}.
 		 */
 		public static class Pre extends KeyboardKeyReleasedEvent {
@@ -746,7 +746,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when keyboard character input is detected for a GuiScreen, before it is handled.
+		 * This event fires when keyboard character input is detected for a Screen, before it is handled.
 		 * Cancel this event to bypass {@link Element#charTyped(char, int)}.
 		 */
 		public static class Pre extends KeyboardCharTypedEvent {
