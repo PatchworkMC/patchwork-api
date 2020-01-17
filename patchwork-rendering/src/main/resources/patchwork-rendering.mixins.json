@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.rendering",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinScreen",
+    "MixinAbstractInventoryScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -21,5 +21,6 @@ include 'patchwork-extensions-shearing'
 include 'patchwork-extensions'
 include 'patchwork-fml'
 include 'patchwork-registries'
+include 'patchwork-rendering'
 include 'patchwork-networking'
 
