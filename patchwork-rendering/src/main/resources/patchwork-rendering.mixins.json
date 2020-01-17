@@ -3,8 +3,9 @@
   "package": "com.patchworkmc.mixin.rendering",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinScreen",
-    "MixinAbstractInventoryScreen"
+    "MixinAbstractInventoryScreen",
+    "MixinGameRenderer",
+    "MixinScreen"
   ],
   "injectors": {
     "defaultRequire": 1
