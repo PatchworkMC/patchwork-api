@@ -5,6 +5,7 @@
   "mixins": [
     "MixinAbstractInventoryScreen",
     "MixinGameRenderer",
+    "MixinKeyboard",
     "MixinMouse",
     "MixinScreen"
   ],

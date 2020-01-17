@@ -61,6 +61,10 @@ public abstract class MixinMouse {
 
 	@Inject(method = "method_1611", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void postMouseClicked(boolean[] bls, double d, double e, int button, CallbackInfo info) {
+		if (bls[0]) {
+			return;
+		}
+
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseClickedEvent.Post(client.currentScreen, d, e, button))) {
 			bls[0] = true;
 			info.cancel();
@@ -77,6 +81,10 @@ public abstract class MixinMouse {
 
 	@Inject(method = "method_1605", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void postMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
+		if (bls[0]) {
+			return;
+		}
+
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Post(client.currentScreen, d, e, button))) {
 			bls[0] = true;
 			info.cancel();
