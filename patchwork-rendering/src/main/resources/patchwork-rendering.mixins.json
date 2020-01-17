@@ -5,6 +5,7 @@
   "mixins": [
     "MixinAbstractInventoryScreen",
     "MixinGameRenderer",
+    "MixinMouse",
     "MixinScreen"
   ],
   "injectors": {

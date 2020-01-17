@@ -46,7 +46,7 @@ public abstract class MixinAbstractInventoryScreen extends AbstractContainerScre
 	private void potionShift(CallbackInfo info) {
 		if (offsetGuiForEffects) {
 			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.PotionShiftEvent())) {
-				this.left = 160 + (this.width - this.containerWidth - 200) / 2;
+				this.left = (this.width - this.containerWidth) / 2;
 			}
 		}
 	}
