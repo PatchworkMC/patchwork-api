@@ -45,6 +45,7 @@ import net.fabricmc.api.Environment;
 public class GuiScreenEvent extends Event {
 	private final Screen gui;
 
+	// For EventBus
 	public GuiScreenEvent() {
 		this(null);
 	}
@@ -66,6 +67,7 @@ public class GuiScreenEvent extends Event {
 
 		private List<AbstractButtonWidget> list;
 
+		// For EventBus
 		public InitGuiEvent() {
 		}
 
@@ -101,6 +103,7 @@ public class GuiScreenEvent extends Event {
 		 * {@code this.initGui();}<br/>
 		 */
 		public static class Pre extends InitGuiEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -119,6 +122,7 @@ public class GuiScreenEvent extends Event {
 		 * This is a good place to alter a GuiScreen's component layout if desired.
 		 */
 		public static class Post extends InitGuiEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -133,6 +137,7 @@ public class GuiScreenEvent extends Event {
 		private final int mouseY;
 		private final float renderPartialTicks;
 
+		// For EventBus
 		public DrawScreenEvent() {
 			this(null, -1, -1, 0);
 		}
@@ -170,6 +175,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to skip {@link Screen#render(int, int, float)}.
 		 */
 		public static class Pre extends DrawScreenEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -187,6 +193,7 @@ public class GuiScreenEvent extends Event {
 		 * This event fires just after {@link Screen#render(int, int, float)} is called.
 		 */
 		public static class Post extends DrawScreenEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -201,6 +208,7 @@ public class GuiScreenEvent extends Event {
 	 * This allows drawing next to Guis, above the background but below any tooltips.
 	 */
 	public static class BackgroundDrawnEvent extends GuiScreenEvent {
+		// For EventBus
 		public BackgroundDrawnEvent() {
 		}
 
@@ -215,6 +223,7 @@ public class GuiScreenEvent extends Event {
 	 * Cancel this event to prevent the Gui from being moved.
 	 */
 	public static class PotionShiftEvent extends GuiScreenEvent {
+		// For EventBus
 		public PotionShiftEvent() {
 		}
 
@@ -232,6 +241,7 @@ public class GuiScreenEvent extends Event {
 		private ButtonWidget button;
 		private List<ButtonWidget> buttonList;
 
+		// For EventBus
 		public ActionPerformedEvent() {
 		}
 
@@ -268,6 +278,7 @@ public class GuiScreenEvent extends Event {
 		 * Replace button with a different button from buttonList to have that button's action executed.
 		 */
 		public static class Pre extends ActionPerformedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -281,6 +292,7 @@ public class GuiScreenEvent extends Event {
 		 * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.
 		 */
 		public static class Post extends ActionPerformedEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -294,6 +306,7 @@ public class GuiScreenEvent extends Event {
 		private final double mouseX;
 		private final double mouseY;
 
+		// For EventBus
 		public MouseInputEvent() {
 			this(null, -1, -1);
 		}
@@ -316,6 +329,7 @@ public class GuiScreenEvent extends Event {
 	public abstract static class MouseClickedEvent extends MouseInputEvent {
 		private final int button;
 
+		// For EventBus
 		public MouseClickedEvent() {
 			this(null, -1, -1, -1);
 		}
@@ -334,6 +348,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#mouseClicked(double, double, int)}.
 		 */
 		public static class Pre extends MouseClickedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -352,6 +367,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
 		 */
 		public static class Post extends MouseClickedEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -369,6 +385,7 @@ public class GuiScreenEvent extends Event {
 	public abstract static class MouseReleasedEvent extends MouseInputEvent {
 		private final int button;
 
+		// For EventBus
 		public MouseReleasedEvent() {
 			this(null, -1, -1, -1);
 		}
@@ -387,6 +404,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#mouseReleased(double, double, int)}.
 		 */
 		public static class Pre extends MouseReleasedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -405,6 +423,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
 		 */
 		public static class Post extends MouseReleasedEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -424,6 +443,7 @@ public class GuiScreenEvent extends Event {
 		private final double dragX;
 		private final double dragY;
 
+		// For EventBus
 		public MouseDragEvent() {
 			this(null, -1, -1, -1, -1, -1);
 		}
@@ -452,6 +472,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#mouseDragged(double, double, int, double, double)}.
 		 */
 		public static class Pre extends MouseDragEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -470,6 +491,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the mouse drag, to prevent other handlers from using the same input.
 		 */
 		public static class Post extends MouseDragEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -487,6 +509,7 @@ public class GuiScreenEvent extends Event {
 	public abstract static class MouseScrollEvent extends MouseInputEvent {
 		private final double scrollDelta;
 
+		// For EventBus
 		public MouseScrollEvent() {
 			this(null, -1, -1, -1);
 		}
@@ -505,6 +528,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#mouseScrolled(double)}.
 		 */
 		public static class Pre extends MouseScrollEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -523,6 +547,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
 		 */
 		public static class Post extends MouseScrollEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -542,6 +567,7 @@ public class GuiScreenEvent extends Event {
 		private final int scanCode;
 		private final int modifiers;
 
+		// For EventBus
 		public KeyboardKeyEvent() {
 			this(null, -1, -1, -1);
 		}
@@ -590,6 +616,7 @@ public class GuiScreenEvent extends Event {
 	}
 
 	public abstract static class KeyboardKeyPressedEvent extends KeyboardKeyEvent {
+		// For EventBus
 		public KeyboardKeyPressedEvent() {
 		}
 
@@ -602,6 +629,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#keyPressed(int, int, int)}.
 		 */
 		public static class Pre extends KeyboardKeyPressedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -620,6 +648,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
 		 */
 		public static class Post extends KeyboardKeyPressedEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -635,6 +664,7 @@ public class GuiScreenEvent extends Event {
 	}
 
 	public abstract static class KeyboardKeyReleasedEvent extends KeyboardKeyEvent {
+		// For EventBus
 		public KeyboardKeyReleasedEvent() {
 		}
 
@@ -647,6 +677,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#keyReleased(int, int, int)}.
 		 */
 		public static class Pre extends KeyboardKeyReleasedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -665,6 +696,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
 		 */
 		public static class Post extends KeyboardKeyReleasedEvent {
+			// For EventBus
 			public Post() {
 			}
 
@@ -683,6 +715,7 @@ public class GuiScreenEvent extends Event {
 		private final char codePoint;
 		private final int modifiers;
 
+		// For EventBus
 		public KeyboardCharTypedEvent() {
 			this(null, (char) -1, -1);
 		}
@@ -717,6 +750,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event to bypass {@link Element#charTyped(char, int)}.
 		 */
 		public static class Pre extends KeyboardCharTypedEvent {
+			// For EventBus
 			public Pre() {
 			}
 
@@ -735,6 +769,7 @@ public class GuiScreenEvent extends Event {
 		 * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
 		 */
 		public static class Post extends KeyboardCharTypedEvent {
+			// For EventBus
 			public Post() {
 			}
 
