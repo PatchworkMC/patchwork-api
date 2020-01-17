@@ -60,7 +60,7 @@ public abstract class MixinMouse {
 	}
 
 	@Inject(method = "method_1611", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void postMouseClicked(boolean[] bls, double d, double e, int button, CallbackInfo info) {
+	private void postMouseClicked(boolean[] bls, double d, double e, int button, CallbackInfo info) {
 		if (bls[0]) {
 			return;
 		}
@@ -72,7 +72,7 @@ public abstract class MixinMouse {
 	}
 
 	@Inject(method = "method_1605", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void preMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
+	private void preMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Pre(client.currentScreen, d, e, button))) {
 			bls[0] = true;
 			info.cancel();
@@ -80,7 +80,7 @@ public abstract class MixinMouse {
 	}
 
 	@Inject(method = "method_1605", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
-	public void postMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
+	private void postMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
 		if (bls[0]) {
 			return;
 		}
@@ -92,21 +92,21 @@ public abstract class MixinMouse {
 	}
 
 	@Inject(method = "method_1602", at = @At("HEAD"), cancellable = true)
-	public void preMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
+	private void preMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Pre(client.currentScreen, d, e, activeButton, f, g))) {
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1602", at = @At("RETURN"))
-	public void postMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
+	private void postMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Post(client.currentScreen, d, e, activeButton, f, g));
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z",
 					ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void preMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
+	private void preMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Pre(client.currentScreen, g, h, f))) {
 			ci.cancel();
 		}
@@ -115,7 +115,7 @@ public abstract class MixinMouse {
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z",
 					ordinal = 0, shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void postMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
+	private void postMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Post(client.currentScreen, g, h, f));
 	}
 
