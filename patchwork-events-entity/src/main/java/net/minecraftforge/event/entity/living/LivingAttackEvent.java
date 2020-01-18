@@ -23,16 +23,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
 /**
- * LivingAttackEvent is fired when a living Entity is attacked.
+ * LivingAttackEvent is fired when a {@link LivingEntity} is attacked.
  *
  * <p>This event is fired whenever a {@link LivingEntity} is attacked in
  * {@link LivingEntity#damage(DamageSource, float)} and
  * {@link net.minecraft.entity.player.PlayerEntity#damage(DamageSource, float)}.</p>
  *
- * <p>This event is fired via the {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingAttack(EntityLivingBase, DamageSource, float)}.</p>
+ * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingAttack(LivingEntity, DamageSource, float)}.</p>
  *
  * <p>{@link #source} contains the {@link DamageSource} of the attack.
- * {@link #amount} contains the amount of damage dealt to the entity.</p>
+ * {@link #damage} contains the amount of damage dealt to the entity.</p>
  *
  * <p>This event is cancellable.
  * If this event is canceled, the {@link LivingEntity} does not take attack damage.</p>

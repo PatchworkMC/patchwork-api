@@ -32,12 +32,10 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(ClientPlayerEntity.class)
 public class MixinClientPlayerEntity {
-	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "damage", at = @At("HEAD"))
 	private void hookDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
-		if (EntityEvents.onLivingAttack(entity, source, amount)) {
-			callback.setReturnValue(false);
-		}
+		EntityEvents.onLivingAttack(entity, source, amount);
 	}
 }
