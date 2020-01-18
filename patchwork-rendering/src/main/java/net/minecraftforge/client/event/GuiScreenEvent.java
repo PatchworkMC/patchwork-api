@@ -55,7 +55,7 @@ public class GuiScreenEvent extends Event {
 	}
 
 	/**
-	 * The Screen object generating this event.
+	 * The {@link Screen} object generating this event.
 	 */
 	public Screen getGui() {
 		return gui;
@@ -98,9 +98,9 @@ public class GuiScreenEvent extends Event {
 		 * {@link Screen#width}, and {@link Screen#height}.</p>
 		 *
 		 * <p>If canceled the following lines are skipped in {@link Screen#init(net.minecraft.client.MinecraftClient, int, int)}:</p>
-		 * {@code this.buttons.clear();}<br/>
-		 * {@code this.children.clear();}<br/>
-		 * {@code this.init();}<br/>
+		 * <p>{@code this.buttons.clear();}</p>
+		 * <p>{@code this.children.clear();}</p>
+		 * <p>{@code this.init();}</p>
 		 */
 		public static class Pre extends InitGuiEvent {
 			// For EventBus
@@ -263,7 +263,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * A COPY of the {@link #buttonList} field from the GuiScreen referenced by {@link #gui}.
+		 * A COPY of the {@link #buttonList} field from {@link Screen#buttons} referenced by {@link #gui}.
 		 */
 		public List<ButtonWidget> getButtonList() {
 			return buttonList;
@@ -274,7 +274,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires once it has been determined that a GuiButton object has been clicked.
+		 * This event fires once it has been determined that a {@link ButtonWidget} object has been clicked.
 		 * Replace button with a different button from buttonList to have that button's action executed.
 		 */
 		public static class Pre extends ActionPerformedEvent {
@@ -543,7 +543,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires after {@link Element#mouseScrolled(double)} if the scroll was not already handled.
+		 * This event fires after {@link Element#mouseScrolled(double, double, double)} if the scroll was not already handled.
 		 * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
 		 */
 		public static class Post extends MouseScrollEvent {

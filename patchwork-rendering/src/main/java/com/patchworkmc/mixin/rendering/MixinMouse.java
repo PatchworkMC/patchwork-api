@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.Screen;
 
 @Mixin(Mouse.class)
 public abstract class MixinMouse {
@@ -52,71 +53,71 @@ public abstract class MixinMouse {
 	private double cursorDeltaX;
 
 	@Inject(method = "method_1611", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void preMouseClicked(boolean[] bls, double d, double e, int button, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseClickedEvent.Pre(client.currentScreen, d, e, button))) {
-			bls[0] = true;
+	public void preMouseClicked(boolean[] handled, double mouseX, double mouseY, int button, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseClickedEvent.Pre(client.currentScreen, mouseX, mouseY, button))) {
+			handled[0] = true;
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1611", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void postMouseClicked(boolean[] bls, double d, double e, int button, CallbackInfo info) {
-		if (bls[0]) {
+	private void postMouseClicked(boolean[] handled, double mouseX, double mouseY, int button, CallbackInfo info) {
+		if (handled[0]) {
 			return;
 		}
 
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseClickedEvent.Post(client.currentScreen, d, e, button))) {
-			bls[0] = true;
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseClickedEvent.Post(client.currentScreen, mouseX, mouseY, button))) {
+			handled[0] = true;
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1605", at = @At("HEAD"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void preMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Pre(client.currentScreen, d, e, button))) {
-			bls[0] = true;
+	private void preMouseReleased(boolean[] handled, double mouseX, double mouseY, int button, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Pre(client.currentScreen, mouseX, mouseY, button))) {
+			handled[0] = true;
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1605", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void postMouseReleased(boolean[] bls, double d, double e, int button, CallbackInfo info) {
-		if (bls[0]) {
+	private void postMouseReleased(boolean[] handled, double mouseX, double mouseY, int button, CallbackInfo info) {
+		if (handled[0]) {
 			return;
 		}
 
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Post(client.currentScreen, d, e, button))) {
-			bls[0] = true;
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseReleasedEvent.Post(client.currentScreen, mouseX, mouseY, button))) {
+			handled[0] = true;
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1602", at = @At("HEAD"), cancellable = true)
-	private void preMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Pre(client.currentScreen, d, e, activeButton, f, g))) {
+	private void preMouseDragged(Element element, double mouseX, double mouseY, double deltaX, double deltaY, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Pre((Screen) element, mouseX, mouseY, activeButton, deltaX, deltaY))) {
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "method_1602", at = @At("RETURN"))
-	private void postMouseDragged(Element element, double d, double e, double f, double g, CallbackInfo info) {
-		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Post(client.currentScreen, d, e, activeButton, f, g));
+	private void postMouseDragged(Element element, double mouseX, double mouseY, double deltaX, double deltaY, CallbackInfo info) {
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseDragEvent.Post((Screen) element, mouseX, mouseY, activeButton, deltaX, deltaY));
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z",
 					ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void preMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Pre(client.currentScreen, g, h, f))) {
-			ci.cancel();
+	private void preMouseScrolled(long window, double xOffset, double yOffset, CallbackInfo info, double amount, double mouseX, double mouseY) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Pre(client.currentScreen, mouseX, mouseY, amount))) {
+			info.cancel();
 		}
 	}
 
 	@Inject(method = "onMouseScroll", at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/gui/screen/Screen;mouseScrolled(DDD)Z",
 					ordinal = 0, shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void postMouseScrolled(long window, double d, double e, CallbackInfo ci, double f, double g, double h) {
-		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Post(client.currentScreen, g, h, f));
+	private void postMouseScrolled(long window, double xOffset, double yOffset, CallbackInfo info, double amount, double mouseX, double mouseY) {
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Post(client.currentScreen, mouseX, mouseY, amount));
 	}
 
 	public boolean isMiddleDown() {

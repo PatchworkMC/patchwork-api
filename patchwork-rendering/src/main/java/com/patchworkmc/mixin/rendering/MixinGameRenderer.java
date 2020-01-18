@@ -39,14 +39,14 @@ public abstract class MixinGameRenderer {
 	private MinecraftClient client;
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(IIF)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void beforeRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo ci, int i, int j) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(client.currentScreen, i, j, tickDelta))) {
-			ci.cancel();
+	private void beforeRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(client.currentScreen, mouseX, mouseY, tickDelta))) {
+			info.cancel();
 		}
 	}
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(IIF)V", shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void afterRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo ci, int i, int j) {
-		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(client.currentScreen, i, j, tickDelta));
+	private void afterRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY) {
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(client.currentScreen, mouseX, mouseY, tickDelta));
 	}
 }

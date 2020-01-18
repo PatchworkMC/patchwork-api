@@ -38,16 +38,16 @@ public abstract class MixinKeyboard {
 	private boolean repeatEvents;
 
 	@Inject(method = "method_1454", at = @At("HEAD"), cancellable = true)
-	private void preKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int j, CallbackInfo info) {
+	private void preKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int mods, CallbackInfo info) {
 		if (i != 1 && (i != 2 || !this.repeatEvents)) {
 			if (i == 0) {
-				if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyReleasedEvent.Pre((Screen) element, key, scanCode, j))) {
+				if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyReleasedEvent.Pre((Screen) element, key, scanCode, mods))) {
 					bls[0] = true;
 					info.cancel();
 				}
 			}
 		} else {
-			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyPressedEvent.Pre((Screen) element, key, scanCode, j))) {
+			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyPressedEvent.Pre((Screen) element, key, scanCode, mods))) {
 				bls[0] = true;
 				info.cancel();
 			}
@@ -55,39 +55,39 @@ public abstract class MixinKeyboard {
 	}
 
 	@Inject(method = "method_1454", at = @At("RETURN"))
-	private void postKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int j, CallbackInfo info) {
+	private void postKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int mods, CallbackInfo info) {
 		if (bls[0]) {
 			return;
 		}
 
 		if (i != 1 && (i != 2 || !this.repeatEvents)) {
 			if (i == 0) {
-				if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyReleasedEvent.Post((Screen) element, key, scanCode, j))) {
+				if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyReleasedEvent.Post((Screen) element, key, scanCode, mods))) {
 					bls[0] = true;
 				}
 			}
 		} else {
-			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyPressedEvent.Post((Screen) element, key, scanCode, j))) {
+			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardKeyPressedEvent.Post((Screen) element, key, scanCode, mods))) {
 				bls[0] = true;
 			}
 		}
 	}
 
 	@Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, int i, int j, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) i, j))) {
+	private static void charEvent(Element element, int character, int mods, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
 			info.cancel();
-		} else if (!element.charTyped((char) i, j)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, (char) i, j));
+		} else if (!element.charTyped((char) character, mods)) {
+			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, (char) character, mods));
 		}
 	}
 
 	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, char i, int j, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, i, j))) {
+	private static void charEvent(Element element, char character, int mods, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, character, mods))) {
 			info.cancel();
-		} else if (!element.charTyped(i, j)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, i, j));
+		} else if (!element.charTyped(character, mods)) {
+			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 		}
 	}
 }
