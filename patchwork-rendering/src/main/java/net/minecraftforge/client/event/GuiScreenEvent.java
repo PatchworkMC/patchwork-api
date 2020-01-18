@@ -746,7 +746,7 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires when keyboard character input is detected for a Screen, before it is handled.
+		 * This event fires when keyboard character input is detected for a {@link Screen}, before it is handled.
 		 * Cancel this event to bypass {@link Element#charTyped(char, int)}.
 		 */
 		public static class Pre extends KeyboardCharTypedEvent {
