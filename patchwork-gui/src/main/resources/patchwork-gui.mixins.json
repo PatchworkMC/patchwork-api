@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.rendering",
+  "package": "com.patchworkmc.mixin.gui",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinAbstractInventoryScreen",

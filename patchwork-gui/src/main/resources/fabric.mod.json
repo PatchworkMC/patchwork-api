@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-rendering",
-  "name": "Patchwork Rendering",
+  "id": "patchwork-gui",
+  "name": "Patchwork GUI",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-rendering/icon.png",
+  "icon": "assets/patchwork-gui/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -17,9 +17,9 @@
     "patchwork-fml": "*"
   },
   "mixins": [
-    "patchwork-rendering.mixins.json"
+    "patchwork-gui.mixins.json"
   ],
-  "description": "Implementation of the Forge Rendering Events.",
+  "description": "Implementation of the Forge GUI Hooks.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
