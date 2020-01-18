@@ -22,7 +22,9 @@ package com.patchworkmc.mixin.event.entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -47,6 +49,30 @@ public class MixinLivingEntity {
 
 		if (EntityEvents.onLivingUpdateEvent(entity)) {
 			callback.cancel();
+		}
+	}
+
+	@Inject(method = "damage", at = @At("HEAD"), cancellable = true)
+	private void hookDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		if (EntityEvents.onLivingAttack(entity, source, amount)) {
+			callback.setReturnValue(false);
+		}
+	}
+
+	// Shift back one because otherwise we inject after the value of damage is pushed onto the JVM stack, causing the modification to have no effect
+	@ModifyVariable(method = "applyDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F", shift = At.Shift.BEFORE))
+	private float hookApplyDamageForHurtEvent(float damage, DamageSource source) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		return EntityEvents.onLivingHurt(entity, source, damage);
+	}
+
+	@Inject(method = "applyDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"), cancellable = true)
+	private void hookApplyDamageForHurtEventCancel(DamageSource source, float damage, CallbackInfo info) {
+		if (damage <= 0) {
+			info.cancel();
 		}
 	}
 }

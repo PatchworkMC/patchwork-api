@@ -7,10 +7,14 @@
     "MixinPlayerEntity",
     "MixinPlayerManager",
     "MixinServerPlayerEntity",
-    "MixinServerWorld"
+    "MixinServerWorld",
+    "MixinMobSpawnerLogic",
+    "MixinSpawnHelper"
   ],
   "client": [
-    "MixinClientWorld"
+    "MixinClientWorld",
+    "MixinClientPlayerEntity",
+    "MixinOtherClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

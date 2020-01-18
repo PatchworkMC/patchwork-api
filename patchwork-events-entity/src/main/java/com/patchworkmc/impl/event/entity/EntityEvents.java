@@ -21,21 +21,29 @@ package com.patchworkmc.impl.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
-import org.apache.logging.log4j.LogManager;
+import net.minecraftforge.eventbus.api.Event.Result;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.ModInitializer;
@@ -68,6 +76,49 @@ public class EntityEvents implements ModInitializer {
 	// PlayerEvents
 	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
+	}
+
+	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float damage) {
+		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
+	}
+
+	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
+		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
+		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+	}
+
+	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
+		if (entity == null) {
+			return Result.DEFAULT;
+		}
+
+		LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, spawner, spawnType);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getResult();
+	}
+
+	public static boolean canEntitySpawnFromSpawner(MobEntity entity, World world, double x, double y, double z, MobSpawnerLogic spawner) {
+		Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnType.SPAWNER);
+
+		if (result == Result.DEFAULT) {
+			return entity.canSpawn(world, SpawnType.SPAWNER) && entity.canSpawn(world); //vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+		} else {
+			return result == Result.ALLOW;
+		}
+	}
+
+	public static boolean canEntitySpawnNaturally(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType, double sqDistanceFromPlayer) {
+		Result result = canEntitySpawn(entity, world, x, y, z, spawner, spawnType);
+
+		if (result == Result.DEFAULT) {
+			return !(sqDistanceFromPlayer > 16384.0D && entity.canImmediatelyDespawn(sqDistanceFromPlayer)) && entity.canSpawn(world, SpawnType.NATURAL) && entity.canSpawn(world); //vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+		} else {
+			return result == Result.ALLOW;
+		}
+	}
+
+	public static boolean doSpecialSpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
+		return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnType));
 	}
 
 	@Override
