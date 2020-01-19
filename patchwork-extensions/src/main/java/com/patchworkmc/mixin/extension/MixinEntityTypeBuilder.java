@@ -39,7 +39,6 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 	@Unique
 	private Boolean shouldRecieveVelocityUpdates = null;
 
-	// TODO potential conflict with patchwork-vanilla-patches
 	@Inject(method = "build", at = @At("RETURN"))
 	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType> cir) {
 		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
