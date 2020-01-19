@@ -5,6 +5,7 @@
   "mixins": [
     "MixinBiome",
     "MixinBlock",
+    "MixinEntityType",
     "MixinFeature",
     "MixinItem",
     "MixinSurfaceBuilder"

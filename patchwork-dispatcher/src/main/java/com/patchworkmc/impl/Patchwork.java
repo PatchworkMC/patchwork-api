@@ -43,6 +43,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.client.MinecraftClient;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.FabricEntityTypeBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 
 import com.patchworkmc.api.ForgeInitializer;
