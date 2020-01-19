@@ -24,12 +24,15 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 	@Inject(method = "build", at = @At("RETURN"))
 	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType> cir) {
 		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
+
 		if (updateInterval != null) {
 			type.setUpdateInterval(updateInterval);
 		}
+
 		if (trackingRange != null) {
 			type.setTrackingRange(trackingRange);
 		}
+
 		if (shouldRecieveVelocityUpdates != null) {
 			type.setShouldReceiveVelocityUpdates(shouldRecieveVelocityUpdates);
 		}
@@ -51,6 +54,5 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 	public EntityType.Builder setShouldReceiveVelocityUpdates(boolean value) {
 		this.shouldRecieveVelocityUpdates = value;
 		return (EntityType.Builder) (Object) this;
-
 	}
 }
