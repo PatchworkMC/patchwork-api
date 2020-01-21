@@ -104,7 +104,7 @@ public class MixinPlayerEntity {
         info.cancel();
     }
 
-    @Inject(method = "handleFallDamage", at = @At("TAIL"))
+    @Inject(method = "handleFallDamage", at = @At("RETURN"))
     private void hookHandleFallDamage(float distance, float damageMultiplier, CallbackInfo info) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         EntityEvents.onPlayerFall(player, distance, damageMultiplier);
