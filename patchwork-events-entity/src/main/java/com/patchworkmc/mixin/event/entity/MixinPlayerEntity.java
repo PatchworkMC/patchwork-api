@@ -96,6 +96,17 @@ public class MixinPlayerEntity {
 	private void hookApplyDamageForHurtEventCancel(DamageSource source, float damage, CallbackInfo info) {
 		if (damage <= 0) {
 			info.cancel();
-		}
-	}
+        }
+    }
+    
+    @Inject(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.handleFallDamage(FF)V", shift = At.Shift.AFTER), cancellable = true)
+    private void hookHandleFallDamageFlyingNotAllowed(float distance, float damageMultiplier, CallbackInfo info) {
+        info.cancel();
+    }
+
+    @Inject(method = "handleFallDamage", at = @At("TAIL"))
+    private void hookHandleFallDamage(float distance, float damageMultiplier, CallbackInfo info) {
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        EntityEvents.onPlayerFall(player, distance, damageMultiplier);
+    }
 }

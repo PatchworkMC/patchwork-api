@@ -26,7 +26,9 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -85,7 +87,17 @@ public class EntityEvents implements ModInitializer {
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
 		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
-	}
+    }
+    
+    public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
+        LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
+        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
+    }
+
+    public static void onPlayerFall(PlayerEntity player, float distance, float damageMultiplier)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
+    }
 
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
 		if (entity == null) {
@@ -179,5 +191,5 @@ public class EntityEvents implements ModInitializer {
 		});
 
 		// TODO: Note: UseEntityCallback is closer to EntityInteractSpecific. We're on our own for EntityInteract.
-	}
+    }
 }
