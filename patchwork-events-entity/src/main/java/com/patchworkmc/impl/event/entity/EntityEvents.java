@@ -22,6 +22,7 @@ package com.patchworkmc.impl.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -80,6 +81,10 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float damage) {
 		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
+	}
+
+	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
+		MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
 	}
 
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
