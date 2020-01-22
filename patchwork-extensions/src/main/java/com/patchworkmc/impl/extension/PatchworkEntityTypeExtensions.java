@@ -21,8 +21,10 @@ package com.patchworkmc.impl.extension;
 
 import net.minecraft.entity.Entity;
 
+/**
+ * Forge does this through patching the constructor instead, we just add methods with mixins instead.
+ */
 public interface PatchworkEntityTypeExtensions<T extends Entity> {
-	// Patchwork: Forge does this through patching the constructor instead
 	void setUpdateInterval(int interval);
 
 	void setTrackingRange(int range);

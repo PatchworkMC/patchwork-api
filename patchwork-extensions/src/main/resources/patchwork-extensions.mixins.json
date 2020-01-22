@@ -5,8 +5,7 @@
   "mixins": [
     "MixinEntityType",
     "MixinEntityTypeBuilder",
-    "MixinStatusEffect",
-    "MixinEntityTypeBuilder"
+    "MixinStatusEffect"
   ],
   "injectors": {
     "defaultRequire": 1

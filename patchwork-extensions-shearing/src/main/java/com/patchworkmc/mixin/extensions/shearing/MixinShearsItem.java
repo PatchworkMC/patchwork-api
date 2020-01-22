@@ -32,7 +32,7 @@ import net.minecraft.item.ShearsItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
-import com.patchworkmc.impl.extension.shearing.Shearables;
+import com.patchworkmc.impl.extensions.shearing.Shearables;
 
 /**
  * Patch {@link ShearsItem} to allow it to shear any {@link IShearable}.
