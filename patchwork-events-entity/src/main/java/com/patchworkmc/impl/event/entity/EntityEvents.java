@@ -25,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -89,6 +90,11 @@ public class EntityEvents implements ModInitializer {
 
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
 		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
+		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+	}
+
+	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
+		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
