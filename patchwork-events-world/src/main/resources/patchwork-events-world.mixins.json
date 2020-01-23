@@ -4,7 +4,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinServerPlayerInteractionManager",
-    "MixinThreadedAnvilChunkStorage"
+    "MixinThreadedAnvilChunkStorage",
+    "MixinClientWorld",
+    "MixinServerWorld",
+    "MixinMinecraftServer",
+    "MixinMinecraftClient",
+    "MixinSpawnHelper",
+    "MixinChunkGenerator"
   ],
   "injectors": {
     "defaultRequire": 1
