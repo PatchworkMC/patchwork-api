@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
@@ -42,12 +43,11 @@ import com.patchworkmc.impl.fml.PatchworkMappingResolver;
  * As such, if issues are encountered, please report them and we can see what we can do to expand
  * the compatibility.
  *
- * <p>In other cases, AccessTransformers may be used.</p>
+ * <p>In other cases, accesssor mixins may be used.</p>
  *
  * <p>All field and method names should be passed in as intermediary names, and this will automatically resolve if Yarn mappings are detected.</p>
  *
  */
-@SuppressWarnings({ "serial", "unchecked", "unused", "WeakerAccess" })
 public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
@@ -93,6 +93,7 @@ public class ObfuscationReflectionHelper {
 	@Nullable
 	public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex) {
 		try {
+			//noinspection unchecked
 			return (T) findField(classToAccess, fieldIndex).get(instance);
 		} catch (Exception e) {
 			LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", fieldIndex, classToAccess.getName(), e);
@@ -118,6 +119,7 @@ public class ObfuscationReflectionHelper {
 	@Nullable
 	public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, String fieldName) {
 		try {
+			//noinspection unchecked
 			return (T) findField(classToAccess, fieldName).get(instance);
 		} catch (UnableToFindFieldException e) {
 			LOGGER.error(REFLECTION, "Unable to locate field {} ({}) on type {}", fieldName,
@@ -208,9 +210,10 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
 
 		try {
-			Method m = clazz.getDeclaredMethod(PatchworkMappingResolver.remapName(INameMappingService.Domain.METHOD, clazz, methodName), parameterTypes);
-			m.setAccessible(true);
-			return m;
+			String name = PatchworkMappingResolver.remapName(INameMappingService.Domain.METHOD, clazz, methodName);
+			Method method = clazz.getDeclaredMethod(name, parameterTypes);
+			method.setAccessible(true);
+			return method;
 		} catch (Exception e) {
 			throw new UnableToFindMethodException(e);
 		}
@@ -259,7 +262,7 @@ public class ObfuscationReflectionHelper {
 	 * Finds a field with the specified name in the given class and makes it accessible.
 	 * Note: For performance, store the returned value and avoid calling this repeatedly.
 	 *
-	 * <p>Throws an exception if the field is not found.</p>
+	 * <p>Throws an exception if the field was not found.</p>
 	 *
 	 * @param clazz     The class to find the field on.
 	 * @param fieldName The intermediary (unmapped) name of the field to find (e.g. "field_1817").
@@ -277,9 +280,10 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
 
 		try {
-			Field f = clazz.getDeclaredField(PatchworkMappingResolver.remapName(INameMappingService.Domain.FIELD, clazz, fieldName));
-			f.setAccessible(true);
-			return f;
+			String name = PatchworkMappingResolver.remapName(INameMappingService.Domain.FIELD, clazz, fieldName);
+			Field field = clazz.getDeclaredField(name);
+			field.setAccessible(true);
+			return field;
 		} catch (Exception e) {
 			throw new UnableToFindFieldException(e);
 		}

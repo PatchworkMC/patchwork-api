@@ -87,38 +87,38 @@ public class PatchworkMappingResolver {
 	}
 
 	// this is a stackoverflow response but with remapping
-	private static String getDescriptorForClass(final Class<?> c, boolean remapToIntermediary) {
-		if (c.isPrimitive()) {
+	private static String getDescriptorForClass(final Class<?> clazz, boolean remapToIntermediary) {
+		if (clazz.isPrimitive()) {
 			// This could technically be turned into a map lookup, but that seems like overengineering considering this will never change
-			if (c == byte.class) {
+			if (clazz == byte.class) {
 				return "B";
-			} else if (c == char.class) {
+			} else if (clazz == char.class) {
 				return "C";
-			} else if (c == double.class) {
+			} else if (clazz == double.class) {
 				return "D";
-			} else if (c == float.class) {
+			} else if (clazz == float.class) {
 				return "F";
-			} else if (c == int.class) {
+			} else if (clazz == int.class) {
 				return "I";
-			} else if (c == long.class) {
+			} else if (clazz == long.class) {
 				return "J";
-			} else if (c == short.class) {
+			} else if (clazz == short.class) {
 				return "S";
-			} else if (c == boolean.class) {
+			} else if (clazz == boolean.class) {
 				return "Z";
-			} else if (c == void.class) {
+			} else if (clazz == void.class) {
 				return "V";
 			} else {
-				throw new RuntimeException("Unrecognized primitive " + c);
+				throw new RuntimeException("Unrecognized primitive " + clazz);
 			}
 		} else {
-			String className = c.getName();
+			String className = clazz.getName();
 
 			if (remapToIntermediary) {
 				className = FabricLoader.getInstance().getMappingResolver().mapClassName(INTERMEDIARY, className);
 			}
 
-			if (c.isArray()) {
+			if (clazz.isArray()) {
 				return className.replace('.', '/');
 			} else {
 				return ('L' + className + ';').replace('.', '/');
@@ -126,15 +126,15 @@ public class PatchworkMappingResolver {
 		}
 	}
 
-	private static String getMethodDescriptor(Method m, boolean remapToIntermediary) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("(");
+	private static String getMethodDescriptor(Method method, boolean remapToIntermediary) {
+		StringBuilder descriptor = new StringBuilder();
+		descriptor.append("(");
 
-		for (Class<?> clazz : m.getParameterTypes()) {
-			sb.append(getDescriptorForClass(clazz, remapToIntermediary));
+		for (Class<?> clazz : method.getParameterTypes()) {
+			descriptor.append(getDescriptorForClass(clazz, remapToIntermediary));
 		}
 
-		sb.append(")").append(getDescriptorForClass(m.getReturnType(), remapToIntermediary));
-		return sb.toString();
+		descriptor.append(")").append(getDescriptorForClass(method.getReturnType(), remapToIntermediary));
+		return descriptor.toString();
 	}
 }

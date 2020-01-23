@@ -21,7 +21,7 @@ package cpw.mods.modlauncher.api;
 
 /**
  * Only serves to expose the Domain enum.
-**/
+ */
 public interface INameMappingService {
 	enum Domain { CLASS, METHOD, FIELD }
 }
