@@ -19,6 +19,7 @@
 
 package com.patchworkmc.impl.biomes;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -39,23 +40,21 @@ public final class PatchworkBiomes implements ModInitializer {
 			addRivers(biome);
 
 			if (!failedBiomes.isEmpty()) {
-				Set<Biome> toRemove = Sets.newHashSet();
+				Iterator<Biome> iterator = failedBiomes.iterator();
 
-				for (Biome failedBiome : failedBiomes) {
-					Biome river = ((ForgeBiomeExt) failedBiome).getRiver();
+				while (iterator.hasNext()) {
+					Biome river = ((ForgeBiomeExt) iterator.next()).getRiver();
 
 					if (river == null) {
 						continue;
 					}
 
-					toRemove.add(biome);
+					iterator.remove();
 
 					if (river != getDefaultRiver(biome)) {
 						OverworldBiomes.setRiverBiome(biome, river);
 					}
 				}
-
-				toRemove.forEach(failedBiomes::remove);
 			}
 		});
 	}
