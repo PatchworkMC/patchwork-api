@@ -37,7 +37,20 @@ public final class PatchworkBiomes implements ModInitializer {
 		Registry.BIOME.forEach(PatchworkBiomes::addRivers);
 		RegistryEntryAddedCallback.event(Registry.BIOME).register((rawid, id, biome) -> {
 			addRivers(biome);
-			failedBiomes.forEach(PatchworkBiomes::addRivers);
+
+			for (Biome failedBiome : failedBiomes) {
+				Biome river = ((ForgeBiomeExt) failedBiome).getRiver();
+
+				if (river == null) {
+					continue;
+				}
+
+				failedBiomes.remove(biome);
+
+				if (river != getDefaultRiver(biome)) {
+					OverworldBiomes.setRiverBiome(biome, river);
+				}
+			}
 		});
 	}
 
