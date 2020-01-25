@@ -31,6 +31,7 @@ import net.minecraft.world.biome.Biomes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 
 public final class PatchworkBiomes implements ModInitializer {
 	@Override
@@ -38,25 +39,9 @@ public final class PatchworkBiomes implements ModInitializer {
 		Registry.BIOME.forEach(PatchworkBiomes::addRivers);
 		RegistryEntryAddedCallback.event(Registry.BIOME).register((rawid, id, biome) -> {
 			addRivers(biome);
-
-			if (!failedBiomes.isEmpty()) {
-				Iterator<Biome> iterator = failedBiomes.iterator();
-
-				while (iterator.hasNext()) {
-					Biome river = ((ForgeBiomeExt) iterator.next()).getRiver();
-
-					if (river == null) {
-						continue;
-					}
-
-					iterator.remove();
-
-					if (river != getDefaultRiver(biome)) {
-						OverworldBiomes.setRiverBiome(biome, river);
-					}
-				}
-			}
+			updateFailedBiomes();
 		});
+		ServerStartCallback.EVENT.register(server -> updateFailedBiomes());
 	}
 
 	private static void addRivers(Biome biome) {
@@ -69,6 +54,27 @@ public final class PatchworkBiomes implements ModInitializer {
 
 		if (river != getDefaultRiver(biome)) {
 			OverworldBiomes.setRiverBiome(biome, river);
+		}
+	}
+
+	private static void updateFailedBiomes() {
+		if (!failedBiomes.isEmpty()) {
+			Iterator<Biome> iterator = failedBiomes.iterator();
+
+			while (iterator.hasNext()) {
+				Biome biome = iterator.next();
+				Biome river = ((ForgeBiomeExt) biome).getRiver();
+
+				if (river == null) {
+					continue;
+				}
+
+				iterator.remove();
+
+				if (river != getDefaultRiver(biome)) {
+					OverworldBiomes.setRiverBiome(biome, river);
+				}
+			}
 		}
 	}
 
