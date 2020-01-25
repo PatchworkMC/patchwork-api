@@ -19,6 +19,10 @@
 
 package com.patchworkmc.impl.biomes;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
@@ -31,11 +35,19 @@ public final class PatchworkBiomes implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Registry.BIOME.forEach(PatchworkBiomes::addRivers);
-		RegistryEntryAddedCallback.event(Registry.BIOME).register((rawid, id, biome) -> addRivers(biome));
+		RegistryEntryAddedCallback.event(Registry.BIOME).register((rawid, id, biome) -> {
+			addRivers(biome);
+			failedBiomes.forEach(PatchworkBiomes::addRivers);
+		});
 	}
 
 	private static void addRivers(Biome biome) {
 		Biome river = ((ForgeBiomeExt) biome).getRiver();
+
+		if (river == null) {
+			failedBiomes.add(biome);
+			return;
+		}
 
 		if (river != getDefaultRiver(biome)) {
 			OverworldBiomes.setRiverBiome(biome, river);
@@ -51,4 +63,6 @@ public final class PatchworkBiomes implements ModInitializer {
 
 		return Biomes.RIVER;
 	}
+
+	private static Set<Biome> failedBiomes = Sets.newHashSet();
 }
