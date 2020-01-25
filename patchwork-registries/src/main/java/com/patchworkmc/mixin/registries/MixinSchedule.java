@@ -43,9 +43,8 @@ public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.SCHEDULE.getId((Schedule) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<Schedule> getRegistryType() {

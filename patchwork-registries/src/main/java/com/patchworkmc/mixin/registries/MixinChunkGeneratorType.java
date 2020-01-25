@@ -43,9 +43,8 @@ public class MixinChunkGeneratorType implements ExtendedForgeRegistryEntry<Chunk
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.CHUNK_GENERATOR_TYPE.getId((ChunkGeneratorType) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<ChunkGeneratorType> getRegistryType() {

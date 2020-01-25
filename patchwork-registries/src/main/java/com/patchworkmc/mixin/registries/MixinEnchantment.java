@@ -43,9 +43,8 @@ public class MixinEnchantment implements ExtendedForgeRegistryEntry<Enchantment>
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.ENCHANTMENT.getId((Enchantment) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<Enchantment> getRegistryType() {

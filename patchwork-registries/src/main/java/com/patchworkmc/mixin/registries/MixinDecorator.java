@@ -43,9 +43,8 @@ public class MixinDecorator implements ExtendedForgeRegistryEntry<Decorator> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.DECORATOR.getId((Decorator) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<Decorator> getRegistryType() {

@@ -43,9 +43,8 @@ public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.SOUND_EVENT.getId((SoundEvent) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<SoundEvent> getRegistryType() {

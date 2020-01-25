@@ -43,9 +43,8 @@ public class MixinBlockEntityType implements ExtendedForgeRegistryEntry<BlockEnt
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.BLOCK_ENTITY.getId((BlockEntityType) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<BlockEntityType> getRegistryType() {

@@ -43,9 +43,8 @@ public class MixinCarver implements ExtendedForgeRegistryEntry<Carver> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.CARVER.getId((Carver) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<Carver> getRegistryType() {

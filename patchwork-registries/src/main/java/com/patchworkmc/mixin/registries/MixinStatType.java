@@ -43,9 +43,8 @@ public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.STAT_TYPE.getId((StatType) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<StatType> getRegistryType() {

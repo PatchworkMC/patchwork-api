@@ -43,9 +43,8 @@ public class MixinBiomeSourceType implements ExtendedForgeRegistryEntry<BiomeSou
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.BIOME_SOURCE_TYPE.getId((BiomeSourceType) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<BiomeSourceType> getRegistryType() {

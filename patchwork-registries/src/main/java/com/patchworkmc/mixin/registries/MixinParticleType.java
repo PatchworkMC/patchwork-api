@@ -43,9 +43,8 @@ public class MixinParticleType implements ExtendedForgeRegistryEntry<ParticleTyp
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.PARTICLE_TYPE.getId((ParticleType) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<ParticleType> getRegistryType() {

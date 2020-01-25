@@ -43,9 +43,8 @@ public class MixinActivity implements ExtendedForgeRegistryEntry<Activity> {
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.ACTIVITY.getId((Activity) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<Activity> getRegistryType() {

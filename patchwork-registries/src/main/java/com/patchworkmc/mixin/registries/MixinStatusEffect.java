@@ -43,9 +43,8 @@ public class MixinStatusEffect implements ExtendedForgeRegistryEntry<StatusEffec
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.STATUS_EFFECT.getId((StatusEffect) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<StatusEffect> getRegistryType() {

@@ -44,9 +44,8 @@ public class MixinShapedRecipeSerializer implements ExtendedForgeRegistryEntry<R
 
 	public Identifier getRegistryName() {
 		Identifier current = Registry.RECIPE_SERIALIZER.getId((ShapedRecipe.Serializer) (Object) this);
-		Identifier set = registryName;
 
-		return current != null ? current : set;
+		return current != null ? current : registryName;
 	}
 
 	public Class<RecipeSerializer> getRegistryType() {
