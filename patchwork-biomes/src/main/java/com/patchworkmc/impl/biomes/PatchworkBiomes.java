@@ -1,11 +1,12 @@
 package com.patchworkmc.impl.biomes;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
-import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 public final class PatchworkBiomes implements ModInitializer {
 	@Override
