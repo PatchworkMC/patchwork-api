@@ -28,6 +28,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.feature.Feature;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Feature.class)
 public class MixinFeature implements ExtendedForgeRegistryEntry<Feature> {
@@ -42,10 +43,9 @@ public class MixinFeature implements ExtendedForgeRegistryEntry<Feature> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.FEATURE.getId((Feature) (Object) this);
-		Identifier set = registryName;
+		Feature<?> feature = (Feature<?>) (Object) this;
 
-		return current != null ? current : set;
+		return Identifiers.getOrFallback(Registry.FEATURE, feature, registryName);
 	}
 
 	public Class<Feature> getRegistryType() {
