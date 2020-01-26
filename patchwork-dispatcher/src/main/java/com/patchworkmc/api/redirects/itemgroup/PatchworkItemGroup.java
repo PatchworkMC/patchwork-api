@@ -29,6 +29,14 @@ public abstract class PatchworkItemGroup extends ItemGroup {
 		super(getNewArrayIndex(), name);
 	}
 
+	public PatchworkItemGroup(int index, String name) {
+		this(name);
+
+		if (index != -1) {
+			throw new IllegalArgumentException("ItemGroup constructor potentially tried to overwrite an existing creative tab!");
+		}
+	}
+
 	private static int getNewArrayIndex() {
 		// Get a new slot in the array
 
