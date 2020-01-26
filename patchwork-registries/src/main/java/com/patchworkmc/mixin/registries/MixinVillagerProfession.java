@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(VillagerProfession.class)
 public class MixinVillagerProfession implements ExtendedForgeRegistryEntry<VillagerProfession> {
@@ -42,14 +43,9 @@ public class MixinVillagerProfession implements ExtendedForgeRegistryEntry<Villa
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.VILLAGER_PROFESSION.getId((VillagerProfession) (Object) this);
-		Identifier set = registryName;
+		VillagerProfession villagerProfession = (VillagerProfession) (Object) this;
 
-		if (set == null) {
-			set = Registry.VILLAGER_PROFESSION.getDefaultId();
-		}
-
-		return current != Registry.VILLAGER_PROFESSION.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.VILLAGER_PROFESSION, villagerProfession, registryName);
 	}
 
 	public Class<VillagerProfession> getRegistryType() {

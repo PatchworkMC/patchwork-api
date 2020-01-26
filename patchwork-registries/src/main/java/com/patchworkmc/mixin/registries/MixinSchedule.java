@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Schedule.class)
 public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
@@ -42,9 +43,9 @@ public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.SCHEDULE.getId((Schedule) (Object) this);
+		Schedule schedule = (Schedule) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.SCHEDULE, schedule, registryName);
 	}
 
 	public Class<Schedule> getRegistryType() {

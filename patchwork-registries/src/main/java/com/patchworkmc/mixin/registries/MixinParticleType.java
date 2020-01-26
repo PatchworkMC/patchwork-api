@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ParticleType.class)
 public class MixinParticleType implements ExtendedForgeRegistryEntry<ParticleType> {
@@ -42,9 +43,9 @@ public class MixinParticleType implements ExtendedForgeRegistryEntry<ParticleTyp
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.PARTICLE_TYPE.getId((ParticleType) (Object) this);
+		ParticleType<?> particleType = (ParticleType<?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.PARTICLE_TYPE, particleType, registryName);
 	}
 
 	public Class<ParticleType> getRegistryType() {

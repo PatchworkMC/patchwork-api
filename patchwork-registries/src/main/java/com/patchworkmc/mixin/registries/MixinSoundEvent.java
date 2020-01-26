@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(SoundEvent.class)
 public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
@@ -42,9 +43,9 @@ public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.SOUND_EVENT.getId((SoundEvent) (Object) this);
+		SoundEvent soundEvent = (SoundEvent) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.SOUND_EVENT, soundEvent, registryName);
 	}
 
 	public Class<SoundEvent> getRegistryType() {

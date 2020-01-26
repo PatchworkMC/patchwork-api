@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(StatType.class)
 public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
@@ -42,9 +43,9 @@ public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.STAT_TYPE.getId((StatType) (Object) this);
+		StatType<?> statType = (StatType<?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.STAT_TYPE, statType, registryName);
 	}
 
 	public Class<StatType> getRegistryType() {

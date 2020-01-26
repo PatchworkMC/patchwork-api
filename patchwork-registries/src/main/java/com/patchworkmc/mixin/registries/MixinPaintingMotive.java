@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(PaintingMotive.class)
 public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingMotive> {
@@ -42,14 +43,9 @@ public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingM
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.MOTIVE.getId((PaintingMotive) (Object) this);
-		Identifier set = registryName;
+		PaintingMotive paintingMotive = (PaintingMotive) (Object) this;
 
-		if (set == null) {
-			set = Registry.MOTIVE.getDefaultId();
-		}
-
-		return current != Registry.MOTIVE.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.MOTIVE, paintingMotive, registryName);
 	}
 
 	public Class<PaintingMotive> getRegistryType() {

@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Fluid.class)
 public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
@@ -42,14 +43,9 @@ public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.FLUID.getId((Fluid) (Object) this);
-		Identifier set = registryName;
+		Fluid fluid = (Fluid) (Object) this;
 
-		if (set == null) {
-			set = Registry.FLUID.getDefaultId();
-		}
-
-		return current != Registry.FLUID.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.FLUID, fluid, registryName);
 	}
 
 	public Class<Fluid> getRegistryType() {

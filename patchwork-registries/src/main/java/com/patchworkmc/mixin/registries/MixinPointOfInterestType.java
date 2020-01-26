@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(PointOfInterestType.class)
 public class MixinPointOfInterestType implements ExtendedForgeRegistryEntry<PointOfInterestType> {
@@ -42,14 +43,9 @@ public class MixinPointOfInterestType implements ExtendedForgeRegistryEntry<Poin
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.POINT_OF_INTEREST_TYPE.getId((PointOfInterestType) (Object) this);
-		Identifier set = registryName;
+		PointOfInterestType pointOfInterestType = (PointOfInterestType) (Object) this;
 
-		if (set == null) {
-			set = Registry.POINT_OF_INTEREST_TYPE.getDefaultId();
-		}
-
-		return current != Registry.POINT_OF_INTEREST_TYPE.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.POINT_OF_INTEREST_TYPE, pointOfInterestType, registryName);
 	}
 
 	public Class<PointOfInterestType> getRegistryType() {

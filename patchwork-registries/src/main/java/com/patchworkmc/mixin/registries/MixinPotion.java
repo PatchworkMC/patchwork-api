@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Potion.class)
 public class MixinPotion implements ExtendedForgeRegistryEntry<Potion> {
@@ -42,14 +43,9 @@ public class MixinPotion implements ExtendedForgeRegistryEntry<Potion> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.POTION.getId((Potion) (Object) this);
-		Identifier set = registryName;
+		Potion potion = (Potion) (Object) this;
 
-		if (set == null) {
-			set = Registry.POTION.getDefaultId();
-		}
-
-		return current != Registry.POTION.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.POTION, potion, registryName);
 	}
 
 	public Class<Potion> getRegistryType() {

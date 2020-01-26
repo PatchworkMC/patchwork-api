@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Activity.class)
 public class MixinActivity implements ExtendedForgeRegistryEntry<Activity> {
@@ -42,9 +43,9 @@ public class MixinActivity implements ExtendedForgeRegistryEntry<Activity> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.ACTIVITY.getId((Activity) (Object) this);
+		Activity activity = (Activity) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.ACTIVITY, activity, registryName);
 	}
 
 	public Class<Activity> getRegistryType() {

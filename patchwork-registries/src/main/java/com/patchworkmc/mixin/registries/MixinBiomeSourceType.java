@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(BiomeSourceType.class)
 public class MixinBiomeSourceType implements ExtendedForgeRegistryEntry<BiomeSourceType> {
@@ -42,9 +43,9 @@ public class MixinBiomeSourceType implements ExtendedForgeRegistryEntry<BiomeSou
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.BIOME_SOURCE_TYPE.getId((BiomeSourceType) (Object) this);
+		BiomeSourceType<?, ?> biomeSourceType = (BiomeSourceType<?, ?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.BIOME_SOURCE_TYPE, biomeSourceType, registryName);
 	}
 
 	public Class<BiomeSourceType> getRegistryType() {

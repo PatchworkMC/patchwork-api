@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ChunkStatus.class)
 public class MixinChunkStatus implements ExtendedForgeRegistryEntry<ChunkStatus> {
@@ -42,14 +43,9 @@ public class MixinChunkStatus implements ExtendedForgeRegistryEntry<ChunkStatus>
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.CHUNK_STATUS.getId((ChunkStatus) (Object) this);
-		Identifier set = registryName;
+		ChunkStatus chunkStatus = (ChunkStatus) (Object) this;
 
-		if (set == null) {
-			set = Registry.CHUNK_STATUS.getDefaultId();
-		}
-
-		return current != Registry.CHUNK_STATUS.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.CHUNK_STATUS, chunkStatus, registryName);
 	}
 
 	public Class<ChunkStatus> getRegistryType() {

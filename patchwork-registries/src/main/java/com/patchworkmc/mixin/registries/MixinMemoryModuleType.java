@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(MemoryModuleType.class)
 public class MixinMemoryModuleType implements ExtendedForgeRegistryEntry<MemoryModuleType> {
@@ -42,14 +43,9 @@ public class MixinMemoryModuleType implements ExtendedForgeRegistryEntry<MemoryM
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.MEMORY_MODULE_TYPE.getId((MemoryModuleType) (Object) this);
-		Identifier set = registryName;
+		MemoryModuleType<?> memoryModuleType = (MemoryModuleType<?>) (Object) this;
 
-		if (set == null) {
-			set = Registry.MEMORY_MODULE_TYPE.getDefaultId();
-		}
-
-		return current != Registry.MEMORY_MODULE_TYPE.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.MEMORY_MODULE_TYPE, memoryModuleType, registryName);
 	}
 
 	public Class<MemoryModuleType> getRegistryType() {

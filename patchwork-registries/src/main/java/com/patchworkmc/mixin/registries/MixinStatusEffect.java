@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(StatusEffect.class)
 public class MixinStatusEffect implements ExtendedForgeRegistryEntry<StatusEffect> {
@@ -42,9 +43,9 @@ public class MixinStatusEffect implements ExtendedForgeRegistryEntry<StatusEffec
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.STATUS_EFFECT.getId((StatusEffect) (Object) this);
+		StatusEffect statusEffect = (StatusEffect) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.STATUS_EFFECT, statusEffect, registryName);
 	}
 
 	public Class<StatusEffect> getRegistryType() {

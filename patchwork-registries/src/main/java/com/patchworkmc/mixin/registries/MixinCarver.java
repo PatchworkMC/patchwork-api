@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Carver.class)
 public class MixinCarver implements ExtendedForgeRegistryEntry<Carver> {
@@ -42,9 +43,9 @@ public class MixinCarver implements ExtendedForgeRegistryEntry<Carver> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.CARVER.getId((Carver) (Object) this);
+		Carver<?> carver = (Carver<?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.CARVER, carver, registryName);
 	}
 
 	public Class<Carver> getRegistryType() {

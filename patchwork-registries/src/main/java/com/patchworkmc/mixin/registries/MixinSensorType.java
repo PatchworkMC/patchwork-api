@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(SensorType.class)
 public class MixinSensorType implements ExtendedForgeRegistryEntry<SensorType> {
@@ -42,14 +43,9 @@ public class MixinSensorType implements ExtendedForgeRegistryEntry<SensorType> {
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.SENSOR_TYPE.getId((SensorType) (Object) this);
-		Identifier set = registryName;
+		SensorType<?> sensorType = (SensorType<?>) (Object) this;
 
-		if (set == null) {
-			set = Registry.SENSOR_TYPE.getDefaultId();
-		}
-
-		return current != Registry.SENSOR_TYPE.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.SENSOR_TYPE, sensorType, registryName);
 	}
 
 	public Class<SensorType> getRegistryType() {

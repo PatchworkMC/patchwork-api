@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Enchantment.class)
 public class MixinEnchantment implements ExtendedForgeRegistryEntry<Enchantment> {
@@ -42,9 +43,9 @@ public class MixinEnchantment implements ExtendedForgeRegistryEntry<Enchantment>
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.ENCHANTMENT.getId((Enchantment) (Object) this);
+		Enchantment enchantment = (Enchantment) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.ENCHANTMENT, enchantment, registryName);
 	}
 
 	public Class<Enchantment> getRegistryType() {

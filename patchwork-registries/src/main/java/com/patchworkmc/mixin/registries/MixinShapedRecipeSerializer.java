@@ -29,6 +29,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ShapedRecipe.Serializer.class)
 public class MixinShapedRecipeSerializer implements ExtendedForgeRegistryEntry<RecipeSerializer> {
@@ -43,9 +44,9 @@ public class MixinShapedRecipeSerializer implements ExtendedForgeRegistryEntry<R
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.RECIPE_SERIALIZER.getId((ShapedRecipe.Serializer) (Object) this);
+		ShapedRecipe.Serializer shapedRecipeSerializer = (ShapedRecipe.Serializer) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.RECIPE_SERIALIZER, shapedRecipeSerializer, registryName);
 	}
 
 	public Class<RecipeSerializer> getRegistryType() {

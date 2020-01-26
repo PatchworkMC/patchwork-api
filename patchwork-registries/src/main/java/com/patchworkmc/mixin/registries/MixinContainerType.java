@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ContainerType.class)
 public class MixinContainerType implements ExtendedForgeRegistryEntry<ContainerType> {
@@ -42,9 +43,9 @@ public class MixinContainerType implements ExtendedForgeRegistryEntry<ContainerT
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.CONTAINER.getId((ContainerType) (Object) this);
+		ContainerType<?> containerType = (ContainerType<?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.CONTAINER, containerType, registryName);
 	}
 
 	public Class<ContainerType> getRegistryType() {

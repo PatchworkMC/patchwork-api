@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ChunkGeneratorType.class)
 public class MixinChunkGeneratorType implements ExtendedForgeRegistryEntry<ChunkGeneratorType> {
@@ -42,9 +43,9 @@ public class MixinChunkGeneratorType implements ExtendedForgeRegistryEntry<Chunk
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.CHUNK_GENERATOR_TYPE.getId((ChunkGeneratorType) (Object) this);
+		ChunkGeneratorType<?, ?> chunkGeneratorType = (ChunkGeneratorType<?, ?>) (Object) this;
 
-		return current != null ? current : registryName;
+		return Identifiers.getOrFallback(Registry.CHUNK_GENERATOR_TYPE, chunkGeneratorType, registryName);
 	}
 
 	public Class<ChunkGeneratorType> getRegistryType() {
