@@ -36,7 +36,7 @@ public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Fluid> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

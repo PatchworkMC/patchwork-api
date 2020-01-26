@@ -36,7 +36,7 @@ public class MixinSensorType implements ExtendedForgeRegistryEntry<SensorType> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<SensorType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

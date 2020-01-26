@@ -36,7 +36,7 @@ public class MixinChunkGeneratorType implements ExtendedForgeRegistryEntry<Chunk
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<ChunkGeneratorType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

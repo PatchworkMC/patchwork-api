@@ -36,7 +36,7 @@ public class MixinDecorator implements ExtendedForgeRegistryEntry<Decorator> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Decorator> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

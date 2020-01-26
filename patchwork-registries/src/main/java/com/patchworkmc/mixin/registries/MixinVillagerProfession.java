@@ -36,7 +36,7 @@ public class MixinVillagerProfession implements ExtendedForgeRegistryEntry<Villa
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<VillagerProfession> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

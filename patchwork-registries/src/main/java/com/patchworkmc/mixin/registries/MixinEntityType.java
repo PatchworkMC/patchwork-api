@@ -36,7 +36,7 @@ public class MixinEntityType implements ExtendedForgeRegistryEntry<EntityType> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<EntityType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

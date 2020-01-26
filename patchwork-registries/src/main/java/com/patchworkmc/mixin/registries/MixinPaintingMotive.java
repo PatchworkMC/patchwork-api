@@ -36,7 +36,7 @@ public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingM
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<PaintingMotive> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

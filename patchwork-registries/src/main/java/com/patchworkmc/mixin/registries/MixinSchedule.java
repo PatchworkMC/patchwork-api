@@ -36,7 +36,7 @@ public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Schedule> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

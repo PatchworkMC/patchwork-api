@@ -36,7 +36,7 @@ public class MixinPotion implements ExtendedForgeRegistryEntry<Potion> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Potion> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

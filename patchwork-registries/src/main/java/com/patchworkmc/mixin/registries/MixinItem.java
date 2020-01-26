@@ -36,7 +36,7 @@ public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Item> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

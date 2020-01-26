@@ -36,7 +36,7 @@ public class MixinFeature implements ExtendedForgeRegistryEntry<Feature> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Feature> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

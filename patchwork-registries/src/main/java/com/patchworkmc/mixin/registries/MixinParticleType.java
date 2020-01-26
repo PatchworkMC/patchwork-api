@@ -36,7 +36,7 @@ public class MixinParticleType implements ExtendedForgeRegistryEntry<ParticleTyp
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<ParticleType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

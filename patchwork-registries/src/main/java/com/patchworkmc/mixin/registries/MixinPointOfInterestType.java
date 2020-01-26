@@ -36,7 +36,7 @@ public class MixinPointOfInterestType implements ExtendedForgeRegistryEntry<Poin
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<PointOfInterestType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

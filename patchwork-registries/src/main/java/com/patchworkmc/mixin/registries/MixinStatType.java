@@ -36,7 +36,7 @@ public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<StatType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

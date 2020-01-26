@@ -36,7 +36,7 @@ public class MixinEnchantment implements ExtendedForgeRegistryEntry<Enchantment>
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Enchantment> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

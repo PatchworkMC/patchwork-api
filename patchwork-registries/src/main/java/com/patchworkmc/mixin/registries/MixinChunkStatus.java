@@ -36,7 +36,7 @@ public class MixinChunkStatus implements ExtendedForgeRegistryEntry<ChunkStatus>
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<ChunkStatus> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

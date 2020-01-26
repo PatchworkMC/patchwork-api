@@ -36,7 +36,7 @@ public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<SoundEvent> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

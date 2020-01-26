@@ -36,7 +36,7 @@ public class MixinBiomeSourceType implements ExtendedForgeRegistryEntry<BiomeSou
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<BiomeSourceType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

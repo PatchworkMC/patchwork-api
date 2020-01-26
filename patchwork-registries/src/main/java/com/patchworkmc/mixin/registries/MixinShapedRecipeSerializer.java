@@ -37,7 +37,7 @@ public class MixinShapedRecipeSerializer implements ExtendedForgeRegistryEntry<R
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<RecipeSerializer> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
