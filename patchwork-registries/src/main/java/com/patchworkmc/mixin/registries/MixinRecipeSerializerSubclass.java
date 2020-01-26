@@ -18,23 +18,23 @@ import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin({ShapedRecipe.Serializer.class, ShapelessRecipe.Serializer.class, CookingRecipeSerializer.class, CuttingRecipe.Serializer.class, SpecialRecipeSerializer.class})
 public class MixinRecipeSerializerSubclass implements ExtendedForgeRegistryEntry<RecipeSerializer> {
-    @Unique
-    private Identifier registryName;
+	@Unique
+	private Identifier registryName;
 
-    @Override
-    public IForgeRegistryEntry<RecipeSerializer> setRegistryName(Identifier name) {
-        this.registryName = name;
+	@Override
+	public IForgeRegistryEntry<RecipeSerializer> setRegistryName(Identifier name) {
+		this.registryName = name;
 
-        return this;
-    }
+		return this;
+	}
 
-    public Identifier getRegistryName() {
-        RecipeSerializer<?> recipeSerializer = (RecipeSerializer<?>) this;
+	public Identifier getRegistryName() {
+		RecipeSerializer<?> recipeSerializer = (RecipeSerializer<?>) this;
 
-        return Identifiers.getOrFallback(Registry.RECIPE_SERIALIZER, recipeSerializer, registryName);
-    }
+		return Identifiers.getOrFallback(Registry.RECIPE_SERIALIZER, recipeSerializer, registryName);
+	}
 
-    public Class<RecipeSerializer> getRegistryType() {
-        return RecipeSerializer.class;
-    }
+	public Class<RecipeSerializer> getRegistryType() {
+		return RecipeSerializer.class;
+	}
 }
