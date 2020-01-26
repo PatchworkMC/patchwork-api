@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,31 +19,27 @@
 
 package com.patchworkmc.mixin.patches.bugfixes;
 
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.schemas.Schema;
+import com.mojang.datafixers.types.Type;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 
-import com.patchworkmc.impl.patches.bugfixes.EntityTypeBuilderShim;
-
 @Mixin(EntityType.Builder.class)
-@Implements(@Interface(iface = EntityTypeBuilderShim.class, prefix = "patchwork$"))
 public abstract class MixinEntityTypeBuilder<T extends Entity> {
 	@Unique
 	private static final Logger LOGGER = LogManager.getLogger();
-
-	@Shadow
-	public abstract EntityType<T> build(String id);
 
 	@Shadow
 	@Final
@@ -71,13 +67,15 @@ public abstract class MixinEntityTypeBuilder<T extends Entity> {
 	/**
 	 * Fixes MC-170128: Cannot build an EntityType without a datafixer due to an IllegalArgumentException.
 	 */
-	@Intrinsic(displace = true)
-	public EntityType<T> patchwork$build(String id) {
+	@Redirect(method = "build", at = @At(value = "INVOKE", target = "Lcom/mojang/datafixers/schemas/Schema;getChoiceType(Lcom/mojang/datafixers/DSL$TypeReference;Ljava/lang/String;)Lcom/mojang/datafixers/types/Type;"), remap = false)
+	public Type catchIllegalArgumentExceptionForDataFixers(Schema schema, DSL.TypeReference type, String choiceName) {
 		try {
-			return this.build(id);
+			return schema.getChoiceType(type, choiceName);
 		} catch (IllegalArgumentException ex) {
-			LOGGER.warn("No data fixer registered for entity {}", id);
-			return new EntityType(this.factory, this.category, this.saveable, this.summonable, this.fireImmune, this.field_19424, this.size);
+			LOGGER.warn("No data fixer registered for entity {}", choiceName);
 		}
+
+		// This return result is ignored
+		return null;
 	}
 }
