@@ -23,32 +23,32 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.item.Item;
+import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import com.patchworkmc.impl.registries.Identifiers;
 
-@Mixin(Item.class)
-public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
+@Mixin(SensorType.class)
+public class MixinSensorType implements ExtendedForgeRegistryEntry<SensorType> {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Item> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<SensorType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		Item item = (Item) (Object) this;
+		SensorType<?> sensorType = (SensorType<?>) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.ITEM, item, registryName);
+		return Identifiers.getOrFallback(Registry.SENSOR_TYPE, sensorType, registryName);
 	}
 
-	public Class<Item> getRegistryType() {
-		return Item.class;
+	public Class<SensorType> getRegistryType() {
+		return SensorType.class;
 	}
 }

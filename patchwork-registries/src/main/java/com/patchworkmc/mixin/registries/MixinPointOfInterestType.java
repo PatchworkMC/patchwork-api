@@ -23,32 +23,32 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.item.Item;
+import net.minecraft.village.PointOfInterestType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import com.patchworkmc.impl.registries.Identifiers;
 
-@Mixin(Item.class)
-public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
+@Mixin(PointOfInterestType.class)
+public class MixinPointOfInterestType implements ExtendedForgeRegistryEntry<PointOfInterestType> {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Item> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<PointOfInterestType> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		Item item = (Item) (Object) this;
+		PointOfInterestType pointOfInterestType = (PointOfInterestType) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.ITEM, item, registryName);
+		return Identifiers.getOrFallback(Registry.POINT_OF_INTEREST_TYPE, pointOfInterestType, registryName);
 	}
 
-	public Class<Item> getRegistryType() {
-		return Item.class;
+	public Class<PointOfInterestType> getRegistryType() {
+		return PointOfInterestType.class;
 	}
 }

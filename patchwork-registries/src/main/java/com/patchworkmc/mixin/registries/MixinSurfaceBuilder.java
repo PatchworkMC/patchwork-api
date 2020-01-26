@@ -36,7 +36,7 @@ public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBu
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<SurfaceBuilder> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

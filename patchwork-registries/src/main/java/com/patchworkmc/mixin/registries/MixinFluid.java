@@ -23,32 +23,32 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.item.Item;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import com.patchworkmc.impl.registries.Identifiers;
 
-@Mixin(Item.class)
-public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
+@Mixin(Fluid.class)
+public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Item> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Fluid> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		Item item = (Item) (Object) this;
+		Fluid fluid = (Fluid) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.ITEM, item, registryName);
+		return Identifiers.getOrFallback(Registry.FLUID, fluid, registryName);
 	}
 
-	public Class<Item> getRegistryType() {
-		return Item.class;
+	public Class<Fluid> getRegistryType() {
+		return Fluid.class;
 	}
 }
