@@ -17,6 +17,14 @@
     "patchwork-fml": "*"
   },
   "description": "Implementation of the Forge Biomes API.",
+  "entrypoints": {
+    "main": [
+      "com.patchworkmc.impl.biomes.PatchworkBiomes"
+    ]
+  },
+  "mixins": [
+    "patchwork-biomes.mixins.json"
+  ],
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
