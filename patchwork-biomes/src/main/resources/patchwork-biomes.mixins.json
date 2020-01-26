@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.biomes",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinBiome"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

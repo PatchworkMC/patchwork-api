@@ -8,6 +8,7 @@
 .settings
 .project
 *.launch
+.recommenders
 
 # Intellij/Idea
 .factorypath
