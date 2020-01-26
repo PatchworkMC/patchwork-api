@@ -44,6 +44,7 @@ public class LivingSpawnEvent extends LivingEvent {
 	private final double y;
 	private final double z;
 
+	// For EventBus
 	public LivingSpawnEvent() {
 		this.world = null;
 		this.x = 0;

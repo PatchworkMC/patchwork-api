@@ -26,7 +26,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraft.util.Identifier;
 
 public class RegistryEvent<T> extends GenericEvent<T> {
-	// Required for post() to work
+	// For EventBus (Required for post() to work)
 	public RegistryEvent() {
 		this(null);
 	}
@@ -39,7 +39,7 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 		private final IForgeRegistry<V> registry;
 		private final Identifier name;
 
-		// Required for post() to work
+		// For EventBus (Required for post() to work)
 		public Register() {
 			super(null);
 
