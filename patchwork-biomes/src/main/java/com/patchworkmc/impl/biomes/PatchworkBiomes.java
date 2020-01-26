@@ -34,6 +34,8 @@ import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 
 public final class PatchworkBiomes implements ModInitializer {
+	private static Set<Biome> failedBiomes = Sets.newHashSet();
+
 	@Override
 	public void onInitialize() {
 		Registry.BIOME.forEach(PatchworkBiomes::addRivers);
@@ -45,16 +47,14 @@ public final class PatchworkBiomes implements ModInitializer {
 	}
 
 	private static void addRivers(Biome biome) {
-		Biome river = ((ForgeBiomeExt) biome).getRiver();
+		Biome river = ((RiverSupplier) biome).getRiver();
 
 		if (river == null) {
 			failedBiomes.add(biome);
 			return;
 		}
 
-		if (river != getDefaultRiver(biome)) {
-			OverworldBiomes.setRiverBiome(biome, river);
-		}
+		setRiverIfNotDefault(biome, river);
 	}
 
 	private static void updateFailedBiomes() {
@@ -63,7 +63,7 @@ public final class PatchworkBiomes implements ModInitializer {
 
 			while (iterator.hasNext()) {
 				Biome biome = iterator.next();
-				Biome river = ((ForgeBiomeExt) biome).getRiver();
+				Biome river = ((RiverSupplier) biome).getRiver();
 
 				if (river == null) {
 					continue;
@@ -71,10 +71,14 @@ public final class PatchworkBiomes implements ModInitializer {
 
 				iterator.remove();
 
-				if (river != getDefaultRiver(biome)) {
-					OverworldBiomes.setRiverBiome(biome, river);
-				}
+				setRiverIfNotDefault(biome, river);
 			}
+		}
+	}
+
+	private static void setRiverIfNotDefault(Biome biome, Biome river) {
+		if (river != getDefaultRiver(biome)) {
+			OverworldBiomes.setRiverBiome(biome, river);
 		}
 	}
 
@@ -87,6 +91,4 @@ public final class PatchworkBiomes implements ModInitializer {
 
 		return Biomes.RIVER;
 	}
-
-	private static Set<Biome> failedBiomes = Sets.newHashSet();
 }
