@@ -33,7 +33,6 @@ import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
-import com.patchworkmc.impl.event.world.IGetWorldFromChunkGenerator;
 import com.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(SpawnHelper.class)
@@ -44,14 +43,14 @@ public class MixinSpawnHelper {
 
 	@ModifyVariable(method = "method_8664", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
 	private static List<Biome.SpawnEntry> hookRandomSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, EntityCategory entityCategory, Random random, BlockPos blockPos) {
-		IWorld world = ((IGetWorldFromChunkGenerator) chunkGenerator).getWorld();
+		IWorld world = ((MixinChunkGenerator) chunkGenerator).getWorld();
 
 		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
 	}
 
 	@ModifyVariable(method = "method_8659", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
 	private static List<Biome.SpawnEntry> hookCanSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, EntityCategory entityCategory, Biome.SpawnEntry spawnEntry, BlockPos blockPos) {
-		IWorld world = ((IGetWorldFromChunkGenerator) chunkGenerator).getWorld();
+		IWorld world = ((MixinChunkGenerator) chunkGenerator).getWorld();
 
 		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
 	}

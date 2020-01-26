@@ -20,19 +20,13 @@
 package com.patchworkmc.mixin.event.world;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
-import com.patchworkmc.impl.event.world.IGetWorldFromChunkGenerator;
-
 @Mixin(ChunkGenerator.class)
-public class MixinChunkGenerator implements IGetWorldFromChunkGenerator {
-	@Shadow
-	protected IWorld world;
-
-	public IWorld getWorld() {
-		return world;
-	}
+public interface MixinChunkGenerator {
+	@Accessor
+	IWorld getWorld();
 }
