@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
@@ -35,7 +34,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.patchworkmc.impl.fml.PatchworkMappingResolver;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.launch.common.FabricLauncherBase;
+import net.fabricmc.mapping.tree.ClassDef;
+import net.fabricmc.mapping.tree.FieldDef;
+import net.fabricmc.mapping.tree.MethodDef;
+import net.fabricmc.mapping.tree.TinyTree;
 
 /**
  * Some reflection helper code.
@@ -51,26 +55,53 @@ import com.patchworkmc.impl.fml.PatchworkMappingResolver;
 public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
-
+	private static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+	private static final String INTERMEDIARY = "intermediary";
+	private static final String NAMED = "named";
 	/**
-	 * Remaps a class name using {@link PatchworkMappingResolver#remapName(INameMappingService.Domain, Class, String)}.
-	 * Throws an exception for non-class domains.
+	 * Remaps a name from intermediary to whatever is currently being used at runtime.
 	 *
 	 * @param domain The {@link INameMappingService.Domain} to use to remap the name.
 	 * @param name   The name to try and remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
-	 * @throws UnsupportedOperationException if the {@code domain} is not {@link INameMappingService.Domain#CLASS}
-	 * @deprecated Patchwork: use {@link PatchworkMappingResolver} instead
 	 */
-	@Deprecated
 	@Nonnull
 	public static String remapName(INameMappingService.Domain domain, String name) {
-		if (domain == INameMappingService.Domain.CLASS) {
-			return PatchworkMappingResolver.remapName(domain, null, name);
-		} else {
-			// This would need a special remapping system, if someone uses it then it can be implemented
-			throw new UnsupportedOperationException("FIXME: Unable to lookup member of type " + domain.name() + " with name " + name + ".");
+		if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
+			return name;
 		}
+
+		for (ClassDef classDef : MAPPINGS.getClasses()) {
+			switch (domain) {
+			case CLASS:
+				if (classDef.getName(INTERMEDIARY).equals(name)) {
+					return classDef.getName(NAMED);
+				}
+
+				break;
+			case METHOD:
+				for (MethodDef methodDef : classDef.getMethods()) {
+					if (methodDef.getName(INTERMEDIARY).equals(name)) {
+						return methodDef.getName(NAMED);
+					}
+				}
+
+				break;
+			case FIELD:
+				for (FieldDef fieldDef : classDef.getFields()) {
+					if (fieldDef.getName(INTERMEDIARY).equals(name)) {
+						return fieldDef.getName(NAMED);
+					}
+				}
+
+				break;
+			default:
+				throw new IllegalArgumentException("Someones tampered with enums! Got unexpected type " + domain.name());
+			}
+		}
+
+		// It couldn't be found.
+		return name;
 	}
 
 	/**
@@ -123,11 +154,11 @@ public class ObfuscationReflectionHelper {
 			return (T) findField(classToAccess, fieldName).get(instance);
 		} catch (UnableToFindFieldException e) {
 			LOGGER.error(REFLECTION, "Unable to locate field {} ({}) on type {}", fieldName,
-					PatchworkMappingResolver.remapName(INameMappingService.Domain.FIELD, classToAccess, fieldName), classToAccess.getName(), e);
+					remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw e;
 		} catch (IllegalAccessException e) {
 			LOGGER.error(REFLECTION, "Unable to access field {} ({}) on type {}", fieldName,
-					PatchworkMappingResolver.remapName(INameMappingService.Domain.FIELD, classToAccess, fieldName), classToAccess.getName(), e);
+					remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw new UnableToAccessFieldException(e);
 		}
 	}
@@ -210,7 +241,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
 
 		try {
-			String name = PatchworkMappingResolver.remapName(INameMappingService.Domain.METHOD, clazz, methodName);
+			String name = remapName(INameMappingService.Domain.METHOD, methodName);
 			Method method = clazz.getDeclaredMethod(name, parameterTypes);
 			method.setAccessible(true);
 			return method;
@@ -280,7 +311,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
 
 		try {
-			String name = PatchworkMappingResolver.remapName(INameMappingService.Domain.FIELD, clazz, fieldName);
+			String name = remapName(INameMappingService.Domain.FIELD, fieldName);
 			Field field = clazz.getDeclaredField(name);
 			field.setAccessible(true);
 			return field;
