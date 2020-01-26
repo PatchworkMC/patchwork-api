@@ -29,10 +29,10 @@ import net.minecraft.entity.LivingEntity;
  * 
  * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingFall(LivingEntity, float, float)}.</p>
  * 
- * <p>{@link #distance} contains the distance the Entity is to fall. If this event is canceled, this value is set to 0.0F.</p>
+ * <p>{@link #distance} contains the distance the Entity is to fall. If this event is cancelled, this value is set to 0.0F.</p>
  * 
- * <p>This event is cancelable.
- * If this event is canceled, the Entity does not fall.</p>
+ * <p>This event is cancellable.
+ * If this event is cancelled, the Entity does not fall.</p>
  * 
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
