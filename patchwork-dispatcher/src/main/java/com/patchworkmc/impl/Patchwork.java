@@ -22,7 +22,9 @@ package com.patchworkmc.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.DistExecutor;
@@ -41,6 +43,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.server.dedicated.DedicatedServer;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -90,19 +93,18 @@ public class Patchwork implements ModInitializer {
 
 		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 		dispatch(mods, FMLCommonSetupEvent::new);
-		DistExecutor.runForDist(
-				() -> () -> {
-					dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
 
-					return "void isn't a valid return value...";
-				},
-				() -> () -> {
-					// TODO: Get the server, the LogicalSidedProvider that's needed for this to be done easily will be merged in the networking PR
-					dispatch(mods, container -> new FMLDedicatedServerSetupEvent(null, container));
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+			dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
+		});
 
-					return "void isn't a valid return value...";
-				}
-		);
+		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
+			Object gameInstance = FabricLoader.getInstance().getGameInstance();
+			Supplier<DedicatedServer> supplier = () -> (DedicatedServer) gameInstance;
+
+			dispatch(mods, container -> new FMLDedicatedServerSetupEvent(supplier, container));
+		});
+
 		dispatch(mods, InterModEnqueueEvent::new);
 		dispatch(mods, InterModProcessEvent::new);
 		dispatch(mods, FMLLoadCompleteEvent::new);

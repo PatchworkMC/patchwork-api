@@ -19,16 +19,27 @@
 
 package com.patchworkmc.impl.fml;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSidedProvider;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.server.MinecraftServer;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class PatchworkFML implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ServerStartCallback.EVENT.register(server -> LogicalSidedProvider.setServer(() -> server));
 		ServerStopCallback.EVENT.register(server -> LogicalSidedProvider.setServer(null));
+
+		Object instance = FabricLoader.getInstance().getGameInstance();
+
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> LogicalSidedProvider.setClient(() -> (MinecraftClient) instance));
+		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> LogicalSidedProvider.setServer(() -> (MinecraftServer) instance));
 	}
 }

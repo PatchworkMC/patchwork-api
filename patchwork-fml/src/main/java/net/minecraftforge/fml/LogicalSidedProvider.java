@@ -27,9 +27,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-
 import com.patchworkmc.impl.fml.PatchworkFML;
 
 public enum LogicalSidedProvider {
@@ -43,19 +40,16 @@ public enum LogicalSidedProvider {
 	private static Supplier<MinecraftClient> client;
 	private static Supplier<MinecraftServer> server;
 
-	// Patchwork: since the client never changes we can just set it directly
-	static {
-		if (FabricLoader.getInstance().getEnvironmentType().equals(EnvType.CLIENT)) {
-			client = () -> (MinecraftClient) FabricLoader.getInstance().getGameInstance();
-		}
-	}
-
 	private final Function<Supplier<MinecraftClient>, ?> clientSide;
 	private final Function<Supplier<MinecraftServer>, ?> serverSide;
 
 	LogicalSidedProvider(Function<Supplier<MinecraftClient>, ?> clientSide, Function<Supplier<MinecraftServer>, ?> serverSide) {
 		this.clientSide = clientSide;
 		this.serverSide = serverSide;
+	}
+
+	public static void setClient(Supplier<MinecraftClient> client) {
+		LogicalSidedProvider.client = client;
 	}
 
 	/**
