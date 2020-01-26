@@ -28,6 +28,7 @@ import com.patchworkmc.impl.biomes.PatchworkBiomes;
 
 @Mixin(Biome.class)
 public class MixinBiome implements RiverSupplier {
+	@Override
 	public Biome getRiver() {
 		Biome self = (Biome) (Object) this;
 		return PatchworkBiomes.getDefaultRiver(self);
