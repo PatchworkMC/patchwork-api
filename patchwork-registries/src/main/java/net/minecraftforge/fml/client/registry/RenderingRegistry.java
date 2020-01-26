@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.client.registry;
 
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.Entity;
 
 import net.fabricmc.fabric.api.client.render.EntityRendererRegistry;
@@ -34,7 +33,4 @@ public class RenderingRegistry {
 	public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory) {
 		EntityRendererRegistry.INSTANCE.register(entityClass, (dispatcher, context) -> renderFactory.createRenderFor(dispatcher));
 	}
-
-	// This is here just in case a mod calls it, entity renderers are loaded by the Fabric API
-	public static void loadEntityRenderers(EntityRenderDispatcher manager) { }
 }
