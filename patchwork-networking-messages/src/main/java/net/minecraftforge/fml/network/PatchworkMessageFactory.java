@@ -19,32 +19,19 @@
 
 package net.minecraftforge.fml.network;
 
+import net.minecraftforge.fml.network.simple.SimpleChannel;
+
 import net.minecraft.entity.Entity;
-import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 
 import com.patchworkmc.impl.networking.MessageFactory;
-import com.patchworkmc.impl.networking.NetworkChannel;
-import com.patchworkmc.impl.networking.PatchworkNetworking;
+import com.patchworkmc.impl.networking.PatchworkNetworkingMessages;
 
-public class NetworkHooks {
-	public static boolean onCustomPayload(final ICustomPacket<?> packet, final ClientConnection connection) {
-		NetworkChannel target = NetworkRegistry.findTarget(packet.getName());
+public class PatchworkMessageFactory implements MessageFactory {
+	@Override
+	public Packet<?> getEntitySpawningPacket(Entity entity) {
+		SimpleChannel play = PatchworkNetworkingMessages.getPlayChannel();
 
-		if (target == null) {
-			return false;
-		}
-
-		final NetworkEvent.Context context = new NetworkEvent.Context(connection, packet.getDirection(), packet.getIndex());
-
-		target.onPacket(packet, context);
-
-		return context.getPacketHandled();
-	}
-
-	public static Packet<?> getEntitySpawningPacket(Entity entity) {
-		MessageFactory factory = PatchworkNetworking.getMessageFactory();
-
-		return factory.getEntitySpawningPacket(entity);
+		return play.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
 	}
 }
