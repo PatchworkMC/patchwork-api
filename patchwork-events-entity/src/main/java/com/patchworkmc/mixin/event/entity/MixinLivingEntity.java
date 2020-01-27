@@ -20,6 +20,7 @@
 package com.patchworkmc.mixin.event.entity;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -33,6 +34,9 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity {
+    @Unique
+    private float[] fallData;
+
 	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
 	private void hookDeath(DamageSource source, CallbackInfo callback) {
@@ -78,23 +82,20 @@ public class MixinLivingEntity {
 
     @ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.BEFORE), ordinal = 0)
     private float hookHandleFallDamageDistance(float distance, float damageMultiplier) {
-        LivingEntity entity = (LivingEntity) (Object) this;
-
-        return EntityEvents.onLivingFall(entity, distance, damageMultiplier)[0];
+        return fallData[0];
     }
 
     @ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.AFTER), ordinal = 1)
     private float hookHandleFallDamageMultiplier(float distance, float damageMultiplier) {
-        LivingEntity entity = (LivingEntity) (Object) this;
-
-        return EntityEvents.onLivingFall(entity, distance, damageMultiplier)[1];
+        return fallData[1];
     } 
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
     private void hookHandleFallDamageCancel(float distance, float damageMultiplier, CallbackInfo info) {
         LivingEntity entity = (LivingEntity) (Object) this;
 
-        if (EntityEvents.onLivingFall(entity, distance, damageMultiplier) == null) {
+        fallData = EntityEvents.onLivingFall(entity, distance, damageMultiplier);
+        if (fallData == null) {
             info.cancel();
         }
     }
