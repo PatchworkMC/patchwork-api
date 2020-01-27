@@ -23,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 /**
  * Occurs when a player falls, but is able to fly.
+ * {@link net.minecraftforge.event.entity.living.LivingFallEvent} will be fired for players that are not able to fly.
  */
 public class PlayerFlyableFallEvent extends PlayerEvent {
     private float distance;

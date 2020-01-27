@@ -25,7 +25,9 @@ import net.minecraft.entity.LivingEntity;
  * LivingFallEvent is fired when an Entity is set to be falling.
  * 
  * <p>This event is fired whenever an Entity is set to fall in
- * {@link LivingEvent#fall(float, float)}.</p>
+ * {@link LivingEvent#fall(float, float)}.
+ * 
+ * For players that are able to fly, {@link net.minecraftforge.event.entity.player.PlayerFlyableFallEvent} will be fired instead.</p>
  * 
  * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingFall(LivingEntity, float, float)}.</p>
  * 
