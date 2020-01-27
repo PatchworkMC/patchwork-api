@@ -39,8 +39,8 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(PlayerEntity.class)
 public class MixinPlayerEntity {
-    @Shadow
-    public PlayerAbilities abilities;
+	@Shadow
+	public PlayerAbilities abilities;
 
 	@Inject(method = "interact", at = @At("HEAD"), cancellable = true)
 	private void hookInteractEntity(Entity entity, Hand hand, CallbackInfoReturnable<ActionResult> callback) {
@@ -104,14 +104,11 @@ public class MixinPlayerEntity {
 		}
 	}
 
-	@Inject(method = "handleFallDamage", at = @At("RETURN"), cancellable = true)
-	private void hookHandleFallDamage(float distance, float damageMultiplier, CallbackInfo info) {
-		if (!abilities.allowFlying) {
-			info.cancel();
-			return;
+	@Inject(method = "handleFallDamage", at = @At("RETURN"))
+	private void hookHandleFallDamage(float distance, float damageMultiplier) {
+		if (abilities.allowFlying) {
+			PlayerEntity player = (PlayerEntity) (Object) this;
+			EntityEvents.onPlayerFall(player, distance, damageMultiplier);
 		}
-
-		PlayerEntity player = (PlayerEntity) (Object) this;
-		EntityEvents.onPlayerFall(player, distance, damageMultiplier);
 	}
 }

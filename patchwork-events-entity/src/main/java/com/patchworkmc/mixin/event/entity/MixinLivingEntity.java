@@ -34,8 +34,8 @@ import com.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(LivingEntity.class)
 public class MixinLivingEntity {
-    @Unique
-    private float[] fallData;
+	@Unique
+	private float[] fallData;
 
 	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
@@ -88,13 +88,14 @@ public class MixinLivingEntity {
 	@ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.AFTER), ordinal = 1)
 	private float hookHandleFallDamageMultiplier(float distance, float damageMultiplier) {
 		return fallData[1];
-	} 
+	}
 
 	@Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
 	private void hookHandleFallDamageCancel(float distance, float damageMultiplier, CallbackInfo info) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
 		fallData = EntityEvents.onLivingFall(entity, distance, damageMultiplier);
+
 		if (fallData == null) {
 			info.cancel();
 		}

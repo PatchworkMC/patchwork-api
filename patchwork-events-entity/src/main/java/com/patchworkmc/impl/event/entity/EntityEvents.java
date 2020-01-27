@@ -87,17 +87,16 @@ public class EntityEvents implements ModInitializer {
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
 		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
-    }
-    
-    public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
-        LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
-    }
+	}
 
-    public static void onPlayerFall(PlayerEntity player, float distance, float damageMultiplier)
-    {
-        MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
-    }
+	public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
+		LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
+		return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
+	}
+
+	public static void onPlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
+		MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
+	}
 
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
 		if (entity == null) {
@@ -191,5 +190,5 @@ public class EntityEvents implements ModInitializer {
 		});
 
 		// TODO: Note: UseEntityCallback is closer to EntityInteractSpecific. We're on our own for EntityInteract.
-    }
+	}
 }

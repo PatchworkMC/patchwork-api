@@ -23,20 +23,20 @@ import net.minecraft.entity.LivingEntity;
 
 /**
  * LivingFallEvent is fired when an Entity is set to be falling.
- * 
+ *
  * <p>This event is fired whenever an Entity is set to fall in
- * {@link LivingEvent#fall(float, float)}.
- * 
- * For players that are able to fly, {@link net.minecraftforge.event.entity.player.PlayerFlyableFallEvent} will be fired instead.</p>
- * 
+ * {@link LivingEvent#fall(float, float)}.</p>
+ *
+ * <p>For players that are able to fly, {@link net.minecraftforge.event.entity.player.PlayerFlyableFallEvent} will be fired instead.</p>
+ *
  * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingFall(LivingEntity, float, float)}.</p>
- * 
+ *
  * <p>{@link #distance} contains the distance the Entity is to fall. If this event is cancelled, this value is set to 0.0F.</p>
- * 
+ *
  * <p>This event is cancellable.
  * If this event is cancelled, the Entity does not fall.</p>
- * 
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ *
+ * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
  */
 public class LivingFallEvent extends LivingEvent {
 	private float distance;
