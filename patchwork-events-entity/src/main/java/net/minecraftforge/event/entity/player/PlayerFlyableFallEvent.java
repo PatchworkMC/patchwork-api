@@ -26,34 +26,34 @@ import net.minecraft.entity.player.PlayerEntity;
  * {@link net.minecraftforge.event.entity.living.LivingFallEvent} will be fired for players that are not able to fly.
  */
 public class PlayerFlyableFallEvent extends PlayerEvent {
-    private float distance;
-    private float multiplier;
+	private float distance;
+	private float multiplier;
 
-    // For EventBus
-    public PlayerFlyableFallEvent() {
-        this(null, 0, 0);
-    }
-    
-    public PlayerFlyableFallEvent(PlayerEntity player, float distance, float multiplier) {
-        super(player);
+	// For EventBus
+	public PlayerFlyableFallEvent() {
+		this(null, 0, 0);
+	}
 
-        this.distance = distance;
-        this.multiplier = multiplier;
-    }
+	public PlayerFlyableFallEvent(PlayerEntity player, float distance, float multiplier) {
+		super(player);
 
-    public float getDistance() {
-        return distance;
-    }
+		this.distance = distance;
+		this.multiplier = multiplier;
+	}
 
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
+	public float getDistance() {
+		return distance;
+	}
 
-    public float getMultiplier() {
-        return multiplier;
-    }
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
 
-    public void setMultiplier(float multiplier) {
-        this.multiplier = multiplier;
-    }
+	public float getMultiplier() {
+		return multiplier;
+	}
+
+	public void setMultiplier(float multiplier) {
+		this.multiplier = multiplier;
+	}
 }

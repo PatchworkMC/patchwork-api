@@ -39,39 +39,39 @@ import net.minecraft.entity.LivingEntity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 public class LivingFallEvent extends LivingEvent {
-    private float distance;
-    private float damageMultiplier;
+	private float distance;
+	private float damageMultiplier;
 
-    // For EventBus
-    public LivingFallEvent() {
-        this(null, 0, 0);
-    }
+	// For EventBus
+	public LivingFallEvent() {
+		this(null, 0, 0);
+	}
 
-    public LivingFallEvent(LivingEntity entity, float distance, float damageMultiplier) {
-        super(entity);
+	public LivingFallEvent(LivingEntity entity, float distance, float damageMultiplier) {
+		super(entity);
 
-        this.setDistance(distance);
-        this.setDamageMultiplier(damageMultiplier);
-    }
+		this.setDistance(distance);
+		this.setDamageMultiplier(damageMultiplier);
+	}
 
-    public float getDistance() {
-        return distance;
-    }
+	public float getDistance() {
+		return distance;
+	}
 
-    public void setDistance(float distance) {
-        this.distance = distance;
-    }
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
 
-    public float getDamageMultiplier() {
-        return damageMultiplier;
-    }
+	public float getDamageMultiplier() {
+		return damageMultiplier;
+	}
 
-    public void setDamageMultiplier(float damageMultiplier) {
-        this.damageMultiplier = damageMultiplier;
-    }
+	public void setDamageMultiplier(float damageMultiplier) {
+		this.damageMultiplier = damageMultiplier;
+	}
 
-    @Override
-    public boolean isCancelable() {
-        return true;
-    }
+	@Override
+	public boolean isCancelable() {
+		return true;
+	}
 }

@@ -78,25 +78,25 @@ public class MixinLivingEntity {
 		if (damage <= 0) {
 			info.cancel();
 		}
-    }
+	}
 
-    @ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.BEFORE), ordinal = 0)
-    private float hookHandleFallDamageDistance(float distance, float damageMultiplier) {
-        return fallData[0];
-    }
+	@ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.BEFORE), ordinal = 0)
+	private float hookHandleFallDamageDistance(float distance, float damageMultiplier) {
+		return fallData[0];
+	}
 
-    @ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.AFTER), ordinal = 1)
-    private float hookHandleFallDamageMultiplier(float distance, float damageMultiplier) {
-        return fallData[1];
-    } 
+	@ModifyVariable(method = "handleFallDamage", at = @At(value = "INVOKE", target = "net/minecraft/entity/Entity.handleFallDamage(FF)V", shift = At.Shift.AFTER), ordinal = 1)
+	private float hookHandleFallDamageMultiplier(float distance, float damageMultiplier) {
+		return fallData[1];
+	} 
 
-    @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
-    private void hookHandleFallDamageCancel(float distance, float damageMultiplier, CallbackInfo info) {
-        LivingEntity entity = (LivingEntity) (Object) this;
+	@Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
+	private void hookHandleFallDamageCancel(float distance, float damageMultiplier, CallbackInfo info) {
+		LivingEntity entity = (LivingEntity) (Object) this;
 
-        fallData = EntityEvents.onLivingFall(entity, distance, damageMultiplier);
-        if (fallData == null) {
-            info.cancel();
-        }
-    }
+		fallData = EntityEvents.onLivingFall(entity, distance, damageMultiplier);
+		if (fallData == null) {
+			info.cancel();
+		}
+	}
 }
