@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,6 +39,11 @@ public class ConfigChangedEvent extends Event {
 	private final boolean requiresMcRestart;
 	@Nullable
 	private final String configID;
+
+	// For EventBus
+	public ConfigChangedEvent() {
+		this(null, null, false, false);
+	}
 
 	public ConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart) {
 		this.modID = modID;
@@ -88,6 +93,10 @@ public class ConfigChangedEvent extends Event {
 	 * Modders should check the modID field of the event to ensure they are only acting on their own config screen's event!
 	 */
 	public static class OnConfigChangedEvent extends ConfigChangedEvent {
+		// For EventBus
+		public OnConfigChangedEvent() {
+		}
+
 		public OnConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart) {
 			super(modID, configID, isWorldRunning, requiresMcRestart);
 		}
@@ -98,6 +107,10 @@ public class ConfigChangedEvent extends Event {
 	 * This event only fires if the OnConfigChangedEvent result is not DENY.
 	 */
 	public static class PostConfigChangedEvent extends ConfigChangedEvent {
+		// For EventBus
+		public PostConfigChangedEvent() {
+		}
+
 		public PostConfigChangedEvent(String modID, @Nullable String configID, boolean isWorldRunning, boolean requiresMcRestart) {
 			super(modID, configID, isWorldRunning, requiresMcRestart);
 		}

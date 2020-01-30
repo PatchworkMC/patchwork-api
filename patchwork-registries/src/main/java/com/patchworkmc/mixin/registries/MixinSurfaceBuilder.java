@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(SurfaceBuilder.class)
 public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBuilder> {
@@ -35,17 +36,16 @@ public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBu
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<SurfaceBuilder> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.SURFACE_BUILDER.getId((SurfaceBuilder) (Object) this);
-		Identifier set = registryName;
+		SurfaceBuilder<?> surfaceBuilder = (SurfaceBuilder<?>) (Object) this;
 
-		return current != null ? current : set;
+		return Identifiers.getOrFallback(Registry.SURFACE_BUILDER, surfaceBuilder, registryName);
 	}
 
 	public Class<SurfaceBuilder> getRegistryType() {
