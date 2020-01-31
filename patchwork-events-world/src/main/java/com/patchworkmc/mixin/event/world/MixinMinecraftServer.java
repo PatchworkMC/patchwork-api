@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,6 +35,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.NonBlockingThreadExecutor;
 import net.minecraft.world.dimension.DimensionType;
 
+import com.patchworkmc.impl.event.world.WorldEvents;
+
 @Mixin(MinecraftServer.class)
 public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<ServerTask> {
 	public MixinMinecraftServer(String name) {
@@ -47,66 +47,72 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 	@Final
 	private Map<DimensionType, ServerWorld> worlds;
 
+	/*
+	// This is a varient of the world load hook that is less likely to break mods and more likely to break on updates.
 	// Should get called once per loop, regardless of which if branch it takes.
-	//	@Inject(
-	//		method = "createWorlds",
-	//		slice = @Slice(
-	//			from = @At(value = "INVOKE", target = "java/util/Iterator.hasNext ()Z")
-	//		),
-	//		at = @At(value = "JUMP", opcode = Opcodes.GOTO),
-	//		locals = LocalCapture.CAPTURE_FAILHARD
-	//	)
-	//	private void hookCreateWorlds(WorldSaveHandler worldSaveHandler, LevelProperties properties, LevelInfo levelInfo, WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, ServerWorld serverWorld, ServerWorld serverWorld2, Iterator var7, DimensionType dimensionType) {
-	//		MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this.worlds.get(dimensionType)));
-	//	}
+	@Inject(
+		method = "createWorlds",
+		slice = @Slice(
+			from = @At(value = "INVOKE", target = "java/util/Iterator.hasNext ()Z")
+		),
+		at = @At(value = "JUMP", opcode = Opcodes.GOTO),
+		locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	private void hookCreateWorlds(WorldSaveHandler worldSaveHandler, LevelProperties properties, LevelInfo levelInfo, WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, ServerWorld serverWorld, ServerWorld serverWorld2, Iterator var7, DimensionType dimensionType) {
+		WorldEvents.onWorldLoad(this.worlds.get(dimensionType));
+	}
 
-	// Alternatively, mixin to the put call, and special case overworld.
-	// Perhaps move the special case outside of the loop?
+	*/
+
+	// This injection gets called at the beginning of each loop, and is used to special case the overworld dimension type.
 	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Iterator.next ()Ljava/lang/Object;"))
 	private Object proxyNextWorldToSpecialCaseOverworld(Iterator iterator) {
 		DimensionType type = (DimensionType) iterator.next();
 
 		if (type == DimensionType.OVERWORLD) {
-			MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(this.worlds.get(type)));
+			WorldEvents.onWorldLoad(this.worlds.get(type));
 		}
 
 		return type;
 	}
 
+	// This injection handles every other dimension type.
 	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Map.put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", ordinal = 1))
 	private Object proxyPutWorld(Map worlds, Object type, Object world) {
 		worlds.put(type, world);
-		MinecraftForge.EVENT_BUS.post(new WorldEvent.Load((ServerWorld) world));
+		WorldEvents.onWorldLoad((ServerWorld) world);
 		return world;
 	}
 
-	// TODO: Should we Inject into ServerWorld.close instead? Currently, this follows Forge's patch location.
 	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close ()V"))
 	private void proxyClose(ServerWorld world) throws IOException {
-		MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(world));
+		WorldEvents.onWorldUnload(world);
 		world.close();
+	}
+
+	/*
+	// TODO: DimensionManager, and move this into a seperate module
+	@Inject(method = "createWorlds", at = @At(value = "HEAD"))
+	private void hookCreateWorldsForDimensionRegistration(CallbackInfo info) {
+		DimensionManager.fireRegister();
 	}
 
 	@Shadow
 	private int ticks;
 
-	// TODO: DimensionManager, and move this into a seperate module
-	//	@Inject(method = "createWorlds", at = @At(value = "HEAD"))
-	//	private void hookCreateWorldsForDimensionRegistration(CallbackInfo info) {
-	//		DimensionManager.fireRegister();
-	//	}
+	@Redirect(method = "tickWorlds", at = @At(value = "INVOKE_STRING", target = "net/minecraft/util/profiler/DisableableProfiler.swap (Ljava/lang/String;)V", args = { "ldc=connection" }))
+	private void hookTickWorldsForDimensionUnload(DisableableProfiler profiler, String section) {
+		MinecraftServer server = (MinecraftServer) (Object) this;
+		profiler.swap("dim_unloading");
+		DimensionManager.unloadWorlds(server, this.ticks % 200);
+		profiler.swap(section);
+	}
 
-	//	@Redirect(method = "tickWorlds", at = @At(value = "INVOKE_STRING", target = "net/minecraft/util/profiler/DisableableProfiler.swap (Ljava/lang/String;)V", args = { "ldc=connection" }))
-	//	private void hookTickWorldsForDimensionUnload(DisableableProfiler profiler, String section) {
-	//		MinecraftServer server = (MinecraftServer) (Object) this;
-	//		profiler.swap("dim_unloading");
-	//		DimensionManager.unloadWorlds(server, this.ticks % 200);
-	//		profiler.swap(section);
-	//	}
+	@Redirect(method = "getWorld", at = @At(value = "INVOKE", target = "java/util/Map.get (Ljava/lang/Object;)Ljava/lang/Object;"))
+	private Object hookGetWorld(Map worlds, Object type) {
+		MinecraftServer server = (MinecraftServer) (Object) this;
+		return DimensionManager.getWorld(server, type, true, true);
+	}
 
-	//	@Redirect(method = "getWorld", at = @At(value = "INVOKE", target = "java/util/Map.get (Ljava/lang/Object;)Ljava/lang/Object;"))
-	//	private Object hookGetWorld(Map worlds, Object type) {
-	//		MinecraftServer server = (MinecraftServer) (Object) this;
-	//		return DimensionManager.getWorld(server, type, true, true);
-	//	}
+	*/
 }

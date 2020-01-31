@@ -21,8 +21,6 @@ package com.patchworkmc.mixin.event.world;
 
 import java.util.function.BiFunction;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -47,8 +45,7 @@ public abstract class MixinServerWorld extends World {
 
 	@Inject(method = "save", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerChunkManager.save (Z)V"))
 	private void hookSave(CallbackInfo info) {
-		ServerWorld world = (ServerWorld) (Object) this;
-		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+		WorldEvents.onWorldSave((ServerWorld) (Object) this);
 	}
 
 	// TODO: consider adding a shift to before obtaining the ChunkManager to match forge more closely

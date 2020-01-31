@@ -19,8 +19,6 @@
 
 package com.patchworkmc.mixin.event.world;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 
+import com.patchworkmc.impl.event.world.WorldEvents;
+
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
 	@Shadow
@@ -39,14 +39,14 @@ public class MixinMinecraftClient {
 	@Inject(method = "joinWorld", at = @At(value = "HEAD"))
 	private void hookJoinWorld(CallbackInfo info) {
 		if (this.world != null) {
-			MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(this.world));
+			WorldEvents.onWorldUnload(this.world);
 		}
 	}
 
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "net/minecraft/client/MinecraftClient.world : Lnet/minecraft/client/world/ClientWorld;"))
 	private void hookDisconnect(CallbackInfo info) {
 		if (this.world != null) {
-			MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(this.world));
+			WorldEvents.onWorldUnload(this.world);
 		}
 	}
 }

@@ -21,8 +21,6 @@ package com.patchworkmc.mixin.event.world;
 
 import java.util.function.BiFunction;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -36,6 +34,8 @@ import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.World;
 import net.minecraft.client.world.ClientWorld;
 
+import com.patchworkmc.impl.event.world.WorldEvents;
+
 @Mixin(ClientWorld.class)
 public abstract class MixinClientWorld extends World {
 	protected MixinClientWorld(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
@@ -43,8 +43,7 @@ public abstract class MixinClientWorld extends World {
 	}
 
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
-	private void hookConstructor(CallbackInfo info) {
-		ClientWorld world = (ClientWorld) (Object) this;
-		MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+	private void postConstruct(CallbackInfo info) {
+		WorldEvents.onWorldLoad((ClientWorld) (Object) this);
 	}
 }

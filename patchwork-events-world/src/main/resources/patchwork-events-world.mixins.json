@@ -3,14 +3,16 @@
   "package": "com.patchworkmc.mixin.event.world",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinServerPlayerInteractionManager",
-    "MixinThreadedAnvilChunkStorage",
-    "MixinClientWorld",
-    "MixinServerWorld",
+    "MixinChunkGenerator",
     "MixinMinecraftServer",
-    "MixinMinecraftClient",
+    "MixinServerPlayerInteractionManager",
+    "MixinServerWorld",
     "MixinSpawnHelper",
-    "MixinChunkGenerator"
+    "MixinThreadedAnvilChunkStorage",
+  ],
+  "client": [
+    "MixinClientWorld",
+    "MixinMinecraftClient"
   ],
   "injectors": {
     "defaultRequire": 1

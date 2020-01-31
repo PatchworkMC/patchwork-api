@@ -45,4 +45,16 @@ public class WorldEvents {
 
 		return event.getList();
 	}
+
+	public static void onWorldLoad(IWorld world) {
+		MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
+	}
+
+	public static void onWorldUnload(IWorld world) {
+		MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(world));
+	}
+
+	public static void onWorldSave(IWorld world) {
+		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
 }

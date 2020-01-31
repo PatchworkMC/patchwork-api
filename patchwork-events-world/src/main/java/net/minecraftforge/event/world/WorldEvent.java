@@ -80,13 +80,18 @@ public class WorldEvent extends Event {
 	 * {@link MinecraftServer#createWorlds(WorldSaveHandler, LevelProperties, LevelInfo, WorldGenerationProgressListener)},
 	 * TODO: {@link DimensionManager#initDimension(int)}</p>
 	 *
-	 * <p>This event is not Cancelable.</p>
+	 * <p>This event is not cancellable.</p>
 	 *
 	 * <p>This event does not have a result.</p>
 	 *
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Load extends WorldEvent {
+		// For EventBus
+		public Load() {
+			super();
+		}
+
 		public Load(IWorld world) {
 			super(world);
 		}
@@ -101,13 +106,18 @@ public class WorldEvent extends Event {
 	 * {@link MinecraftServer#shutdown()},
 	 * TODO: {@link DimensionManager#unloadWorlds()}</p>
 	 *
-	 * <p>This event is not Cancelable.</p>
+	 * <p>This event is not cancellable.</p>
 	 *
 	 * <p>This event does not have a result.</p>
 	 *
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Unload extends WorldEvent {
+		// For EventBus
+		public Unload() {
+			super();
+		}
+
 		public Unload(IWorld world) {
 			super(world);
 		}
@@ -119,20 +129,25 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired when a world is saved in
 	 * {@link ServerWorld#save(ProgressListener, boolean, boolean)}.</p>
 	 *
-	 * <p>This event is not Cancelable.</p>
+	 * <p>This event is not cancellable.</p>
 	 *
 	 * <p>This event does not have a result.</p>
 	 *
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Save extends WorldEvent {
+		// For EventBus
+		public Save() {
+			super();
+		}
+
 		public Save(IWorld world) {
 			super(world);
 		}
 	}
 
 	/**
-	 * Called by ServerWorld to gather a list of all possible entities that can spawn at the specified location.
+	 * Called by {@link ServerWorld} to gather a list of all possible entities that can spawn at the specified location.
 	 * If an entry is added to the list, it needs to be a globally unique instance.
 	 * The event is called in {@link SpawnHelper#method_8664(ChunkGenerator, EntityCategory, Random, BlockPos)} as well as
 	 * {@link SpawnHelper#method_8659(ChunkGenerator, EntityCategory, SpawnEntry, BlockPos)}
@@ -143,6 +158,14 @@ public class WorldEvent extends Event {
 		private final EntityCategory type;
 		private final BlockPos pos;
 		private final List<SpawnEntry> list;
+
+		// For EventBus
+		public PotentialSpawns() {
+			super();
+			type = null;
+			pos = null;
+			list = null;
+		}
 
 		public PotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<SpawnEntry> oldList) {
 			super(world);
@@ -178,9 +201,15 @@ public class WorldEvent extends Event {
 	 * Called by ServerWorld when it attempts to create a spawnpoint for a dimension.
 	 * Canceling the event will prevent the vanilla code from running.
 	 */
-
 	public static class CreateSpawnPosition extends WorldEvent {
 		private final LevelInfo settings;
+
+		// For EventBus
+		public CreateSpawnPosition() {
+			super();
+			settings = null;
+		}
+
 		public CreateSpawnPosition(IWorld world, LevelInfo settings) {
 			super(world);
 			this.settings = settings;
