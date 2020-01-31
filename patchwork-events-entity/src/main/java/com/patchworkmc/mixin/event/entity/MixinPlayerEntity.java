@@ -108,7 +108,7 @@ public class MixinPlayerEntity {
 	private void hookHandleFallDamage(float distance, float damageMultiplier) {
 		if (abilities.allowFlying) {
 			PlayerEntity player = (PlayerEntity) (Object) this;
-			EntityEvents.onPlayerFall(player, distance, damageMultiplier);
+			EntityEvents.onFlyablePlayerFall(player, distance, damageMultiplier);
 		}
 	}
 }
