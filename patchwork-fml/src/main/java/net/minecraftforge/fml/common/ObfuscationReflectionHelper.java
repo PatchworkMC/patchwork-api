@@ -37,8 +37,7 @@ import org.apache.logging.log4j.MarkerManager;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.launch.common.FabricLauncherBase;
 import net.fabricmc.mapping.tree.ClassDef;
-import net.fabricmc.mapping.tree.FieldDef;
-import net.fabricmc.mapping.tree.MethodDef;
+import net.fabricmc.mapping.tree.Mapped;
 import net.fabricmc.mapping.tree.TinyTree;
 
 /**
@@ -50,14 +49,15 @@ import net.fabricmc.mapping.tree.TinyTree;
  * <p>In other cases, accesssor mixins may be used.</p>
  *
  * <p>All field and method names should be passed in as intermediary names, and this will automatically resolve if Yarn mappings are detected.</p>
- *
  */
 public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
+	// We're technically messing with Loader's internal APIs here, if Loader ever gets a better mapping resolution system this class should be refactored.
 	private static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
 	private static final String INTERMEDIARY = "intermediary";
 	private static final String NAMED = "named";
+
 	/**
 	 * Remaps a name from intermediary to whatever is currently being used at runtime.
 	 *
@@ -67,36 +67,49 @@ public class ObfuscationReflectionHelper {
 	 */
 	@Nonnull
 	public static String remapName(INameMappingService.Domain domain, String name) {
-		if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
+		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
 			return name;
 		}
 
 		for (ClassDef classDef : MAPPINGS.getClasses()) {
-			switch (domain) {
-			case CLASS:
+			if (domain == INameMappingService.Domain.CLASS) {
 				if (classDef.getName(INTERMEDIARY).equals(name)) {
 					return classDef.getName(NAMED);
 				}
-
-				break;
-			case METHOD:
-				for (MethodDef methodDef : classDef.getMethods()) {
-					if (methodDef.getName(INTERMEDIARY).equals(name)) {
-						return methodDef.getName(NAMED);
+			} else {
+				for (Mapped mapped : domain == INameMappingService.Domain.METHOD ? classDef.getMethods() : classDef.getFields()) {
+					if (mapped.getName(INTERMEDIARY).equals(name)) {
+						return mapped.getName(NAMED);
 					}
 				}
+			}
+		}
 
-				break;
-			case FIELD:
-				for (FieldDef fieldDef : classDef.getFields()) {
-					if (fieldDef.getName(INTERMEDIARY).equals(name)) {
-						return fieldDef.getName(NAMED);
-					}
-				}
+		// It couldn't be found.
+		return name;
+	}
 
-				break;
-			default:
-				throw new IllegalArgumentException("Someones tampered with enums! Got unexpected type " + domain.name());
+	/**
+	 * Like {@link ObfuscationReflectionHelper#remapName(INameMappingService.Domain, String)}, but only iterates through members of the target class.
+	 * @param domain The {@link INameMappingService.Domain} to look up.
+	 * @param clazz The class that contains the {@code name} to look up.
+	 * @param name The name to remap.
+	 * @return The remapped name, or the original name if it couldn't be remapped.
+	 */
+	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
+		if (domain == INameMappingService.Domain.CLASS) {
+			remapName(domain, name);
+		}
+
+		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
+			return name;
+		}
+
+		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
+
+		for (Mapped mapped : domain == INameMappingService.Domain.METHOD ? classDef.getMethods() : classDef.getFields()) {
+			if (mapped.getName(INTERMEDIARY).equals(name)) {
+				return mapped.getName(NAMED);
 			}
 		}
 
@@ -152,6 +165,8 @@ public class ObfuscationReflectionHelper {
 		try {
 			//noinspection unchecked
 			return (T) findField(classToAccess, fieldName).get(instance);
+
+		// We use remapName instead of remapNameFast because the member wasn't found, which means it's probably not in that class.
 		} catch (UnableToFindFieldException e) {
 			LOGGER.error(REFLECTION, "Unable to locate field {} ({}) on type {}", fieldName,
 					remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
@@ -241,7 +256,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
 
 		try {
-			String name = remapName(INameMappingService.Domain.METHOD, methodName);
+			String name = remapNameFast(INameMappingService.Domain.METHOD, clazz, methodName);
 			Method method = clazz.getDeclaredMethod(name, parameterTypes);
 			method.setAccessible(true);
 			return method;
@@ -311,7 +326,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
 
 		try {
-			String name = remapName(INameMappingService.Domain.FIELD, fieldName);
+			String name = remapNameFast(INameMappingService.Domain.FIELD, clazz, fieldName);
 			Field field = clazz.getDeclaredField(name);
 			field.setAccessible(true);
 			return field;
