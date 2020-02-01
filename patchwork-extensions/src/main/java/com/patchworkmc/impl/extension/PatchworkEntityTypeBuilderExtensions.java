@@ -32,5 +32,5 @@ public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
 
 	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
 
-	// TODO: setCustomClientFactory
+	// TODO: setCustomClientFactory (waiting on patchwork-networking features)
 }

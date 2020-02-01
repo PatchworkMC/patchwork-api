@@ -24,45 +24,18 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCategory;
-import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 
 @Mixin(EntityType.Builder.class)
 public abstract class MixinEntityTypeBuilder<T extends Entity> {
 	@Unique
 	private static final Logger LOGGER = LogManager.getLogger();
-
-	@Shadow
-	@Final
-	private EntityType.EntityFactory<T> factory;
-
-	@Shadow
-	@Final
-	private EntityCategory category;
-
-	@Shadow
-	private boolean saveable;
-
-	@Shadow
-	private boolean summonable;
-
-	@Shadow
-	private boolean fireImmune;
-
-	@Shadow
-	private boolean field_19424;
-
-	@Shadow
-	private EntityDimensions size;
 
 	/**
 	 * Fixes MC-170128: Cannot build an EntityType without a datafixer due to an IllegalArgumentException.
