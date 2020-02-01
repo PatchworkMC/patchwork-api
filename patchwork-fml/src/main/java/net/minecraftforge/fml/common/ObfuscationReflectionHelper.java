@@ -77,7 +77,9 @@ public class ObfuscationReflectionHelper {
 					return classDef.getName(NAMED);
 				}
 			} else {
-				for (Mapped mapped : domain == INameMappingService.Domain.METHOD ? classDef.getMethods() : classDef.getFields()) {
+				boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
+
+				for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
 					if (mapped.getName(INTERMEDIARY).equals(name)) {
 						return mapped.getName(NAMED);
 					}
@@ -106,8 +108,9 @@ public class ObfuscationReflectionHelper {
 		}
 
 		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
+		boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
 
-		for (Mapped mapped : domain == INameMappingService.Domain.METHOD ? classDef.getMethods() : classDef.getFields()) {
+		for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
 			if (mapped.getName(INTERMEDIARY).equals(name)) {
 				return mapped.getName(NAMED);
 			}
