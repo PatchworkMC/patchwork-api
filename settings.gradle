@@ -23,4 +23,5 @@ include 'patchwork-fml'
 include 'patchwork-registries'
 include 'patchwork-gui'
 include 'patchwork-networking'
+include 'patchwork-vanilla-patches'
 
