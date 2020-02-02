@@ -61,8 +61,8 @@ public class ObfuscationReflectionHelper {
 	/**
 	 * Remaps a name from intermediary to whatever is currently being used at runtime.
 	 *
-	 * @param domain The {@link INameMappingService.Domain} to use to remap the name.
-	 * @param name   The name to try and remap.
+	 * @param domain    The {@link INameMappingService.Domain} to look up.
+	 * @param name      The name to try and remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 */
 	@Nonnull
@@ -75,37 +75,51 @@ public class ObfuscationReflectionHelper {
 			return MAPPINGS.getDefaultNamespaceClassMap().get(name).getName(NAMED);
 		}
 
-		for (ClassDef classDef : MAPPINGS.getClasses()) {
-			boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
+		String remappedName;
 
-			for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
-				if (mapped.getName(INTERMEDIARY).equals(name)) {
-					return mapped.getName(NAMED);
-				}
+		for (ClassDef classDef : MAPPINGS.getClasses()) {
+			remappedName = remapNameInternal(domain, classDef, name);
+			if(remappedName != null) {
+				return remappedName;
 			}
 		}
 
-		// It couldn't be found.
 		return name;
 	}
 
+	// Begin Patchwork-added methods
 	/**
 	 * Like {@link ObfuscationReflectionHelper#remapName(INameMappingService.Domain, String)}, but only iterates through members of the target class.
-	 * @param domain The {@link INameMappingService.Domain} to look up.
-	 * @param clazz The class that contains the {@code name} to look up.
-	 * @param name The name to remap.
+	 * @param domain    The {@link INameMappingService.Domain} to look up.
+	 * @param clazz     The class that contains the {@code name} to look up.
+	 * @param name      The name to remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 */
+	@Nonnull
 	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
+		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
+		String remappedName = remapNameInternal(domain, classDef, name);
+
+		return remappedName != null ? remappedName : name;
+	}
+
+	/**
+	 * Like {@link ObfuscationReflectionHelper#remapNameFast(INameMappingService.Domain, Class, String)}, but takes a {@link ClassDef} instead of a {@link Class}
+	 * @param domain    The {@link INameMappingService.Domain} to look up.
+	 * @param classDef  The classDef that contains the {@code name} to look up.
+	 * @param name      The name to remap.
+	 * @return The remapped name, or null if it couldn't be remapped.
+	 */
+	@Nullable
+	public static String remapNameInternal(INameMappingService.Domain domain, ClassDef classDef, String name) {
 		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
 			return name;
 		}
 
 		if (domain == INameMappingService.Domain.CLASS) {
-			remapName(domain, name);
+			return classDef.getName(name);
 		}
 
-		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
 		boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
 
 		for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
@@ -114,9 +128,9 @@ public class ObfuscationReflectionHelper {
 			}
 		}
 
-		// It couldn't be found.
-		return name;
+		return null;
 	}
+	// End Patchwork-added methods
 
 	/**
 	 * Gets the value a field with the specified index in the given class.
