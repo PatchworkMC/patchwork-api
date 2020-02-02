@@ -19,16 +19,20 @@
 
 package com.patchworkmc.impl.networking;
 
+import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public final class NetworkChannelVersion {
 	private final String networkProtocolVersion;
 	private final Predicate<String> clientAcceptedVersions;
 	private final Predicate<String> serverAcceptedVersions;
 
-	NetworkChannelVersion(Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
-		this.networkProtocolVersion = networkProtocolVersion.get();
+	public NetworkChannelVersion(String networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+		Objects.requireNonNull(networkProtocolVersion);
+		Objects.requireNonNull(clientAcceptedVersions);
+		Objects.requireNonNull(serverAcceptedVersions);
+
+		this.networkProtocolVersion = networkProtocolVersion;
 		this.clientAcceptedVersions = clientAcceptedVersions;
 		this.serverAcceptedVersions = serverAcceptedVersions;
 	}

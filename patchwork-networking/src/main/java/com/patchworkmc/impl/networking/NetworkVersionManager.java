@@ -76,20 +76,16 @@ public final class NetworkVersionManager {
 	 * @param serverAcceptedVersions The server accepted predicate
 	 * @throws IllegalArgumentException if the name already exists
 	 */
-	public void createChannel(Identifier name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+	public void createChannel(Identifier name, NetworkChannelVersion version) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(networkProtocolVersion);
-		Objects.requireNonNull(clientAcceptedVersions);
-		Objects.requireNonNull(serverAcceptedVersions);
+		Objects.requireNonNull(version);
 
 		if (versions.containsKey(name)) {
 			LOGGER.error(NETREGISTRY, "Attempted to register a channel with the name {}, but there is already a channel registered with that name.", name);
 			throw new IllegalArgumentException("Channel {" + name + "} already registered");
 		}
 
-		final NetworkChannelVersion channel = new NetworkChannelVersion(networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
-
-		versions.put(name, channel);
+		versions.put(name, version);
 	}
 
 	// For internal Patchwork use

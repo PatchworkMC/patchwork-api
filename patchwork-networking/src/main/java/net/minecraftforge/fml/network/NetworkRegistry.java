@@ -42,6 +42,7 @@ import net.minecraft.util.PacketByteBuf;
 import com.patchworkmc.impl.networking.ListenableChannel;
 import com.patchworkmc.impl.networking.NetworkChannelVersion;
 import com.patchworkmc.impl.networking.NetworkVersionManager;
+import com.patchworkmc.impl.networking.PatchworkNetworking;
 
 /**
  * The network registry. Tracks channels on behalf of mods.
@@ -56,23 +57,22 @@ public class NetworkRegistry {
 	public static final String ABSENT = NetworkVersionManager.ABSENT;
 	public static final String ACCEPTVANILLA = NetworkVersionManager.ACCEPTVANILLA;
 	private static final Map<Identifier, ListenableChannel> listeners = Collections.synchronizedMap(new HashMap<>());
-	private static final NetworkVersionManager versionManager = new NetworkVersionManager();
 	private static boolean lock = false;
 
 	public static List<String> getServerNonVanillaNetworkMods() {
-		return versionManager.getServerNonVanillaNetworkMods();
+		return PatchworkNetworking.getVersionManager().getServerNonVanillaNetworkMods();
 	}
 
 	public static List<String> getClientNonVanillaNetworkMods() {
-		return versionManager.getClientNonVanillaNetworkMods();
+		return PatchworkNetworking.getVersionManager().getClientNonVanillaNetworkMods();
 	}
 
 	public static boolean acceptsVanillaClientConnections() {
-		return versionManager.acceptsVanillaClientConnections();
+		return PatchworkNetworking.getVersionManager().acceptsVanillaClientConnections();
 	}
 
 	public static boolean canConnectToVanillaServer() {
-		return versionManager.canConnectToVanillaServer();
+		return PatchworkNetworking.getVersionManager().canConnectToVanillaServer();
 	}
 
 	/**
@@ -133,7 +133,9 @@ public class NetworkRegistry {
 			throw new IllegalArgumentException("Channel listener {" + name + "} already registered");
 		}
 
-		versionManager.createChannel(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
+		NetworkChannelVersion version = new NetworkChannelVersion(networkProtocolVersion.get(), clientAcceptedVersions, serverAcceptedVersions);
+
+		PatchworkNetworking.getVersionManager().createChannel(name, version);
 	}
 
 	/**

@@ -19,36 +19,51 @@
 
 package com.patchworkmc.impl.networking;
 
+import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.network.Packet;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
-public class PatchworkNetworkingMessages implements ModInitializer {
-	private static final String VERSION = "FML2";
+public class PatchworkNetworkingMessages implements ModInitializer, MessageFactory {
+	private static final Logger LOGGER = LogManager.getLogger("patchwork-networking");
 	private static final Identifier PLAY_IDENTIFIER = new Identifier("fml", "play");
-	private static SimpleChannel play;
+	private static final NetworkChannelVersion VERSION = new NetworkChannelVersion("FML2", version -> true, version -> true);
+	private static final short SPAWN_ENTITY = 0;
 
 	@Override
 	public void onInitialize() {
-		play = NetworkRegistry.ChannelBuilder
-				.named(PLAY_IDENTIFIER)
-				.clientAcceptedVersions(version -> true)
-				.serverAcceptedVersions(version -> true)
-				.networkProtocolVersion(() -> VERSION)
-				.simpleChannel();
+		PatchworkNetworking.getVersionManager().createChannel(PLAY_IDENTIFIER, VERSION);
+		PatchworkNetworking.setFactory(this);
 
-		play.messageBuilder(FMLPlayMessages.SpawnEntity.class, 0).
-				decoder(FMLPlayMessages.SpawnEntity::decode).
-				encoder(FMLPlayMessages.SpawnEntity::encode).
-				consumer(FMLPlayMessages.SpawnEntity::handle).
-				add();
+		ClientSidePacketRegistry.INSTANCE.register(PLAY_IDENTIFIER, (context, buf) -> {
+			int id = buf.readUnsignedByte();
+
+			if (id == SPAWN_ENTITY) {
+				FMLPlayMessages.SpawnEntity spawn = FMLPlayMessages.SpawnEntity.decode(buf);
+				FMLPlayMessages.SpawnEntity.handle(spawn, context);
+			} else {
+				LOGGER.warn("Received an unknown fml:play message with an id of {} and a payload of {} bytes", id, buf.readableBytes());
+			}
+		});
 	}
 
-	public static SimpleChannel getPlayChannel() {
-		return play;
+	@Override
+	public Packet<?> getEntitySpawningPacket(Entity entity) {
+		FMLPlayMessages.SpawnEntity message = new FMLPlayMessages.SpawnEntity(entity);
+		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+
+		buf.writeByte(SPAWN_ENTITY);
+		FMLPlayMessages.SpawnEntity.encode(message, buf);
+
+		return ServerSidePacketRegistry.INSTANCE.toPacket(PLAY_IDENTIFIER, buf);
 	}
 }

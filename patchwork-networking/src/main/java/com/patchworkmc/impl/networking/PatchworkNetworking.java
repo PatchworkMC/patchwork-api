@@ -19,8 +19,27 @@
 
 package com.patchworkmc.impl.networking;
 
+import java.util.concurrent.CompletableFuture;
+
+import net.minecraft.util.ThreadExecutor;
+
+import com.patchworkmc.mixin.networking.accessor.ThreadExecutorAccessor;
+
 public class PatchworkNetworking {
 	private static MessageFactory factory;
+	private static NetworkVersionManager versionManager = new NetworkVersionManager();
+
+	public static CompletableFuture<Void> enqueueWork(ThreadExecutor<?> executor, Runnable runnable) {
+		// Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
+		// Same logic as ThreadTaskExecutor#runImmediately without the join
+		if (!executor.isOnThread()) {
+			// Use the internal method so thread check isn't done twice
+			return ((ThreadExecutorAccessor) executor).patchwork$executeFuture(runnable);
+		} else {
+			runnable.run();
+			return CompletableFuture.completedFuture(null);
+		}
+	}
 
 	public static void setFactory(MessageFactory factory) {
 		PatchworkNetworking.factory = factory;
@@ -28,5 +47,9 @@ public class PatchworkNetworking {
 
 	public static MessageFactory getMessageFactory() {
 		return factory;
+	}
+
+	public static NetworkVersionManager getVersionManager() {
+		return versionManager;
 	}
 }

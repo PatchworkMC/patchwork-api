@@ -30,6 +30,7 @@ import io.netty.util.AttributeKey;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.PacketListener;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -38,8 +39,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.ThreadExecutor;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.network.PacketContext;
+
+import com.patchworkmc.impl.networking.PatchworkNetworking;
 import com.patchworkmc.mixin.networking.accessor.ClientConnectionAccessor;
-import com.patchworkmc.mixin.networking.accessor.ThreadExecutorAccessor;
 
 public class NetworkEvent extends Event {
 	private final PacketByteBuf payload;
@@ -198,7 +202,7 @@ public class NetworkEvent extends Event {
 	/**
 	 * Context for {@link NetworkEvent}.
 	 */
-	public static class Context {
+	public static class Context implements PacketContext {
 		/**
 		 * The {@link ClientConnection} for this message.
 		 */
@@ -225,6 +229,28 @@ public class NetworkEvent extends Event {
 			this.packetDispatcher = dispatcher;
 		}
 
+		// Not in Forge
+		@Override
+		public EnvType getPacketEnvironment() {
+			return networkDirection.getReceptionSide().isClient() ? EnvType.CLIENT : EnvType.SERVER;
+		}
+
+		// Not in Forge
+		@Override
+		public PlayerEntity getPlayer() {
+			if (getPacketEnvironment() == EnvType.CLIENT) {
+				throw new UnsupportedOperationException();
+			}
+
+			return getSender();
+		}
+
+		// Not in Forge
+		@Override
+		public ThreadExecutor<?> getTaskQueue() {
+			return LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
+		}
+
 		public NetworkDirection getDirection() {
 			return networkDirection;
 		}
@@ -246,17 +272,7 @@ public class NetworkEvent extends Event {
 		}
 
 		public CompletableFuture<Void> enqueueWork(Runnable runnable) {
-			ThreadExecutor<?> executor = LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
-
-			// Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
-			// Same logic as ThreadTaskExecutor#runImmediately without the join
-			if (!executor.isOnThread()) {
-				// Use the internal method so thread check isn't done twice
-				return ((ThreadExecutorAccessor) executor).patchwork$executeFuture(runnable);
-			} else {
-				runnable.run();
-				return CompletableFuture.completedFuture(null);
-			}
+			return PatchworkNetworking.enqueueWork(getTaskQueue(), runnable);
 		}
 
 		/**

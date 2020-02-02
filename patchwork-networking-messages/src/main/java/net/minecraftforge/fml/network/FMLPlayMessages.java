@@ -34,7 +34,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 
+import net.fabricmc.fabric.api.network.PacketContext;
+
 import com.patchworkmc.impl.networking.ClientEntitySpawner;
+import com.patchworkmc.impl.networking.PatchworkNetworking;
 
 public class FMLPlayMessages {
 	/**
@@ -42,7 +45,7 @@ public class FMLPlayMessages {
 	 * {@link net.minecraft.client.network.packet.EntitySpawnS2CPacket} or {@link net.minecraft.client.network.packet.MobSpawnS2CPacket}
 	 * <p>
 	 * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
-	 * see {@link EntityType.Builder#setCustomClientFactory}.
+	 * see {@link com.patchworkmc.mixin.networking.MixinEntityTypeBuilder#setCustomClientFactory}.
 	 */
 	public static class SpawnEntity {
 		private final Entity entity;
@@ -54,7 +57,8 @@ public class FMLPlayMessages {
 		private final int velX, velY, velZ;
 		private final PacketByteBuf buf;
 
-		SpawnEntity(Entity e) {
+		// Note: package-private on Forge
+		public SpawnEntity(Entity e) {
 			this.entity = e;
 			this.typeId = Registry.ENTITY_TYPE.getRawId(e.getType());
 			this.entityId = e.getEntityId();
@@ -125,16 +129,12 @@ public class FMLPlayMessages {
 			);
 		}
 
-		public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx) {
-			ctx.get().enqueueWork(() -> {
+		public static void handle(SpawnEntity msg, PacketContext context) {
+			PatchworkNetworking.enqueueWork(context.getTaskQueue(), () -> {
 				EntityType<?> type = Registry.ENTITY_TYPE.get(msg.typeId);
 
 				if (type.equals(Registry.ENTITY_TYPE.get(Registry.ENTITY_TYPE.getDefaultId()))) {
 					throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
-				}
-
-				if (ctx.get().getDirection().getReceptionSide() != LogicalSide.CLIENT) {
-					return;
 				}
 
 				ClientWorld world = MinecraftClient.getInstance().world;
@@ -159,7 +159,18 @@ public class FMLPlayMessages {
 					((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
 				}
 			});
-			ctx.get().setPacketHandled(true);
+		}
+
+		public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> contextSupplier) {
+			NetworkEvent.Context context = contextSupplier.get();
+
+			if (context.getDirection().getReceptionSide() != LogicalSide.CLIENT) {
+				return;
+			}
+
+			handle(msg, context);
+
+			context.setPacketHandled(true);
 		}
 
 		public Entity getEntity() {

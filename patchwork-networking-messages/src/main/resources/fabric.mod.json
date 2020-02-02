@@ -14,7 +14,14 @@
   ],
   "depends": {
     "fabricloader": ">=0.6.2",
-    "patchwork-fml": "*"
+    "fabric-networking-v0": "*",
+    "patchwork-fml": "*",
+    "patchwork-networking": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "com.patchworkmc.impl.networking.PatchworkNetworkingMessages"
+    ]
   },
   "mixins": [
     "patchwork-networking-messages.mixins.json"
