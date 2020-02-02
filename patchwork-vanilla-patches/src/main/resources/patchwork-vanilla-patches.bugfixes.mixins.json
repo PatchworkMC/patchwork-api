@@ -1,11 +1,9 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.extension",
+  "package": "com.patchworkmc.mixin.patches.bugfixes",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinEntityType",
     "MixinEntityTypeBuilder",
-    "MixinStatusEffect"
   ],
   "injectors": {
     "defaultRequire": 1

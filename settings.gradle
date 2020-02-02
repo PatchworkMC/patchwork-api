@@ -24,3 +24,5 @@ include 'patchwork-registries'
 include 'patchwork-gui'
 include 'patchwork-networking'
 include 'patchwork-networking-messages'
+include 'patchwork-vanilla-patches'
+
