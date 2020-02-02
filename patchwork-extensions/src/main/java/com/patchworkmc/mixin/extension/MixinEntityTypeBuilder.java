@@ -44,15 +44,15 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
 
 		if (updateInterval != null) {
-			type.setUpdateInterval(updateInterval);
+			type.patchwork$setUpdateInterval(updateInterval);
 		}
 
 		if (trackingRange != null) {
-			type.setTrackingRange(trackingRange);
+			type.patchwork$setTrackingRange(trackingRange);
 		}
 
 		if (shouldRecieveVelocityUpdates != null) {
-			type.setShouldReceiveVelocityUpdates(shouldRecieveVelocityUpdates);
+			type.patchwork$setShouldReceiveVelocityUpdates(shouldRecieveVelocityUpdates);
 		}
 	}
 

@@ -31,6 +31,4 @@ public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
 	EntityType.Builder<T> setTrackingRange(int range);
 
 	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
-
-	// TODO: setCustomClientFactory (waiting on patchwork-networking features)
 }

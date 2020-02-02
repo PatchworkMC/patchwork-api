@@ -51,6 +51,6 @@ public class MixinEntityTypeBuilder<T extends Entity> {
 	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType<T>> callback) {
 		ClientEntitySpawner<T> spawner = (ClientEntitySpawner<T>) callback.getReturnValue();
 
-		spawner.setCustomClientFactory(this.customClientFactory);
+		spawner.patchwork$setCustomClientFactory(this.customClientFactory);
 	}
 }

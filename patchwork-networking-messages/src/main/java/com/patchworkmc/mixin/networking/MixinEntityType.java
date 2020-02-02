@@ -48,7 +48,7 @@ public class MixinEntityType<T extends Entity> implements ClientEntitySpawner<T>
 	}
 
 	@Override
-	public void setCustomClientFactory(BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
+	public void patchwork$setCustomClientFactory(BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
 		this.customClientFactory = customClientFactory;
 	}
 }

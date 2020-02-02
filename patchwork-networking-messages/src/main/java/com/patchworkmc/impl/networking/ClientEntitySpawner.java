@@ -28,5 +28,5 @@ import net.minecraft.world.World;
 
 public interface ClientEntitySpawner<T extends Entity> {
 	T customClientSpawn(FMLPlayMessages.SpawnEntity packet, World world);
-	void setCustomClientFactory(BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory);
+	void patchwork$setCustomClientFactory(BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory);
 }

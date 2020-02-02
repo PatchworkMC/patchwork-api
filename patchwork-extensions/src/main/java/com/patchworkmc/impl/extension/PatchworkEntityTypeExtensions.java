@@ -25,11 +25,9 @@ import net.minecraft.entity.Entity;
  * Forge does this through patching the constructor instead, we just add methods with mixins instead.
  */
 public interface PatchworkEntityTypeExtensions<T extends Entity> {
-	void setUpdateInterval(int interval);
+	void patchwork$setUpdateInterval(int interval);
 
-	void setTrackingRange(int range);
+	void patchwork$setTrackingRange(int range);
 
-	void setShouldReceiveVelocityUpdates(boolean value);
-
-	// TODO: setCustomClientFactory (waiting on patchwork-networking features)
+	void patchwork$setShouldReceiveVelocityUpdates(boolean value);
 }
