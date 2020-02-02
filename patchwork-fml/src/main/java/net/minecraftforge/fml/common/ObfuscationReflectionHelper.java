@@ -71,18 +71,16 @@ public class ObfuscationReflectionHelper {
 			return name;
 		}
 
-		for (ClassDef classDef : MAPPINGS.getClasses()) {
-			if (domain == INameMappingService.Domain.CLASS) {
-				if (classDef.getName(INTERMEDIARY).equals(name)) {
-					return classDef.getName(NAMED);
-				}
-			} else {
-				boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
+		if (domain == INameMappingService.Domain.CLASS) {
+			return MAPPINGS.getDefaultNamespaceClassMap().get(name).getName(NAMED);
+		}
 
-				for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
-					if (mapped.getName(INTERMEDIARY).equals(name)) {
-						return mapped.getName(NAMED);
-					}
+		for (ClassDef classDef : MAPPINGS.getClasses()) {
+			boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
+
+			for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
+				if (mapped.getName(INTERMEDIARY).equals(name)) {
+					return mapped.getName(NAMED);
 				}
 			}
 		}
@@ -99,12 +97,12 @@ public class ObfuscationReflectionHelper {
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 */
 	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
-		if (domain == INameMappingService.Domain.CLASS) {
-			remapName(domain, name);
-		}
-
 		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
 			return name;
+		}
+
+		if (domain == INameMappingService.Domain.CLASS) {
+			remapName(domain, name);
 		}
 
 		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
