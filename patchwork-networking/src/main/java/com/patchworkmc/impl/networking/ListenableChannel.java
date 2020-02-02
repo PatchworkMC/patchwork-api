@@ -28,7 +28,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 
 public interface ListenableChannel {
-	void setPacketListener(BiConsumer<ICustomPacket<?>, NetworkEvent.Context> listener);
-	void setRegistrationChangeListener(Consumer<NetworkEvent.ChannelRegistrationChangeEvent> listener);
-	void setGatherLoginPayloadsListener(BiConsumer<List<NetworkRegistry.LoginPayload>, Boolean> listener);
+	void onPacket(ICustomPacket<?> packet, NetworkEvent.Context context);
+	void onRegistrationChange(NetworkEvent.ChannelRegistrationChangeEvent event);
+	void onGatherLoginPayloads(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal);
 }

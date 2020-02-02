@@ -23,13 +23,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 
+import com.patchworkmc.impl.networking.ListenableChannel;
 import com.patchworkmc.impl.networking.MessageFactory;
-import com.patchworkmc.impl.networking.NetworkChannel;
 import com.patchworkmc.impl.networking.PatchworkNetworking;
 
 public class NetworkHooks {
 	public static boolean onCustomPayload(final ICustomPacket<?> packet, final ClientConnection connection) {
-		NetworkChannel target = NetworkRegistry.findTarget(packet.getName());
+		ListenableChannel target = NetworkRegistry.findListener(packet.getName());
 
 		if (target == null) {
 			return false;

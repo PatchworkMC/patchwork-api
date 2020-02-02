@@ -43,25 +43,29 @@ import net.minecraft.util.PacketByteBuf;
 
 import com.patchworkmc.impl.networking.ListenableChannel;
 
-public class SimpleChannel {
+public class SimpleChannel implements ListenableChannel {
 	private final Identifier channelName;
 	private final IndexedMessageCodec indexedCodec;
 	private List<Function<Boolean, List<Pair<String, ?>>>> loginPackets;
 
-	public SimpleChannel(Identifier name, ListenableChannel channel) {
+	public SimpleChannel(Identifier name) {
 		this.channelName = name;
 		this.indexedCodec = new IndexedMessageCodec(channelName);
 		this.loginPackets = new ArrayList<>();
-
-		channel.setPacketListener(this::packetListener);
-		channel.setGatherLoginPayloadsListener(this::networkLoginGather);
 	}
 
-	private void packetListener(ICustomPacket<?> packet, NetworkEvent.Context context) {
+	@Override
+	public void onPacket(ICustomPacket<?> packet, NetworkEvent.Context context) {
 		this.indexedCodec.consume(packet.getInternalData(), packet.getIndex(), context);
 	}
 
-	private void networkLoginGather(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
+	@Override
+	public void onRegistrationChange(NetworkEvent.ChannelRegistrationChangeEvent event) {
+		// No-op
+	}
+
+	@Override
+	public void onGatherLoginPayloads(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
 		for (Function<Boolean, List<Pair<String, ?>>> packetGenerator: loginPackets) {
 			List<Pair<String, ?>> packets = packetGenerator.apply(isLocal);
 
