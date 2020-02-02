@@ -40,7 +40,7 @@ public abstract class MixinEntityTypeBuilder<T extends Entity> {
 	/**
 	 * Fixes MC-170128: Cannot build an EntityType without a datafixer due to an IllegalArgumentException.
 	 */
-	@Redirect(method = "build", at = @At(value = "INVOKE", target = "Lcom/mojang/datafixers/schemas/Schema;getChoiceType(Lcom/mojang/datafixers/DSL$TypeReference;Ljava/lang/String;)Lcom/mojang/datafixers/types/Type;"), remap = false)
+	@Redirect(method = "build", at = @At(value = "INVOKE", target = "Lcom/mojang/datafixers/schemas/Schema;getChoiceType(Lcom/mojang/datafixers/DSL$TypeReference;Ljava/lang/String;)Lcom/mojang/datafixers/types/Type;", remap = false))
 	public Type catchIllegalArgumentExceptionForDataFixers(Schema schema, DSL.TypeReference type, String choiceName) {
 		try {
 			return schema.getChoiceType(type, choiceName);
