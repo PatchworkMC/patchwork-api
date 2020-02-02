@@ -33,18 +33,18 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
-public class PatchworkNetworkingMessages implements ModInitializer, MessageFactory {
+public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageFactory {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-networking");
-	private static final Identifier PLAY_IDENTIFIER = new Identifier("fml", "play");
+	private static final Identifier IDENTIFIER = new Identifier("fml", "play");
 	private static final NetworkChannelVersion VERSION = new NetworkChannelVersion("FML2", version -> true, version -> true);
 	private static final short SPAWN_ENTITY = 0;
 
 	@Override
 	public void onInitialize() {
-		PatchworkNetworking.getVersionManager().createChannel(PLAY_IDENTIFIER, VERSION);
+		PatchworkNetworking.getVersionManager().createChannel(IDENTIFIER, VERSION);
 		PatchworkNetworking.setFactory(this);
 
-		ClientSidePacketRegistry.INSTANCE.register(PLAY_IDENTIFIER, (context, buf) -> {
+		ClientSidePacketRegistry.INSTANCE.register(IDENTIFIER, (context, buf) -> {
 			int id = buf.readUnsignedByte();
 
 			if (id == SPAWN_ENTITY) {
@@ -64,6 +64,6 @@ public class PatchworkNetworkingMessages implements ModInitializer, MessageFacto
 		buf.writeByte(SPAWN_ENTITY);
 		FMLPlayMessages.SpawnEntity.encode(message, buf);
 
-		return ServerSidePacketRegistry.INSTANCE.toPacket(PLAY_IDENTIFIER, buf);
+		return ServerSidePacketRegistry.INSTANCE.toPacket(IDENTIFIER, buf);
 	}
 }

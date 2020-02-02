@@ -43,8 +43,8 @@ public class FMLPlayMessages {
 	/**
 	 * Used to spawn a custom entity without the same restrictions as
 	 * {@link net.minecraft.client.network.packet.EntitySpawnS2CPacket} or {@link net.minecraft.client.network.packet.MobSpawnS2CPacket}
-	 * <p>
-	 * To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
+	 *
+	 * <p>To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
 	 * see {@link com.patchworkmc.mixin.networking.MixinEntityTypeBuilder#setCustomClientFactory}.
 	 */
 	public static class SpawnEntity {
@@ -58,50 +58,53 @@ public class FMLPlayMessages {
 		private final PacketByteBuf buf;
 
 		// Note: package-private on Forge
-		public SpawnEntity(Entity e) {
-			this.entity = e;
-			this.typeId = Registry.ENTITY_TYPE.getRawId(e.getType());
-			this.entityId = e.getEntityId();
-			this.uuid = e.getUuid();
-			this.posX = e.x;
-			this.posY = e.y;
-			this.posZ = e.z;
-			this.pitch = (byte) MathHelper.floor(e.pitch * 256.0F / 360.0F);
-			this.yaw = (byte) MathHelper.floor(e.yaw * 256.0F / 360.0F);
-			this.headYaw = (byte) (e.getHeadYaw() * 256.0F / 360.0F);
-			Vec3d vec3d = e.getVelocity();
-			double d1 = MathHelper.clamp(vec3d.x, -3.9D, 3.9D);
-			double d2 = MathHelper.clamp(vec3d.y, -3.9D, 3.9D);
-			double d3 = MathHelper.clamp(vec3d.z, -3.9D, 3.9D);
-			this.velX = (int) (d1 * 8000.0D);
-			this.velY = (int) (d2 * 8000.0D);
-			this.velZ = (int) (d3 * 8000.0D);
+		public SpawnEntity(Entity entity) {
+			this.entity = entity;
+
+			this.typeId = Registry.ENTITY_TYPE.getRawId(entity.getType());
+			this.entityId = entity.getEntityId();
+			this.uuid = entity.getUuid();
+			this.posX = entity.x;
+			this.posY = entity.y;
+			this.posZ = entity.z;
+			this.pitch = (byte) MathHelper.floor(entity.pitch * 256.0F / 360.0F);
+			this.yaw = (byte) MathHelper.floor(entity.yaw * 256.0F / 360.0F);
+			this.headYaw = (byte) (entity.getHeadYaw() * 256.0F / 360.0F);
+
+			Vec3d velocity = entity.getVelocity();
+			double clampedVelX = MathHelper.clamp(velocity.x, -3.9D, 3.9D);
+			double clampedVelY = MathHelper.clamp(velocity.y, -3.9D, 3.9D);
+			double clampedVelZ = MathHelper.clamp(velocity.z, -3.9D, 3.9D);
+			this.velX = (int) (clampedVelX * 8000.0D);
+			this.velY = (int) (clampedVelY * 8000.0D);
+			this.velZ = (int) (clampedVelZ * 8000.0D);
+
 			this.buf = null;
 		}
 
-		private SpawnEntity(int typeId, int entityId, UUID uuid, double posX, double posY, double posZ,
-							byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, PacketByteBuf buf) {
+		private SpawnEntity(PacketByteBuf buf) {
 			this.entity = null;
-			this.typeId = typeId;
-			this.entityId = entityId;
-			this.uuid = uuid;
-			this.posX = posX;
-			this.posY = posY;
-			this.posZ = posZ;
-			this.pitch = pitch;
-			this.yaw = yaw;
-			this.headYaw = headYaw;
-			this.velX = velX;
-			this.velY = velY;
-			this.velZ = velZ;
+
+			this.typeId = buf.readVarInt();
+			this.entityId = buf.readInt();
+			this.uuid = buf.readUuid();
+			this.posX = buf.readDouble();
+			this.posY = buf.readDouble();
+			this.posZ = buf.readDouble();
+			this.pitch = buf.readByte();
+			this.yaw = buf.readByte();
+			this.headYaw = buf.readByte();
+			this.velX = buf.readShort();
+			this.velY = buf.readShort();
+			this.velZ = buf.readShort();
+
 			this.buf = buf;
 		}
 
 		public static void encode(SpawnEntity msg, PacketByteBuf buf) {
 			buf.writeVarInt(msg.typeId);
 			buf.writeInt(msg.entityId);
-			buf.writeLong(msg.uuid.getMostSignificantBits());
-			buf.writeLong(msg.uuid.getLeastSignificantBits());
+			buf.writeUuid(msg.uuid);
 			buf.writeDouble(msg.posX);
 			buf.writeDouble(msg.posY);
 			buf.writeDouble(msg.posZ);
@@ -118,15 +121,7 @@ public class FMLPlayMessages {
 		}
 
 		public static SpawnEntity decode(PacketByteBuf buf) {
-			return new SpawnEntity(
-					buf.readVarInt(),
-					buf.readInt(),
-					new UUID(buf.readLong(), buf.readLong()),
-					buf.readDouble(), buf.readDouble(), buf.readDouble(),
-					buf.readByte(), buf.readByte(), buf.readByte(),
-					buf.readShort(), buf.readShort(), buf.readShort(),
-					buf
-			);
+			return new SpawnEntity(buf);
 		}
 
 		public static void handle(SpawnEntity msg, PacketContext context) {
@@ -139,24 +134,24 @@ public class FMLPlayMessages {
 
 				ClientWorld world = MinecraftClient.getInstance().world;
 
-				Entity e = ((ClientEntitySpawner<?>) type).customClientSpawn(msg, world);
+				Entity entity = ((ClientEntitySpawner<?>) type).customClientSpawn(msg, world);
 
-				if (e == null) {
+				if (entity == null) {
 					return;
 				}
 
-				e.updateTrackedPosition(msg.posX, msg.posY, msg.posZ);
-				e.setPositionAnglesAndUpdate(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
-				e.setHeadYaw((msg.headYaw * 360) / 256.0F);
-				e.setYaw((msg.headYaw * 360) / 256.0F);
+				entity.updateTrackedPosition(msg.posX, msg.posY, msg.posZ);
+				entity.setPositionAnglesAndUpdate(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
+				entity.setHeadYaw((msg.headYaw * 360) / 256.0F);
+				entity.setYaw((msg.headYaw * 360) / 256.0F);
 
-				e.setEntityId(msg.entityId);
-				e.setUuid(msg.uuid);
-				world.addEntity(msg.entityId, e);
-				e.setVelocity(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
+				entity.setEntityId(msg.entityId);
+				entity.setUuid(msg.uuid);
+				world.addEntity(msg.entityId, entity);
+				entity.setVelocity(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
 
-				if (e instanceof IEntityAdditionalSpawnData) {
-					((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
+				if (entity instanceof IEntityAdditionalSpawnData) {
+					((IEntityAdditionalSpawnData) entity).readSpawnData(msg.buf);
 				}
 			});
 		}

@@ -22,15 +22,11 @@ package com.patchworkmc.impl.networking;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -130,7 +126,7 @@ public final class NetworkVersionManager {
 
 		return channelVersions;
 	}
-	
+
 	/**
 	 * Validate the versions from the server on the client. Tests the client predicates against the server
 	 * supplied network protocol version.
@@ -170,7 +166,7 @@ public final class NetworkVersionManager {
 		for (Map.Entry<Identifier, NetworkChannelVersion> entry: versions.entrySet()) {
 			Identifier name = entry.getKey();
 			NetworkChannelVersion channel = entry.getValue();
-			
+
 			if (origin == Origin.PING && name.getNamespace().equals("fml")) {
 				// FML versions are not checked during the ping process.
 				continue;
@@ -231,7 +227,7 @@ public final class NetworkVersionManager {
 		if (!rejected.isEmpty()) {
 			return false;
 		}
-		
+
 		List<Identifier> missingButRequired = new ArrayList<>();
 
 		for (Map.Entry<Identifier, Pair<String, Boolean>> entry : incoming.entrySet()) {
