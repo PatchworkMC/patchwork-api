@@ -251,6 +251,7 @@ dependencies {
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'com.patchworkmc:patchwork-eventbus:0.1.2:all'
+	include 'org.apache.maven:maven-artifact:3.6.0'
 
 	fileTree(dir: 'jars', include: '*.jar').each {
 		String baseName = it.name.replace(".jar", "")
