@@ -34,11 +34,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.launch.common.FabricLauncherBase;
-import net.fabricmc.mapping.tree.ClassDef;
-import net.fabricmc.mapping.tree.Mapped;
 import net.fabricmc.mapping.tree.TinyTree;
+
+import com.patchworkmc.impl.fml.PatchworkMappingService;
 
 /**
  * Some reflection helper code.
@@ -54,9 +53,9 @@ public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
 	// We're technically messing with Loader's internal APIs here, if Loader ever gets a better mapping resolution system this class should be refactored.
-	private static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
-	private static final String INTERMEDIARY = "intermediary";
-	private static final String NAMED = "named";
+	public static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+	public static final String INTERMEDIARY = "intermediary";
+	public static final String NAMED = "named";
 
 	/**
 	 * Remaps a name from intermediary to whatever is currently being used at runtime.
@@ -64,73 +63,13 @@ public class ObfuscationReflectionHelper {
 	 * @param domain    The {@link INameMappingService.Domain} to look up.
 	 * @param name      The name to try and remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
+	 * @deprecated Fabric mods should use {@link PatchworkMappingService#remapName(INameMappingService.Domain, String)} instead.
 	 */
 	@Nonnull
+	@Deprecated
 	public static String remapName(INameMappingService.Domain domain, String name) {
-		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
-			return name;
-		}
-
-		if (domain == INameMappingService.Domain.CLASS) {
-			return MAPPINGS.getDefaultNamespaceClassMap().get(name).getName(NAMED);
-		}
-
-		String remappedName;
-
-		for (ClassDef classDef : MAPPINGS.getClasses()) {
-			remappedName = remapNameInternal(domain, classDef, name);
-			if(remappedName != null) {
-				return remappedName;
-			}
-		}
-
-		return name;
+		return PatchworkMappingService.remapName(domain, name);
 	}
-
-	// Begin Patchwork-added methods
-	/**
-	 * Like {@link ObfuscationReflectionHelper#remapName(INameMappingService.Domain, String)}, but only iterates through members of the target class.
-	 * @param domain    The {@link INameMappingService.Domain} to look up.
-	 * @param clazz     The class that contains the {@code name} to look up.
-	 * @param name      The name to remap.
-	 * @return The remapped name, or the original name if it couldn't be remapped.
-	 */
-	@Nonnull
-	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
-		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
-		String remappedName = remapNameInternal(domain, classDef, name);
-
-		return remappedName != null ? remappedName : name;
-	}
-
-	/**
-	 * Like {@link ObfuscationReflectionHelper#remapNameFast(INameMappingService.Domain, Class, String)}, but takes a {@link ClassDef} instead of a {@link Class}
-	 * @param domain    The {@link INameMappingService.Domain} to look up.
-	 * @param classDef  The classDef that contains the {@code name} to look up.
-	 * @param name      The name to remap.
-	 * @return The remapped name, or null if it couldn't be remapped.
-	 */
-	@Nullable
-	public static String remapNameInternal(INameMappingService.Domain domain, ClassDef classDef, String name) {
-		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
-			return name;
-		}
-
-		if (domain == INameMappingService.Domain.CLASS) {
-			return classDef.getName(name);
-		}
-
-		boolean domainIsMethod = domain == INameMappingService.Domain.METHOD;
-
-		for (Mapped mapped : domainIsMethod ? classDef.getMethods() : classDef.getFields()) {
-			if (mapped.getName(INTERMEDIARY).equals(name)) {
-				return mapped.getName(NAMED);
-			}
-		}
-
-		return null;
-	}
-	// End Patchwork-added methods
 
 	/**
 	 * Gets the value a field with the specified index in the given class.
@@ -184,11 +123,11 @@ public class ObfuscationReflectionHelper {
 		// We use remapName instead of remapNameFast because the member wasn't found, which means it's probably not in that class.
 		} catch (UnableToFindFieldException e) {
 			LOGGER.error(REFLECTION, "Unable to locate field {} ({}) on type {}", fieldName,
-					remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+					PatchworkMappingService.remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw e;
 		} catch (IllegalAccessException e) {
 			LOGGER.error(REFLECTION, "Unable to access field {} ({}) on type {}", fieldName,
-					remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+					PatchworkMappingService.remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw new UnableToAccessFieldException(e);
 		}
 	}
@@ -271,7 +210,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
 
 		try {
-			String name = remapNameFast(INameMappingService.Domain.METHOD, clazz, methodName);
+			String name = PatchworkMappingService.remapNameFast(INameMappingService.Domain.METHOD, clazz, methodName);
 			Method method = clazz.getDeclaredMethod(name, parameterTypes);
 			method.setAccessible(true);
 			return method;
@@ -341,7 +280,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
 
 		try {
-			String name = remapNameFast(INameMappingService.Domain.FIELD, clazz, fieldName);
+			String name = PatchworkMappingService.remapNameFast(INameMappingService.Domain.FIELD, clazz, fieldName);
 			Field field = clazz.getDeclaredField(name);
 			field.setAccessible(true);
 			return field;
