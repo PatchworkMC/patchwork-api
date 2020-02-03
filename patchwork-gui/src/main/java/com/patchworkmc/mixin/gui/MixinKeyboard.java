@@ -22,6 +22,7 @@ package com.patchworkmc.mixin.gui;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -73,21 +74,21 @@ public abstract class MixinKeyboard {
 		}
 	}
 
-	@Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, int character, int mods, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
-			info.cancel();
-		} else if (!element.charTyped((char) character, mods)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, (char) character, mods));
+	@Overwrite
+	private static void method_1458(Element element, int character, int mods) {
+		if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
+			if (!element.charTyped((char) character, mods)) {
+				MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, (char) character, mods));
+			}
 		}
 	}
 
-	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, char character, int mods, CallbackInfo info) {
+	@Overwrite
+	private static void method_1473(Element element, char character, int mods) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, character, mods))) {
-			info.cancel();
-		} else if (!element.charTyped(character, mods)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
+			if (!element.charTyped(character, mods)) {
+				MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
+			}
 		}
 	}
 }
