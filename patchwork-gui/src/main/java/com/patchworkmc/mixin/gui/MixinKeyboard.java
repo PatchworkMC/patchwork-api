@@ -75,26 +75,26 @@ public abstract class MixinKeyboard {
 	}
 
 	@Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
-	private static void method_1458(Element element, int character, int mods, CallbackInfo info) {
+	private static void preCharTyped(Element element, int character, int mods, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
 			info.cancel();
 		}
 	}
 
 	@Redirect(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
-	private static boolean method_1458(Element element, char character, int mods) {
+	private static boolean charTyped(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}
 
 	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
-	private static void method_1473(Element element, char character, int mods, CallbackInfo info) {
+	private static void preCharTyped(Element element, char character, int mods, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
 			info.cancel();
 		}
 	}
 
 	@Redirect(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
-	private static boolean method_1473(Element element, char character, int mods) {
+	private static boolean charTyped2(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}
 }
