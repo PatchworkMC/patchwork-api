@@ -19,20 +19,22 @@
 
 package com.patchworkmc.impl.fml;
 
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.INTERMEDIARY;
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.MAPPINGS;
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.NAMED;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import cpw.mods.modlauncher.api.INameMappingService;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.launch.common.FabricLauncherBase;
 import net.fabricmc.mapping.tree.ClassDef;
 import net.fabricmc.mapping.tree.Mapped;
+import net.fabricmc.mapping.tree.TinyTree;
 
 public class PatchworkMappingService {
+	public static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+	public static final String INTERMEDIARY = "intermediary";
+	public static final String NAMED = "named";
+
 	private PatchworkMappingService() {
 		// NO-OP
 	}
