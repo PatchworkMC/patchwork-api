@@ -31,9 +31,10 @@ import net.fabricmc.mapping.tree.Mapped;
 import net.fabricmc.mapping.tree.TinyTree;
 
 public class PatchworkMappingService {
-	public static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
-	public static final String INTERMEDIARY = "intermediary";
-	public static final String NAMED = "named";
+	// We're technically messing with Loader's internal APIs here, if Loader ever gets a better mapping resolution system this class should be refactored.
+	private static final TinyTree MAPPINGS = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+	private static final String INTERMEDIARY = "intermediary";
+	private static final String NAMED = "named";
 
 	private PatchworkMappingService() {
 		// NO-OP
@@ -48,7 +49,7 @@ public class PatchworkMappingService {
 	 */
 	@Nonnull
 	public static String remapName(INameMappingService.Domain domain, String name) {
-		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
+		if (runtimeNamespaceIsIntermediary()) {
 			return name;
 		}
 
@@ -78,6 +79,10 @@ public class PatchworkMappingService {
 	 */
 	@Nonnull
 	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
+		if (runtimeNamespaceIsIntermediary()) {
+			return name;
+		}
+
 		ClassDef classDef = MAPPINGS.getDefaultNamespaceClassMap().get(clazz.getName());
 		String remappedName = remapNameInternal(domain, classDef, name);
 
@@ -92,8 +97,8 @@ public class PatchworkMappingService {
 	 * @return The remapped name, or null if it couldn't be remapped.
 	 */
 	@Nullable
-	public static String remapNameInternal(INameMappingService.Domain domain, ClassDef classDef, String name) {
-		if (FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY)) {
+	private static String remapNameInternal(INameMappingService.Domain domain, ClassDef classDef, String name) {
+		if (runtimeNamespaceIsIntermediary()) {
 			return name;
 		}
 
@@ -110,5 +115,9 @@ public class PatchworkMappingService {
 		}
 
 		return null;
+	}
+
+	private static boolean runtimeNamespaceIsIntermediary() {
+		return FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace().equals(INTERMEDIARY);
 	}
 }

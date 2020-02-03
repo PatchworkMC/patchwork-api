@@ -49,7 +49,6 @@ import com.patchworkmc.impl.fml.PatchworkMappingService;
 public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
-	// We're technically messing with Loader's internal APIs here, if Loader ever gets a better mapping resolution system this class should be refactored.
 
 	/**
 	 * Remaps a name from intermediary to whatever is currently being used at runtime.
