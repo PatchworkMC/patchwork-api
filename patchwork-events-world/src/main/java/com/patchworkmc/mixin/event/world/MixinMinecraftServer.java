@@ -48,7 +48,7 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 	private Map<DimensionType, ServerWorld> worlds;
 
 	/*
-	// This is a varient of the world load hook that is less likely to break mods and more likely to break on updates.
+	// This is a variant of the world load hook that is less likely to break mods and more likely to break on updates.
 	// Should get called once per loop, regardless of which if branch it takes.
 	@Inject(
 		method = "createWorlds",
@@ -66,8 +66,8 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 
 	// This injection gets called at the beginning of each loop, and is used to special case the overworld dimension type.
 	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Iterator.next ()Ljava/lang/Object;"))
-	private Object proxyNextWorldToSpecialCaseOverworld(Iterator iterator) {
-		DimensionType type = (DimensionType) iterator.next();
+	private Object proxyNextWorldToSpecialCaseOverworld(Iterator<DimensionType> iterator) {
+		DimensionType type = iterator.next();
 
 		if (type == DimensionType.OVERWORLD) {
 			WorldEvents.onWorldLoad(this.worlds.get(type));
@@ -78,9 +78,10 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 
 	// This injection handles every other dimension type.
 	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Map.put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", ordinal = 1))
-	private Object proxyPutWorld(Map worlds, Object type, Object world) {
+	private Object proxyPutWorld(Map<Object, Object> worlds, Object type, Object world) {
 		worlds.put(type, world);
 		WorldEvents.onWorldLoad((ServerWorld) world);
+
 		return world;
 	}
 
@@ -90,9 +91,8 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 		world.close();
 	}
 
-	/*
-	// TODO: DimensionManager, and move this into a seperate module
-	@Inject(method = "createWorlds", at = @At(value = "HEAD"))
+	// TODO: DimensionManager, and move this into a seperate module/*
+	/*@Inject(method = "createWorlds", at = @At(value = "HEAD"))
 	private void hookCreateWorldsForDimensionRegistration(CallbackInfo info) {
 		DimensionManager.fireRegister();
 	}
@@ -112,7 +112,5 @@ public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<Ser
 	private Object hookGetWorld(Map worlds, Object type) {
 		MinecraftServer server = (MinecraftServer) (Object) this;
 		return DimensionManager.getWorld(server, type, true, true);
-	}
-
-	*/
+	}*/
 }
