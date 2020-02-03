@@ -33,4 +33,8 @@ public class ModList {
 		// Patchwork: use Fabric Loader lookup instead of an internal one
 		return FabricLoader.getInstance().isModLoaded(modId);
 	}
+
+	public int size() {
+		return FabricLoader.getInstance().getAllMods().size();
+	}
 }
