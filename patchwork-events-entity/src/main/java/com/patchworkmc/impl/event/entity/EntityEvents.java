@@ -94,7 +94,7 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
 	}
 
-	public static void onPlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
+	public static void onFlyablePlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
 		MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
 	}
 
