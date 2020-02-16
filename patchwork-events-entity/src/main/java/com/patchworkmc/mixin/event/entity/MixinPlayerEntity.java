@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -104,11 +104,20 @@ public class MixinPlayerEntity {
 		}
 	}
 
+<<<<<<< HEAD
 	@Inject(method = "handleFallDamage", at = @At("RETURN"))
 	private void hookHandleFallDamage(float distance, float damageMultiplier) {
 		if (abilities.allowFlying) {
 			PlayerEntity player = (PlayerEntity) (Object) this;
 			EntityEvents.onFlyablePlayerFall(player, distance, damageMultiplier);
 		}
+=======
+	// No shift, because we are specifically not modifying the value for this function call.
+	@ModifyVariable(method = "applyDamage", argsOnly = true, at = @At(value = "INVOKE", target = "net/minecraft/entity/player/PlayerEntity.setAbsorptionAmount (F)V", ordinal = 0))
+	private float hookApplyDamageForDamageEvent(float damage, DamageSource source) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		return EntityEvents.onLivingDamage(entity, source, damage);
+>>>>>>> upstream/master
 	}
 }

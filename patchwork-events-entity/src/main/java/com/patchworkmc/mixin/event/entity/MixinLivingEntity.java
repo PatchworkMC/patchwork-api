@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -99,5 +99,14 @@ public class MixinLivingEntity {
 		if (fallData == null) {
 			info.cancel();
 		}
+	}
+
+	// No shift, because we are specifically not modifying the value for this function call.
+	// TODO: Forge patches a bit later into the function here, being inconsistent with their patch for PlayerEntity. For the moment, I don't feel like finding an injection point for that, and this may be a Forge bug?
+	@ModifyVariable(method = "applyDamage", argsOnly = true, at = @At(value = "INVOKE", target = "net/minecraft/entity/LivingEntity.setAbsorptionAmount (F)V", ordinal = 0))
+	private float hookApplyDamageForDamageEvent(float damage, DamageSource source) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		return EntityEvents.onLivingDamage(entity, source, damage);
 	}
 }

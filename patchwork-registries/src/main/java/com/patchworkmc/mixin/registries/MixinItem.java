@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import com.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
+import com.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Item.class)
 public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
@@ -35,21 +36,16 @@ public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
+	public IForgeRegistryEntry<Item> setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		Identifier current = Registry.ITEM.getId((Item) (Object) this);
-		Identifier set = registryName;
+		Item item = (Item) (Object) this;
 
-		if (set == null) {
-			set = Registry.ITEM.getDefaultId();
-		}
-
-		return current != Registry.ITEM.getDefaultId() ? current : set;
+		return Identifiers.getOrFallback(Registry.ITEM, item, registryName);
 	}
 
 	public Class<Item> getRegistryType() {

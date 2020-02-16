@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,10 @@ package com.patchworkmc.impl.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -84,11 +86,16 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
 
+	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
+		MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
+	}
+
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
 		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
+<<<<<<< HEAD
 	public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
 		LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
 		return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
@@ -96,6 +103,11 @@ public class EntityEvents implements ModInitializer {
 
 	public static void onFlyablePlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
 		MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
+=======
+	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
+		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
+		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+>>>>>>> upstream/master
 	}
 
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {

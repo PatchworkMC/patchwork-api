@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.gui",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinAbstractInventoryScreen",
+    "MixinGameRenderer",
+    "MixinKeyboard",
+    "MixinMouse",
+    "MixinScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
