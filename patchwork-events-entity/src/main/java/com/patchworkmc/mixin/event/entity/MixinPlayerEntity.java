@@ -98,4 +98,12 @@ public class MixinPlayerEntity {
 			info.cancel();
 		}
 	}
+
+	// No shift, because we are specifically not modifying the value for this function call.
+	@ModifyVariable(method = "applyDamage", argsOnly = true, at = @At(value = "INVOKE", target = "net/minecraft/entity/player/PlayerEntity.setAbsorptionAmount (F)V", ordinal = 0))
+	private float hookApplyDamageForDamageEvent(float damage, DamageSource source) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+
+		return EntityEvents.onLivingDamage(entity, source, damage);
+	}
 }
