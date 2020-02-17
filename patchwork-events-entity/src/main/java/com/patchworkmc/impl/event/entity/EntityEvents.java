@@ -95,7 +95,6 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
-<<<<<<< HEAD
 	public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
 		LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
 		return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
@@ -103,11 +102,11 @@ public class EntityEvents implements ModInitializer {
 
 	public static void onFlyablePlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
 		MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
-=======
+	}
+
 	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
 		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
->>>>>>> upstream/master
 	}
 
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
