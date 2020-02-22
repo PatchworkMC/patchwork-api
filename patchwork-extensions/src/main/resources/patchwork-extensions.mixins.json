@@ -3,9 +3,16 @@
   "package": "com.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ItemTagsAccessor",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
+    "MixinItem",
+    "MixinItemSettings",
     "MixinStatusEffect"
+  ],
+  "client": [
+    "client.MixinItem",
+    "client.MixinItemSettings"
   ],
   "injectors": {
     "defaultRequire": 1
