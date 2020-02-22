@@ -15,6 +15,7 @@ rootProject.name = "patchwork-api"
 include 'patchwork-biomes'
 include 'patchwork-dispatcher'
 include 'patchwork-events-entity'
+include 'patchwork-events-input'
 include 'patchwork-events-lifecycle'
 include 'patchwork-events-world'
 include 'patchwork-extensions-shearing'
