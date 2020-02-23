@@ -27,22 +27,26 @@ import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
-import net.minecraft.item.Item.Settings;
 
 import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
-	@Unique private Supplier<Callable<ItemDynamicRenderer>> teisr;
+	@Unique private ItemDynamicRenderer teisr = ItemDynamicRenderer.INSTANCE;
 
 	@Override
-	public Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr) {
-		this.teisr = teisr;
-		return (Settings) (Object) this;
+	public Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr) {
+		try {
+			this.teisr = teisr.get().call();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		return (Item.Settings) (Object) this;
 	}
 
 	@Override
-	public Supplier<Callable<ItemDynamicRenderer>> getTeisr() {
+	public ItemDynamicRenderer getTeisr() {
 		return teisr;
 	}
 }

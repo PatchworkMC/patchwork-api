@@ -26,6 +26,9 @@ import java.util.function.Supplier;
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 /**
  * Forge does this through patching the constructor, we just add methods with
  * mixins instead.
@@ -41,5 +44,6 @@ public interface PatchworkItemSettingsExtensions {
 
 	Map<Object /* TODO: ToolType */, Integer> getToolClasses();
 
-	Supplier<Callable<ItemDynamicRenderer>> getTeisr();
+	@Environment(EnvType.CLIENT)
+	ItemDynamicRenderer getTeisr();
 }

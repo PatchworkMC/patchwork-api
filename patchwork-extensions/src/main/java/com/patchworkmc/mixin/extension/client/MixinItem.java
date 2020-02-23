@@ -19,8 +19,6 @@
 
 package com.patchworkmc.mixin.extension.client;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,9 +26,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.extensions.IForgeItem;
-import net.minecraftforge.fml.DistExecutor;
 
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
@@ -41,19 +37,17 @@ import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 public abstract class MixinItem implements IForgeItem {
 	@Unique
 	@Nullable
-	private Supplier<ItemDynamicRenderer> teisr;
+	private ItemDynamicRenderer teisr;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
 		final PatchworkItemSettingsExtensions extension = (PatchworkItemSettingsExtensions) settings;
 
-		final Object tmp = extension.getTeisr() == null ? null : DistExecutor.callWhenOn(Dist.CLIENT, extension.getTeisr());
-		this.teisr = tmp == null ? null : () -> (ItemDynamicRenderer) tmp;
+		this.teisr = extension.getTeisr();
 	}
 
 	@Override
-	public final ItemDynamicRenderer getTileEntityItemStackRenderer() {
-		ItemDynamicRenderer renderer = teisr != null ? teisr.get() : null;
-		return renderer != null ? renderer : ItemDynamicRenderer.INSTANCE;
+	public ItemDynamicRenderer getTileEntityItemStackRenderer() {
+		return teisr;
 	}
 }
