@@ -34,6 +34,9 @@ public class ModList {
 		return FabricLoader.getInstance().isModLoaded(modId);
 	}
 
+	/**
+	 * @return the size of the mods loaded by fabric total.
+	 */
 	public int size() {
 		return FabricLoader.getInstance().getAllMods().size();
 	}

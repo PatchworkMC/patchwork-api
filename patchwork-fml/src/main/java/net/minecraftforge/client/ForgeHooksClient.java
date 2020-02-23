@@ -20,5 +20,8 @@
 package net.minecraftforge.client;
 
 public class ForgeHooksClient {
+	/*
+	 * Not actually used anywhere, used for the beta/unstable text for forge.
+	 */
 	public static String forgeStatusLine;
 }

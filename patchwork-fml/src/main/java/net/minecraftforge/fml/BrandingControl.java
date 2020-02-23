@@ -21,6 +21,10 @@ package net.minecraftforge.fml;
 
 import java.util.List;
 
+/*
+ * The fields in this class aren't actually used anywhere, these are actually used for replacing the vanilla brandings
+ * in the title screen in an actual forge instance,
+ */
 public class BrandingControl {
 	private static List<String> brandings;
 	private static List<String> brandingsNoMC;
