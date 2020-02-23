@@ -77,7 +77,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * ItemStack sensitive version of getItemAttributeModifiers.
+	 * ItemStack sensitive version of {@link Item#getModifiers}.
 	 */
 	default Multimap<String, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
 		return getItem().getModifiers(slot);
@@ -118,7 +118,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called by CraftingManager to determine if an item is reparable.
+	 * Determines if an item is reparable, used by Repair recipes and Grindstone.
 	 *
 	 * @return True if reparable
 	 */
@@ -140,9 +140,9 @@ public interface IForgeItem {
 	 * <p>Note that this will sometimes be applied multiple times, the following MUST
 	 * be supported:
 	 * Item item = stack.getItem();
-	 * NBTTagCompound nbtShare1 = item.getNBTShareTag(stack);
+	 * CompoundTag nbtShare1 = item.getShareTag(stack);
 	 * stack.setTagCompound(nbtShare1);
-	 * NBTTagCompound nbtShare2 = item.getNBTShareTag(stack);
+	 * CompoundTag nbtShare2 = item.getShareTag(stack);
 	 * assert nbtShare1.equals(nbtShare2);
 	 *
 	 * @param stack The stack to send the NBT tag for
@@ -155,7 +155,7 @@ public interface IForgeItem {
 
 	/**
 	 * Override this method to decide what to do with the NBT data received from
-	 * getNBTShareTag().
+	 * getShareTag().
 	 *
 	 * @param stack The stack that received NBT
 	 * @param nbt   Received NBT, can be null
@@ -205,7 +205,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
+	 * ItemStack sensitive version of {@link Item#getRecipeRemainder()}. Returns a full ItemStack
 	 * instance of the result.
 	 *
 	 * @param itemStack The current ItemStack
@@ -220,10 +220,10 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * ItemStack sensitive version of hasContainerItem.
+	 * ItemStack sensitive version of {@link Item#hasRecipeRemainder()}.
 	 *
 	 * @param stack The current item stack
-	 * @return True if this item has a 'container'
+	 * @return True if this item has a recipe remainder
 	 */
 	default boolean hasContainerItem(ItemStack stack) {
 		return getItem().hasRecipeRemainder();
@@ -231,7 +231,7 @@ public interface IForgeItem {
 
 	/**
 	 * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
-	 * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
+	 * as an {@link ItemEntity}. This is in ticks, standard result is 6000, or 5 mins.
 	 *
 	 * @param itemStack The current ItemStack
 	 * @param world     The world the entity is in
@@ -242,14 +242,14 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Determines if this Item has a special entity for when they are in the world.
-	 * Is called when a EntityItem is spawned in the world, if true and
-	 * Item#createCustomEntity returns non null, the EntityItem will be destroyed
+	 * Determines if this {@link Item} has a special entity for when it is in the world.
+	 * Is called when an {@link ItemEntity} is spawned in the world, if true and
+	 * {@link #createEntity(World, Entity, ItemStack)} returns non null, the ItemEntity will be destroyed
 	 * and the new Entity will be added to the world.
 	 *
 	 * @param stack The current item stack
 	 * @return True of the item has a custom entity, If true,
-	 * Item#createCustomEntity will be called
+	 * {@link #createEntity(World, Entity, ItemStack)} will be called
 	 */
 	default boolean hasCustomEntity(ItemStack stack) {
 		return false;
@@ -257,11 +257,11 @@ public interface IForgeItem {
 
 	/**
 	 * This function should return a new entity to replace the dropped item.
-	 * Returning null here will not kill the EntityItem and will leave it to
-	 * function normally. Called when the item it placed in a world.
+	 * Returning null here will not kill the ItemEntity and will leave it to
+	 * function normally. Called when the item is spawned in a world.
 	 *
 	 * @param world     The world object
-	 * @param location  The EntityItem object, useful for getting the position of
+	 * @param location  The ItemEntity object, useful for getting the position of
 	 *                  the entity
 	 * @param itemstack The current item stack
 	 * @return A new Entity object to spawn or null
@@ -272,7 +272,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called by the default implemetation of EntityItem's onUpdate method, allowing
+	 * Called by the default implemetation of {@link ItemEntity#tick()}, allowing
 	 * for cleaner control over the update of the item without having to write a
 	 * subclass.
 	 *
@@ -285,7 +285,7 @@ public interface IForgeItem {
 
 	/**
 	 * Gets a list of tabs that items belonging to this class can display on,
-	 * combined properly with getSubItems allows for a single item to span many
+	 * combined properly with {@link Item#getGroup()} allows for a single item to span many
 	 * sub-items across many tabs.
 	 *
 	 * @return A list of all tabs that this item could possibly be one.
@@ -330,7 +330,7 @@ public interface IForgeItem {
 	 * slot, for the entity.
 	 *
 	 * @param stack     The ItemStack
-	 * @param armorType Armor slot to be verified.
+	 * @param armorType Equipment slot to be verified.
 	 * @param entity    The entity trying to equip the armor
 	 * @return True if the given ItemStack can be inserted in the slot
 	 */
@@ -341,11 +341,11 @@ public interface IForgeItem {
 	/**
 	 * Override this to set a non-default armor slot for an ItemStack, but <em>do
 	 * not use this to get the armor slot of said stack; for that, use
-	 * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+	 * {@link MobEntity#getPreferredEquipmentSlot(ItemStack)}.</em>
 	 *
 	 * @param stack the ItemStack
 	 * @return the armor slot of the ItemStack, or {@code null} to let the default
-	 * vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
+	 * vanilla logic as per {@link MobEntity#getPreferredEquipmentSlot(ItemStack)}
 	 * decide
 	 */
 	@Nullable
@@ -365,9 +365,8 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called by RenderBiped and RenderPlayer to determine the armor texture that
-	 * should be use for the currently equipped item. This will only be called on
-	 * instances of ItemArmor.
+	 * Called to determine the armor texture that should be use for the currently
+	 * equipped item. This will only be called on instances of ArmorItem
 	 *
 	 * <p>Returning null from this function will use the default value.
 	 *
@@ -383,11 +382,11 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Returns the font renderer used to render tooltips and overlays for this item.
-	 * Returning null will use the standard font renderer.
+	 * Returns the text renderer used to render tooltips and overlays for this item.
+	 * Returning null will use the standard text renderer.
 	 *
 	 * @param stack The current item stack
-	 * @return A instance of FontRenderer or null to use default
+	 * @return A instance of TextRenderer or null to use default
 	 */
 	@Environment(EnvType.CLIENT)
 	@Nullable
@@ -402,7 +401,7 @@ public interface IForgeItem {
 	 * @param itemStack    The itemStack to render the model of
 	 * @param armorSlot    The slot the armor is in
 	 * @param _default     Original armor model. Will have attributes set.
-	 * @return A ModelBiped to render instead of the default
+	 * @return A BipedEntityModel to render instead of the default
 	 */
 	@Environment(EnvType.CLIENT)
 	@Nullable
@@ -414,7 +413,7 @@ public interface IForgeItem {
 	 * Called when a entity tries to play the 'swing' animation.
 	 *
 	 * @param entity The entity swinging the item.
-	 * @return True to cancel any further processing by EntityLiving
+	 * @return True to cancel any further processing by LivingEntity
 	 */
 	default boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
 		return false;
@@ -447,8 +446,8 @@ public interface IForgeItem {
 
 	/**
 	 * Determines if the durability bar should be rendered for this item. Defaults
-	 * to vanilla stack.isDamaged behavior. But modders can use this for any data
-	 * they wish.
+	 * to vanilla {@link ItemStack#isDamaged()} behavior. But modders can use this
+	 * for any data they wish.
 	 *
 	 * @param stack The current Item Stack
 	 * @return True if it should render the 'durability' bar.
@@ -493,7 +492,7 @@ public interface IForgeItem {
 
 	/**
 	 * Return if this itemstack is damaged. Note only called if
-	 * {@link #isDamageable()} is true.
+	 * {@link Item#isDamageable()} is true.
 	 *
 	 * @param stack the stack
 	 * @return if the stack is damaged
@@ -514,7 +513,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}.
+	 * ItemStack sensitive version of {@link Item#isEffectiveOn(BlockState)}.
 	 *
 	 * @param stack The itemstack used to harvest the block
 	 * @param state The block trying to harvest
@@ -526,7 +525,7 @@ public interface IForgeItem {
 
 	/**
 	 * Gets the maximum number of items that this stack should be able to hold. This
-	 * is a ItemStack (and thus NBT) sensitive version of Item.getItemStackLimit()
+	 * is a ItemStack (and thus NBT) sensitive version of {@link Item#getMaxCount()}
 	 *
 	 * @param stack The ItemStack
 	 * @return The maximum number this item can be stacked to
@@ -538,11 +537,11 @@ public interface IForgeItem {
 	Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack);
 
 	/**
-	 * Queries the harvest level of this item stack for the specified tool class,
+	 * Queries the harvest level of this item stack for the specified tool type,
 	 * Returns -1 if this tool is not of the specified type.
 	 *
 	 * @param stack      This item stack instance
-	 * @param toolClass  Tool Class
+	 * @param tool       Tool type
 	 * @param player     The player trying to harvest the given blockstate
 	 * @param blockState The block to harvest
 	 * @return Harvest level, or -1 if not the specified tool type.
@@ -550,7 +549,7 @@ public interface IForgeItem {
 	int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
 
 	/**
-	 * ItemStack sensitive version of getItemEnchantability.
+	 * ItemStack sensitive version of {@link Item#getEnchantability()}.
 	 *
 	 * @param stack The ItemStack
 	 * @return the item echantability value
@@ -564,7 +563,7 @@ public interface IForgeItem {
 	 * applies specifically to enchanting an item in the enchanting table and is
 	 * called when retrieving the list of possible enchantments for an item.
 	 * Enchantments may additionally (or exclusively) be doing their own checks in
-	 * {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)};
+	 * {@link net.minecraft.enchantment.Enchantment#isAcceptableItem(ItemStack)};
 	 * check the individual implementation for reference. By default this will check
 	 * if the enchantment type is valid for this item type.
 	 *
@@ -605,7 +604,7 @@ public interface IForgeItem {
 
 	/**
 	 * Called when the player is mining a block and the item in his hand changes.
-	 * Allows to not reset blockbreaking if only NBT or similar changes.
+	 * Allows to not reset block breaking if only NBT or similar changes.
 	 *
 	 * @param oldStack The old stack that was used for mining. Item in players main
 	 *                 hand
@@ -642,7 +641,7 @@ public interface IForgeItem {
 	 *
 	 * @param itemStack the ItemStack to check
 	 * @return the Mod ID for the ItemStack, or null when there is no specially
-	 * associated mod and {@link #getRegistryName()} would return null.
+	 * associated mod and {@link Registry#getId(Item)} would return null.
 	 */
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
@@ -682,7 +681,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called from ItemStack.setItem, will hold extra data for the life of this
+	 * Called from {@link ItemStack#ItemStack}, will hold extra data for the life of this
 	 * ItemStack. Can be retrieved from stack.getCapabilities() The NBT can be null
 	 * if this is not called from readNBT or if the item the stack is changing FROM
 	 * is different then this item, or the previous item had no capabilities.
@@ -742,8 +741,8 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
-	 * armor slot.
+	 * Called every tick from {@link net.minecraft.entity.passive.HorseEntity#tick()}
+	 * on the item in the armor slot.
 	 *
 	 * @param stack the armor itemstack
 	 * @param world the world the horse is in
@@ -760,8 +759,9 @@ public interface IForgeItem {
 	ItemDynamicRenderer getTileEntityItemStackRenderer();
 
 	/**
-	 * Retrieves a list of tags names this is known to be associated with.
-	 * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+	 * Retrieves a list of tags names this is known to be associated with. This should be
+	 * used in favor of {@link net.minecraft.tag.TagContainer#getTagsFor(Item)}, as
+	 * this caches the result and automatically updates when the TagContainer changes.
 	 */
 	Set<Identifier> getTags();
 
