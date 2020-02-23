@@ -24,4 +24,4 @@ include 'patchwork-registries'
 include 'patchwork-gui'
 include 'patchwork-networking'
 include 'patchwork-vanilla-patches'
-
+include 'patchwork-enum-hacks'
