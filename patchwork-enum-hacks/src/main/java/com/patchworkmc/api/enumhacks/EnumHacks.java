@@ -24,6 +24,7 @@ import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Field;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
@@ -64,20 +65,35 @@ import com.patchworkmc.mixin.enumhacks.StructurePoolProjectionAccessor;
 public final class EnumHacks {
 	private EnumHacks() { }
 
-	public static final EnchantmentTargetFactory ENCHANTMENT_TARGET_FACTORY;
+	private static final EnchantmentTargetFactory ENCHANTMENT_TARGET_FACTORY;
+	private static final Field ENUM_CACHE;
+	private static final Field ENUM_DIRECTORY_CACHE;
 
-	/*
-	 * We can't use a constructor accessor because we get around EnchantmentTarget being abstract by using EnchantmentTarget$1.
-	 * EnchantmentTarget$1 is a private anonymous internal class and cannot be used as a return type. Mixin doesn't like that so @Coerce won't work for some reason.
-	 */
 	static {
-		//get a lookup that has access to EnchantmentTarget's private methods, including constructor.
+		// Enum values are cached on Class objects. Store the Fields to reset the caches.
+		try {
+			ENUM_CACHE = Class.class.getDeclaredField("enumConstants");
+			ENUM_CACHE.setAccessible(true);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new RuntimeException("Problem getting enumConstants field", e);
+		}
+
+		try {
+			ENUM_DIRECTORY_CACHE = Class.class.getDeclaredField("enumConstantDirectory");
+			ENUM_DIRECTORY_CACHE.setAccessible(true);
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new RuntimeException("Problem getting enumConstantDirectory field", e);
+		}
+
+		// We can't use a constructor accessor because we get around EnchantmentTarget being abstract by using EnchantmentTarget$1.
+		// EnchantmentTarget$1 is a private anonymous internal class and cannot be used as a return type. Mixin doesn't like that so @Coerce won't work for some reason.
+		// get a lookup that has access to EnchantmentTarget's private methods, including constructor.
 		MethodHandles.Lookup lookup = ((PatchworkEnchantmentTarget) EnchantmentTarget.ALL).patchwork_getEnchantmentTargetPrivateLookup();
 		MethodType type = MethodType.methodType(EnchantmentTarget.class, String.class, int.class);
 
 		try {
-			MethodHandle enchTargetCtor = lookup.findConstructor(EnchantmentTarget.ALL.getClass(), type.changeReturnType(void.class)); //ctors have void return internally
-			//LambdaMetafactory stuff is technically unnecessary but it means we don't have to catch Throwable every time we instantiate an EnchantmentTarget and I'd rather not do that.
+			MethodHandle enchTargetCtor = lookup.findConstructor(EnchantmentTarget.ALL.getClass(), type.changeReturnType(void.class)); // ctors have void return internally
+			// LambdaMetafactory stuff is technically unnecessary but it means we don't have to catch Throwable every time we instantiate an EnchantmentTarget and I'd rather not do that.
 			CallSite site = LambdaMetafactory.metafactory(lookup, "create", MethodType.methodType(EnchantmentTargetFactory.class), type, enchTargetCtor, type);
 			ENCHANTMENT_TARGET_FACTORY = (EnchantmentTargetFactory) site.getTarget().invoke();
 		} catch (Throwable e) {
@@ -90,10 +106,20 @@ public final class EnumHacks {
 		((HackableEnum<T>) newValue).patchwork_setValues(ArrayUtils.add(origArray, newValue));
 	}
 
+	private static void clearCachedValues(Class<? extends Enum<?>> clazz) {
+		try {
+			ENUM_CACHE.set(clazz, null);
+			ENUM_DIRECTORY_CACHE.set(clazz, null);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Exception clearing enum cache for class " + clazz.getSimpleName(), e);
+		}
+	}
+
 	public static Rarity createRarity(String name, Formatting formatting) {
 		Rarity[] values = Rarity.values(); //each values call creates a copy of the array. avoid them.
 		Rarity instance = RarityAccessor.invokeConstructor(name, values.length, formatting);
 		addToValues(values, instance);
+		clearCachedValues(Rarity.class);
 		return instance;
 	}
 
@@ -101,6 +127,7 @@ public final class EnumHacks {
 		EntityCategory[] values = EntityCategory.values();
 		EntityCategory instance = EntityCategoryAccessor.invokeConstructor(constantName, values.length, name, spawnCap, peaceful, animal);
 		addToValues(values, instance);
+		clearCachedValues(EntityCategory.class);
 		return instance;
 	}
 
@@ -108,6 +135,7 @@ public final class EnumHacks {
 		StructurePool.Projection[] values = StructurePool.Projection.values();
 		StructurePool.Projection instance = StructurePoolProjectionAccessor.invokeConstructor(name, values.length, id, processors);
 		addToValues(values, instance);
+		clearCachedValues(StructurePool.Projection.class);
 		StructurePoolProjectionAccessor.getIdProjectionMap().put(id, instance);
 		return instance;
 	}
@@ -116,6 +144,7 @@ public final class EnumHacks {
 		OreFeatureConfig.Target[] values = OreFeatureConfig.Target.values();
 		OreFeatureConfig.Target instance = OreFeatureConfigTargetAccessor.invokeConstructor(constantName, values.length, name, predicate);
 		addToValues(values, instance);
+		clearCachedValues(OreFeatureConfig.Target.class);
 		OreFeatureConfigTargetAccessor.getNameMap().put(name, instance);
 		return instance;
 	}
@@ -124,6 +153,7 @@ public final class EnumHacks {
 		BannerPattern[] values = BannerPattern.values();
 		BannerPattern instance = BannerPatternAccessor.invokeConstructor(constantName, values.length, name, id, baseStack);
 		addToValues(values, instance);
+		clearCachedValues(BannerPattern.class);
 		return instance;
 	}
 
@@ -131,6 +161,7 @@ public final class EnumHacks {
 		BannerPattern[] values = BannerPattern.values();
 		BannerPattern instance = BannerPatternAccessor.invokeConstructor(constantName, values.length, name, id, recipePattern0, recipePattern1, recipePattern2);
 		addToValues(values, instance);
+		clearCachedValues(BannerPattern.class);
 		return instance;
 	}
 
@@ -139,6 +170,7 @@ public final class EnumHacks {
 		SpawnRestriction.Location instance = SpawnRestrictionLocationAccessor.invokeConstructor(name, values.length);
 		((PatchworkSpawnRestrictionLocation) (Object) instance).patchwork_setPredicate(predicate);
 		addToValues(values, instance);
+		clearCachedValues(SpawnRestriction.Location.class);
 		return instance;
 	}
 
@@ -147,6 +179,7 @@ public final class EnumHacks {
 		EnchantmentTarget instance = ENCHANTMENT_TARGET_FACTORY.create(name, values.length);
 		((PatchworkEnchantmentTarget) instance).patchwork_setPredicate(predicate);
 		addToValues(values, instance);
+		clearCachedValues(EnchantmentTarget.class);
 		return instance;
 	}
 
