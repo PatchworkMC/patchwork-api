@@ -38,7 +38,7 @@ public class ClientRegistry {
 	private static Map<Class<? extends Entity>, Identifier> entityShaderMap = new ConcurrentHashMap<>();
 
 	/**
-	 * Registers a Tile Entity renderer.
+	 * Registers a {@link BlockEntityRenderer}
 	 * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
 	 * This method is safe to call during parallel mod loading.
 	 */
@@ -48,7 +48,7 @@ public class ClientRegistry {
 	}
 
 	/**
-	 * Registers a KeyBinding.
+	 * Registers a {@link KeyBinding}.
 	 * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
 	 * This method is safe to call during parallel mod loading.
 	 */
