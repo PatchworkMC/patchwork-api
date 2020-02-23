@@ -20,7 +20,6 @@
 package com.patchworkmc.mixin.enumhacks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.block.entity.BannerPattern;
@@ -37,7 +36,4 @@ public interface BannerPatternAccessor {
 	static BannerPattern invokeConstructor(String constantName, int ordinal, String name, String id, String recipePattern0, String recipePattern1, String recipePattern2) {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
-
-	@Accessor("field_11833")
-	static void setValues(BannerPattern[] values) { }
 }

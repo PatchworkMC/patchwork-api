@@ -19,13 +19,21 @@
 
 package com.patchworkmc.mixin.enumhacks;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.enchantment.EnchantmentTarget;
+import net.minecraft.entity.EntityCategory;
 
-@Mixin(EnchantmentTarget.class)
-public interface EnchantmentTargetAccessor {
-	@Accessor("field_9077")
-	static void setValues(EnchantmentTarget[] values) { }
+import com.patchworkmc.impl.enumhacks.HackableEnum;
+
+@Mixin(EntityCategory.class)
+public class EntityCategoryMixin implements HackableEnum<EntityCategory> {
+	private static @Shadow @Final @Mutable EntityCategory[] field_6301;
+
+	@Override
+	public void patchwork_setValues(EntityCategory[] values) {
+		field_6301 = values;
+	}
 }

@@ -19,25 +19,21 @@
 
 package com.patchworkmc.mixin.enumhacks;
 
-import java.util.Map;
-import java.util.function.Predicate;
-
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.world.gen.feature.OreFeatureConfig;
+import net.minecraft.structure.pool.StructurePool;
 
-@Mixin(OreFeatureConfig.Target.class)
-public interface OreFeatureConfigTargetAccessor {
-	@Invoker("<init>")
-	static OreFeatureConfig.Target invokeConstructor(String constantName, int ordinal, String name, Predicate<BlockState> predicate) {
-		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
-	}
+import com.patchworkmc.impl.enumhacks.HackableEnum;
 
-	@Accessor("nameMap")
-	static Map<String, OreFeatureConfig.Target> getNameMap() {
-		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
+@Mixin(StructurePool.Projection.class)
+public class StructurePoolProjectionMixin implements HackableEnum<StructurePool.Projection> {
+	private static @Shadow @Final @Mutable StructurePool.Projection[] field_16683;
+
+	@Override
+	public void patchwork_setValues(StructurePool.Projection[] values) {
+		field_16683 = values;
 	}
 }

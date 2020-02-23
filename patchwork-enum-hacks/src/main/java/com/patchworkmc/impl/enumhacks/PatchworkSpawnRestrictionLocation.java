@@ -22,10 +22,11 @@ package com.patchworkmc.impl.enumhacks;
 import net.minecraftforge.common.util.TriPredicate;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ViewableWorld;
 
-public interface PatchworkSpawnRestrictionLocation {
+public interface PatchworkSpawnRestrictionLocation extends HackableEnum<SpawnRestriction.Location> {
 	boolean patchwork_useVanillaBehavior();
 
 	void patchwork_setPredicate(TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate);

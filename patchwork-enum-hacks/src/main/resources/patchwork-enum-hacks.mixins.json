@@ -4,15 +4,20 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   	"BannerPatternAccessor",
+  	"BannerPatternMixin",
+    "EnchantmentTargetInnerMixin",
+    "EnchantmentTargetMixin",
     "EntityCategoryAccessor",
+    "EntityCategoryMixin",
     "OreFeatureConfigTargetAccessor",
+    "OreFeatureConfigTargetMixin",
     "RarityAccessor",
+    "RarityMixin",
     "SpawnHelperMixin",
     "SpawnRestrictionLocationAccessor",
     "SpawnRestrictionLocationMixin",
     "StructurePoolProjectionAccessor",
-    "EnchantmentTargetMixin",
-    "EnchantmentTargetAccessor"
+    "StructurePoolProjectionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -20,7 +20,6 @@
 package com.patchworkmc.mixin.enumhacks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.entity.SpawnRestriction;
@@ -31,7 +30,4 @@ public interface SpawnRestrictionLocationAccessor {
 	static SpawnRestriction.Location invokeConstructor(String name, int ordinal) {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
-
-	@Accessor("field_6319")
-	static void setValues(SpawnRestriction.Location[] values) { }
 }

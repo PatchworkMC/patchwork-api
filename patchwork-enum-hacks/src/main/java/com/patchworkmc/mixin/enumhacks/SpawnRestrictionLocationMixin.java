@@ -20,7 +20,10 @@
 package com.patchworkmc.mixin.enumhacks;
 
 import net.minecraftforge.common.util.TriPredicate;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.entity.EntityType;
@@ -35,6 +38,8 @@ public class SpawnRestrictionLocationMixin implements PatchworkSpawnRestrictionL
 	@Unique
 	private TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate;
 
+	private static @Shadow @Final @Mutable SpawnRestriction.Location[] field_6319;
+
 	public boolean canSpawnAt(ViewableWorld world, BlockPos pos, EntityType<?> type) {
 		return predicate.test(world, pos, type);
 	}
@@ -47,5 +52,10 @@ public class SpawnRestrictionLocationMixin implements PatchworkSpawnRestrictionL
 	@Override
 	public void patchwork_setPredicate(TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate) {
 		this.predicate = predicate;
+	}
+
+	@Override
+	public void patchwork_setValues(SpawnRestriction.Location[] values) {
+		field_6319 = values;
 	}
 }

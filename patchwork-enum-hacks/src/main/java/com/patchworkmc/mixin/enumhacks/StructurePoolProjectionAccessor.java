@@ -40,7 +40,4 @@ public interface StructurePoolProjectionAccessor {
 	static Map<String, StructurePool.Projection> getIdProjectionMap() {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
-
-	@Accessor("field_16683")
-	static void setValues(StructurePool.Projection[] values) { }
 }

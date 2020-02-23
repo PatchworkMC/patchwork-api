@@ -17,23 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.enumhacks;
+package com.patchworkmc.impl.enumhacks;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.enchantment.EnchantmentTarget;
-
-import com.patchworkmc.impl.enumhacks.HackableEnum;
-
-@Mixin(EnchantmentTarget.class)
-public class EnchantmentTargetMixin implements HackableEnum<EnchantmentTarget> {
-	private static @Shadow @Final @Mutable EnchantmentTarget[] field_9077;
-
-	@Override
-	public void patchwork_setValues(EnchantmentTarget[] values) {
-		field_9077 = values;
-	}
+public interface HackableEnum<T> {
+	void patchwork_setValues(T[] values);
 }

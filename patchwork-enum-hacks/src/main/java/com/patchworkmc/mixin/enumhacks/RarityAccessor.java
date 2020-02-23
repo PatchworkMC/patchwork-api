@@ -20,7 +20,6 @@
 package com.patchworkmc.mixin.enumhacks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.util.Formatting;
@@ -32,7 +31,4 @@ public interface RarityAccessor {
 	static Rarity invokeConstructor(String name, int ordinal, Formatting formatting) {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
-
-	@Accessor("field_8905")
-	static void setValues(Rarity[] values) { }
 }

@@ -20,7 +20,6 @@
 package com.patchworkmc.mixin.enumhacks;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.entity.EntityCategory;
@@ -31,7 +30,4 @@ public interface EntityCategoryAccessor {
 	static EntityCategory invokeConstructor(String constantName, int index, String name, int spawnCap, boolean peaceful, boolean animal) {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
-
-	@Accessor("field_6301")
-	static void setValues(EntityCategory[] values) { }
 }
