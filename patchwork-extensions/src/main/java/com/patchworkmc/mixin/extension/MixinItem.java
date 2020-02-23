@@ -47,7 +47,7 @@ import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {
-	@Unique private Map<Object /* ToolType */, Integer> toolClasses;
+	@Unique private Map<Object /* TODO: ToolType */, Integer> toolClasses;
 	@Unique private boolean canRepair;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
@@ -66,12 +66,12 @@ public abstract class MixinItem implements IForgeItem {
 	}
 
 	@Override
-	public Set<Object /* ToolType */> getToolTypes(ItemStack stack) {
+	public Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack) {
 		return toolClasses.keySet();
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, Object /* ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+	public int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
 		return toolClasses.getOrDefault(tool, -1);
 	}
 

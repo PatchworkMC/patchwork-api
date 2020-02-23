@@ -27,19 +27,19 @@ import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
 
 /**
- * Forge does this through patching the constructor instead, we just add methods
- * with mixins instead.
+ * Forge does this through patching the constructor, we just add methods with
+ * mixins instead.
  */
 public interface PatchworkItemSettingsExtensions {
 	Item.Settings setNoRepair();
 
-	Item.Settings addToolType(Object /* ToolType */ type, int level);
+	Item.Settings addToolType(Object /* TODO: ToolType */ type, int level);
 
 	Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr);
 
 	boolean canRepair();
 
-	Map<Object /* ToolType */, Integer> getToolClasses();
+	Map<Object /* TODO: ToolType */, Integer> getToolClasses();
 
 	Supplier<Callable<ItemDynamicRenderer>> getTeisr();
 }

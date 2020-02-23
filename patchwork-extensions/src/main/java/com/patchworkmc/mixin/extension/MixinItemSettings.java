@@ -33,7 +33,7 @@ import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
 	@Unique private boolean canRepair = true;
-	@Unique private final Map<Object /* ToolType */, Integer> toolClasses = new HashMap<>();
+	@Unique private final Map<Object /* TODO: ToolType */, Integer> toolClasses = new HashMap<>();
 
 	@Override
 	public Settings setNoRepair() {
@@ -42,7 +42,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public Settings addToolType(Object /* ToolType */ type, int level) {
+	public Settings addToolType(Object /* TODO: ToolType */ type, int level) {
 		toolClasses.put(type, level);
 		return (Settings) (Object) this;
 	}
@@ -53,7 +53,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public Map<Object /* ToolType */, Integer> getToolClasses() {
+	public Map<Object /* TODO: ToolType */, Integer> getToolClasses() {
 		return toolClasses;
 	}
 }

@@ -535,7 +535,7 @@ public interface IForgeItem {
 		return getItem().getMaxCount();
 	}
 
-	Set<Object /* ToolType */> getToolTypes(ItemStack stack);
+	Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack);
 
 	/**
 	 * Queries the harvest level of this item stack for the specified tool class,
@@ -547,7 +547,7 @@ public interface IForgeItem {
 	 * @param blockState The block to harvest
 	 * @return Harvest level, or -1 if not the specified tool type.
 	 */
-	int getHarvestLevel(ItemStack stack, Object /* ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
+	int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
 
 	/**
 	 * ItemStack sensitive version of getItemEnchantability.
@@ -696,14 +696,14 @@ public interface IForgeItem {
 	 * capabilities for the life of this item.
 	 */
 	@Nullable
-	default Object /* ICapabilityProvider */ initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+	default Object /* TODO: ICapabilityProvider */ initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
 		return null;
 	}
 
 	Map<Identifier, ItemPropertyGetter> patchwork_getPropertyGetters();
 
-	default ImmutableMap<String, UnaryOperator<Float>/* ITimeValue */> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity) {
-		ImmutableMap.Builder<String, UnaryOperator<Float>/* ITimeValue */> builder = ImmutableMap.builder();
+	default ImmutableMap<String, UnaryOperator<Float>/* TODO: ITimeValue */> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity) {
+		ImmutableMap.Builder<String, UnaryOperator<Float>/* TODO: ITimeValue */> builder = ImmutableMap.builder();
 		patchwork_getPropertyGetters().forEach((k, v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
 		return builder.build();
 	}
