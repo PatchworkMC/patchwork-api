@@ -63,7 +63,7 @@ import com.patchworkmc.mixin.enumhacks.StructurePoolProjectionAccessor;
  * @author NuclearFarts
  */
 public final class EnumHacks {
-	private EnumHacks() { }
+	public EnumHacks() { }
 
 	private static final EnchantmentTargetFactory ENCHANTMENT_TARGET_FACTORY;
 	private static final Field ENUM_CACHE;
@@ -71,18 +71,34 @@ public final class EnumHacks {
 
 	static {
 		// Enum values are cached on Class objects. Store the Fields to reset the caches.
-		try {
-			ENUM_CACHE = Class.class.getDeclaredField("enumConstants");
-			ENUM_CACHE.setAccessible(true);
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new RuntimeException("Problem getting enumConstants field", e);
-		}
+		boolean attemptDirectory = true;
+		Field enumCache;
 
 		try {
-			ENUM_DIRECTORY_CACHE = Class.class.getDeclaredField("enumConstantDirectory");
-			ENUM_DIRECTORY_CACHE.setAccessible(true);
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new RuntimeException("Problem getting enumConstantDirectory field", e);
+			enumCache = Class.class.getDeclaredField("enumConstants");
+		} catch (NoSuchFieldException e) {
+			// don't blow up quite yet. we might be on openj9.
+			try {
+				enumCache = Class.class.getDeclaredField("enumVars");
+				attemptDirectory = false; // if we didn't go into the catch block, we're on openj9, which caches both in one object. don't look for the other one.
+			} catch (NoSuchFieldException e2) {
+				// we aren't on openj9 either. blow up.
+				throw new RuntimeException("Problem getting enumConstants field", e);
+			}
+		}
+
+		ENUM_CACHE = enumCache;
+		ENUM_CACHE.setAccessible(true);
+
+		if (attemptDirectory) {
+			try {
+				ENUM_DIRECTORY_CACHE = Class.class.getDeclaredField("enumConstantDirectory");
+				ENUM_DIRECTORY_CACHE.setAccessible(true);
+			} catch (NoSuchFieldException | SecurityException e) {
+				throw new RuntimeException("Problem getting enumConstantDirectory field", e);
+			}
+		} else {
+			ENUM_DIRECTORY_CACHE = null;
 		}
 
 		// We can't use a constructor accessor because we get around EnchantmentTarget being abstract by using EnchantmentTarget$1.
@@ -109,7 +125,10 @@ public final class EnumHacks {
 	private static void clearCachedValues(Class<? extends Enum<?>> clazz) {
 		try {
 			ENUM_CACHE.set(clazz, null);
-			ENUM_DIRECTORY_CACHE.set(clazz, null);
+
+			if (ENUM_DIRECTORY_CACHE != null) {
+				ENUM_DIRECTORY_CACHE.set(clazz, null);
+			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException("Exception clearing enum cache for class " + clazz.getSimpleName(), e);
 		}
