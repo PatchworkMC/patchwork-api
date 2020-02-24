@@ -19,7 +19,6 @@
 
 package com.patchworkmc.mixin.extension;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +45,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
@@ -114,7 +114,14 @@ public abstract class MixinItem implements IForgeItem {
 	@Override
 	public Set<Identifier> getTags() {
 		if (cachedTags == null || tagVersion != ItemTagsAccessor.getLatestVersion()) {
-			this.cachedTags = Collections.unmodifiableSet(new HashSet<>(ItemTags.getContainer().getTagsFor(getItem())));
+			this.cachedTags = new HashSet<>();
+
+			for (final Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getContainer().getEntries().entrySet()) {
+				if (entry.getValue().contains((Item) (Object) this)) {
+					cachedTags.add(entry.getKey());
+				}
+			}
+
 			this.tagVersion = ItemTagsAccessor.getLatestVersion();
 		}
 
