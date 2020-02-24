@@ -43,7 +43,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPropertyGetter;
@@ -726,7 +725,7 @@ public interface IForgeItem {
 	 * @return True if this ItemStack can disable the shield in question.
 	 */
 	default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-		return this instanceof AxeItem;
+		return false;
 	}
 
 	// TODO: Call locations: Patches: MobEntity, PlayerEntity, Forge classes: IForgeItemStack
