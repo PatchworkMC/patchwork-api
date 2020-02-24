@@ -55,7 +55,7 @@ import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {
 	@Unique private Map<Object /* TODO: ToolType */, Integer> toolClasses;
-	@Unique private boolean canRepair;
+	protected boolean canRepair;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
