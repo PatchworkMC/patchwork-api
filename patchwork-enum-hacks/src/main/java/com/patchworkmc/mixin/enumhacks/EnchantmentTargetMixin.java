@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(EnchantmentTarget.class)
 public class EnchantmentTargetMixin implements HackableEnum<EnchantmentTarget> {
-	private static @Shadow @Final @Mutable EnchantmentTarget[] field_9077;
+	@Shadow
+	@Final
+	@Mutable
+	private static EnchantmentTarget[] field_9077;
 
 	@Override
 	public void patchwork_setValues(EnchantmentTarget[] values) {

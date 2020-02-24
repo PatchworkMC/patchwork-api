@@ -25,6 +25,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
@@ -134,71 +135,51 @@ public final class EnumHacks {
 		}
 	}
 
-	public static Rarity createRarity(String name, Formatting formatting) {
-		Rarity[] values = Rarity.values(); //each values call creates a copy of the array. avoid them.
-		Rarity instance = RarityAccessor.invokeConstructor(name, values.length, formatting);
+	private static <T extends Enum<T>> T constructAndAdd(Class<T> clazz, IntFunction<? extends T> constructor) {
+		T[] values = clazz.getEnumConstants();
+		T instance = constructor.apply(values.length);
 		addToValues(values, instance);
-		clearCachedValues(Rarity.class);
+		clearCachedValues(clazz);
 		return instance;
+	}
+
+	public static Rarity createRarity(String name, Formatting formatting) {
+		return constructAndAdd(Rarity.class, ordinal -> RarityAccessor.invokeConstructor(name, ordinal, formatting));
 	}
 
 	public static EntityCategory createEntityCategory(String constantName, String name, int spawnCap, boolean peaceful, boolean animal) {
-		EntityCategory[] values = EntityCategory.values();
-		EntityCategory instance = EntityCategoryAccessor.invokeConstructor(constantName, values.length, name, spawnCap, peaceful, animal);
-		addToValues(values, instance);
-		clearCachedValues(EntityCategory.class);
-		return instance;
+		return constructAndAdd(EntityCategory.class, ordinal -> EntityCategoryAccessor.invokeConstructor(constantName, ordinal, name, spawnCap, peaceful, animal));
 	}
 
 	public static StructurePool.Projection createStructurePoolProjection(String name, String id, ImmutableList<StructureProcessor> processors) {
-		StructurePool.Projection[] values = StructurePool.Projection.values();
-		StructurePool.Projection instance = StructurePoolProjectionAccessor.invokeConstructor(name, values.length, id, processors);
-		addToValues(values, instance);
-		clearCachedValues(StructurePool.Projection.class);
+		StructurePool.Projection instance = constructAndAdd(StructurePool.Projection.class, ordinal -> StructurePoolProjectionAccessor.invokeConstructor(name, ordinal, id, processors));
 		StructurePoolProjectionAccessor.getIdProjectionMap().put(id, instance);
 		return instance;
 	}
 
 	public static OreFeatureConfig.Target createOreFeatureConfigTarget(String constantName, String name, Predicate<BlockState> predicate) {
-		OreFeatureConfig.Target[] values = OreFeatureConfig.Target.values();
-		OreFeatureConfig.Target instance = OreFeatureConfigTargetAccessor.invokeConstructor(constantName, values.length, name, predicate);
-		addToValues(values, instance);
-		clearCachedValues(OreFeatureConfig.Target.class);
+		OreFeatureConfig.Target instance = constructAndAdd(OreFeatureConfig.Target.class, ordinal -> OreFeatureConfigTargetAccessor.invokeConstructor(constantName, ordinal, name, predicate));
 		OreFeatureConfigTargetAccessor.getNameMap().put(name, instance);
 		return instance;
 	}
 
 	public static BannerPattern createBannerPattern(String constantName, String name, String id, ItemStack baseStack) {
-		BannerPattern[] values = BannerPattern.values();
-		BannerPattern instance = BannerPatternAccessor.invokeConstructor(constantName, values.length, name, id, baseStack);
-		addToValues(values, instance);
-		clearCachedValues(BannerPattern.class);
-		return instance;
+		return constructAndAdd(BannerPattern.class, ordinal -> BannerPatternAccessor.invokeConstructor(constantName, ordinal, name, id, baseStack));
 	}
 
 	public static BannerPattern createBannerPattern(String constantName, String name, String id, String recipePattern0, String recipePattern1, String recipePattern2) {
-		BannerPattern[] values = BannerPattern.values();
-		BannerPattern instance = BannerPatternAccessor.invokeConstructor(constantName, values.length, name, id, recipePattern0, recipePattern1, recipePattern2);
-		addToValues(values, instance);
-		clearCachedValues(BannerPattern.class);
-		return instance;
+		return constructAndAdd(BannerPattern.class, ordinal -> BannerPatternAccessor.invokeConstructor(constantName, ordinal, name, id, recipePattern0, recipePattern1, recipePattern2));
 	}
 
 	public static SpawnRestriction.Location createSpawnRestrictionLocation(String name, TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate) {
-		SpawnRestriction.Location[] values = SpawnRestriction.Location.values();
-		SpawnRestriction.Location instance = SpawnRestrictionLocationAccessor.invokeConstructor(name, values.length);
+		SpawnRestriction.Location instance = constructAndAdd(SpawnRestriction.Location.class, ordinal -> SpawnRestrictionLocationAccessor.invokeConstructor(name, ordinal));
 		((PatchworkSpawnRestrictionLocation) (Object) instance).patchwork_setPredicate(predicate);
-		addToValues(values, instance);
-		clearCachedValues(SpawnRestriction.Location.class);
 		return instance;
 	}
 
 	public static EnchantmentTarget createEnchantmentTarget(String name, Predicate<Item> predicate) {
-		EnchantmentTarget[] values = EnchantmentTarget.values();
-		EnchantmentTarget instance = ENCHANTMENT_TARGET_FACTORY.create(name, values.length);
+		EnchantmentTarget instance = constructAndAdd(EnchantmentTarget.class, ordinal -> ENCHANTMENT_TARGET_FACTORY.create(name, ordinal));
 		((PatchworkEnchantmentTarget) instance).patchwork_setPredicate(predicate);
-		addToValues(values, instance);
-		clearCachedValues(EnchantmentTarget.class);
 		return instance;
 	}
 

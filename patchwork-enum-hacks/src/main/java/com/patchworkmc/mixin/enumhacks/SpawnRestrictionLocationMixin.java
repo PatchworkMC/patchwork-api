@@ -31,14 +31,18 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ViewableWorld;
 
+import com.patchworkmc.impl.enumhacks.HackableEnum;
 import com.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 
 @Mixin(SpawnRestriction.Location.class)
-public class SpawnRestrictionLocationMixin implements PatchworkSpawnRestrictionLocation {
+public class SpawnRestrictionLocationMixin implements PatchworkSpawnRestrictionLocation, HackableEnum<SpawnRestriction.Location> {
 	@Unique
 	private TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate;
 
-	private static @Shadow @Final @Mutable SpawnRestriction.Location[] field_6319;
+	@Shadow
+	@Final
+	@Mutable
+	private static SpawnRestriction.Location[] field_6319;
 
 	public boolean canSpawnAt(ViewableWorld world, BlockPos pos, EntityType<?> type) {
 		return predicate.test(world, pos, type);

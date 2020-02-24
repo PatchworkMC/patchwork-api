@@ -34,16 +34,16 @@ import com.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 
 @Mixin(SpawnHelper.class)
 public class SpawnHelperMixin {
-	@Inject(method = "canSpawn",
+	@Inject(method = "canSpawn(Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/CollisionView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z",
 			at = @At(value = "INVOKE", target = "net/minecraft/world/ViewableWorld.getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"),
 			cancellable = true)
-	private static void handleCustomSpawnRestrictionLocation(SpawnRestriction.Location location, ViewableWorld viewableWorld, BlockPos blockPos, EntityType<?> entityType, CallbackInfoReturnable<Boolean> cir) {
+	private static void handleCustomSpawnRestrictionLocation(SpawnRestriction.Location location, ViewableWorld world, BlockPos pos, EntityType<?> type, CallbackInfoReturnable<Boolean> callback) {
 		PatchworkSpawnRestrictionLocation patchworkLocation = (PatchworkSpawnRestrictionLocation) (Object) location;
 
 		if (patchworkLocation.patchwork_useVanillaBehavior()) {
 			return;
 		}
 
-		cir.setReturnValue(patchworkLocation.canSpawnAt(viewableWorld, blockPos, entityType));
+		callback.setReturnValue(patchworkLocation.canSpawnAt(world, pos, type));
 	}
 }

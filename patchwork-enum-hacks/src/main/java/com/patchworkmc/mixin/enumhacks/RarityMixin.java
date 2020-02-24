@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(Rarity.class)
 public class RarityMixin implements HackableEnum<Rarity> {
-	private static @Shadow @Final @Mutable Rarity[] field_8905;
+	@Shadow
+	@Final
+	@Mutable
+	private static Rarity[] field_8905;
 
 	@Override
 	public void patchwork_setValues(Rarity[] values) {

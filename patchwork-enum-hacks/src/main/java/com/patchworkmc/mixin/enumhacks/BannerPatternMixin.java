@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(BannerPattern.class)
 public class BannerPatternMixin implements HackableEnum<BannerPattern> {
-	private static @Shadow @Final @Mutable BannerPattern[] field_11833;
+	@Shadow
+	@Final
+	@Mutable
+	private static BannerPattern[] field_11833;
 
 	@Override
 	public void patchwork_setValues(BannerPattern[] values) {

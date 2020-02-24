@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(StructurePool.Projection.class)
 public class StructurePoolProjectionMixin implements HackableEnum<StructurePool.Projection> {
-	private static @Shadow @Final @Mutable StructurePool.Projection[] field_16683;
+	@Shadow
+	@Final
+	@Mutable
+	private static StructurePool.Projection[] field_16683;
 
 	@Override
 	public void patchwork_setValues(StructurePool.Projection[] values) {

@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(EntityCategory.class)
 public class EntityCategoryMixin implements HackableEnum<EntityCategory> {
-	private static @Shadow @Final @Mutable EntityCategory[] field_6301;
+	@Shadow
+	@Final
+	@Mutable
+	private static EntityCategory[] field_6301;
 
 	@Override
 	public void patchwork_setValues(EntityCategory[] values) {

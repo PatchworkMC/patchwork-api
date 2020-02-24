@@ -3,8 +3,8 @@
   "package": "com.patchworkmc.mixin.enumhacks",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-  	"BannerPatternAccessor",
-  	"BannerPatternMixin",
+    "BannerPatternAccessor",
+    "BannerPatternMixin",
     "EnchantmentTargetInnerMixin",
     "EnchantmentTargetMixin",
     "EntityCategoryAccessor",

@@ -30,7 +30,10 @@ import com.patchworkmc.impl.enumhacks.HackableEnum;
 
 @Mixin(OreFeatureConfig.Target.class)
 public class OreFeatureConfigTargetMixin implements HackableEnum<OreFeatureConfig.Target> {
-	private static @Shadow @Final @Mutable OreFeatureConfig.Target[] field_13729;
+	@Shadow
+	@Final
+	@Mutable
+	private static OreFeatureConfig.Target[] field_13729;
 
 	@Override
 	public void patchwork_setValues(OreFeatureConfig.Target[] values) {

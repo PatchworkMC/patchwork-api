@@ -41,11 +41,10 @@ public class EnchantmentTargetInnerMixin implements PatchworkEnchantmentTarget {
 	@Unique
 	private Predicate<Item> predicate;
 
-	// Have to use full signature or the annotation processor complains
 	@Inject(method = "isAcceptableItem(Lnet/minecraft/item/Item;)Z", at = @At("HEAD"), cancellable = true)
-	private void checkItem(Item item, CallbackInfoReturnable<Boolean> cir) {
+	private void checkItem(Item item, CallbackInfoReturnable<Boolean> callback) {
 		if (isPatchwork) {
-			cir.setReturnValue(predicate.test(item));
+			callback.setReturnValue(predicate.test(item));
 		}
 	}
 
