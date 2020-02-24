@@ -73,7 +73,7 @@ public abstract class MixinItem implements IForgeItem {
 	}
 
 	@ModifyConstant(method = "rayTrace(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/RayTraceContext$FluidHandling;)Lnet/minecraft/util/hit/HitResult;", constant = @Constant(doubleValue = 5.0D))
-	private double modifyReachDistance(double originalDist, World world, PlayerEntity player, RayTraceContext.FluidHandling fluidHandling) {
+	private static double modifyReachDistance(double originalDist, World world, PlayerEntity player, RayTraceContext.FluidHandling fluidHandling) {
 		// TODO: return player.getAttributeInstance(REACH_DISTANCE).getValue();
 		return originalDist;
 	}
