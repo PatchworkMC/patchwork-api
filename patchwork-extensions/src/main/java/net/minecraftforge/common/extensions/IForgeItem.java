@@ -295,7 +295,7 @@ public interface IForgeItem {
 	 * for cleaner control over the update of the item without having to write a
 	 * subclass.
 	 *
-	 * @param entity The entity Item
+	 * @param entity The item entity
 	 * @return Return true to skip any further update code.
 	 */
 	default boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
@@ -391,7 +391,7 @@ public interface IForgeItem {
 	// TODO: Call locations: Patches: ArmorFeatureRenderer, Forge classes: ForgeHooksClient
 	/**
 	 * Called to determine the armor texture that should be use for the currently
-	 * equipped item. This will only be called on instances of ArmorItem
+	 * equipped item. This will only be called on instances of {@link net.minecraft.item.ArmorItem}
 	 *
 	 * <p>Returning null from this function will use the default value.
 	 *
@@ -538,8 +538,7 @@ public interface IForgeItem {
 
 	// TODO: Call locations: Patches: ItemStack
 	/**
-	 * Set the damage for this itemstack. Note, this method is responsible for zero
-	 * checking.
+	 * Set the damage for this itemstack. Note, this method is responsible for zero-checking.
 	 *
 	 * @param stack  the stack
 	 * @param damage the new damage value
