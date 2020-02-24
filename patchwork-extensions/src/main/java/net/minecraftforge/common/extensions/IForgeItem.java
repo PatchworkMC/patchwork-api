@@ -37,7 +37,6 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -45,21 +44,13 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.AxeItem;
-import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.item.TippedArrowItem;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtil;
-import net.minecraft.potion.Potions;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -676,7 +667,6 @@ public interface IForgeItem {
 		return oldStack.equals(newStack);
 	}
 
-	// TODO: Move contents to ForgeHooks
 	/**
 	 * Called to get the Mod ID of the mod that *created* the ItemStack, instead of
 	 * the real Mod ID that *registered* it.
@@ -693,53 +683,8 @@ public interface IForgeItem {
 	 */
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
-		final Item item = itemStack.getItem();
-		Identifier id = Registry.ITEM.getId(item);
-
-		if (!itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id)) {
-			return null;
-		} else {
-			final String namespace = id.getNamespace();
-
-			if ("minecraft".equals(namespace)) {
-				if (item instanceof EnchantedBookItem) {
-					final ListTag enchantments = EnchantedBookItem.getEnchantmentTag(itemStack);
-
-					if (enchantments.size() == 1) {
-						final Identifier enchantmentId = Identifier.tryParse(enchantments.getCompoundTag(0).getString("id"));
-
-						if (Registry.ENCHANTMENT.getOrEmpty(enchantmentId).isPresent()) {
-							return enchantmentId.getNamespace();
-						}
-					}
-				} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
-					final Potion potion = PotionUtil.getPotion(itemStack);
-
-					if (potion != Potions.EMPTY) {
-						id = Registry.POTION.getId(potion);
-
-						if (Registry.POTION.getDefaultId().equals(id)) {
-							return namespace;
-						}
-
-						return id.getNamespace();
-					}
-				} else if (item instanceof SpawnEggItem) {
-					final EntityType<?> type = ((SpawnEggItem) item).getEntityType(null);
-					id = Registry.ENTITY_TYPE.getId(type);
-
-					final Identifier defaultId = Registry.ENTITY_TYPE.getDefaultId();
-
-					if (type != Registry.ENTITY_TYPE.get(defaultId) && defaultId.equals(id)) {
-						return namespace;
-					}
-
-					return id.getNamespace();
-				}
-			}
-
-			return namespace;
-		}
+		final Identifier id = Registry.ITEM.getId(itemStack.getItem());
+		return !itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id) ? null : id.getNamespace();
 	}
 
 	// TODO: Call locations: Patches: ItemStack

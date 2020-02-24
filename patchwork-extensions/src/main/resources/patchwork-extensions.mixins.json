@@ -4,10 +4,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ItemTagsAccessor",
+    "MixinEnchantedBookItem",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
     "MixinItem",
     "MixinItemSettings",
+    "MixinPotionItems",
+    "MixinSpawnEggItem",
     "MixinStatusEffect"
   ],
   "client": [
