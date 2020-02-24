@@ -272,7 +272,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called by the default implemetation of {@link ItemEntity#tick()}, allowing
+	 * Called by the default implementation of {@link ItemEntity#tick()}, allowing
 	 * for cleaner control over the update of the item without having to write a
 	 * subclass.
 	 *
@@ -386,7 +386,7 @@ public interface IForgeItem {
 	 * Returning null will use the standard text renderer.
 	 *
 	 * @param stack The current item stack
-	 * @return A instance of TextRenderer or null to use default
+	 * @return An instance of TextRenderer or null to use default
 	 */
 	@Environment(EnvType.CLIENT)
 	@Nullable
@@ -410,7 +410,7 @@ public interface IForgeItem {
 	}
 
 	/**
-	 * Called when a entity tries to play the 'swing' animation.
+	 * Called when an entity tries to play the 'swing' animation.
 	 *
 	 * @param entity The entity swinging the item.
 	 * @return True to cancel any further processing by LivingEntity
@@ -525,7 +525,7 @@ public interface IForgeItem {
 
 	/**
 	 * Gets the maximum number of items that this stack should be able to hold. This
-	 * is a ItemStack (and thus NBT) sensitive version of {@link Item#getMaxCount()}
+	 * is an ItemStack (and thus NBT) sensitive version of {@link Item#getMaxCount()}
 	 *
 	 * @param stack The ItemStack
 	 * @return The maximum number this item can be stacked to
@@ -552,7 +552,7 @@ public interface IForgeItem {
 	 * ItemStack sensitive version of {@link Item#getEnchantability()}.
 	 *
 	 * @param stack The ItemStack
-	 * @return the item echantability value
+	 * @return the item enchantability value
 	 */
 	default int getItemEnchantability(ItemStack stack) {
 		return getItem().getEnchantability();
