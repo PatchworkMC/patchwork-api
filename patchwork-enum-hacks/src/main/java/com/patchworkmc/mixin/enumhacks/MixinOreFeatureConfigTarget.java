@@ -24,19 +24,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.world.gen.feature.OreFeatureConfig;
 
 import com.patchworkmc.impl.enumhacks.HackableEnum;
 
-@Mixin(BannerPattern.class)
-public class BannerPatternMixin implements HackableEnum<BannerPattern> {
+@Mixin(OreFeatureConfig.Target.class)
+public class MixinOreFeatureConfigTarget implements HackableEnum<OreFeatureConfig.Target> {
 	@Shadow
 	@Final
 	@Mutable
-	private static BannerPattern[] field_11833;
+	private static OreFeatureConfig.Target[] field_13729;
 
 	@Override
-	public void patchwork_setValues(BannerPattern[] values) {
-		field_11833 = values;
+	public void patchwork_setValues(OreFeatureConfig.Target[] values) {
+		field_13729 = values;
 	}
 }

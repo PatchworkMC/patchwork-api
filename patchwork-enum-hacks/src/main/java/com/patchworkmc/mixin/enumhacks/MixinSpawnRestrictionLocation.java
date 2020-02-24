@@ -19,31 +19,47 @@
 
 package com.patchworkmc.mixin.enumhacks;
 
+import net.minecraftforge.common.util.TriPredicate;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.ViewableWorld;
 
+import com.patchworkmc.impl.enumhacks.HackableEnum;
 import com.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 
-@Mixin(SpawnHelper.class)
-public class SpawnHelperMixin {
-	@Inject(method = "canSpawn(Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/CollisionView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z",
-			at = @At(value = "INVOKE", target = "net/minecraft/world/ViewableWorld.getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"),
-			cancellable = true)
-	private static void handleCustomSpawnRestrictionLocation(SpawnRestriction.Location location, ViewableWorld world, BlockPos pos, EntityType<?> type, CallbackInfoReturnable<Boolean> callback) {
-		PatchworkSpawnRestrictionLocation patchworkLocation = (PatchworkSpawnRestrictionLocation) (Object) location;
+@Mixin(SpawnRestriction.Location.class)
+public class MixinSpawnRestrictionLocation implements PatchworkSpawnRestrictionLocation, HackableEnum<SpawnRestriction.Location> {
+	@Unique
+	private TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate;
 
-		if (patchworkLocation.patchwork_useVanillaBehavior()) {
-			return;
-		}
+	@Shadow
+	@Final
+	@Mutable
+	private static SpawnRestriction.Location[] field_6319;
 
-		callback.setReturnValue(patchworkLocation.canSpawnAt(world, pos, type));
+	public boolean canSpawnAt(ViewableWorld world, BlockPos pos, EntityType<?> type) {
+		return predicate.test(world, pos, type);
+	}
+
+	@Override
+	public boolean patchwork_useVanillaBehavior() {
+		return predicate == null;
+	}
+
+	@Override
+	public void patchwork_setPredicate(TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate) {
+		this.predicate = predicate;
+	}
+
+	@Override
+	public void patchwork_setValues(SpawnRestriction.Location[] values) {
+		field_6319 = values;
 	}
 }

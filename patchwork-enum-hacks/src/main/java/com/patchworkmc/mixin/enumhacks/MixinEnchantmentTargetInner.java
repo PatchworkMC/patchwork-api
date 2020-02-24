@@ -34,7 +34,7 @@ import net.minecraft.item.Item;
 import com.patchworkmc.impl.enumhacks.PatchworkEnchantmentTarget;
 
 @Mixin(targets = "net.minecraft.enchantment.EnchantmentTarget$1")
-public class EnchantmentTargetInnerMixin implements PatchworkEnchantmentTarget {
+public class MixinEnchantmentTargetInner implements PatchworkEnchantmentTarget {
 	@Unique
 	private boolean isPatchwork = false;
 

@@ -24,19 +24,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.enchantment.EnchantmentTarget;
+import net.minecraft.entity.EntityCategory;
 
 import com.patchworkmc.impl.enumhacks.HackableEnum;
 
-@Mixin(EnchantmentTarget.class)
-public class EnchantmentTargetMixin implements HackableEnum<EnchantmentTarget> {
+@Mixin(EntityCategory.class)
+public class MixinEntityCategory implements HackableEnum<EntityCategory> {
 	@Shadow
 	@Final
 	@Mutable
-	private static EnchantmentTarget[] field_9077;
+	private static EntityCategory[] field_6301;
 
 	@Override
-	public void patchwork_setValues(EnchantmentTarget[] values) {
-		field_9077 = values;
+	public void patchwork_setValues(EntityCategory[] values) {
+		field_6301 = values;
 	}
 }

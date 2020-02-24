@@ -24,19 +24,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.util.Rarity;
+import net.minecraft.enchantment.EnchantmentTarget;
 
 import com.patchworkmc.impl.enumhacks.HackableEnum;
 
-@Mixin(Rarity.class)
-public class RarityMixin implements HackableEnum<Rarity> {
+@Mixin(EnchantmentTarget.class)
+public class MixinEnchantmentTarget implements HackableEnum<EnchantmentTarget> {
 	@Shadow
 	@Final
 	@Mutable
-	private static Rarity[] field_8905;
+	private static EnchantmentTarget[] field_9077;
 
 	@Override
-	public void patchwork_setValues(Rarity[] values) {
-		field_8905 = values;
+	public void patchwork_setValues(EnchantmentTarget[] values) {
+		field_9077 = values;
 	}
 }

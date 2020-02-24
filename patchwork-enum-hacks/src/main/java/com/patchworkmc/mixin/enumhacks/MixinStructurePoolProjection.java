@@ -24,19 +24,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.structure.pool.StructurePool;
 
 import com.patchworkmc.impl.enumhacks.HackableEnum;
 
-@Mixin(EntityCategory.class)
-public class EntityCategoryMixin implements HackableEnum<EntityCategory> {
+@Mixin(StructurePool.Projection.class)
+public class MixinStructurePoolProjection implements HackableEnum<StructurePool.Projection> {
 	@Shadow
 	@Final
 	@Mutable
-	private static EntityCategory[] field_6301;
+	private static StructurePool.Projection[] field_16683;
 
 	@Override
-	public void patchwork_setValues(EntityCategory[] values) {
-		field_6301 = values;
+	public void patchwork_setValues(StructurePool.Projection[] values) {
+		field_16683 = values;
 	}
 }
