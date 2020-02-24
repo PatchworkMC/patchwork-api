@@ -37,6 +37,7 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -56,7 +57,9 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.TippedArrowItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.potion.Potions;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -693,25 +696,50 @@ public interface IForgeItem {
 		final Item item = itemStack.getItem();
 		Identifier id = Registry.ITEM.getId(item);
 
-		if (id != null && "minecraft".equals(id.getNamespace())) {
-			if (item instanceof EnchantedBookItem) {
-				final ListTag enchantments = EnchantedBookItem.getEnchantmentTag(itemStack);
+		if (!itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id)) {
+			return null;
+		} else {
+			final String namespace = id.getNamespace();
 
-				if (enchantments.size() == 1) {
-					Identifier enchantmentId = Identifier.tryParse(enchantments.getCompoundTag(0).getString("id"));
+			if ("minecraft".equals(namespace)) {
+				if (item instanceof EnchantedBookItem) {
+					final ListTag enchantments = EnchantedBookItem.getEnchantmentTag(itemStack);
 
-					if (Registry.ENCHANTMENT.getOrEmpty(enchantmentId).isPresent()) {
-						id = enchantmentId;
+					if (enchantments.size() == 1) {
+						final Identifier enchantmentId = Identifier.tryParse(enchantments.getCompoundTag(0).getString("id"));
+
+						if (Registry.ENCHANTMENT.getOrEmpty(enchantmentId).isPresent()) {
+							return enchantmentId.getNamespace();
+						}
 					}
-				}
-			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
-				id = Registry.POTION.getId(PotionUtil.getPotion(itemStack));
-			} else if (item instanceof SpawnEggItem) {
-				id = Registry.ENTITY_TYPE.getId(((SpawnEggItem) item).getEntityType(null));
-			}
-		}
+				} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
+					final Potion potion = PotionUtil.getPotion(itemStack);
 
-		return id == null ? null : id.getNamespace();
+					if (potion != Potions.EMPTY) {
+						id = Registry.POTION.getId(potion);
+
+						if (Registry.POTION.getDefaultId().equals(id)) {
+							return namespace;
+						}
+
+						return id.getNamespace();
+					}
+				} else if (item instanceof SpawnEggItem) {
+					final EntityType<?> type = ((SpawnEggItem) item).getEntityType(null);
+					id = Registry.ENTITY_TYPE.getId(type);
+
+					final Identifier defaultId = Registry.ENTITY_TYPE.getDefaultId();
+
+					if (type != Registry.ENTITY_TYPE.get(defaultId) && defaultId.equals(id)) {
+						return namespace;
+					}
+
+					return id.getNamespace();
+				}
+			}
+
+			return namespace;
+		}
 	}
 
 	// TODO: Call locations: Patches: ItemStack
