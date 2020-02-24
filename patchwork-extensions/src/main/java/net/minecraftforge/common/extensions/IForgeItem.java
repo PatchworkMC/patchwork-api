@@ -56,7 +56,6 @@ import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.TippedArrowItem;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.ActionResult;
@@ -691,39 +690,28 @@ public interface IForgeItem {
 	 */
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
-		Item item = itemStack.getItem();
-		Identifier registryName = Registry.ITEM.getId(item);
-		String modId = registryName == null ? null : registryName.getNamespace();
+		final Item item = itemStack.getItem();
+		Identifier id = Registry.ITEM.getId(item);
 
-		if ("minecraft".equals(modId)) {
+		if (id != null && "minecraft".equals(id.getNamespace())) {
 			if (item instanceof EnchantedBookItem) {
-				ListTag enchantmentsNbt = EnchantedBookItem.getEnchantmentTag(itemStack);
+				final ListTag enchantments = EnchantedBookItem.getEnchantmentTag(itemStack);
 
-				if (enchantmentsNbt.size() == 1) {
-					CompoundTag nbttagcompound = enchantmentsNbt.getCompoundTag(0);
-					Identifier resourceLocation = Identifier.tryParse(nbttagcompound.getString("id"));
+				if (enchantments.size() == 1) {
+					Identifier enchantmentId = Identifier.tryParse(enchantments.getCompoundTag(0).getString("id"));
 
-					if (resourceLocation != null && Registry.ENCHANTMENT.containsId(resourceLocation)) {
-						return resourceLocation.getNamespace();
+					if (Registry.ENCHANTMENT.getOrEmpty(enchantmentId).isPresent()) {
+						id = enchantmentId;
 					}
 				}
 			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
-				Potion potionType = PotionUtil.getPotion(itemStack);
-				Identifier resourceLocation = Registry.POTION.getId(potionType);
-
-				if (resourceLocation != null) {
-					return resourceLocation.getNamespace();
-				}
+				id = Registry.POTION.getId(PotionUtil.getPotion(itemStack));
 			} else if (item instanceof SpawnEggItem) {
-				Identifier resourceLocation = Registry.ENTITY_TYPE.getId(((SpawnEggItem) item).getEntityType(null));
-
-				if (resourceLocation != null) {
-					return resourceLocation.getNamespace();
-				}
+				id = Registry.ENTITY_TYPE.getId(((SpawnEggItem) item).getEntityType(null));
 			}
 		}
 
-		return modId;
+		return id == null ? null : id.getNamespace();
 	}
 
 	// TODO: Call locations: Patches: ItemStack
