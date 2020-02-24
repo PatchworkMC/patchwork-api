@@ -76,6 +76,9 @@ public interface IForgeItem {
 		return (Item) this;
 	}
 
+	// For call location TODOs, asterisks indicate calling the ItemStack or IForgeItemStack version of a method
+
+	// TODO: Call locations: Patches: LivingEntity, ItemStack
 	/**
 	 * ItemStack sensitive version of {@link Item#getModifiers}.
 	 */
@@ -83,6 +86,7 @@ public interface IForgeItem {
 		return getItem().getModifiers(slot);
 	}
 
+	// TODO: Call locations: Patches: PlayerEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Called when a player drops the item into the world, returning false from this
 	 * will prevent the item from being removed from the players inventory and
@@ -95,6 +99,7 @@ public interface IForgeItem {
 		return true;
 	}
 
+	// TODO: Call locations: Patches: InGameHud
 	/**
 	 * Allow the item one last chance to modify its name used for the tool highlight
 	 * useful for adding something extra that can't be removed by a user in the
@@ -108,6 +113,7 @@ public interface IForgeItem {
 		return displayName;
 	}
 
+	// TODO: Call locations: Patches: PlayerController*, ItemStack, ServerPlayerInteractionManager*, Forge classes: IForgeItemStack
 	/**
 	 * This is called when the item is used, before the block is activated.
 	 *
@@ -117,6 +123,7 @@ public interface IForgeItem {
 		return ActionResult.PASS;
 	}
 
+	// TODO: Call locations: Patches: RepairItemRecipe*, GrindstoneContainer*, Forge classes: IForgeItemStack
 	/**
 	 * Determines if an item is reparable, used by Repair recipes and Grindstone.
 	 *
@@ -124,6 +131,7 @@ public interface IForgeItem {
 	 */
 	boolean isRepairable(ItemStack stack);
 
+	// TODO: Call locations: Patches: ExperienceOrbEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Determines the amount of durability the mending enchantment
 	 * will repair, on average, per point of experience.
@@ -132,6 +140,7 @@ public interface IForgeItem {
 		return 2f;
 	}
 
+	// TODO: Call locations: Patches: PacketByteBuf*, Forge classes: IForgeItemStack
 	/**
 	 * Override this method to change the NBT data being sent to the client. You
 	 * should ONLY override this when you have no other choice, as this might change
@@ -153,6 +162,7 @@ public interface IForgeItem {
 		return stack.getTag();
 	}
 
+	// TODO: Call locations: Patches: PacketByteBuf*, Forge classes: IForgeItemStack
 	/**
 	 * Override this method to decide what to do with the NBT data received from
 	 * getShareTag().
@@ -164,6 +174,7 @@ public interface IForgeItem {
 		stack.setTag(nbt);
 	}
 
+	// TODO: Call locations: Patches: ClientPlayerInteractionManager*, ServerPlayerInteractionManager*, Forge classes: IForgeItemStack
 	/**
 	 * Called before a block is broken. Return true to prevent default block
 	 * harvesting.
@@ -179,6 +190,7 @@ public interface IForgeItem {
 		return false;
 	}
 
+	// TODO: Call locations: Patches: LivingEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Called each tick while using an item.
 	 *
@@ -190,6 +202,7 @@ public interface IForgeItem {
 	default void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 	}
 
+	// TODO: Call locations: Forge classes: ForgeHooks
 	/**
 	 * Called when the player Left Clicks (attacks) an entity. Processed before
 	 * damage is done, if return value is true further processing is canceled and
@@ -204,6 +217,7 @@ public interface IForgeItem {
 		return false;
 	}
 
+	// TODO: Call locations: Patches: BannerDuplicateRecipe*, BookCloningRecipe*, Recipe*, BrewingStandBlockEntity*, AbstractFurnaceBlockEntity*, Forge classes: IForgeItemStack, ForgeHooks
 	/**
 	 * ItemStack sensitive version of {@link Item#getRecipeRemainder()}. Returns a full ItemStack
 	 * instance of the result.
@@ -219,6 +233,7 @@ public interface IForgeItem {
 		return new ItemStack(getItem().getRecipeRemainder());
 	}
 
+	// TODO: Call locations: Patches: BannerDuplicateRecipe*, BookCloningRecipe*, Recipe*, BrewingStandBlockEntity*, AbstractFurnaceBlockEntity*, Forge classes: IForgeItemStack, ForgeHooks
 	/**
 	 * ItemStack sensitive version of {@link Item#hasRecipeRemainder()}.
 	 *
@@ -229,6 +244,7 @@ public interface IForgeItem {
 		return getItem().hasRecipeRemainder();
 	}
 
+	// TODO: Call locations: Patches: ItemEntity*, Forge classes: IForgeItemStack, ForgeEventFactory
 	/**
 	 * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
 	 * as an {@link ItemEntity}. This is in ticks, standard result is 6000, or 5 mins.
@@ -241,6 +257,7 @@ public interface IForgeItem {
 		return 6000;
 	}
 
+	// TODO: Call locations: Forge classes: ForgeInternalHandler
 	/**
 	 * Determines if this {@link Item} has a special entity for when it is in the world.
 	 * Is called when an {@link ItemEntity} is spawned in the world, if true and
@@ -255,6 +272,7 @@ public interface IForgeItem {
 		return false;
 	}
 
+	// TODO: Call locations: Forge classes: ForgeInternalHandler
 	/**
 	 * This function should return a new entity to replace the dropped item.
 	 * Returning null here will not kill the ItemEntity and will leave it to
@@ -271,6 +289,7 @@ public interface IForgeItem {
 		return null;
 	}
 
+	// TODO: Call locations: Patches: ItemEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Called by the default implementation of {@link ItemEntity#tick()}, allowing
 	 * for cleaner control over the update of the item without having to write a
@@ -306,6 +325,7 @@ public interface IForgeItem {
 		return -1;
 	}
 
+	// TODO: Call locations: Patches: PlayerController, ClientPlayerInteractionManager*, ServerPlayerInteractionManager*, Forge classes: IForgeItemStack
 	/**
 	 * Should this item, when held, allow sneak-clicks to pass through to the
 	 * underlying block?
@@ -319,12 +339,14 @@ public interface IForgeItem {
 		return false;
 	}
 
+	// TODO: Call locations: Patches: PlayerInventory, Forge classes: IForgeItemStack
 	/**
 	 * Called to tick armor in the armor slot. Override to do something
 	 */
 	default void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
 	}
 
+	// TODO: Call locations: Patches: PlayerContainer*, Forge classes: PlayerArmorInvWrapper, IForgeItemStack
 	/**
 	 * Determines if the specific ItemStack can be placed in the specified armor
 	 * slot, for the entity.
@@ -338,6 +360,7 @@ public interface IForgeItem {
 		return MobEntity.getPreferredEquipmentSlot(stack) == armorType;
 	}
 
+	// TODO: Call locations: Patches: MobEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Override this to set a non-default armor slot for an ItemStack, but <em>do
 	 * not use this to get the armor slot of said stack; for that, use
@@ -353,6 +376,7 @@ public interface IForgeItem {
 		return null;
 	}
 
+	// TODO: Call locations: Patches: AnvilContainer*, Forge classes: IForgeItemStack
 	/**
 	 * Allow or forbid the specific book/item combination as an anvil enchant.
 	 *
@@ -364,6 +388,7 @@ public interface IForgeItem {
 		return true;
 	}
 
+	// TODO: Call locations: Patches: ArmorFeatureRenderer, Forge classes: ForgeHooksClient
 	/**
 	 * Called to determine the armor texture that should be use for the currently
 	 * equipped item. This will only be called on instances of ArmorItem
@@ -381,6 +406,7 @@ public interface IForgeItem {
 		return null;
 	}
 
+	// TODO: Call locations: Patches: Screen, AbstractContainerScreen, CreativeInventoryScreen
 	/**
 	 * Returns the text renderer used to render tooltips and overlays for this item.
 	 * Returning null will use the standard text renderer.
@@ -394,6 +420,7 @@ public interface IForgeItem {
 		return null;
 	}
 
+	// TODO: Call locations: Patches: ArmorBipedFeatureRenderer, Forge classes: ForgeHooksClient
 	/**
 	 * Override this method to have an item handle its own armor rendering.
 	 *
@@ -409,6 +436,7 @@ public interface IForgeItem {
 		return null;
 	}
 
+	// TODO: Call locations: Patches: LivingEntity*, Forge classes: IForgeItemStack
 	/**
 	 * Called when an entity tries to play the 'swing' animation.
 	 *
@@ -419,6 +447,7 @@ public interface IForgeItem {
 		return false;
 	}
 
+	// TODO: Call locations: Forge classes: ForgeIngameGui
 	/**
 	 * Called when the client starts rendering the HUD, for whatever item the player
 	 * currently has as a helmet. This is where pumpkins would render there overlay.
@@ -433,6 +462,7 @@ public interface IForgeItem {
 	default void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks) {
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Return the itemDamage represented by this ItemStack. Defaults to the Damage
 	 * entry in the stack NBT, but can be overridden here for other sources.
@@ -444,6 +474,7 @@ public interface IForgeItem {
 		return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
 	}
 
+	// TODO: Call locations: Patches: ItemRenderer
 	/**
 	 * Determines if the durability bar should be rendered for this item. Defaults
 	 * to vanilla {@link ItemStack#isDamaged()} behavior. But modders can use this
@@ -456,6 +487,7 @@ public interface IForgeItem {
 		return stack.isDamaged();
 	}
 
+	// TODO: Call locations: Patches: ItemRenderer
 	/**
 	 * Queries the percentage of the 'Durability' bar that should be drawn.
 	 *
@@ -467,6 +499,7 @@ public interface IForgeItem {
 		return (double) stack.getDamage() / (double) stack.getMaxDamage();
 	}
 
+	// TODO: Call locations: Patches: ItemRenderer
 	/**
 	 * Returns the packed int RGB value used to render the durability bar in the
 	 * GUI. Defaults to a value based on the hue scaled based on
@@ -479,6 +512,7 @@ public interface IForgeItem {
 		return MathHelper.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
 	}
 
+	// TODO: Call locations: Patches: GrindstoneContainer*, RepairItemRecipe*, AnvilContainer*, ItemStack, Forge classes: ForgeHooks*
 	/**
 	 * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in
 	 * this item, but can be overridden here for other sources such as NBT.
@@ -490,6 +524,7 @@ public interface IForgeItem {
 		return getItem().getMaxDamage();
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Return if this itemstack is damaged. Note only called if
 	 * {@link Item#isDamageable()} is true.
@@ -501,6 +536,7 @@ public interface IForgeItem {
 		return stack.getDamage() > 0;
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Set the damage for this itemstack. Note, this method is responsible for zero
 	 * checking.
@@ -512,6 +548,7 @@ public interface IForgeItem {
 		stack.getOrCreateTag().putInt("Damage", Math.max(0, damage));
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * ItemStack sensitive version of {@link Item#isEffectiveOn(BlockState)}.
 	 *
@@ -523,6 +560,7 @@ public interface IForgeItem {
 		return getItem().isEffectiveOn(state);
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Gets the maximum number of items that this stack should be able to hold. This
 	 * is an ItemStack (and thus NBT) sensitive version of {@link Item#getMaxCount()}
@@ -534,8 +572,10 @@ public interface IForgeItem {
 		return getItem().getMaxCount();
 	}
 
+	// TODO: Call locations: Patches: MiningToolItem, Forge classes: IForgeItemStack, ForgeHooks*
 	Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack);
 
+	// TODO: Call locations: Forge classes: IForgeItemStack, ForgeHooks
 	/**
 	 * Queries the harvest level of this item stack for the specified tool type,
 	 * Returns -1 if this tool is not of the specified type.
@@ -548,6 +588,7 @@ public interface IForgeItem {
 	 */
 	int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
 
+	// TODO: Call locations: Patches: EnchantmentHelper, Forge classes: IForgeItemStack
 	/**
 	 * ItemStack sensitive version of {@link Item#getEnchantability()}.
 	 *
@@ -558,6 +599,7 @@ public interface IForgeItem {
 		return getItem().getEnchantability();
 	}
 
+	// TODO: Call locations: Patches: Enchantment, EnchantmentHelper, Forge classes: IForgeItemStack
 	/**
 	 * Checks whether an item can be enchanted with a certain enchantment. This
 	 * applies specifically to enchanting an item in the enchanting table and is
@@ -578,6 +620,7 @@ public interface IForgeItem {
 	@Deprecated // TODO move once net.minecraftforge.common.Tags is added
 	Tag<Item> BEACON_PAYMENT = TagRegistry.item(new Identifier("forge", "beacon_payment"));
 
+	// TODO: Call locations: Patches: BeaconContainer*, Forge classes: IForgeItemStack
 	/**
 	 * Whether this Item can be used as a payment to activate the vanilla beacon.
 	 *
@@ -588,6 +631,7 @@ public interface IForgeItem {
 		return BEACON_PAYMENT.contains(stack.getItem());
 	}
 
+	// TODO: Call locations: Forge classes: ForgeHooksClient
 	/**
 	 * Determine if the player switching between these two item stacks.
 	 *
@@ -602,6 +646,7 @@ public interface IForgeItem {
 		return !oldStack.equals(newStack);
 	}
 
+	// TODO: Call locations: Patches: ClientPlayerInteractionManager, Forge classes: IForgeItemStack
 	/**
 	 * Called when the player is mining a block and the item in his hand changes.
 	 * Allows to not reset block breaking if only NBT or similar changes.
@@ -616,6 +661,7 @@ public interface IForgeItem {
 			&& (newStack.isDamageable() || newStack.getDamage() == oldStack.getDamage()));
 	}
 
+	// TODO: Call locations: Forge classes: ForgeHooks
 	/**
 	 * Called while an item is in 'active' use to determine if usage should
 	 * continue. Allows items to continue being used while sustaining damage, for
@@ -629,6 +675,7 @@ public interface IForgeItem {
 		return oldStack.equals(newStack);
 	}
 
+	// TODO: Move contents to ForgeHooks
 	/**
 	 * Called to get the Mod ID of the mod that *created* the ItemStack, instead of
 	 * the real Mod ID that *registered* it.
@@ -680,6 +727,7 @@ public interface IForgeItem {
 		return modId;
 	}
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Called from {@link ItemStack#ItemStack}, will hold extra data for the life of this
 	 * ItemStack. Can be retrieved from stack.getCapabilities() The NBT can be null
@@ -707,6 +755,7 @@ public interface IForgeItem {
 		return builder.build();
 	}
 
+	// TODO: Call locations: Patches: MobEntity, PlayerEntity, Forge classes: IForgeItemStack
 	/**
 	 * Can this Item disable a shield.
 	 *
@@ -720,6 +769,7 @@ public interface IForgeItem {
 		return this instanceof AxeItem;
 	}
 
+	// TODO: Call locations: Patches: MobEntity, PlayerEntity, Forge classes: IForgeItemStack
 	/**
 	 * Is this Item a shield.
 	 *
@@ -731,6 +781,7 @@ public interface IForgeItem {
 		return stack.getItem() == Items.SHIELD;
 	}
 
+	// TODO: Call locations: Forge classes: IForgeItemStack, ForgeHooks*
 	/**
 	 * @return the fuel burn time for this itemStack in a furnace. Return 0 to make
 	 * it not act as a fuel. Return -1 to let the default vanilla logic
@@ -740,6 +791,7 @@ public interface IForgeItem {
 		return -1;
 	}
 
+	// TODO: Call locations: Patches: HorseEntity, Forge classes: IForgeItemStack
 	/**
 	 * Called every tick from {@link net.minecraft.entity.passive.HorseEntity#tick()}
 	 * on the item in the armor slot.
@@ -751,6 +803,7 @@ public interface IForgeItem {
 	default void onHorseArmorTick(ItemStack stack, World world, MobEntity horse) {
 	}
 
+	// TODO: Call locations: Patches: ItemRenderer, DynamicBlockRenderer
 	/**
 	 * @return This Item's renderer, or the default instance if it does not have
 	 * one.
@@ -758,6 +811,7 @@ public interface IForgeItem {
 	@Environment(EnvType.CLIENT)
 	ItemDynamicRenderer getTileEntityItemStackRenderer();
 
+	// TODO: Call locations: Patches: MinecraftClient
 	/**
 	 * Retrieves a list of tags names this is known to be associated with. This should be
 	 * used in favor of {@link net.minecraft.tag.TagContainer#getTagsFor(Item)}, as
@@ -765,6 +819,7 @@ public interface IForgeItem {
 	 */
 	Set<Identifier> getTags();
 
+	// TODO: Call locations: Patches: ItemStack
 	/**
 	 * Reduce the durability of this item by the amount given.
 	 * This can be used to e.g. consume power from NBT before durability.
