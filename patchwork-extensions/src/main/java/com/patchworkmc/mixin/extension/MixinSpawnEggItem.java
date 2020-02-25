@@ -34,20 +34,20 @@ public abstract class MixinSpawnEggItem implements IForgeItem {
 	@Override
 	public String getCreatorModId(ItemStack itemStack) {
 		final Item item = itemStack.getItem();
+		Identifier defaultId = Registry.ITEM.getDefaultId();
 		Identifier id = Registry.ITEM.getId(item);
 
-		if (!itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id)) {
+		if (defaultId.equals(id) && item != Registry.ITEM.get(defaultId)) {
 			return null;
 		} else {
 			final String namespace = id.getNamespace();
 
 			if ("minecraft".equals(namespace)) {
-				final EntityType<?> type = ((SpawnEggItem) item).getEntityType(null);
+				final EntityType<?> type = ((SpawnEggItem) item).getEntityType(itemStack.getTag());
 				id = Registry.ENTITY_TYPE.getId(type);
+				defaultId = Registry.ENTITY_TYPE.getDefaultId();
 
-				final Identifier defaultId = Registry.ENTITY_TYPE.getDefaultId();
-
-				if (type != Registry.ENTITY_TYPE.get(defaultId) && defaultId.equals(id)) {
+				if (defaultId.equals(id) && type != Registry.ENTITY_TYPE.get(defaultId)) {
 					return namespace;
 				}
 

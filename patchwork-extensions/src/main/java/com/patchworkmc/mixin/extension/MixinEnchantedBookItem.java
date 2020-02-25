@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeItem;
 
 import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Identifier;
@@ -32,9 +33,11 @@ import net.minecraft.util.registry.Registry;
 public abstract class MixinEnchantedBookItem implements IForgeItem {
 	@Override
 	public String getCreatorModId(ItemStack itemStack) {
-		final Identifier id = Registry.ITEM.getId(itemStack.getItem());
+		final Item item = itemStack.getItem();
+		final Identifier defaultId = Registry.ITEM.getDefaultId();
+		final Identifier id = Registry.ITEM.getId(item);
 
-		if (!itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id)) {
+		if (defaultId.equals(id) && item != Registry.ITEM.get(defaultId)) {
 			return null;
 		} else {
 			final String namespace = id.getNamespace();

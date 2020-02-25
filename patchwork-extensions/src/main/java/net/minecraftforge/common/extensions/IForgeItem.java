@@ -682,8 +682,11 @@ public interface IForgeItem {
 	 */
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
-		final Identifier id = Registry.ITEM.getId(itemStack.getItem());
-		return !itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id) ? null : id.getNamespace();
+		final Item item = itemStack.getItem();
+		final Identifier defaultId = Registry.ITEM.getDefaultId();
+		final Identifier id = Registry.ITEM.getId(item);
+
+		return defaultId.equals(id) && item != Registry.ITEM.get(defaultId) ? null : id.getNamespace();
 	}
 
 	// TODO: Call locations: Patches: ItemStack

@@ -22,38 +22,38 @@ package com.patchworkmc.mixin.extension;
 import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeItem;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.TippedArrowItem;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.potion.Potions;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-@Mixin({ PotionItem.class, TippedArrowItem.class })
+@Mixin({PotionItem.class, TippedArrowItem.class})
 public abstract class MixinPotionItems implements IForgeItem {
 	@Override
 	public String getCreatorModId(ItemStack itemStack) {
-		Identifier id = Registry.ITEM.getId(itemStack.getItem());
+		final Item item = itemStack.getItem();
+		Identifier defaultId = Registry.ITEM.getDefaultId();
+		Identifier id = Registry.ITEM.getId(item);
 
-		if (!itemStack.isEmpty() && Registry.ITEM.getDefaultId().equals(id)) {
+		if (defaultId.equals(id) && item != Registry.ITEM.get(defaultId)) {
 			return null;
 		} else {
 			final String namespace = id.getNamespace();
 
 			if ("minecraft".equals(namespace)) {
 				final Potion potion = PotionUtil.getPotion(itemStack);
+				defaultId = Registry.POTION.getDefaultId();
+				id = Registry.POTION.getId(potion);
 
-				if (potion != Potions.EMPTY) {
-					id = Registry.POTION.getId(potion);
-
-					if (Registry.POTION.getDefaultId().equals(id)) {
-						return namespace;
-					}
-
-					return id.getNamespace();
+				if (defaultId.equals(id) && potion != Registry.POTION.get(defaultId)) {
+					return namespace;
 				}
+
+				return id.getNamespace();
 			}
 
 			return namespace;
