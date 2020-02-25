@@ -22,6 +22,8 @@ package net.minecraftforge.event.entity;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 
 /**
  * EntityEvent is fired when an event involving any Entity occurs.
@@ -60,11 +62,11 @@ public class EntityEvent extends Event {
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class EntityConstructing extends EntityEvent {
+	public static class EntityConstructing extends EntityEvent {
 		public EntityConstructing(Entity entity) {
 			super(entity);
 		}
-	}*/
+	}
 
 	/**
 	 * <b>TODO: Forge never fires this event.</b>
@@ -106,7 +108,7 @@ public class EntityEvent extends Event {
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class EnteringChunk extends EntityEvent {
+	public static class EnteringChunk extends EntityEvent {
 		private int newChunkX;
 		private int newChunkZ;
 		private int oldChunkX;
@@ -151,7 +153,7 @@ public class EntityEvent extends Event {
 		public void setOldChunkZ(int oldChunkZ) {
 			this.oldChunkZ = oldChunkZ;
 		}
-	}*/
+	}
 
 	/**
 	 * EyeHeight is fired when an Entity's eye height changes.
@@ -164,7 +166,7 @@ public class EntityEvent extends Event {
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class EyeHeight extends EntityEvent {
+	public static class EyeHeight extends EntityEvent {
 		private final EntityPose pose;
 		private final EntityDimensions size;
 		private final float oldHeight;
@@ -197,5 +199,5 @@ public class EntityEvent extends Event {
 		public void setNewHeight(float newSize) {
 			this.newHeight = newSize;
 		}
-	}*/
+	}
 }
