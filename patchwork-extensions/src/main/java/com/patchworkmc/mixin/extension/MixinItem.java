@@ -29,9 +29,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -47,8 +45,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.RayTraceContext;
-import net.minecraft.world.World;
 
 import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
 
@@ -70,12 +66,6 @@ public abstract class MixinItem implements IForgeItem {
 	@Redirect(method = "isEnchantable(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getMaxCount()I"))
 	private int getMaxCountForStack(Item item, ItemStack stack) {
 		return getItemStackLimit(stack);
-	}
-
-	@ModifyConstant(method = "rayTrace(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/RayTraceContext$FluidHandling;)Lnet/minecraft/util/hit/HitResult;", constant = @Constant(doubleValue = 5.0D))
-	private static double modifyReachDistance(double originalDist, World world, PlayerEntity player, RayTraceContext.FluidHandling fluidHandling) {
-		// TODO: return player.getAttributeInstance(REACH_DISTANCE).getValue();
-		return originalDist;
 	}
 
 	@Inject(method = "isIn(Lnet/minecraft/item/ItemGroup;)Z", at = @At("HEAD"), cancellable = true)
