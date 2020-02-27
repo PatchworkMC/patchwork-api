@@ -32,8 +32,8 @@ import com.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
 public class CapabilityRegisteredCallbackInternal {
 	private static final Logger LOGGER = LogManager.getLogger(CapabilityRegisteredCallback.class);
-	@SuppressWarnings("rawtypes")
-	private static final Map<Class<?>, Event> CALLBACKS = new IdentityHashMap<>();
+
+	private static final Map<Class<?>, Event<?>> CALLBACKS = new IdentityHashMap<>();
 
 	@SuppressWarnings("unchecked")
 	public static <C> Event<CapabilityRegisteredCallback<C>> getOrCreateEvent(Class<C> type) {
