@@ -208,3 +208,5 @@ Set<Identifier> getTags()
 
 Patches: ItemStack  
 <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken)
+
+----
