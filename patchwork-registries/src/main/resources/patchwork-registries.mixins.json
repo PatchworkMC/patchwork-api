@@ -17,6 +17,7 @@
     "MixinEntityType",
     "MixinFeature",
     "MixinFluid",
+    "MixinGameOptions",
     "MixinItem",
     "MixinMemoryModuleType",
     "MixinPaintingMotive",
