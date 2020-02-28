@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension;
+package com.patchworkmc.mixin.extensions.item;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Settings;
 
-import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
+import com.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {

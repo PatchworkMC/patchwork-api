@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension;
+package com.patchworkmc.mixin.extensions.item;
 
 import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeItem;

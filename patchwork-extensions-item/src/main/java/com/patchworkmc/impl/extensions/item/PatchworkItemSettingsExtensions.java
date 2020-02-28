@@ -17,36 +17,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension.client;
+package com.patchworkmc.impl.extensions.item;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
 
-import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-@Mixin(Item.Settings.class)
-public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
-	@Unique private ItemDynamicRenderer teisr = ItemDynamicRenderer.INSTANCE;
+/**
+ * Forge does this through patching the constructor, we just add methods with
+ * mixins instead.
+ */
+public interface PatchworkItemSettingsExtensions {
+	Item.Settings setNoRepair();
 
-	@Override
-	public Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr) {
-		try {
-			this.teisr = teisr.get().call();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	Item.Settings addToolType(Object /* TODO: ToolType */ type, int level);
 
-		return (Item.Settings) (Object) this;
-	}
+	Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr);
 
-	@Override
-	public ItemDynamicRenderer getTeisr() {
-		return teisr;
-	}
+	boolean canRepair();
+
+	Map<Object /* TODO: ToolType */, Integer> getToolClasses();
+
+	@Environment(EnvType.CLIENT)
+	ItemDynamicRenderer getTeisr();
 }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension;
+package com.patchworkmc.mixin.extensions.item;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -46,7 +46,7 @@ import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 
-import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
+import com.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {

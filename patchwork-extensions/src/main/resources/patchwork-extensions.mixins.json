@@ -3,20 +3,9 @@
   "package": "com.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ItemTagsAccessor",
-    "MixinAxeItem",
-    "MixinEnchantedBookItem",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
-    "MixinItem",
-    "MixinItemSettings",
-    "MixinPotionItems",
-    "MixinSpawnEggItem",
     "MixinStatusEffect"
-  ],
-  "client": [
-    "client.MixinItem",
-    "client.MixinItemSettings"
   ],
   "injectors": {
     "defaultRequire": 1

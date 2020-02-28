@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension.client;
+package com.patchworkmc.mixin.extensions.item.client;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +31,7 @@ import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraft.client.render.item.ItemDynamicRenderer;
 import net.minecraft.item.Item;
 
-import com.patchworkmc.impl.extension.PatchworkItemSettingsExtensions;
+import com.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {

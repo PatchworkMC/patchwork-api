@@ -17,17 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.mixin.extension;
+package com.patchworkmc.mixin.extensions.item;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import net.minecraftforge.common.extensions.IForgeItem;
 
-import net.minecraft.tag.ItemTags;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ItemStack;
 
-@Mixin(ItemTags.class)
-public class ItemTagsAccessor {
-	@Accessor
-	public static int getLatestVersion() {
-		throw new UnsupportedOperationException();
+@Mixin(AxeItem.class)
+public abstract class MixinAxeItem implements IForgeItem {
+	@Override
+	public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
+		return true;
 	}
 }
