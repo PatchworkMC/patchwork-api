@@ -29,6 +29,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import org.apache.logging.log4j.LogManager;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -117,7 +118,11 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 		CompoundTag tag = new CompoundTag();
 
 		for (int x = 0; x < writers.length; x++) {
-			tag.put(names[x], writers[x].serializeNBT());
+			try {
+				tag.put(names[x], writers[x].serializeNBT());
+			} catch (Exception exception) {
+				LogManager.getLogger().error("A capability provider with the name " + names[x] + " has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
+			}
 		}
 
 		return tag;
@@ -127,7 +132,11 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 	public void deserializeNBT(CompoundTag tag) {
 		for (int x = 0; x < writers.length; x++) {
 			if (tag.containsKey(names[x])) {
-				writers[x].deserializeNBT(tag.getTag(names[x]));
+				try {
+					writers[x].deserializeNBT(tag.getTag(names[x]));
+				} catch (Exception exception) {
+					LogManager.getLogger().error("A capability provider with the name " + names[x] + " has thrown an exception trying to read state. It will not persist. Report this to the mod author", exception);
+				}
 			}
 		}
 	}
