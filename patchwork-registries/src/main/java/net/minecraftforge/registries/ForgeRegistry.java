@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,11 +154,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 	}
 
 	@Override
-	public <T> T getSlaveMap(Identifier slaveMapName, Class<T> type) {
-		return null;
-	}
-
-	@Override
+	@Nonnull
 	public Iterator<V> iterator() {
 		return vanilla.stream().iterator();
 	}
@@ -186,6 +184,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		}
 
 		@Override
+		@SuppressWarnings("rawtypes")
 		public boolean equals(Object o) {
 			if (o == this) {
 				return true;

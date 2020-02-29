@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.networking.handler",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinServerLoginNetworkHandler",
+    "MixinServerPlayNetworkHandler"
+  ],
+  "client": [
+    "MixinClientLoginNetworkHandler",
+    "MixinClientPlayNetworkHandler"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

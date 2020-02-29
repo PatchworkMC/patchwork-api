@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,20 @@ import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.fml.ModContainer;
 
-public class FMLModContainer {
+public class FMLModContainer extends ModContainer {
 	private final IEventBus eventBus;
 
-	public FMLModContainer() {
+	public FMLModContainer(String id) {
+		super(id);
+
 		this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
 	}
 
-	public FMLModContainer(IEventBus bus) {
+	public FMLModContainer(String id, IEventBus bus) {
+		super(id);
+
 		this.eventBus = bus;
 	}
 

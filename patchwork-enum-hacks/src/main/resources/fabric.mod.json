@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-enum-hacks",
+  "version": "${version}",
+  "icon": "assets/patchwork-enum-hacks/icon.png",
+  "name": "Patchwork Enum Hacks",
+  "description": "Implementation of Forge's enum hacks",
+  "authors": [
+    "PatchworkMC"
+  ],
+  "license": "LGPL-2.1-only",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  },
+  "mixins": [
+    "patchwork-enum-hacks.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

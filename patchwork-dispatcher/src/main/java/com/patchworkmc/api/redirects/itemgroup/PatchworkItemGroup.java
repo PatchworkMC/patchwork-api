@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,14 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 public abstract class PatchworkItemGroup extends ItemGroup {
 	public PatchworkItemGroup(String name) {
 		super(getNewArrayIndex(), name);
+	}
+
+	public PatchworkItemGroup(int index, String name) {
+		this(name);
+
+		if (index != -1) {
+			throw new IllegalArgumentException("ItemGroup constructor potentially tried to overwrite an existing creative tab!");
+		}
 	}
 
 	private static int getNewArrayIndex() {

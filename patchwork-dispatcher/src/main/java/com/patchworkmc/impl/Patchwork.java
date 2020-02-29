@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,79 +19,50 @@
 
 package com.patchworkmc.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.server.dedicated.DedicatedServer;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import com.patchworkmc.api.ForgeInitializer;
-import com.patchworkmc.impl.registries.RegistryClassMapping;
+import com.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
 
-	private static void dispatchRegistryEvents(Map<ForgeInitializer, FMLModContainer> mods) {
-		// verify supers
-
-		List<Identifier> registries = new ArrayList<>(Registry.REGISTRIES.getIds());
-
-		registries.remove(Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.remove(Registry.REGISTRIES.getId(Registry.ITEM));
-
-		registries.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
-
-		registries.add(0, Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.add(1, Registry.REGISTRIES.getId(Registry.ITEM));
-
-		LOGGER.info("Dispatching registry events for: " + registries);
-
-		for (Identifier identifier : registries) {
-			Registry registry = Registry.REGISTRIES.get(identifier);
-			Class superType = RegistryClassMapping.getClass(identifier);
-
-			ForgeRegistry forgeRegistry = new ForgeRegistry(identifier, registry, superType);
-
-			// Note: this checks to see if supers is correct
-			/*for(Map.Entry<Identifier, Object> entry: (Set<Map.Entry<Identifier, Object>>)forgeRegistry.getEntries()) {
-				if(!superType.isAssignableFrom(entry.getValue().getClass())) {
-					System.err.println("Bad registry type for " + identifier + " (" + entry.getKey() + ")");
-					throw new RuntimeException();
-				}
-			}*/
-
-			dispatch(mods, new RegistryEvent.Register(forgeRegistry));
-		}
+	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Event event) {
+		dispatch(mods, container -> event);
 	}
 
-	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Event event) {
-		for (Map.Entry<ForgeInitializer, FMLModContainer> entry : mods.entrySet()) {
-			ForgeInitializer initializer = entry.getKey();
-			FMLModContainer container = entry.getValue();
+	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Function<ModContainer, Event> provider) {
+		for (FMLModContainer container : mods.values()) {
+			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
-			ModLoadingContext.get().setActiveContainer(new ModContainer(initializer.getModId()), new FMLJavaModLoadingContext(container));
-
-			container.getEventBus().post(event);
+			container.getEventBus().post(provider.apply(container));
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 		}
@@ -99,15 +70,17 @@ public class Patchwork implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ForgeRegistries.init();
+
 		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
 
 		// Construct forge mods
 
 		for (ForgeInitializer initializer : FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class)) {
-			LOGGER.info("Constructing Forge mod: " + initializer);
+			LOGGER.info("Constructing Forge mod: " + initializer.getModId());
 
-			FMLModContainer container = new FMLModContainer();
-			ModLoadingContext.get().setActiveContainer(new ModContainer(initializer.getModId()), new FMLJavaModLoadingContext(container));
+			FMLModContainer container = new FMLModContainer(initializer.getModId());
+			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			initializer.onForgeInitialize();
 
@@ -117,12 +90,24 @@ public class Patchwork implements ModInitializer {
 		}
 
 		// Send initialization events
-		dispatchRegistryEvents(mods);
-		// TODO: One per modcontainer
-		dispatch(mods, new FMLCommonSetupEvent(new ModContainer("minecraft")));
-		dispatch(mods, new InterModEnqueueEvent(new ModContainer("minecraft")));
-		dispatch(mods, new InterModProcessEvent(new ModContainer("minecraft")));
-		dispatch(mods, new FMLLoadCompleteEvent(new ModContainer("minecraft")));
+
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+		dispatch(mods, FMLCommonSetupEvent::new);
+
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+			dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
+		});
+
+		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
+			Object gameInstance = FabricLoader.getInstance().getGameInstance();
+			Supplier<DedicatedServer> supplier = () -> (DedicatedServer) gameInstance;
+
+			dispatch(mods, container -> new FMLDedicatedServerSetupEvent(supplier, container));
+		});
+
+		dispatch(mods, InterModEnqueueEvent::new);
+		dispatch(mods, InterModProcessEvent::new);
+		dispatch(mods, FMLLoadCompleteEvent::new);
 
 		MinecraftForge.EVENT_BUS.start();
 	}

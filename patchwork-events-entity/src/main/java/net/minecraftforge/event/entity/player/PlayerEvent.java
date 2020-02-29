@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2019, 2019
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,6 +61,21 @@ public class PlayerEvent extends LivingEvent {
 		return playerEntity;
 	}
 
+	/**
+	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
+	 * when the player has finished logging in.
+	 */
+	public static class PlayerLoggedInEvent extends PlayerEvent {
+		// For EventBus
+		public PlayerLoggedInEvent() {
+			super(null);
+		}
+
+		public PlayerLoggedInEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
@@ -74,7 +89,6 @@ public class PlayerEvent extends LivingEvent {
 	ItemPickupEvent
 	ItemCraftedEvent
 	ItemSmeltedEvent
-	PlayerLoggedInEvent
 	PlayerLoggedOutEvent
 	PlayerRespawnEvent
 	PlayerChangedDimensionEvent*/

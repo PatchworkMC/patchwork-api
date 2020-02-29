@@ -12,7 +12,7 @@ plugins {
 def ENV = System.getenv()
 
 class Globals {
-	static def baseVersion = "0.1.1"
+	static def baseVersion = "0.3.0"
 	static def mcVersion = "1.14.4"
 	static def yarnVersion = "+build.15"
 }
@@ -60,6 +60,7 @@ allprojects {
 
 		implementation 'com.patchworkmc:patchwork-eventbus:0.1.2:all'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
+		implementation 'org.apache.logging.log4j:log4j-core:2.10.0'
 
 		// For EventBus
 		implementation 'org.ow2.asm:asm:6.2'
@@ -230,7 +231,9 @@ repositories {
 		dirs 'jars'
 	}
 	mavenCentral()
+	maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
 }
+
 dependencies {
 	afterEvaluate {
 		subprojects.each {
@@ -248,6 +251,7 @@ dependencies {
 	implementation 'com.electronwill.night-config:toml:3.6.2'
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
+	include 'com.patchworkmc:patchwork-eventbus:0.1.2:all'
 
 	fileTree(dir: 'jars', include: '*.jar').each {
 		String baseName = it.name.replace(".jar", "")
