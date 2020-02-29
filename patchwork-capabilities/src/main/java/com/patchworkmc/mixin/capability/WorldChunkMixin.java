@@ -44,6 +44,6 @@ public class WorldChunkMixin implements CapabilityProviderHolder {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		provider.gatherCapabilities();
+		gatherCapabilities();
 	}
 }

@@ -60,7 +60,7 @@ public class ChunkSerializerMixin {
 		CompoundTag level = compoundTag.getCompound("Level");
 
 		if (level.containsKey("ForgeCaps")) {
-			((CapabilityProviderHolder) chunk).getCapabilityProvider().deserializeCaps(level.getCompound("ForgeCaps"));
+			((CapabilityProviderHolder) chunk).deserializeCaps(level.getCompound("ForgeCaps"));
 		}
 
 		return chunk;
@@ -68,7 +68,7 @@ public class ChunkSerializerMixin {
 
 	@Inject(method = "serialize", slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;saveToTag(Lnet/minecraft/nbt/CompoundTag;)Z"), to = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ProtoChunk;getEntities()Ljava/util/List;")), at = @At(value = "JUMP", opcode = Opcodes.GOTO, ordinal = 2), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void serializeCapabilities(ServerWorld serverWorld, Chunk chunk, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable, ChunkPos chunkPos, CompoundTag compoundTag, CompoundTag level) {
-		CompoundTag tag = ((CapabilityProviderHolder) chunk).getCapabilityProvider().serializeCaps();
+		CompoundTag tag = ((CapabilityProviderHolder) chunk).serializeCaps();
 
 		if (tag != null) {
 			level.put("ForgeCaps", tag);

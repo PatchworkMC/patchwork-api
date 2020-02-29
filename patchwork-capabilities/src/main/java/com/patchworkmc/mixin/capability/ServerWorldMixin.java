@@ -34,6 +34,6 @@ public abstract class ServerWorldMixin implements CapabilityProviderHolder {
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
 		// TODO: Requires Dimension API (IForgeDimension)
-		getCapabilityProvider().gatherCapabilities(null);
+		gatherCapabilities(null);
 	}
 }

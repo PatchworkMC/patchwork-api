@@ -48,22 +48,22 @@ public class ItemStackMixin implements CapabilityProviderHolder {
 	@Inject(method = "<init>(Lnet/minecraft/item/ItemConvertible;I)V", at = @At("RETURN"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
 		// TODO: Fix when IForgeItem is available. This shouldn't be too much of an issue now as the method would return null by default
-		provider.gatherCapabilities(null);
+		gatherCapabilities(null);
 	}
 
 	@Inject(method = "<init>(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("RETURN"))
 	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
 		// TODO: See above TODO
-		provider.gatherCapabilities(null);
+		gatherCapabilities(null);
 
 		if (tag.containsKey("ForgeCaps")) {
-			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
+			deserializeCaps(tag.getCompound("ForgeCaps"));
 		}
 	}
 
 	@Inject(method = "toTag", at = @At(value = "RETURN"))
 	private void serializeCapabilities(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
-		CompoundTag compoundTag = provider.serializeCaps();
+		CompoundTag compoundTag = serializeCaps();
 
 		if (compoundTag != null && !compoundTag.isEmpty()) {
 			tag.put("ForgeCaps", compoundTag);
@@ -72,11 +72,11 @@ public class ItemStackMixin implements CapabilityProviderHolder {
 
 	@Redirect(method = "isEqualIgnoreDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"))
 	private boolean equals(CompoundTag a, Object b, ItemStack stack) {
-		return a.equals(b) && provider.areCapsCompatible(((ItemStackMixin) (Object) stack).provider);
+		return a.equals(b) && areCapsCompatible(((ItemStackMixin) (Object) stack).provider);
 	}
 
 	@Redirect(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"))
 	private static boolean equals(CompoundTag a, Object b, ItemStack left, ItemStack right) {
-		return a.equals(b) && ((ItemStackMixin) (Object) left).provider.areCapsCompatible(((ItemStackMixin) (Object) right).provider);
+		return a.equals(b) && ((ItemStackMixin) (Object) left).areCapsCompatible(((ItemStackMixin) (Object) right).provider);
 	}
 }

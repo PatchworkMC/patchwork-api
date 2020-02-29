@@ -50,12 +50,12 @@ public class EntityMixin implements CapabilityProviderHolder {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		provider.gatherCapabilities();
+		gatherCapabilities();
 	}
 
 	@Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V"))
 	private void serializeCapabilities(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
-		CompoundTag compoundTag = provider.serializeCaps();
+		CompoundTag compoundTag = serializeCaps();
 
 		if (compoundTag != null) {
 			tag.put("ForgeCaps", compoundTag);
@@ -65,13 +65,13 @@ public class EntityMixin implements CapabilityProviderHolder {
 	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V"))
 	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
 		if (tag.containsKey("ForgeCaps")) {
-			provider.deserializeCaps(tag.getCompound("ForgeCaps"));
+			deserializeCaps(tag.getCompound("ForgeCaps"));
 		}
 	}
 
 	@Inject(method = "remove", at = @At("RETURN"))
 	private void onRemoved(CallbackInfo callback) {
-		provider.invalidateCaps();
+		invalidateCaps();
 	}
 
 	// "well, my approach is that if that becomes an issue, we'll fix it"
@@ -80,7 +80,7 @@ public class EntityMixin implements CapabilityProviderHolder {
 		removed = true;
 
 		if (!keep) {
-			provider.invalidateCaps();
+			invalidateCaps();
 		}
 	}
 }
