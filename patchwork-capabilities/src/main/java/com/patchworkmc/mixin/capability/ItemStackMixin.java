@@ -25,6 +25,7 @@ import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -67,5 +68,15 @@ public class ItemStackMixin implements CapabilityProviderHolder {
 		if (compoundTag != null && !compoundTag.isEmpty()) {
 			tag.put("ForgeCaps", compoundTag);
 		}
+	}
+
+	@Redirect(method = "isEqualIgnoreDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"))
+	private boolean equals(CompoundTag a, Object b, ItemStack stack) {
+		return a.equals(b) && provider.areCapsCompatible(((ItemStackMixin) (Object) stack).provider);
+	}
+
+	@Redirect(method = "areTagsEqual", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;equals(Ljava/lang/Object;)Z"))
+	private static boolean equals(CompoundTag a, Object b, ItemStack left, ItemStack right) {
+		return a.equals(b) && ((ItemStackMixin) (Object) left).provider.areCapsCompatible(((ItemStackMixin) (Object) right).provider);
 	}
 }

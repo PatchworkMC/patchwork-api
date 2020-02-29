@@ -6,6 +6,7 @@
     "BlockEntityMixin",
     "ChunkSerializerMixin",
     "EntityMixin",
+    "ItemEntityMixin",
     "ItemStackMixin",
     "ServerWorldMixin",
     "WorldChunkMixin",
