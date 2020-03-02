@@ -31,11 +31,25 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
 
 /**
- * This is the core holder object Capabilities.
- * Each capability will have ONE instance of this class,
- * and it will the the one passed into the {@link ICapabilityProvider} functions.
+ * Capabilities are an extensible way of attaching arbitrary interfaces to classes that support
+ * {@link ICapabilityProvider} using {@link ICapabilityProvider#getCapability}. This class is a marker that
+ * represents support for the interface held in <code>&lt;T&gt;</code>
+ *
+ * <p>This class, beyond serving as a marker, also allows creation of the default implementation of the interface as well
+ * as the ability to read and write the interface to NBT
+ *
+ * <p>When {@link CapabilityManager#register} is called, {@link CapabilityManager} creates a single instance of this class,
+ * which is then passed to any listeners of {@link com.patchworkmc.api.capability.CapabilityRegisteredCallback}.
+ *
+ * <p>After registration, instances of this class may be used with {@link ICapabilityProvider#getCapability} and the
+ * functions within {@link IStorage}
+ *
+ * <p>Each capability will have ONE instance of this class, and it will the the one passed into
+ * {@link ICapabilityProvider}'s methods
  *
  * <p>The {@link CapabilityManager} is in charge of creating this class.
+ *
+ * @param <T> The data which is to be attached
  */
 public class Capability<T> {
 	public interface IStorage<T> {
