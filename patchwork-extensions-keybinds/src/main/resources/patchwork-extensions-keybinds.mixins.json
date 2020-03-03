@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.extensions.keybinds",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "KeyBindingHooks",
+    "MixinControlsListWidget$KeyBindingEntry",
+    "MixinControlsOptionsScreen",
+    "MixinGameOptions",
+    "MixinKeyBinding"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,2 @@
+archivesBaseName = "patchwork-extensions"
+version = getSubprojectVersion(project, "0.1.0")

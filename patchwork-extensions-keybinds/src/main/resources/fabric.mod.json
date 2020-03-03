@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-keybinds",
+  "version": "${version}",
+  "name": "Patchwork Extensions Keybinds",
+  "description": "Implements the Minecraft Forge keybinds API",
+  "authors": [
+    "Patchwork"
+  ],
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-extensions-keybinds/icon.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
+  },
+  "mixins": [
+    "patchwork-extensions-keybinds.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
