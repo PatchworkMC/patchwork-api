@@ -17,7 +17,6 @@
     "MixinEntityType",
     "MixinFeature",
     "MixinFluid",
-    "MixinGameOptions",
     "MixinItem",
     "MixinMemoryModuleType",
     "MixinPaintingMotive",
@@ -33,6 +32,10 @@
     "MixinStatusEffect",
     "MixinSurfaceBuilder",
     "MixinVillagerProfession"
+  ],
+  "client": [
+    "MixinGameOptions",
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
