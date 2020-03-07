@@ -47,22 +47,22 @@ public class MixinControlsOptionsScreen {
 	}
 
 	@Inject(method = "keyPressed", at = @At("HEAD"))
-	private void setKeyCodeHead(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+	private void saveFocusedKeyBinding(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		focusedTempBinding = focusedBinding;
 	}
 
 	@Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/options/GameOptions;setKeyCode(Lnet/minecraft/client/options/KeyBinding;Lnet/minecraft/client/util/InputUtil$KeyCode;)V", ordinal = 0))
-	private void setKeyCodeOne(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+	private void setUnknownKeyCodeModifier(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		((IForgeKeybinding) this.focusedBinding).setKeyModifierAndCode(KeyModifier.getActiveModifier(), InputUtil.UNKNOWN_KEYCODE);
 	}
 
 	@Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/options/GameOptions;setKeyCode(Lnet/minecraft/client/options/KeyBinding;Lnet/minecraft/client/util/InputUtil$KeyCode;)V", ordinal = 1))
-	private void setKeyCodeTwo(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+	private void setKnownKeyCodeModifier(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		((IForgeKeybinding) this.focusedBinding).setKeyModifierAndCode(KeyModifier.getActiveModifier(), InputUtil.getKeyCode(keyCode, scanCode));
 	}
 
 	@Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/SystemUtil;getMeasuringTimeMs()J"))
-	private void setKeyCodeReturn(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+	private void restoreFocusedKeyBinding(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
 		if (focusedTempBinding != null) {
 			if (KeyModifier.isKeyCodeModifier(((IForgeKeybinding) this.focusedTempBinding).getKey())) {
 				focusedBinding = focusedTempBinding;

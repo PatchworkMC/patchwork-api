@@ -3,7 +3,7 @@
   "package": "com.patchworkmc.mixin.extensions.keybinds",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "KeyBindingHooks",
+    "KeyBindingAccessor",
     "MixinControlsListWidget$KeyBindingEntry",
     "MixinControlsOptionsScreen",
     "MixinGameOptions",

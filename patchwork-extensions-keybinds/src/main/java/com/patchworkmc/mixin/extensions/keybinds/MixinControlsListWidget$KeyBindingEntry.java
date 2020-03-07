@@ -32,7 +32,7 @@ import net.minecraft.client.options.KeyBinding;
 @Mixin(ControlsListWidget.KeyBindingEntry.class)
 public class MixinControlsListWidget$KeyBindingEntry {
 	@Inject(method = "method_19870", at = @At("HEAD"))
-	private void method_19870(KeyBinding keyBinding, ButtonWidget widget, CallbackInfo ci) {
+	private void onResetButtonPressed(KeyBinding keyBinding, ButtonWidget widget, CallbackInfo ci) {
 		((IForgeKeybinding) keyBinding).setToDefault();
 	}
 }

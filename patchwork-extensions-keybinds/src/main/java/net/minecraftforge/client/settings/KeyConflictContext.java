@@ -24,7 +24,7 @@ import net.minecraft.client.MinecraftClient;
 public enum KeyConflictContext implements IKeyConflictContext {
 	/**
 	 * Universal key bindings are used in every context and will conflict with any other context.
-	 * Key Bindings are universal by default.
+	 * Key bindings are universal by default.
 	 */
 	UNIVERSAL {
 		@Override

@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.client.options.KeyBinding;
 
 @Mixin(KeyBinding.class)
-public interface KeyBindingHooks {
+public interface KeyBindingAccessor {
 	@Accessor("timesPressed")
 	int getTimesPressed();
 

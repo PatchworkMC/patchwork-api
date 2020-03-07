@@ -60,8 +60,15 @@ public interface IForgeKeybinding {
 	 * Returns true when one of the bindings' key codes conflicts with the other's modifier.
 	 */
 	default boolean hasKeyCodeModifierConflict(KeyBinding other) {
-		if (getKeyConflictContext().conflicts(((IForgeKeybinding) other).getKeyConflictContext()) || ((IForgeKeybinding) other).getKeyConflictContext().conflicts(getKeyConflictContext())) {
-			return getKeyModifier().matches(((IForgeKeybinding) other).getKey()) || ((IForgeKeybinding) other).getKeyModifier().matches(getKey());
+		IKeyConflictContext keyConflictContext = getKeyConflictContext();
+		IKeyConflictContext otherKeyConflictContext = ((IForgeKeybinding) other).getKeyConflictContext();
+		KeyModifier keyModifier = getKeyModifier();
+		KeyModifier otherKeyModifier = ((IForgeKeybinding) other).getKeyModifier();
+		InputUtil.KeyCode key = getKey();
+		InputUtil.KeyCode otherKey = ((IForgeKeybinding) other).getKey();
+
+		if (keyConflictContext.conflicts(otherKeyConflictContext) || otherKeyConflictContext.conflicts(keyConflictContext)) {
+			return keyModifier.matches(otherKey) || otherKeyModifier.matches(key);
 		}
 
 		return false;

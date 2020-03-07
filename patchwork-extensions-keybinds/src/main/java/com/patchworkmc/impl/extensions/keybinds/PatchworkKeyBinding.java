@@ -65,11 +65,11 @@ public class PatchworkKeyBinding extends KeyBinding {
 	public PatchworkKeyBinding(String description, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputUtil.KeyCode keyCode, String category) {
 		this(description, keyCode.getCategory(), keyCode.getKeyCode(), category);
 		((IForgeKeybinding) this).setKeyConflictContext(keyConflictContext);
-		((IPatchworkKeyBinding) this).setKeyModifier(keyModifier);
-		((IPatchworkKeyBinding) this).setKeyModifierDefault(keyModifier);
+		((KeyBindingWithModifierSetter) this).setKeyModifier(keyModifier);
+		((KeyBindingWithModifierSetter) this).setKeyModifierDefault(keyModifier);
 
 		if (((IForgeKeybinding) this).getKeyModifier().matches(keyCode)) {
-			((IPatchworkKeyBinding) this).setKeyModifier(KeyModifier.NONE);
+			((KeyBindingWithModifierSetter) this).setKeyModifier(KeyModifier.NONE);
 		}
 	}
 }

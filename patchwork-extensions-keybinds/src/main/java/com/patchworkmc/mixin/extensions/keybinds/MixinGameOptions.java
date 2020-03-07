@@ -100,7 +100,7 @@ public class MixinGameOptions {
 	public KeyBinding keySwapHands;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void init(MinecraftClient client, File optionsFile, CallbackInfo ci) {
+	private void addVanillaConflictContexts(MinecraftClient client, File optionsFile, CallbackInfo ci) {
 		KeyConflictContext inGame = KeyConflictContext.IN_GAME;
 		((IForgeKeybinding) keyForward).setKeyConflictContext(inGame);
 		((IForgeKeybinding) keyLeft).setKeyConflictContext(inGame);
@@ -129,17 +129,19 @@ public class MixinGameOptions {
 
 	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/InputUtil;fromName(Ljava/lang/String;)Lnet/minecraft/client/util/InputUtil$KeyCode;"),
 					locals = LocalCapture.CAPTURE_FAILHARD)
-	private void setKeyCodeAndActuallyDoStuff(CallbackInfo ci, List list, CompoundTag compoundTag, Iterator var3, String string2, String string3, KeyBinding[] var6, int var7, int var8, KeyBinding keyBinding, String var11) {
-		if (string3.indexOf(':') != -1) {
-			String[] pts = string3.split(":");
+	private void setKeyCodeAndActuallyDoStuff(CallbackInfo ci, List optionsFileLines, CompoundTag options, Iterator keys, String key, String value, KeyBinding[] keysAll, int keysAllLength, int keyBindingIndex, KeyBinding keyBinding, String noIdeaWhatThisIs) {
+		if (value.indexOf(':') != -1) {
+			String[] pts = value.split(":");
 			((IForgeKeybinding) keyBinding).setKeyModifierAndCode(KeyModifier.valueFromString(pts[1]), InputUtil.fromName(pts[0]));
 		} else {
-			((IForgeKeybinding) keyBinding).setKeyModifierAndCode(KeyModifier.NONE, InputUtil.fromName(string3));
+			((IForgeKeybinding) keyBinding).setKeyModifierAndCode(KeyModifier.NONE, InputUtil.fromName(value));
 		}
 	}
 
 	@Redirect(method = "write", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/options/KeyBinding;getName()Ljava/lang/String;"))
 	private String getNameWithModifiers(KeyBinding keyBinding) {
-		return keyBinding.getName() + (((IForgeKeybinding) keyBinding).getKeyModifier() != KeyModifier.NONE ? ":" + ((IForgeKeybinding) keyBinding).getKeyModifier() : "");
+		KeyModifier modifier = ((IForgeKeybinding) keyBinding).getKeyModifier();
+		String modifierSuffix = modifier != KeyModifier.NONE ? ":" + modifier : "";
+		return keyBinding.getName() + modifierSuffix;
 	}
 }

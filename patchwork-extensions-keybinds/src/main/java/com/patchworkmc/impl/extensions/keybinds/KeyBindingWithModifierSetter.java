@@ -21,7 +21,7 @@ package com.patchworkmc.impl.extensions.keybinds;
 
 import net.minecraftforge.client.settings.KeyModifier;
 
-public interface IPatchworkKeyBinding {
+public interface KeyBindingWithModifierSetter {
 	void setKeyModifier(KeyModifier modifier);
 
 	void setKeyModifierDefault(KeyModifier keyModifierDefault);

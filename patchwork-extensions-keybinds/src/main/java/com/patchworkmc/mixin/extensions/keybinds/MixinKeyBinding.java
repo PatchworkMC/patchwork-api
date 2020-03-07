@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -41,10 +42,10 @@ import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 
-import com.patchworkmc.impl.extensions.keybinds.IPatchworkKeyBinding;
+import com.patchworkmc.impl.extensions.keybinds.KeyBindingWithModifierSetter;
 
 @Mixin(KeyBinding.class)
-public abstract class MixinKeyBinding implements IForgeKeybinding, IPatchworkKeyBinding {
+public abstract class MixinKeyBinding implements IForgeKeybinding, KeyBindingWithModifierSetter {
 	@Shadow
 	private InputUtil.KeyCode keyCode;
 
@@ -62,8 +63,11 @@ public abstract class MixinKeyBinding implements IForgeKeybinding, IPatchworkKey
 	@Shadow
 	@Final
 	private static Map<String, Integer> categoryOrderMap;
+	@Unique
 	private KeyModifier keyModifierDefault = KeyModifier.NONE;
+	@Unique
 	private KeyModifier keyModifier = KeyModifier.NONE;
+	@Unique
 	private IKeyConflictContext keyConflictContext = KeyConflictContext.UNIVERSAL;
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
@@ -77,7 +81,7 @@ public abstract class MixinKeyBinding implements IForgeKeybinding, IPatchworkKey
 
 		for (KeyBinding keybinding : ((KeyBindingMap) keysByCode).lookupAll(keyCode)) {
 			if (keybinding != null) {
-				((KeyBindingHooks) keybinding).setTimesPressed(((KeyBindingHooks) keybinding).getTimesPressed() + 1);
+				((KeyBindingAccessor) keybinding).setTimesPressed(((KeyBindingAccessor) keybinding).getTimesPressed() + 1);
 			}
 		}
 	}
@@ -88,71 +92,71 @@ public abstract class MixinKeyBinding implements IForgeKeybinding, IPatchworkKey
 
 		for (KeyBinding keybinding : ((KeyBindingMap) keysByCode).lookupAll(keyCode)) {
 			if (keybinding != null) {
-				((KeyBindingHooks) keybinding).setPressed(pressed);
+				((KeyBindingAccessor) keybinding).setPressed(pressed);
 			}
 		}
 	}
 
 	@Inject(method = "isPressed", at = @At("RETURN"), cancellable = true)
 	private void isPressed(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(cir.getReturnValueZ() && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext()));
+		if (cir.getReturnValueZ() && (!getKeyConflictContext().isActive() || !getKeyModifier().isActive(getKeyConflictContext()))) {
+			cir.setReturnValue(false);
+		}
 	}
 
 	@Inject(method = "method_1430", at = @At("HEAD"), cancellable = true)
-	private void compareTo(KeyBinding keyBinding, CallbackInfoReturnable<Integer> cir) {
-		if (this.getCategory().equals(keyBinding.getCategory())) {
-			cir.setReturnValue(I18n.translate(this.getId()).compareTo(I18n.translate(keyBinding.getId())));
-			return;
+	private void compareHandleNullCategories(KeyBinding keyBinding, CallbackInfoReturnable<Integer> cir) {
+		if (!this.getCategory().equals(keyBinding.getCategory())) {
+			Integer tCat = categoryOrderMap.get(this.getCategory());
+			Integer oCat = categoryOrderMap.get(keyBinding.getCategory());
+
+			if (tCat == null && oCat != null) {
+				cir.setReturnValue(1);
+			} else if (tCat != null && oCat == null) {
+				cir.setReturnValue(-1);
+			} else if (tCat == null && oCat == null) {
+				cir.setReturnValue(I18n.translate(this.getCategory()).compareTo(I18n.translate(keyBinding.getCategory())));
+			}
 		}
-
-		Integer tCat = categoryOrderMap.get(this.getCategory());
-		Integer oCat = categoryOrderMap.get(keyBinding.getCategory());
-
-		if (tCat == null && oCat != null) {
-			cir.setReturnValue(1);
-			return;
-		}
-
-		if (tCat != null && oCat == null) {
-			cir.setReturnValue(-1);
-			return;
-		}
-
-		if (tCat == null && oCat == null) {
-			cir.setReturnValue(I18n.translate(this.getCategory()).compareTo(I18n.translate(keyBinding.getCategory())));
-			return;
-		}
-
-		cir.setReturnValue(tCat.compareTo(oCat));
 	}
 
 	@Inject(method = "equals", at = @At("HEAD"), cancellable = true)
-	private void equals(KeyBinding binding, CallbackInfoReturnable<Boolean> cir) {
-		if (getKeyConflictContext().conflicts(((IForgeKeybinding) binding).getKeyConflictContext()) || ((IForgeKeybinding) binding).getKeyConflictContext().conflicts(getKeyConflictContext())) {
+	private void conflictAwareEquals(KeyBinding binding, CallbackInfoReturnable<Boolean> cir) {
+		IKeyConflictContext keyConflictContext = getKeyConflictContext();
+		IKeyConflictContext otherKeyConflictContext = ((IForgeKeybinding) binding).getKeyConflictContext();
+
+		if (keyConflictContext.conflicts(otherKeyConflictContext) || otherKeyConflictContext.conflicts(keyConflictContext)) {
 			KeyModifier keyModifier = getKeyModifier();
 			KeyModifier otherKeyModifier = ((IForgeKeybinding) binding).getKeyModifier();
+			InputUtil.KeyCode key = getKey();
+			InputUtil.KeyCode otherKey = ((IForgeKeybinding) binding).getKey();
 
-			if (keyModifier.matches(((IForgeKeybinding) binding).getKey()) || otherKeyModifier.matches(getKey())) {
+			if (keyModifier.matches(otherKey) || otherKeyModifier.matches(key)) {
 				cir.setReturnValue(true);
-			} else if (getKey().equals(((IForgeKeybinding) binding).getKey())) {
-				// IN_GAME key contexts have a conflict when at least one modifier is NONE.
-				// For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
-				// GUI and other key contexts do not have this limitation.
-				cir.setReturnValue(keyModifier == otherKeyModifier
-								|| (getKeyConflictContext().conflicts(KeyConflictContext.IN_GAME)
-								&& (keyModifier == KeyModifier.NONE || otherKeyModifier == KeyModifier.NONE)));
+			} else if (key.equals(otherKey)) {
+				if (keyModifier == otherKeyModifier) {
+					cir.setReturnValue(true);
+				} else if (keyConflictContext.conflicts(KeyConflictContext.IN_GAME)) {
+					cir.setReturnValue(keyModifier == KeyModifier.NONE || otherKeyModifier == KeyModifier.NONE);
+				} else {
+					cir.setReturnValue(false);
+				}
 			}
 		}
 	}
 
 	@Inject(method = "getLocalizedName()Ljava/lang/String;", at = @At("RETURN"), cancellable = true)
 	private void getLocalizedName(CallbackInfoReturnable<String> cir) {
-		cir.setReturnValue(getKeyModifier().getLocalizedComboName(keyCode, cir::getReturnValue));
+		if (getKeyModifier() != KeyModifier.NONE) {
+			cir.setReturnValue(getKeyModifier().getLocalizedComboName(keyCode, cir::getReturnValue));
+		}
 	}
 
 	@Inject(method = "isDefault", at = @At("RETURN"), cancellable = true)
 	private void isDefault(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(cir.getReturnValueZ() && getKeyModifier() == getKeyModifierDefault());
+		if (cir.getReturnValueZ() && getKeyModifier() != getKeyModifierDefault()) {
+			cir.setReturnValue(false);
+		}
 	}
 
 	@Nonnull
