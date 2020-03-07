@@ -16,8 +16,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.6.2",
-    "fabric": "*",
-    "patchwork-fml": "*"
+    "fabric": "*"
   },
   "mixins": [
     "patchwork-extensions-item.mixins.json"
