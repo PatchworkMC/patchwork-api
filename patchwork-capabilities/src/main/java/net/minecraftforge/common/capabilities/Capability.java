@@ -91,7 +91,7 @@ public class Capability<T> {
 		 * @param capability The capability being stored.
 		 * @param instance   An instance of that capability's interface.
 		 * @param side       The side of the object the instance is associated with.
-		 * @param nbt        A tag holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+		 * @param nbt        A {@link Tag} holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
 		 */
 		void readNBT(Capability<T> capability, T instance, Direction side, Tag nbt);
 	}

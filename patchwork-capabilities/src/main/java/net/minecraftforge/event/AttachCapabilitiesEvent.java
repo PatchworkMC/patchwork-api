@@ -31,16 +31,16 @@ import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraft.util.Identifier;
 
 /**
- * Fired whenever an object with Capabilities support (currently {@link net.minecraft.block.entity.BlockEntity block entities}, {@link net.minecraft.item.Item items}, and {@link javax.swing.text.html.parser.Entity entities})
+ * Fired whenever an object with Capabilities support (currently {@link net.minecraft.block.entity.BlockEntity block entities}, {@link net.minecraft.item.ItemStack items}, {@link net.minecraft.entity.Entity entities}, {@link net.minecraft.world.World worlds} and {@link net.minecraft.world.chunk.WorldChunk chunks})
  * is created. Allowing for the attachment of arbitrary capability providers.
  *
  * <p>Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
 public class AttachCapabilitiesEvent<T> extends GenericEvent<T> {
-	private final T obj;
-	private final Map<Identifier, ICapabilityProvider> caps = Maps.newLinkedHashMap();
-	private final Map<Identifier, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
+	private final T object;
+	private final Map<Identifier, ICapabilityProvider> capabilities = Maps.newLinkedHashMap();
+	private final Map<Identifier, ICapabilityProvider> view = Collections.unmodifiableMap(capabilities);
 	private final List<Runnable> listeners = Lists.newArrayList();
 	private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
 
@@ -49,32 +49,33 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T> {
 		this(null, null);
 	}
 
-	public AttachCapabilitiesEvent(Class<T> type, T obj) {
+	public AttachCapabilitiesEvent(Class<T> type, T object) {
 		super(type);
-		this.obj = obj;
+		this.object = object;
 	}
 
 	/**
-	 * Retrieves the object that is being created, Not much state is set.
+	 * Retrieves the object that is being created.<br>
+	 * <b>Note:</b> Object creation is still incomplete at this point
 	 */
 	public T getObject() {
-		return this.obj;
+		return this.object;
 	}
 
 	/**
-	 * Adds a capability to be attached to this object.
+	 * Adds a {@link net.minecraftforge.common.capabilities.Capability} to be attached to this object.
 	 * Keys MUST be unique, it is suggested that you set the domain to your mod ID.
-	 * If the capability is an instance of INBTSerializable, this key will be used when serializing this capability.
+	 * If the capability is an instance of {@link net.minecraftforge.common.util.INBTSerializable}, this key will be used when serializing this capability.
 	 *
 	 * @param key The name of owner of this capability provider.
-	 * @param cap The capability provider
+	 * @param cap The {@link ICapabilityProvider capability provider}
 	 */
 	public void addCapability(Identifier key, ICapabilityProvider cap) {
-		if (caps.containsKey(key)) {
+		if (capabilities.containsKey(key)) {
 			throw new IllegalStateException("Duplicate Capability Key: " + key + " " + cap);
 		}
 
-		this.caps.put(key, cap);
+		this.capabilities.put(key, cap);
 	}
 
 	/**

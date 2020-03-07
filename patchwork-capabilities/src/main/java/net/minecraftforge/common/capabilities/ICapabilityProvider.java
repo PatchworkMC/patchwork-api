@@ -30,7 +30,8 @@ public interface ICapabilityProvider {
 	/**
 	 * Retrieves the {@link LazyOptional optional} handler for the capability requested on the specific side.
 	 * The return value <strong>CAN</strong> be the same for multiple faces.
-	 * Modders are encouraged to cache this value, using the listener capabilities of the optional to
+	 *
+	 * <p>Modders are encouraged to cache this value, using the listener capabilities of the optional to
 	 * be notified if the requested capability get lost.
 	 *
 	 * @param capability The {@link Capability capability} to check

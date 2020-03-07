@@ -25,8 +25,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When placed on a FIELD, the field will be set to an
- * instance of Capability once that capability is registered.
+ * When placed on a field, the field will be set to an
+ * instance of {@link Capability} once that capability is registered.
  * That field must be static and be able to hold a instance
  * of 'Capability'
  *
@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * private static final Capability&lt;IExampleCapability&gt; TEST_CAP = null;
  * </blockquote>
  *
- * <p>When placed on a METHOD, the method will be invoked once the
+ * <p>When placed on a method, the method will be invoked once the
  * capability is registered. This allows you to have a 'enable features'
  * callback. It MUST have one parameter of type 'Capability;
  *
@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
  * private static void capRegistered(Capability&lt;IExampleCapability&gt; cap) {}
  * </blockquote>
  *
- * <b>Warning</b>: Capability injections are run in the thread that the capablity is registered.
+ * <b>Warning</b>: Capability injections are run in the thread that the capability is registered.
  * Due to parallel mod loading, this can potentially be off of the main thread.
  */
 @Retention(RetentionPolicy.RUNTIME)

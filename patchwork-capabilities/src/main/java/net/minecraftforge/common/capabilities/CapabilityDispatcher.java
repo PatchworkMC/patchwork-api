@@ -39,7 +39,8 @@ import net.minecraft.util.math.Direction;
 /**
  * A high-speed implementation of a {@link Capability} delegator.
  * This is used to wrap the results of the {@link net.minecraftforge.event.AttachCapabilitiesEvent}.
- * It is HIGHLY recommended that you DO NOT use this approach unless
+ *
+ * <p>It is HIGHLY recommended that you DO NOT use this approach unless
  * you MUST delegate to multiple providers instead just implementing
  * your handlers using normal if statements.
  *
@@ -59,34 +60,34 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 
 	@SuppressWarnings("unchecked")
 	public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> providers, List<Runnable> listeners, @Nullable ICapabilityProvider parent) {
-		List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-		List<INBTSerializable<Tag>> lstWriters = Lists.newArrayList();
-		List<String> lstNames = Lists.newArrayList();
-		this.listeners = listeners;
+		List<ICapabilityProvider> capabilities = Lists.newArrayList();
+		List<INBTSerializable<Tag>> writers = Lists.newArrayList();
+		List<String> names = Lists.newArrayList();
 
 		// Parents go first!
 		if (parent != null) {
-			lstCaps.add(parent);
+			capabilities.add(parent);
 
 			if (parent instanceof INBTSerializable) {
-				lstWriters.add((INBTSerializable<Tag>) parent);
-				lstNames.add("Parent");
+				writers.add((INBTSerializable<Tag>) parent);
+				names.add("Parent");
 			}
 		}
 
 		for (Map.Entry<Identifier, ICapabilityProvider> entry : providers.entrySet()) {
 			ICapabilityProvider prov = entry.getValue();
-			lstCaps.add(prov);
+			capabilities.add(prov);
 
 			if (prov instanceof INBTSerializable) {
-				lstWriters.add((INBTSerializable<Tag>) prov);
-				lstNames.add(entry.getKey().toString());
+				writers.add((INBTSerializable<Tag>) prov);
+				names.add(entry.getKey().toString());
 			}
 		}
 
-		this.providers = lstCaps.toArray(new ICapabilityProvider[0]);
-		writers = lstWriters.toArray(new INBTSerializable[0]);
-		names = lstNames.toArray(new String[0]);
+		this.listeners = listeners;
+		this.providers = capabilities.toArray(new ICapabilityProvider[0]);
+		this.writers = writers.toArray(new INBTSerializable[0]);
+		this.names = names.toArray(new String[0]);
 	}
 
 	@Nonnull
@@ -144,8 +145,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 	// Called from ItemStack to compare equality.
 	// Only compares serializable caps.
 	public boolean areCompatible(@Nullable CapabilityDispatcher other) {
+		// Do some checks before costly NBT serialization and comparisons
 		if (other == null) {
-			return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
+			return this.writers.length == 0;
 		}
 
 		if (this.writers.length == 0) {

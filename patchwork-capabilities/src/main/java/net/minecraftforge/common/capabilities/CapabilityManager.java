@@ -40,7 +40,7 @@ public enum CapabilityManager {
 	private final Map<String, Capability<?>> providers = new HashMap<>();
 
 	/**
-	 * Registers a capability to be consumed by others.
+	 * Registers a {@link Capability} to be consumed by others.
 	 * APIs who define the capability should call this.
 	 * To retrieve the Capability instance, use the @CapabilityInject annotation.
 	 * This method is safe to call during parallel mod loading.
