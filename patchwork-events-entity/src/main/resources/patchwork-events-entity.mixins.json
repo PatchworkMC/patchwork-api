@@ -3,6 +3,7 @@
   "package": "com.patchworkmc.mixin.event.entity",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinEntity",
     "MixinEntityType",
     "MixinLivingEntity",
     "MixinMobEntity",
@@ -11,7 +12,8 @@
     "MixinPlayerManager",
     "MixinServerPlayerEntity",
     "MixinServerWorld",
-    "MixinSpawnHelper"
+    "MixinSpawnHelper",
+    "MixinWorldChunk"
   ],
   "client": [
     "MixinClientWorld",

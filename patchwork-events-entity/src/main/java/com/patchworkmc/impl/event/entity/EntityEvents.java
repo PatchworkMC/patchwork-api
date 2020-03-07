@@ -20,6 +20,7 @@
 package com.patchworkmc.impl.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -38,6 +39,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
@@ -77,6 +80,14 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, world));
 	}
 
+	public static void onEntityConstruct(Entity entity) {
+		MinecraftForge.EVENT_BUS.post(new EntityEvent.EntityConstructing(entity));
+	}
+
+	public static void onEnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
+		MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(entity, newChunkX, newChunkZ, oldChunkX, oldChunkZ));
+	}
+
 	// PlayerEvents
 	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
@@ -107,6 +118,12 @@ public class EntityEvents implements ModInitializer {
 	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
 		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+	}
+
+	public static float getEyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
+		EntityEvent.EyeHeight event = new EntityEvent.EyeHeight(entity, pose, size, defaultHeight);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getNewHeight();
 	}
 
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
