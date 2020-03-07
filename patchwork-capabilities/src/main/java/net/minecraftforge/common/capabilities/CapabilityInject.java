@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * When placed on a field, the field will be set to an
  * instance of {@link Capability} once that capability is registered.
  * That field must be static and be able to hold a instance
- * of 'Capability'
+ * of '{@link Capability}'
  *
  * <p>Example:
  * <blockquote>

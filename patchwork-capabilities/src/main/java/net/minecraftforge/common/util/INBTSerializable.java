@@ -22,7 +22,7 @@ package net.minecraftforge.common.util;
 import net.minecraft.nbt.Tag;
 
 /**
- * An interface designed to unify various things in the Minecraft
+ * An interface designed to unify various things in Minecraft.
  * code base that can be serialized to and from an {@link Tag NBT tag}
  */
 public interface INBTSerializable<T extends Tag> {
