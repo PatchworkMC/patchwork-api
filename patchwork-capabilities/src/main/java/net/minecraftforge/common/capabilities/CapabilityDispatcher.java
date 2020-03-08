@@ -75,11 +75,11 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 		}
 
 		for (Map.Entry<Identifier, ICapabilityProvider> entry : providers.entrySet()) {
-			ICapabilityProvider prov = entry.getValue();
-			capabilities.add(prov);
+			ICapabilityProvider provider = entry.getValue();
+			capabilities.add(provider);
 
-			if (prov instanceof INBTSerializable) {
-				writers.add((INBTSerializable<Tag>) prov);
+			if (provider instanceof INBTSerializable) {
+				writers.add((INBTSerializable<Tag>) provider);
 				names.add(entry.getKey().toString());
 			}
 		}

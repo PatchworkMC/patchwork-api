@@ -47,7 +47,12 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider {
 	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
 		AttachCapabilitiesEvent<B> event = new AttachCapabilitiesEvent<>(baseClass, (B) this);
 		MinecraftForge.EVENT_BUS.post(event);
-		capabilities = !event.getCapabilities().isEmpty() || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
+
+		if (!event.getCapabilities().isEmpty() || parent != null) {
+			capabilities = new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent);
+		} else {
+			capabilities = null;
+		}
 	}
 
 	public final @Nullable CapabilityDispatcher getCapabilities() {

@@ -63,7 +63,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T> {
 	}
 
 	/**
-	 * Adds a {@link net.minecraftforge.common.capabilities.Capability} to be attached to this object.
+	 * Adds a {@link net.minecraftforge.common.capabilities.ICapabilityProvider capability provider} to be attached to this object.
 	 * Keys MUST be unique, it is suggested that you set the domain to your mod ID.
 	 * If the capability is an instance of {@link net.minecraftforge.common.util.INBTSerializable}, this key will be used when serializing this capability.
 	 *

@@ -33,10 +33,10 @@ import com.patchworkmc.impl.capability.CapabilityProviderHolder;
 public class ItemEntityMixin {
 	@Inject(method = "merge", at = @At("HEAD"), cancellable = true)
 	private static void merge(ItemEntity targetEntity, ItemStack targetStack, ItemEntity sourceEntity, ItemStack sourceStack, CallbackInfo callbackInfo) {
-		CapabilityProviderHolder a = (CapabilityProviderHolder) (Object) targetStack;
-		CapabilityProviderHolder b = (CapabilityProviderHolder) (Object) targetStack;
+		CapabilityProviderHolder source = (CapabilityProviderHolder) (Object) sourceStack;
+		CapabilityProviderHolder target = (CapabilityProviderHolder) (Object) targetStack;
 
-		if (!a.areCapsCompatible(b.getCapabilityProvider())) {
+		if (!source.areCapsCompatible(target.getCapabilityProvider())) {
 			callbackInfo.cancel();
 		}
 	}
