@@ -22,13 +22,16 @@ package net.minecraftforge.fml.network;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.container.ContainerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.text.Text;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -225,6 +228,80 @@ public class FMLPlayMessages {
 		}
 	}
 
-	// TODO: OpenContainer
+	public static class OpenContainer {
+		private final int id;
+		private final int windowId;
+		private final Text name;
+		private final PacketByteBuf additionalData;
+
+		// Note: package-private on Forge
+		public OpenContainer(ContainerType<?> id, int windowId, Text name, PacketByteBuf additionalData) {
+			this(Registry.CONTAINER.getRawId(id), windowId, name, additionalData);
+		}
+
+		private OpenContainer(int id, int windowId, Text name, PacketByteBuf additionalData) {
+			this.id = id;
+			this.windowId = windowId;
+			this.name = name;
+			this.additionalData = additionalData;
+		}
+
+		public static void encode(OpenContainer msg, PacketByteBuf buf) {
+			buf.writeVarInt(msg.id);
+			buf.writeVarInt(msg.windowId);
+			buf.writeText(msg.name);
+			buf.writeByteArray(msg.additionalData.readByteArray());
+		}
+
+		public static OpenContainer decode(PacketByteBuf buf) {
+			return new OpenContainer(buf.readVarInt(), buf.readVarInt(), buf.readText(), new PacketByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
+		}
+
+		public static void handle(OpenContainer msg, PacketContext context) {
+			// TODO: IForgeContainerType
+
+			throw new UnsupportedOperationException("Cannot yet handle custom OpenContainer packets");
+
+			/*PatchworkNetworking.enqueueWork(context.getTaskQueue(), () -> {
+				Screens.getScreenFactory(msg.getType(), MinecraftClient.getInstance(), msg.getWindowId(), msg.getName())
+						.ifPresent(f -> {
+							Container c = msg.getType().create(msg.getWindowId(), MinecraftClient.getInstance().player.inventory, msg.getAdditionalData());
+							@SuppressWarnings("unchecked")
+							Screen s = ((Screens.Provider<Container, ?>) f).create(c, MinecraftClient.getInstance().player.inventory, msg.getName());
+							MinecraftClient.getInstance().player.container = ((ContainerProvider<?>) s).getContainer();
+							MinecraftClient.getInstance().openScreen(s);
+						});
+			});*/
+		}
+
+		public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> contextSupplier) {
+			NetworkEvent.Context context = contextSupplier.get();
+
+			if (context.getDirection().getReceptionSide() != LogicalSide.CLIENT) {
+				return;
+			}
+
+			handle(msg, context);
+
+			context.setPacketHandled(true);
+		}
+
+		public final ContainerType<?> getType() {
+			return Registry.CONTAINER.get(this.id);
+		}
+
+		public int getWindowId() {
+			return windowId;
+		}
+
+		public Text getName() {
+			return name;
+		}
+
+		public PacketByteBuf getAdditionalData() {
+			return additionalData;
+		}
+	}
+
 	// TODO: DimensionInfoMessage
 }

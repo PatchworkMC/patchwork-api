@@ -17,17 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.impl.networking;
+package com.patchworkmc.mixin.networking;
 
-import java.util.function.Consumer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.container.NameableContainerProvider;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.PacketByteBuf;
 
-public interface MessageFactory {
-	Packet<?> getEntitySpawningPacket(Entity entity);
-	void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerProvider provider, Consumer<PacketByteBuf> extraDataWriter);
+import com.patchworkmc.impl.networking.ContainerSyncAccess;
+
+@Mixin(ServerPlayerEntity.class)
+public class MixinServerPlayerEntity implements ContainerSyncAccess {
+	@Accessor
+	private int getContainerSyncId() {
+		throw new AssertionError("Mixin not applied");
+	}
+
+	@Invoker
+	private void invokeIncrementContainerSyncId() {
+		throw new AssertionError("Mixin not applied");
+	}
+
+	@Override
+	public int patchwork$getNewContainerSyncId() {
+		invokeIncrementContainerSyncId();
+
+		return getContainerSyncId();
+	}
 }
