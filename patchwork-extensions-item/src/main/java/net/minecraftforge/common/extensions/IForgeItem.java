@@ -194,7 +194,6 @@ public interface IForgeItem {
 	default void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 	}
 
-	// TODO: Call locations: Forge classes: ForgeHooks
 	/**
 	 * Called when the player Left Clicks (attacks) an entity. Processed before
 	 * damage is done, if return value is true further processing is canceled and

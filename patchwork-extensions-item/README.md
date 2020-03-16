@@ -62,9 +62,6 @@ Patches: **LivingEntity**
 Forge classes: IForgeItemStack  
 void onUsingTick(ItemStack stack, LivingEntity player, int count)
 
-Forge classes: ForgeHooks  
-boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity)
-
 Patches: **BannerDuplicateRecipe**, **BookCloningRecipe**, **Recipe**, **BrewingStandBlockEntity**, **AbstractFurnaceBlockEntity**  
 Forge classes: IForgeItemStack, ForgeHooks  
 ItemStack getContainerItem(ItemStack itemStack)

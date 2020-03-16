@@ -119,4 +119,13 @@ public class MixinPlayerEntity {
 
 		return EntityEvents.onLivingDamage(entity, source, damage);
 	}
+
+	@Inject(method = "attack(Lnet/minecraft/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
+	private void onAttackEntity(Entity target, CallbackInfo callback) {
+		PlayerEntity player = (PlayerEntity) (Object) this;
+
+		if (!EntityEvents.attackEntity(player, target)) {
+			callback.cancel();
+		}
+	}
 }

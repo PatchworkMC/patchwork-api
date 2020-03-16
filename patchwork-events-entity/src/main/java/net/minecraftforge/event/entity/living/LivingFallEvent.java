@@ -36,7 +36,7 @@ import net.minecraft.entity.LivingEntity;
  * <p>This event is cancellable.
  * If this event is cancelled, the {@link LivingEntity} does not take fall damage.</p>
  *
- * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
+ * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
  */
 public class LivingFallEvent extends LivingEvent {
 	private float distance;

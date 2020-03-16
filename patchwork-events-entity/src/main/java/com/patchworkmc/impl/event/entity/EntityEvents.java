@@ -20,6 +20,7 @@
 package com.patchworkmc.impl.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -30,6 +31,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -46,6 +48,7 @@ import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -140,7 +143,8 @@ public class EntityEvents implements ModInitializer {
 		Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnType.SPAWNER);
 
 		if (result == Result.DEFAULT) {
-			return entity.canSpawn(world, SpawnType.SPAWNER) && entity.canSpawn(world); //vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+			// Vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+			return entity.canSpawn(world, SpawnType.SPAWNER) && entity.canSpawn(world);
 		} else {
 			return result == Result.ALLOW;
 		}
@@ -150,7 +154,8 @@ public class EntityEvents implements ModInitializer {
 		Result result = canEntitySpawn(entity, world, x, y, z, spawner, spawnType);
 
 		if (result == Result.DEFAULT) {
-			return !(sqDistanceFromPlayer > 16384.0D && entity.canImmediatelyDespawn(sqDistanceFromPlayer)) && entity.canSpawn(world, SpawnType.NATURAL) && entity.canSpawn(world); //vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+			// Vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
+			return !(sqDistanceFromPlayer > 16384.0D && entity.canImmediatelyDespawn(sqDistanceFromPlayer)) && entity.canSpawn(world, SpawnType.NATURAL) && entity.canSpawn(world);
 		} else {
 			return result == Result.ALLOW;
 		}
@@ -158,6 +163,22 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean doSpecialSpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
 		return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnType));
+	}
+
+	public static boolean attackEntity(PlayerEntity player, Entity target) {
+		if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) {
+			return false;
+		}
+
+		ItemStack stack = player.getMainHandStack();
+
+		if (stack.isEmpty()) {
+			return true;
+		}
+
+		IForgeItem item = (IForgeItem) stack.getItem();
+
+		return !item.onLeftClickEntity(stack, player, target);
 	}
 
 	@Override
