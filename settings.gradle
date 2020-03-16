@@ -13,6 +13,7 @@ pluginManagement {
 rootProject.name = "patchwork-api"
 
 include 'patchwork-biomes'
+include 'patchwork-capabilities'
 include 'patchwork-dispatcher'
 include 'patchwork-events-entity'
 include 'patchwork-events-input'
