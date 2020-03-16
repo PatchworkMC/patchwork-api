@@ -26,7 +26,7 @@
   "mixins": [
     "patchwork-networking-messages.mixins.json"
   ],
-  "description": "Implementation of the messages part of the Forge Networking API.",
+  "description": "Implementation of some messages part of the Forge Networking API, including entity spawn packets.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
