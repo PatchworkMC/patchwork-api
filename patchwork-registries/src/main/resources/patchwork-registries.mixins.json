@@ -33,6 +33,10 @@
     "MixinSurfaceBuilder",
     "MixinVillagerProfession"
   ],
+  "client": [
+    "MixinGameOptions",
+    "MixinGameRenderer"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

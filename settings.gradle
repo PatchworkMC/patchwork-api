@@ -13,16 +13,19 @@ pluginManagement {
 rootProject.name = "patchwork-api"
 
 include 'patchwork-biomes'
+include 'patchwork-capabilities'
 include 'patchwork-dispatcher'
 include 'patchwork-events-entity'
+include 'patchwork-events-input'
 include 'patchwork-events-lifecycle'
 include 'patchwork-events-world'
 include 'patchwork-extensions-shearing'
 include 'patchwork-extensions'
+include 'patchwork-extensions-item'
 include 'patchwork-fml'
 include 'patchwork-registries'
 include 'patchwork-gui'
 include 'patchwork-networking'
 include 'patchwork-networking-messages'
 include 'patchwork-vanilla-patches'
-
+include 'patchwork-enum-hacks'

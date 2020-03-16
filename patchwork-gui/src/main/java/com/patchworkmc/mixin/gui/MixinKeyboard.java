@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.Keyboard;
@@ -74,20 +75,26 @@ public abstract class MixinKeyboard {
 	}
 
 	@Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, int character, int mods, CallbackInfo info) {
+	private static void preCharTyped(Element element, int character, int mods, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
 			info.cancel();
-		} else if (!element.charTyped((char) character, mods)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, (char) character, mods));
 		}
 	}
 
+	@Redirect(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
+	private static boolean charTyped(Element element, char character, int mods) {
+		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
+	}
+
 	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
-	private static void charEvent(Element element, char character, int mods, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, character, mods))) {
+	private static void preCharTyped(Element element, char character, int mods, CallbackInfo info) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
 			info.cancel();
-		} else if (!element.charTyped(character, mods)) {
-			MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 		}
+	}
+
+	@Redirect(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
+	private static boolean charTyped2(Element element, char character, int mods) {
+		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}
 }

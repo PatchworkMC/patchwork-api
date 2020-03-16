@@ -161,7 +161,7 @@
 		<module name="PackageName">
 			<!-- require a package either in patchwork or forge -->
 			<property name="format"
-					  value="^com\.patchworkmc|^net.minecraftforge"/>
+					  value="^com\.patchworkmc|^net\.minecraftforge|^cpw\.mods\.modlauncher\.api"/>
 		</module>
 
 		<!--<module name="InvalidJavadocPosition"/>-->
