@@ -14,10 +14,5 @@ MinecraftForge offers a capability API
   * [PlayerEntity](https://github.com/PatchworkMC/YarnForge/blob/04d384add800bc395f4934507721f72eb733389f/patches/minecraft/net/minecraft/entity/player/PlayerEntity.java.patch#L521-L529)
 
 ## Patcher
-Redirect all instance calls to `CapabilityProvider` to static interface calls to `CapabilityProxy`
-```
-INVOKEVIRTUAL net/minecraftforge/common/capabilities/CapabilityProvider ??? (???)???
- -> INVOKESTATIC com/patchworkmc/impl/capability/CapabilityProxy ??? (???)??? (itf)
-```
 `CapabilityInject` on methods require a `CapabilityRegisteredCallback` to be registered. `CapabilityInject` for fields
 requires a bridge callback method to be created, where the field is assigned from.

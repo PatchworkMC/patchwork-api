@@ -54,19 +54,19 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 	private final String[] names;
 	private final List<Runnable> listeners;
 
-	public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> providers, List<Runnable> listeners) {
-		this(providers, listeners, null);
+	public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> capabilities, List<Runnable> listeners) {
+		this(capabilities, listeners, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> providers, List<Runnable> listeners, @Nullable ICapabilityProvider parent) {
-		List<ICapabilityProvider> capabilities = Lists.newArrayList();
+	public CapabilityDispatcher(Map<Identifier, ICapabilityProvider> capabilities, List<Runnable> listeners, @Nullable ICapabilityProvider parent) {
+		List<ICapabilityProvider> providers = Lists.newArrayList();
 		List<INBTSerializable<Tag>> writers = Lists.newArrayList();
 		List<String> names = Lists.newArrayList();
 
 		// Parents go first!
 		if (parent != null) {
-			capabilities.add(parent);
+			providers.add(parent);
 
 			if (parent instanceof INBTSerializable) {
 				writers.add((INBTSerializable<Tag>) parent);
@@ -74,9 +74,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 			}
 		}
 
-		for (Map.Entry<Identifier, ICapabilityProvider> entry : providers.entrySet()) {
+		for (Map.Entry<Identifier, ICapabilityProvider> entry : capabilities.entrySet()) {
 			ICapabilityProvider provider = entry.getValue();
-			capabilities.add(provider);
+			providers.add(provider);
 
 			if (provider instanceof INBTSerializable) {
 				writers.add((INBTSerializable<Tag>) provider);
@@ -85,7 +85,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 		}
 
 		this.listeners = listeners;
-		this.providers = capabilities.toArray(new ICapabilityProvider[0]);
+		this.providers = providers.toArray(new ICapabilityProvider[0]);
 		this.writers = writers.toArray(new INBTSerializable[0]);
 		this.names = names.toArray(new String[0]);
 	}
