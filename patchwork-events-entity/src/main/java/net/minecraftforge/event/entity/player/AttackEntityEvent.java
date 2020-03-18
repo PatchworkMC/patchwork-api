@@ -27,6 +27,8 @@ import net.minecraft.entity.player.PlayerEntity;
  *
  * <p>This event is fired whenever a player attacks an Entity in
  * {@link PlayerEntity#attack(Entity)} on either the client or the server.
+ * This is in contrast to {@link net.fabricmc.fabric.api.event.player.AttackEntityCallback}, which is only called on the
+ * logical server.
  *
  * <p>This event is cancellable.
  * If this event is canceled, the player does not attack the Entity.
