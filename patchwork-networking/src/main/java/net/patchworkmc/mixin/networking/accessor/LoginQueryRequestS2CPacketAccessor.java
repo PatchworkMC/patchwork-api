@@ -22,7 +22,7 @@ package net.patchworkmc.mixin.networking.accessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.client.network.packet.LoginQueryRequestS2CPacket;
+import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 
 @Mixin(LoginQueryRequestS2CPacket.class)
 public interface LoginQueryRequestS2CPacketAccessor {

@@ -34,7 +34,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.item.ItemDynamicRenderer;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -56,7 +56,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
@@ -326,7 +326,7 @@ public interface IForgeItem {
 	 * @param player The Player that is wielding the item
 	 * @return
 	 */
-	default boolean doesSneakBypassUse(ItemStack stack, ViewableWorld world, BlockPos pos, PlayerEntity player) {
+	default boolean doesSneakBypassUse(ItemStack stack, CollisionView world, BlockPos pos, PlayerEntity player) {
 		return false;
 	}
 
@@ -770,7 +770,7 @@ public interface IForgeItem {
 	 * one.
 	 */
 	@Environment(EnvType.CLIENT)
-	ItemDynamicRenderer getTileEntityItemStackRenderer();
+	BuiltinModelItemRenderer getTileEntityItemStackRenderer();
 
 	// TODO: Call locations: Patches: MinecraftClient
 	/**

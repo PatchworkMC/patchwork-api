@@ -56,7 +56,7 @@ public class ItemStackMixin implements CapabilityProviderHolder {
 		// TODO: See above TODO
 		gatherCapabilities(null);
 
-		if (tag.containsKey("ForgeCaps")) {
+		if (tag.contains("ForgeCaps")) {
 			deserializeCaps(tag.getCompound("ForgeCaps"));
 		}
 	}

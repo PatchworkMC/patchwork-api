@@ -64,7 +64,7 @@ public class EntityMixin implements CapabilityProviderHolder {
 
 	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;readCustomDataFromTag(Lnet/minecraft/nbt/CompoundTag;)V"))
 	private void deserializeCapabilities(CompoundTag tag, CallbackInfo callbackInfo) {
-		if (tag.containsKey("ForgeCaps")) {
+		if (tag.contains("ForgeCaps")) {
 			deserializeCaps(tag.getCompound("ForgeCaps"));
 		}
 	}

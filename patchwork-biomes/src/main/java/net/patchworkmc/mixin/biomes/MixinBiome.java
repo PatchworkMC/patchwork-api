@@ -23,8 +23,8 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.world.biome.Biome;
 
-import net.patchworkmc.impl.biomes.RiverSupplier;
 import net.patchworkmc.impl.biomes.PatchworkBiomes;
+import net.patchworkmc.impl.biomes.RiverSupplier;
 
 @Mixin(Biome.class)
 public class MixinBiome implements RiverSupplier {

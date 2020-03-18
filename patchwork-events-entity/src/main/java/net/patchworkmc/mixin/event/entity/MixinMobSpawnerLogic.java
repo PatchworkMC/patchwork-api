@@ -25,9 +25,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
-import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
@@ -41,8 +41,8 @@ public class MixinMobSpawnerLogic {
 		return EntityEvents.canEntitySpawnFromSpawner(on, (World) world, on.x, on.y, on.z, spawner);
 	}
 
-	@Redirect(method = "update", at = @At(value = "INVOKE", target = "net/minecraft/entity/mob/MobEntity.canSpawn(Lnet/minecraft/world/ViewableWorld;)Z"))
-	private boolean makeTheOtherMethodNotMessItUp(MobEntity on, ViewableWorld world) {
+	@Redirect(method = "update", at = @At(value = "INVOKE", target = "net/minecraft/entity/mob/MobEntity.canSpawn(Lnet/minecraft/world/CollisionView;)Z"))
+	private boolean makeTheOtherMethodNotMessItUp(MobEntity on, CollisionView world) {
 		return true;
 	}
 }

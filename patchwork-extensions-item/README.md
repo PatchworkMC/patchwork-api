@@ -86,7 +86,7 @@ boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity)
 
 Patches: PlayerController, **ClientPlayerInteractionManager**, **ServerPlayerInteractionManager**  
 Forge classes: IForgeItemStack  
-boolean doesSneakBypassUse(ItemStack stack, ViewableWorld world, BlockPos pos, PlayerEntity player)
+boolean doesSneakBypassUse(ItemStack stack, CollisionView world, BlockPos pos, PlayerEntity player)
 
 Patches: PlayerInventory  
 Forge classes: IForgeItemStack  

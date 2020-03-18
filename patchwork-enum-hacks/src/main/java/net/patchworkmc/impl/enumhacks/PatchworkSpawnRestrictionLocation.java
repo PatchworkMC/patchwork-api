@@ -23,13 +23,13 @@ import net.minecraftforge.common.util.TriPredicate;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.CollisionView;
 
 public interface PatchworkSpawnRestrictionLocation {
 	boolean patchwork_useVanillaBehavior();
 
-	void patchwork_setPredicate(TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate);
+	void patchwork_setPredicate(TriPredicate<CollisionView, BlockPos, EntityType<?>> predicate);
 
 	// Forge method, so no prefix
-	boolean canSpawnAt(ViewableWorld world, BlockPos pos, EntityType<?> type);
+	boolean canSpawnAt(CollisionView world, BlockPos pos, EntityType<?> type);
 }

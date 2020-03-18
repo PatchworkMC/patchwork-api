@@ -24,10 +24,10 @@ import java.util.concurrent.CompletableFuture;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.util.ThreadExecutor;
+import net.minecraft.util.thread.ThreadExecutor;
 
 @Mixin(ThreadExecutor.class)
 public interface ThreadExecutorAccessor {
-	@Invoker("executeFuture")
-	CompletableFuture<Void> patchwork$executeFuture(Runnable runnable);
+	@Invoker("submitAsync")
+	CompletableFuture<Void> patchwork$submitAsync(Runnable runnable);
 }

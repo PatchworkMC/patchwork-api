@@ -21,7 +21,7 @@ package net.patchworkmc.impl.networking;
 
 import java.util.function.Consumer;
 
-import net.minecraft.container.NameableContainerProvider;
+import net.minecraft.container.NameableContainerFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,5 +29,5 @@ import net.minecraft.util.PacketByteBuf;
 
 public interface MessageFactory {
 	Packet<?> getEntitySpawningPacket(Entity entity);
-	void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerProvider provider, Consumer<PacketByteBuf> extraDataWriter);
+	void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerFactory factory, Consumer<PacketByteBuf> extraDataWriter);
 }

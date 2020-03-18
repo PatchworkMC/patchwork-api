@@ -29,8 +29,8 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.ArrayUtils;
 import net.minecraftforge.common.util.TriPredicate;
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerPattern;
@@ -45,7 +45,7 @@ import net.minecraft.structure.processor.StructureProcessor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.gen.feature.OreFeatureConfig;
 
 import net.patchworkmc.impl.enumhacks.HackableEnum;
@@ -171,7 +171,7 @@ public final class EnumHacks {
 		return constructAndAdd(BannerPattern.class, ordinal -> BannerPatternAccessor.invokeConstructor(constantName, ordinal, name, id, recipePattern0, recipePattern1, recipePattern2));
 	}
 
-	public static SpawnRestriction.Location createSpawnRestrictionLocation(String name, TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate) {
+	public static SpawnRestriction.Location createSpawnRestrictionLocation(String name, TriPredicate<CollisionView, BlockPos, EntityType<?>> predicate) {
 		SpawnRestriction.Location instance = constructAndAdd(SpawnRestriction.Location.class, ordinal -> SpawnRestrictionLocationAccessor.invokeConstructor(name, ordinal));
 		((PatchworkSpawnRestrictionLocation) (Object) instance).patchwork_setPredicate(predicate);
 		return instance;

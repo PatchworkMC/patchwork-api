@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.network;
 
 import net.minecraft.container.ContainerType;
-import net.minecraft.container.NameableContainerProvider;
+import net.minecraft.container.NameableContainerFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
@@ -59,7 +59,7 @@ public class NetworkHooks {
 	 * @param player   The player to open the GUI for
 	 * @param provider Provides the container name and allows creation of new container instances
 	 */
-	public static void openGui(ServerPlayerEntity player, NameableContainerProvider provider) {
+	public static void openGui(ServerPlayerEntity player, NameableContainerFactory provider) {
 		// TODO: IForgeContainerType
 		player.openContainer(provider);
 	}

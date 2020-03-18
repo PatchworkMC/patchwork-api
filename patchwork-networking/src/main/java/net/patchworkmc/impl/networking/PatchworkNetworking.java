@@ -21,7 +21,7 @@ package net.patchworkmc.impl.networking;
 
 import java.util.concurrent.CompletableFuture;
 
-import net.minecraft.util.ThreadExecutor;
+import net.minecraft.util.thread.ThreadExecutor;
 
 import net.patchworkmc.mixin.networking.accessor.ThreadExecutorAccessor;
 
@@ -34,7 +34,7 @@ public class PatchworkNetworking {
 		// Same logic as ThreadTaskExecutor#runImmediately without the join
 		if (!executor.isOnThread()) {
 			// Use the internal method so thread check isn't done twice
-			return ((ThreadExecutorAccessor) executor).patchwork$executeFuture(runnable);
+			return ((ThreadExecutorAccessor) executor).patchwork$submitAsync(runnable);
 		} else {
 			runnable.run();
 			return CompletableFuture.completedFuture(null);

@@ -29,7 +29,7 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ViewableWorld;
+import net.minecraft.world.CollisionView;
 
 import net.patchworkmc.impl.enumhacks.HackableEnum;
 import net.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
@@ -37,14 +37,14 @@ import net.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 @Mixin(SpawnRestriction.Location.class)
 public class MixinSpawnRestrictionLocation implements PatchworkSpawnRestrictionLocation, HackableEnum<SpawnRestriction.Location> {
 	@Unique
-	private TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate;
+	private TriPredicate<CollisionView, BlockPos, EntityType<?>> predicate;
 
 	@Shadow
 	@Final
 	@Mutable
 	private static SpawnRestriction.Location[] field_6319;
 
-	public boolean canSpawnAt(ViewableWorld world, BlockPos pos, EntityType<?> type) {
+	public boolean canSpawnAt(CollisionView world, BlockPos pos, EntityType<?> type) {
 		return predicate.test(world, pos, type);
 	}
 
@@ -54,7 +54,7 @@ public class MixinSpawnRestrictionLocation implements PatchworkSpawnRestrictionL
 	}
 
 	@Override
-	public void patchwork_setPredicate(TriPredicate<ViewableWorld, BlockPos, EntityType<?>> predicate) {
+	public void patchwork_setPredicate(TriPredicate<CollisionView, BlockPos, EntityType<?>> predicate) {
 		this.predicate = predicate;
 	}
 

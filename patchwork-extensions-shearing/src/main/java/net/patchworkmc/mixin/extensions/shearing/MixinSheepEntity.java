@@ -35,8 +35,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ViewableWorld;
 import net.minecraft.world.World;
 
 /**
@@ -64,7 +64,7 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 	}
 
 	@Override
-	public boolean isShearable(ItemStack item, ViewableWorld world, BlockPos pos) {
+	public boolean isShearable(ItemStack item, CollisionView world, BlockPos pos) {
 		return !this.isSheared() && !this.isBaby();
 	}
 
