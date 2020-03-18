@@ -21,12 +21,13 @@ package net.patchworkmc.mixin.extensions.item.client;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.extensions.IForgeItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import net.minecraftforge.common.extensions.IForgeItem;
+
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 

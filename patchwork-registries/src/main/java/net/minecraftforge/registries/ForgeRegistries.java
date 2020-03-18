@@ -58,6 +58,7 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 import net.minecraft.world.poi.PointOfInterestType;
+
 import net.patchworkmc.impl.registries.RegistryClassMapping;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 

@@ -19,8 +19,8 @@
 
 package net.patchworkmc.mixin.extensions.item;
 
-import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeItem;
+import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

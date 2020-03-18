@@ -38,6 +38,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.thread.ThreadExecutor;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.network.PacketContext;
 

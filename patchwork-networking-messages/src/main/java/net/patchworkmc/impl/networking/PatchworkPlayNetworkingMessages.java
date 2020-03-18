@@ -20,6 +20,7 @@
 package net.patchworkmc.impl.networking;
 
 import java.util.function.Consumer;
+
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import org.apache.logging.log4j.LogManager;
@@ -87,7 +88,7 @@ public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageF
 	}
 
 	@Override
-	public void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerFactory provider, Consumer<PacketByteBuf> extraDataWriter) {
+	public void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerFactory factory, Consumer<PacketByteBuf> extraDataWriter) {
 		if (player.world.isClient) {
 			return;
 		}
@@ -111,10 +112,10 @@ public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageF
 			throw new IllegalArgumentException("Invalid PacketByteBuf for openGui, found " + output.readableBytes() + " bytes");
 		}
 
-		Container c = provider.createMenu(openContainerId, player.inventory, player);
+		Container c = factory.createMenu(openContainerId, player.inventory, player);
 		ContainerType<?> type = c.getType();
 
-		FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, provider.getDisplayName(), output);
+		FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, factory.getDisplayName(), output);
 		Packet<?> packet = PatchworkPlayNetworkingMessages.getOpenContainerPacket(msg);
 
 		player.networkHandler.sendPacket(packet);

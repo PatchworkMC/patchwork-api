@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 

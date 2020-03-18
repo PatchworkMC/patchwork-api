@@ -29,6 +29,7 @@ import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
 import net.minecraft.world.SpawnHelper;
+
 import net.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 
 @Mixin(SpawnHelper.class)

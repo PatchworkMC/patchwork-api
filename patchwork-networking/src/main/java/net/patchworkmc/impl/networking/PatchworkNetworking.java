@@ -20,7 +20,9 @@
 package net.patchworkmc.impl.networking;
 
 import java.util.concurrent.CompletableFuture;
+
 import net.minecraft.util.thread.ThreadExecutor;
+
 import net.patchworkmc.mixin.networking.accessor.ThreadExecutorAccessor;
 
 public class PatchworkNetworking {

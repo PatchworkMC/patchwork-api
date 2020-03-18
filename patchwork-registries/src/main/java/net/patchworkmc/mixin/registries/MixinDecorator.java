@@ -23,9 +23,9 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.decorator.Decorator;
 
 import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;

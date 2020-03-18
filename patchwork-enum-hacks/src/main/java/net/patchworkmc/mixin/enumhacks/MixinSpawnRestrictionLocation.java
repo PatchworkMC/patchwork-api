@@ -30,6 +30,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
+
 import net.patchworkmc.impl.enumhacks.HackableEnum;
 import net.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 

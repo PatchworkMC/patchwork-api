@@ -19,13 +19,14 @@
 
 package net.patchworkmc.mixin.loot;
 
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextType;
-import net.minecraft.loot.context.LootContextTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextType;
+import net.minecraft.loot.context.LootContextTypes;
 
 @Mixin(LootContextTypes.class)
 public class MixinLootContextTypes {

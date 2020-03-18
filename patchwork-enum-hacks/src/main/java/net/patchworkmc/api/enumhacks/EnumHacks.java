@@ -29,8 +29,8 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.ArrayUtils;
 import net.minecraftforge.common.util.TriPredicate;
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerPattern;

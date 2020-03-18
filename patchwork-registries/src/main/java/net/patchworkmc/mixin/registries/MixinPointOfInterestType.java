@@ -22,9 +22,11 @@ package net.patchworkmc.mixin.registries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.poi.PointOfInterestType;
+
 import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 

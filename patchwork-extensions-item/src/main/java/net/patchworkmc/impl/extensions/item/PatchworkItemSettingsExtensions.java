@@ -22,6 +22,7 @@ package net.patchworkmc.impl.extensions.item;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 

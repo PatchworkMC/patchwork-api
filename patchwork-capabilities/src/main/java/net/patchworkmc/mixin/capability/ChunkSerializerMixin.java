@@ -47,6 +47,7 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.UpgradeData;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.poi.PointOfInterestStorage;
+
 import net.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(ChunkSerializer.class)

@@ -32,6 +32,7 @@ import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.SpawnHelper;
+
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(SpawnHelper.class)
