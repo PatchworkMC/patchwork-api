@@ -58,12 +58,12 @@ public class BlockEntityMixin implements CapabilityProviderHolder {
 
 	@Inject(method = "fromTag", at = @At("RETURN"))
 	private void deserializeCapabilities(CompoundTag compoundTag, CallbackInfo callbackInfo) {
-		if (getCapabilities() != null && compoundTag.containsKey("ForgeCaps")) {
+		if (getCapabilities() != null && compoundTag.contains("ForgeCaps")) {
 			deserializeCaps(compoundTag.getCompound("ForgeCaps"));
 		}
 	}
 
-	@Inject(method = "invalidate", at = @At("RETURN"))
+	@Inject(method = "markRemoved", at = @At("RETURN"))
 	private void invalidate(CallbackInfo callbackInfo) {
 		invalidateCaps();
 	}

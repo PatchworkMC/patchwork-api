@@ -45,7 +45,7 @@ public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingM
 	public Identifier getRegistryName() {
 		PaintingMotive paintingMotive = (PaintingMotive) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.MOTIVE, paintingMotive, registryName);
+		return Identifiers.getOrFallback(Registry.PAINTING_MOTIVE, paintingMotive, registryName);
 	}
 
 	public Class<PaintingMotive> getRegistryType() {

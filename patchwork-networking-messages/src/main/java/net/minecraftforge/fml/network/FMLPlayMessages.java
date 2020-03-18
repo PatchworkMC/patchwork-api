@@ -45,7 +45,7 @@ import net.patchworkmc.impl.networking.PatchworkNetworking;
 public class FMLPlayMessages {
 	/**
 	 * Used to spawn a custom entity without the same restrictions as
-	 * {@link net.minecraft.client.network.packet.EntitySpawnS2CPacket} or {@link net.minecraft.client.network.packet.MobSpawnS2CPacket}
+	 * {@link net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket} or {@link net.minecraft.network.packet.s2c.play.MobSpawnS2CPacket}
 	 *
 	 * <p>To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
 	 * see {@link net.patchworkmc.mixin.networking.MixinEntityTypeBuilder#setCustomClientFactory}.
@@ -144,7 +144,7 @@ public class FMLPlayMessages {
 				}
 
 				entity.updateTrackedPosition(msg.posX, msg.posY, msg.posZ);
-				entity.setPositionAnglesAndUpdate(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
+				entity.updatePositionAndAngles(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
 				entity.setHeadYaw((msg.headYaw * 360) / 256.0F);
 				entity.setYaw((msg.headYaw * 360) / 256.0F);
 

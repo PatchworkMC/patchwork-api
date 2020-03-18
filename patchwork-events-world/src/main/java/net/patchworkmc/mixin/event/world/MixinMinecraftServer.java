@@ -32,13 +32,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.NonBlockingThreadExecutor;
+import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.dimension.DimensionType;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(MinecraftServer.class)
-public abstract class MixinMinecraftServer extends NonBlockingThreadExecutor<ServerTask> {
+public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> {
 	public MixinMinecraftServer(String name) {
 		super(name);
 	}

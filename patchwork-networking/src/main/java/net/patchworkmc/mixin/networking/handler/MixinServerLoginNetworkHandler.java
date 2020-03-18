@@ -28,8 +28,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
-import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public abstract class MixinServerLoginNetworkHandler {

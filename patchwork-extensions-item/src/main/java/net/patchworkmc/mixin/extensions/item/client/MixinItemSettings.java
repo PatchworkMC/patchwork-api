@@ -24,18 +24,17 @@ import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import net.minecraft.client.render.item.ItemDynamicRenderer;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
 import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
-	@Unique private ItemDynamicRenderer teisr = ItemDynamicRenderer.INSTANCE;
+	@Unique private BuiltinModelItemRenderer teisr = BuiltinModelItemRenderer.INSTANCE;
 
 	@Override
-	public Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr) {
+	public Item.Settings setTEISR(Supplier<Callable<BuiltinModelItemRenderer>> teisr) {
 		try {
 			this.teisr = teisr.get().call();
 		} catch (Exception e) {
@@ -46,7 +45,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public ItemDynamicRenderer getTeisr() {
+	public BuiltinModelItemRenderer getTeisr() {
 		return teisr;
 	}
 }

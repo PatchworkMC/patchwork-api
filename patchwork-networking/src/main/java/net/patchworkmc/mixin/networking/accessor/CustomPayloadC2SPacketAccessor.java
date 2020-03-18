@@ -19,10 +19,9 @@
 
 package net.patchworkmc.mixin.networking.accessor;
 
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
-
-import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 
 @Mixin(CustomPayloadC2SPacket.class)
 public interface CustomPayloadC2SPacketAccessor {

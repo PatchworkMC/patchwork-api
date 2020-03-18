@@ -27,9 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.SpawnHelper;
-import net.minecraft.world.ViewableWorld;
-
 import net.patchworkmc.impl.enumhacks.PatchworkSpawnRestrictionLocation;
 
 @Mixin(SpawnHelper.class)
@@ -37,7 +36,7 @@ public class MixinSpawnHelper {
 	@Inject(method = "canSpawn(Lnet/minecraft/entity/SpawnRestriction$Location;Lnet/minecraft/world/CollisionView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z",
 			at = @At(value = "INVOKE", target = "net/minecraft/world/ViewableWorld.getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"),
 			cancellable = true)
-	private static void handleCustomSpawnRestrictionLocation(SpawnRestriction.Location location, ViewableWorld world, BlockPos pos, EntityType<?> type, CallbackInfoReturnable<Boolean> callback) {
+	private static void handleCustomSpawnRestrictionLocation(SpawnRestriction.Location location, CollisionView world, BlockPos pos, EntityType<?> type, CallbackInfoReturnable<Boolean> callback) {
 		PatchworkSpawnRestrictionLocation patchworkLocation = (PatchworkSpawnRestrictionLocation) (Object) location;
 
 		if (patchworkLocation.patchwork_useVanillaBehavior()) {

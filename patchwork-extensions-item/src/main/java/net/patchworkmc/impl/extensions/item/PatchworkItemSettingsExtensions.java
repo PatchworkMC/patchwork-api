@@ -22,8 +22,7 @@ package net.patchworkmc.impl.extensions.item;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-
-import net.minecraft.client.render.item.ItemDynamicRenderer;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
 import net.fabricmc.api.EnvType;
@@ -38,12 +37,12 @@ public interface PatchworkItemSettingsExtensions {
 
 	Item.Settings addToolType(Object /* TODO: ToolType */ type, int level);
 
-	Item.Settings setTEISR(Supplier<Callable<ItemDynamicRenderer>> teisr);
+	Item.Settings setTEISR(Supplier<Callable<BuiltinModelItemRenderer>> teisr);
 
 	boolean canRepair();
 
 	Map<Object /* TODO: ToolType */, Integer> getToolClasses();
 
 	@Environment(EnvType.CLIENT)
-	ItemDynamicRenderer getTeisr();
+	BuiltinModelItemRenderer getTeisr();
 }

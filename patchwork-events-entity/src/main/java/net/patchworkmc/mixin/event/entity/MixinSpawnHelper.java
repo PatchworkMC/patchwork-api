@@ -28,11 +28,10 @@ import net.minecraft.entity.EntityData;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.SpawnHelper;
-import net.minecraft.world.ViewableWorld;
-
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(SpawnHelper.class)
@@ -53,7 +52,7 @@ public class MixinSpawnHelper {
 	}
 
 	@Redirect(method = "spawnEntitiesInChunk", at = @At(value = "INVOKE", target = "net/minecraft/entity/mob/MobEntity.canSpawn(Lnet/minecraft/world/ViewableWorld;)Z"))
-	private static boolean disableVanillaLogic(MobEntity entity, ViewableWorld world) {
+	private static boolean disableVanillaLogic(MobEntity entity, CollisionView world) {
 		return true;
 	}
 

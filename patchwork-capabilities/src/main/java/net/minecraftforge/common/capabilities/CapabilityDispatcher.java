@@ -132,9 +132,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
 	@Override
 	public void deserializeNBT(CompoundTag tag) {
 		for (int x = 0; x < writers.length; x++) {
-			if (tag.containsKey(names[x])) {
+			if (tag.contains(names[x])) {
 				try {
-					writers[x].deserializeNBT(tag.getTag(names[x]));
+					writers[x].deserializeNBT(tag.get(names[x]));
 				} catch (Exception exception) {
 					LogManager.getLogger().error("A capability provider with the name " + names[x] + " has thrown an exception trying to read state. It will not persist. Report this to the mod author", exception);
 				}

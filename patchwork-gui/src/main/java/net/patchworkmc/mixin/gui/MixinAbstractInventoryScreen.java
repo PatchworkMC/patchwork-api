@@ -26,15 +26,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.gui.screen.ingame.AbstractContainerScreen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.ContainerScreen;
 import net.minecraft.container.Container;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 
 @Mixin(AbstractInventoryScreen.class)
-public abstract class MixinAbstractInventoryScreen extends AbstractContainerScreen {
+public abstract class MixinAbstractInventoryScreen extends ContainerScreen {
 	@Shadow
 	protected boolean offsetGuiForEffects;
 
@@ -46,7 +45,7 @@ public abstract class MixinAbstractInventoryScreen extends AbstractContainerScre
 	private void potionShift(CallbackInfo info) {
 		if (offsetGuiForEffects) {
 			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.PotionShiftEvent())) {
-				this.left = (this.width - this.containerWidth) / 2;
+				this.x = (this.width - this.containerWidth) / 2;
 			}
 		}
 	}

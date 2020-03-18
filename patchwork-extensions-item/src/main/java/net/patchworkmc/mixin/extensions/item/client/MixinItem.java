@@ -27,8 +27,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraftforge.common.extensions.IForgeItem;
-
-import net.minecraft.client.render.item.ItemDynamicRenderer;
+import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
 import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
@@ -37,7 +36,7 @@ import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 public abstract class MixinItem implements IForgeItem {
 	@Unique
 	@Nullable
-	private ItemDynamicRenderer teisr;
+	private BuiltinModelItemRenderer teisr;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
@@ -47,7 +46,7 @@ public abstract class MixinItem implements IForgeItem {
 	}
 
 	@Override
-	public ItemDynamicRenderer getTileEntityItemStackRenderer() {
+	public BuiltinModelItemRenderer getTileEntityItemStackRenderer() {
 		return teisr;
 	}
 }

@@ -24,8 +24,8 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ViewableWorld;
 
 /**
  * This allows for mods to create their own Shear-like items
@@ -45,7 +45,7 @@ public interface IShearable {
 	 * @param pos   The current position in the world of the target block or entity.
 	 * @return {@code true} if this block/entity is shearable, and if {@link #onSheared} should be called.
 	 */
-	default boolean isShearable(ItemStack item, ViewableWorld world, BlockPos pos) {
+	default boolean isShearable(ItemStack item, CollisionView world, BlockPos pos) {
 		return true;
 	}
 

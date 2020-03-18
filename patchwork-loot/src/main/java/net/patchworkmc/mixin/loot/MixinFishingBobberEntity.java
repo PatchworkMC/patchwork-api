@@ -30,20 +30,20 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.loot.LootSupplier;
-import net.minecraft.world.loot.context.LootContext;
-import net.minecraft.world.loot.context.LootContextParameters;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
 
 @Mixin(FishingBobberEntity.class)
 public class MixinFishingBobberEntity {
 	private static final String LOOT_CONTEXT_BUILD_TARGET =
-			"net/minecraft/world/loot/context/LootContext$Builder.build(Lnet/minecraft/world/loot/context/LootContextType;)Lnet/minecraft/world/loot/context/LootContext;";
+			"net/minecraft/loot/context/LootContext$Builder.build(Lnet/minecraft/loot/context/LootContextType;)Lnet/minecraft/loot/context/LootContext;";
 
 	@Shadow
 	private final PlayerEntity owner = null;
 
 	@Inject(method = "method_6957(Lnet/minecraft/item/ItemStack;)I", at = @At(value = "INVOKE", target = LOOT_CONTEXT_BUILD_TARGET), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void patchwork_addFishingParameters(ItemStack stack, CallbackInfoReturnable<Integer> callback, int rodDamage, LootContext.Builder builder, LootSupplier supplier) {
+	private void patchwork_addFishingParameters(ItemStack stack, CallbackInfoReturnable<Integer> callback, int rodDamage, LootContext.Builder builder, LootTable supplier) {
 		builder.put(LootContextParameters.KILLER_ENTITY, this.owner);
 		builder.put(LootContextParameters.THIS_ENTITY, (Entity) (Object) this);
 	}

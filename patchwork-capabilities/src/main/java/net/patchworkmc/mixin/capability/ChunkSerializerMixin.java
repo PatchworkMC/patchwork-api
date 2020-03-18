@@ -38,7 +38,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.village.PointOfInterestStorage;
 import net.minecraft.world.ChunkSerializer;
 import net.minecraft.world.TickScheduler;
 import net.minecraft.world.World;
@@ -47,7 +46,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.UpgradeData;
 import net.minecraft.world.chunk.WorldChunk;
-
+import net.minecraft.world.poi.PointOfInterestStorage;
 import net.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 @Mixin(ChunkSerializer.class)
@@ -59,7 +58,7 @@ public class ChunkSerializerMixin {
 		WorldChunk chunk = new WorldChunk(newWorld, newChunkPos, newBiomes, newUpgradeData, newTickScheduler, newTickScheduler2, newL, newChunkSections, newConsumer);
 		CompoundTag level = compoundTag.getCompound("Level");
 
-		if (level.containsKey("ForgeCaps")) {
+		if (level.contains("ForgeCaps")) {
 			((CapabilityProviderHolder) chunk).deserializeCaps(level.getCompound("ForgeCaps"));
 		}
 

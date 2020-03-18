@@ -46,7 +46,7 @@ public abstract class MixinEnchantedBookItem implements IForgeItem {
 				final ListTag enchantments = EnchantedBookItem.getEnchantmentTag(itemStack);
 
 				if (enchantments.size() == 1) {
-					final Identifier enchantmentId = Identifier.tryParse(enchantments.getCompoundTag(0).getString("id"));
+					final Identifier enchantmentId = Identifier.tryParse(enchantments.getCompound(0).getString("id"));
 
 					if (Registry.ENCHANTMENT.getOrEmpty(enchantmentId).isPresent()) {
 						return enchantmentId.getNamespace();

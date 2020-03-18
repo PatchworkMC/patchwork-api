@@ -29,8 +29,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.CollisionView;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.ViewableWorld;
 
 /**
  * Patches {@link SnowGolemEntity} to allow using {@link IShearable} for removing its pumpkin. The pumpkin will not be dropped as an item.
@@ -46,7 +46,7 @@ public abstract class MixinSnowGolemEntity implements IShearable {
 	public abstract void setHasPumpkin(boolean hasPumpkin);
 
 	@Override
-	public boolean isShearable(ItemStack item, ViewableWorld world, BlockPos pos) {
+	public boolean isShearable(ItemStack item, CollisionView world, BlockPos pos) {
 		return this.hasPumpkin();
 	}
 
