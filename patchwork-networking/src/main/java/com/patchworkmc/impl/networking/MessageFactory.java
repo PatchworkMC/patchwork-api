@@ -17,18 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.impl.extension;
+package com.patchworkmc.impl.networking;
 
+import java.util.function.Consumer;
+
+import net.minecraft.container.NameableContainerProvider;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.network.Packet;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
-/**
- * Forge does this through patching the constructor instead, we just add methods with mixins instead.
- */
-public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
-	EntityType.Builder<T> setUpdateInterval(int interval);
-
-	EntityType.Builder<T> setTrackingRange(int range);
-
-	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
+public interface MessageFactory {
+	Packet<?> getEntitySpawningPacket(Entity entity);
+	void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerProvider provider, Consumer<PacketByteBuf> extraDataWriter);
 }

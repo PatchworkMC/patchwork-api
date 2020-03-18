@@ -43,6 +43,7 @@ public class LivingAttackEvent extends LivingEvent {
 	private final DamageSource source;
 	private final float damage;
 
+	// For EventBus
 	public LivingAttackEvent() {
 		this.source = null;
 		this.damage = 0f;

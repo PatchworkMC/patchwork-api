@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.patchworkmc.mixin.networking",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEntityType",
+    "MixinEntityTypeBuilder"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

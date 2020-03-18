@@ -19,13 +19,20 @@
 
 package net.minecraftforge.fml.network;
 
+import net.minecraft.container.ContainerType;
+import net.minecraft.container.NameableContainerProvider;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Packet;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-import com.patchworkmc.impl.networking.NetworkChannel;
+import com.patchworkmc.impl.networking.ListenableChannel;
+import com.patchworkmc.impl.networking.MessageFactory;
+import com.patchworkmc.impl.networking.PatchworkNetworking;
 
 public class NetworkHooks {
 	public static boolean onCustomPayload(final ICustomPacket<?> packet, final ClientConnection connection) {
-		NetworkChannel target = NetworkRegistry.findTarget(packet.getName());
+		ListenableChannel target = NetworkRegistry.findListener(packet.getName());
 
 		if (target == null) {
 			return false;
@@ -37,4 +44,34 @@ public class NetworkHooks {
 
 		return context.getPacketHandled();
 	}
+
+	public static Packet<?> getEntitySpawningPacket(Entity entity) {
+		MessageFactory factory = PatchworkNetworking.getMessageFactory();
+
+		return factory.getEntitySpawningPacket(entity);
+	}
+
+	/**
+	 * Request to open a GUI on the client, from the server
+	 *
+	 * <p>The {@link ContainerType} for the container must be registered on both sides, it handles the creation of the container on the client.
+	 *
+	 * @param player   The player to open the GUI for
+	 * @param provider Provides the container name and allows creation of new container instances
+	 */
+	public static void openGui(ServerPlayerEntity player, NameableContainerProvider provider) {
+		// TODO: IForgeContainerType
+		player.openContainer(provider);
+	}
+
+	/*TODO
+	public static void openGui(ServerPlayerEntity player, NameableContainerProvider provider, BlockPos pos) {
+		openGui(player, provider, buf -> buf.writeBlockPos(pos));
+	}
+
+	public static void openGui(ServerPlayerEntity player, NameableContainerProvider provider, Consumer<PacketByteBuf> extraDataWriter) {
+		MessageFactory factory = PatchworkNetworking.getMessageFactory();
+
+		factory.sendContainerOpenPacket(player, provider, extraDataWriter);
+	}*/
 }

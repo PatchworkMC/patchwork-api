@@ -32,15 +32,11 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 
 import com.patchworkmc.impl.networking.ListenableChannel;
 
-public class EventNetworkChannel {
+public class EventNetworkChannel implements ListenableChannel {
 	private final IEventBus networkEventBus;
 
-	public EventNetworkChannel(ListenableChannel channel) {
+	public EventNetworkChannel() {
 		this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
-
-		channel.setPacketListener(this::packetListener);
-		channel.setRegistrationChangeListener(networkEventBus::post);
-		channel.setGatherLoginPayloadsListener(this::gatherLoginPayloadsListener);
 
 		// TODO: Login packet stuff, registration change listeners
 		throw new UnsupportedOperationException("Registration change / gather login payload events aren't supported");
@@ -50,11 +46,18 @@ public class EventNetworkChannel {
 		// Forge: NO-OP
 	}
 
-	private void packetListener(final ICustomPacket<?> packet, final NetworkEvent.Context context) {
+	@Override
+	public void onPacket(final ICustomPacket<?> packet, final NetworkEvent.Context context) {
 		this.networkEventBus.post(packet.getDirection().getEvent(packet, () -> context));
 	}
 
-	private void gatherLoginPayloadsListener(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
+	@Override
+	public void onRegistrationChange(NetworkEvent.ChannelRegistrationChangeEvent event) {
+		this.networkEventBus.post(event);
+	}
+
+	@Override
+	public void onGatherLoginPayloads(List<NetworkRegistry.LoginPayload> payloads, boolean isLocal) {
 		this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(payloads, isLocal));
 	}
 

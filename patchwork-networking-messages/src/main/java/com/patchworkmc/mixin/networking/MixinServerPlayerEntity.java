@@ -17,18 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.impl.extension;
+package com.patchworkmc.mixin.networking;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-/**
- * Forge does this through patching the constructor instead, we just add methods with mixins instead.
- */
-public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
-	EntityType.Builder<T> setUpdateInterval(int interval);
+import net.minecraft.server.network.ServerPlayerEntity;
 
-	EntityType.Builder<T> setTrackingRange(int range);
+import com.patchworkmc.impl.networking.ContainerSyncAccess;
 
-	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
+@Mixin(ServerPlayerEntity.class)
+public class MixinServerPlayerEntity implements ContainerSyncAccess {
+	@Accessor
+	private int getContainerSyncId() {
+		throw new AssertionError("Mixin not applied");
+	}
+
+	@Invoker
+	private void invokeIncrementContainerSyncId() {
+		throw new AssertionError("Mixin not applied");
+	}
+
+	@Override
+	public int patchwork$getNewContainerSyncId() {
+		invokeIncrementContainerSyncId();
+
+		return getContainerSyncId();
+	}
 }

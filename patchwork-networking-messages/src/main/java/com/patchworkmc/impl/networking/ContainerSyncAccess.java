@@ -17,18 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.impl.extension;
+package com.patchworkmc.impl.networking;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-
-/**
- * Forge does this through patching the constructor instead, we just add methods with mixins instead.
- */
-public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
-	EntityType.Builder<T> setUpdateInterval(int interval);
-
-	EntityType.Builder<T> setTrackingRange(int range);
-
-	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
+public interface ContainerSyncAccess {
+	int patchwork$getNewContainerSyncId();
 }

@@ -19,8 +19,14 @@
 
 package com.patchworkmc.impl.networking;
 
-public interface VersionedChannel extends NamedChannel {
-	String getNetworkProtocolVersion();
-	boolean tryServerVersionOnClient(String serverVersion);
-	boolean tryClientVersionOnServer(String clientVersion);
+import java.util.function.BiFunction;
+
+import net.minecraftforge.fml.network.FMLPlayMessages;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
+
+public interface ClientEntitySpawner<T extends Entity> {
+	T customClientSpawn(FMLPlayMessages.SpawnEntity packet, World world);
+	void patchwork$setCustomClientFactory(BiFunction<FMLPlayMessages.SpawnEntity, World, T> customClientFactory);
 }

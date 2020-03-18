@@ -60,17 +60,17 @@ public class MixinEntityType implements PatchworkEntityTypeExtensions {
 	}
 
 	@Override
-	public void setUpdateInterval(int interval) {
+	public void patchwork$setUpdateInterval(int interval) {
 		this.updateInterval = interval;
 	}
 
 	@Override
-	public void setTrackingRange(int range) {
+	public void patchwork$setTrackingRange(int range) {
 		this.trackingRange = range;
 	}
 
 	@Override
-	public void setShouldReceiveVelocityUpdates(boolean value) {
+	public void patchwork$setShouldReceiveVelocityUpdates(boolean value) {
 		this.shouldRecieveVelocityUpdates = value;
 	}
 }

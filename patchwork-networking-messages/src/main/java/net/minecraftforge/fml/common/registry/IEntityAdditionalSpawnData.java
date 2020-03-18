@@ -17,10 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.patchworkmc.impl.networking;
+package net.minecraftforge.fml.common.registry;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.PacketByteBuf;
 
-public interface NamedChannel {
-	Identifier getChannelName();
+/**
+ * A interface for Entities that need extra information to be communicated
+ * between the server and client when they are spawned.
+ */
+public interface IEntityAdditionalSpawnData {
+	/**
+	 * Called by the server when constructing the spawn packet.
+	 * Data should be added to the provided stream.
+	 *
+	 * @param buffer The packet data stream
+	 */
+	void writeSpawnData(PacketByteBuf buffer);
+
+	/**
+	 * Called by the client when it receives a Entity spawn packet.
+	 * Data should be read out of the stream in the same way as it was written.
+	 *
+	 * @param additionalData The packet data stream
+	 */
+	void readSpawnData(PacketByteBuf additionalData);
 }
