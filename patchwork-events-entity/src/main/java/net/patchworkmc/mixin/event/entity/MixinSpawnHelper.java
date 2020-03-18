@@ -52,7 +52,7 @@ public class MixinSpawnHelper {
 		return EntityEvents.canEntitySpawnNaturally(entity, entity.world, entity.x, entity.y, entity.x, null, spawnType, playerDistanceStore);
 	}
 
-	@Redirect(method = "spawnEntitiesInChunk", at = @At(value = "INVOKE", target = "net/minecraft/entity/mob/MobEntity.canSpawn(Lnet/minecraft/world/ViewableWorld;)Z"))
+	@Redirect(method = "spawnEntitiesInChunk", at = @At(value = "INVOKE", target = "net/minecraft/entity/mob/MobEntity.canSpawn(Lnet/minecraft/world/CollisionView;)Z"))
 	private static boolean disableVanillaLogic(MobEntity entity, CollisionView world) {
 		return true;
 	}

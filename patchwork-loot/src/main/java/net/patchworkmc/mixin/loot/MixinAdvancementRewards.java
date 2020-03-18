@@ -30,7 +30,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 @Mixin(AdvancementRewards.class)
 public class MixinAdvancementRewards {
 	private static final String LOOT_CONTEXT_BUILD_TARGET =
-			"net/minecraft/world/loot/context/LootContext$Builder.build(Lnet/minecraft/world/loot/context/LootContextType;)Lnet/minecraft/world/loot/context/LootContext;";
+			"Lnet/minecraft/loot/context/LootContext$Builder;build(Lnet/minecraft/loot/context/LootContextType;)Lnet/minecraft/loot/context/LootContext;";
 
 	@Inject(method = "apply(Lnet/minecraft/server/network/ServerPlayerEntity;)V", at = @At(value = "INVOKE", target = LOOT_CONTEXT_BUILD_TARGET))
 	private void patchwork_addLuckToLootContext(ServerPlayerEntity player, CallbackInfo callback) {
