@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.loot",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAdvancementRewards",
+    "MixinFishingBobberEntity",
+    "MixinLootContextTypes"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
