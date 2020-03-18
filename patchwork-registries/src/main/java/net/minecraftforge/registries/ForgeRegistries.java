@@ -59,8 +59,8 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 
-import com.patchworkmc.impl.registries.RegistryClassMapping;
-import com.patchworkmc.impl.registries.RegistryEventDispatcher;
+import net.patchworkmc.impl.registries.RegistryClassMapping;
+import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 /**
  * A class that exposes static references to all vanilla registries.

@@ -39,7 +39,7 @@ import net.minecraft.util.math.Direction;
  * as the ability to read and write the interface to NBT
  *
  * <p>When {@link CapabilityManager#register} is called, {@link CapabilityManager} creates a single instance of this class,
- * which is then passed to any listeners of {@link com.patchworkmc.api.capability.CapabilityRegisteredCallback}.
+ * which is then passed to any listeners of {@link net.patchworkmc.api.capability.CapabilityRegisteredCallback}.
  *
  * <p>After registration, instances of this class may be used with {@link ICapabilityProvider#getCapability} and the
  * functions within {@link IStorage}

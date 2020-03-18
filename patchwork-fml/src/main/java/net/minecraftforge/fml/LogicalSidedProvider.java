@@ -27,7 +27,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
-import com.patchworkmc.impl.fml.PatchworkFML;
+import net.patchworkmc.impl.fml.PatchworkFML;
 
 public enum LogicalSidedProvider {
 	WORKQUEUE(Supplier::get, Supplier::get),

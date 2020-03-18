@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.loot",
+  "package": "net.patchworkmc.mixin.loot",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinAdvancementRewards",

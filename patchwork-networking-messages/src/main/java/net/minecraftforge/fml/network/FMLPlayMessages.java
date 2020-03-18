@@ -39,8 +39,8 @@ import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.fabric.api.network.PacketContext;
 
-import com.patchworkmc.impl.networking.ClientEntitySpawner;
-import com.patchworkmc.impl.networking.PatchworkNetworking;
+import net.patchworkmc.impl.networking.ClientEntitySpawner;
+import net.patchworkmc.impl.networking.PatchworkNetworking;
 
 public class FMLPlayMessages {
 	/**
@@ -48,7 +48,7 @@ public class FMLPlayMessages {
 	 * {@link net.minecraft.client.network.packet.EntitySpawnS2CPacket} or {@link net.minecraft.client.network.packet.MobSpawnS2CPacket}
 	 *
 	 * <p>To customize how your entity is created clientside (instead of using the default factory provided to the {@link EntityType})
-	 * see {@link com.patchworkmc.mixin.networking.MixinEntityTypeBuilder#setCustomClientFactory}.
+	 * see {@link net.patchworkmc.mixin.networking.MixinEntityTypeBuilder#setCustomClientFactory}.
 	 */
 	public static class SpawnEntity {
 		private final Entity entity;

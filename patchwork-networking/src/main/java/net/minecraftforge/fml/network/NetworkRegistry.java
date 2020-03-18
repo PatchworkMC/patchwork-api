@@ -39,10 +39,10 @@ import org.apache.logging.log4j.MarkerManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-import com.patchworkmc.impl.networking.ListenableChannel;
-import com.patchworkmc.impl.networking.NetworkChannelVersion;
-import com.patchworkmc.impl.networking.NetworkVersionManager;
-import com.patchworkmc.impl.networking.PatchworkNetworking;
+import net.patchworkmc.impl.networking.ListenableChannel;
+import net.patchworkmc.impl.networking.NetworkChannelVersion;
+import net.patchworkmc.impl.networking.NetworkVersionManager;
+import net.patchworkmc.impl.networking.PatchworkNetworking;
 
 /**
  * The network registry. Tracks channels on behalf of mods.

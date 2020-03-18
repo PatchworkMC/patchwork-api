@@ -41,7 +41,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-import com.patchworkmc.impl.networking.ListenableChannel;
+import net.patchworkmc.impl.networking.ListenableChannel;
 
 public class SimpleChannel implements ListenableChannel {
 	private final Identifier channelName;

@@ -18,7 +18,7 @@
   },
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.event.lifecycle.LifecycleEvents"
+      "net.patchworkmc.impl.event.lifecycle.LifecycleEvents"
     ]
   },
   "mixins": [

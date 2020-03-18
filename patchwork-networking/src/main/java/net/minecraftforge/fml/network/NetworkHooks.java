@@ -26,9 +26,9 @@ import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import com.patchworkmc.impl.networking.ListenableChannel;
-import com.patchworkmc.impl.networking.MessageFactory;
-import com.patchworkmc.impl.networking.PatchworkNetworking;
+import net.patchworkmc.impl.networking.ListenableChannel;
+import net.patchworkmc.impl.networking.MessageFactory;
+import net.patchworkmc.impl.networking.PatchworkNetworking;
 
 public class NetworkHooks {
 	public static boolean onCustomPayload(final ICustomPacket<?> packet, final ClientConnection connection) {

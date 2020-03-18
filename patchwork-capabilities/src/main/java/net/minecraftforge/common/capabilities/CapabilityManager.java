@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.patchworkmc.api.capability.CapabilityRegisteredCallback;
+import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
 public enum CapabilityManager {
 	INSTANCE;

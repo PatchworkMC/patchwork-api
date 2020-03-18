@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.extensions.item",
+  "package": "net.patchworkmc.mixin.extensions.item",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ItemTagsAccessor",

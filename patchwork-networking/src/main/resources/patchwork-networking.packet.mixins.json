@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.networking.packet",
+  "package": "net.patchworkmc.mixin.networking.packet",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinCustomPayloadC2SPacket",

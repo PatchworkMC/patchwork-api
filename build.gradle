@@ -50,7 +50,7 @@ allprojects {
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 
-	group = "com.patchworkmc.patchwork-api"
+	group = "net.patchworkmc.patchwork-api"
 
 	dependencies {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"

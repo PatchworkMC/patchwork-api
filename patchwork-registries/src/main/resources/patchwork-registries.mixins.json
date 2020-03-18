@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.registries",
+  "package": "net.patchworkmc.mixin.registries",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinActivity",

@@ -20,7 +20,7 @@
   },
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.networking.PatchworkPlayNetworkingMessages"
+      "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessages"
     ]
   },
   "mixins": [

@@ -31,7 +31,7 @@ import net.minecraft.entity.LivingEntity;
  * {@link LivingEntity#applyDamage(DamageSource, float)} and
  * {@link net.minecraft.entity.player.PlayerEntity#applyDamage(DamageSource, float)}.</p>
  *
- * <p>This event is fired via the {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingDamage(LivingEntity, DamageSource, float)}.</p>
+ * <p>This event is fired via the {@link net.patchworkmc.impl.event.entity.EntityEvents#onLivingDamage(LivingEntity, DamageSource, float)}.</p>
  *
  * <p>{@link #source} contains the DamageSource that caused this Entity to be hurt. </p>
  * <p>{@link #amount} contains the final amount of damage that will be dealt to entity. </p>

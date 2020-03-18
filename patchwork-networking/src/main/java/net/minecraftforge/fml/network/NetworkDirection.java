@@ -36,8 +36,8 @@ import net.minecraft.server.network.packet.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
-import com.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
-import com.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
+import net.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
+import net.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
 
 public enum NetworkDirection {
 	PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, 1),

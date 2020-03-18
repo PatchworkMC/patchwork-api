@@ -30,7 +30,7 @@ import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 
-import com.patchworkmc.impl.networking.ListenableChannel;
+import net.patchworkmc.impl.networking.ListenableChannel;
 
 public class EventNetworkChannel implements ListenableChannel {
 	private final IEventBus networkEventBus;

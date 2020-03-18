@@ -42,8 +42,8 @@ import net.minecraft.util.ThreadExecutor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.network.PacketContext;
 
-import com.patchworkmc.impl.networking.PatchworkNetworking;
-import com.patchworkmc.mixin.networking.accessor.ClientConnectionAccessor;
+import net.patchworkmc.impl.networking.PatchworkNetworking;
+import net.patchworkmc.mixin.networking.accessor.ClientConnectionAccessor;
 
 public class NetworkEvent extends Event {
 	private final PacketByteBuf payload;

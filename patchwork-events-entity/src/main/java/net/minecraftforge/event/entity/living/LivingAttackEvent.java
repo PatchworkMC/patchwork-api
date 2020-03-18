@@ -29,7 +29,7 @@ import net.minecraft.entity.damage.DamageSource;
  * {@link LivingEntity#damage(DamageSource, float)} and
  * {@link net.minecraft.entity.player.PlayerEntity#damage(DamageSource, float)}.</p>
  *
- * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingAttack(LivingEntity, DamageSource, float)}.</p>
+ * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#onLivingAttack(LivingEntity, DamageSource, float)}.</p>
  *
  * <p>{@link #source} contains the {@link DamageSource} of the attack.
  * {@link #damage} contains the amount of damage dealt to the entity.</p>

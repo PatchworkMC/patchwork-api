@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.patches.bugfixes",
+  "package": "net.patchworkmc.mixin.patches.bugfixes",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinEntityTypeBuilder",

@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.networking.accessor",
+  "package": "net.patchworkmc.mixin.networking.accessor",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "ClientConnectionAccessor",

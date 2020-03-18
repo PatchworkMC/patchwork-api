@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.event.entity",
+  "package": "net.patchworkmc.mixin.event.entity",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinEntity",

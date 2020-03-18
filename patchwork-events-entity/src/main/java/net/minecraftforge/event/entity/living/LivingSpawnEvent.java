@@ -136,7 +136,7 @@ public class LivingSpawnEvent extends LivingEvent {
 	 * <p>SpecialSpawn is fired when an Entity is to be spawned.
 	 * This allows you to do special initializers in the new entity.</p>
 	 *
-	 * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#doSpecialSpawn(MobEntity, IWorld, double, double, double, MobSpawnerLogic, SpawnType)}.</p>
+	 * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#doSpecialSpawn(MobEntity, IWorld, double, double, double, MobSpawnerLogic, SpawnType)}.</p>
 	 *
 	 * <p>This event is cancellable.
 	 * If this event is canceled, the entity's {@link MobEntity#initialize} method is not called.</p>
