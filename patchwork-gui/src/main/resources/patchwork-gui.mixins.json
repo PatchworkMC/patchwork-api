@@ -3,11 +3,13 @@
   "package": "net.patchworkmc.mixin.gui",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "MixinAbstractInventoryScreen",
-    "MixinGameRenderer",
-    "MixinKeyboard",
-    "MixinMouse",
-    "MixinScreen"
+    "gameoverlay.HookMainEvent",
+    "gameoverlay.HookStatusBarEvents",
+    "screen.MixinAbstractInventoryScreen",
+    "screen.MixinGameRenderer",
+    "screen.MixinKeyboard",
+    "screen.MixinMouse",
+    "screen.MixinScreen"
   ],
   "injectors": {
     "defaultRequire": 1,
