@@ -1,10 +1,13 @@
 package net.minecraftforge.forgespi.language;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,15 +36,17 @@ public class ModFileScanData {
 			Path annotationJsonPath = modContainer.getPath("annotations.json");
 
 			try {
-				FileReader fileReader = new FileReader(annotationJsonPath.toFile());
+				InputStream outputStream = Files.newInputStream(annotationJsonPath);
 				Gson gson = new Gson();
 				annotationStorage = gson.fromJson(
-						fileReader, AnnotationStorage.class
+						new InputStreamReader(outputStream), AnnotationStorage.class
 				);
-				annotationStorage.entries.stream()
+				annotationData = annotationStorage.entries.stream()
 						.map(entry -> getAnnotationData(entry))
 						.collect(Collectors.toSet());
 			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		};
@@ -60,10 +65,12 @@ public class ModFileScanData {
 	}
 
 	private static AnnotationData getAnnotationData(AnnotationStorage.Entry entry) {
+		Type annotationType = Type.getType(entry.annotationType);
+		Type targetInType = Type.getType("L" + entry.targetInClass + ";");
 		return new AnnotationData(
-				Type.getType(entry.annotationType),
+				annotationType,
 				entry.targetType,
-				Type.getType(entry.targetInClass),
+				targetInType,
 				entry.target
 		);
 	}
