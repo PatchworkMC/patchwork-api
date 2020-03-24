@@ -5,6 +5,8 @@
   "mixins": [
     "MixinEntityType",
     "MixinEntityTypeBuilder",
+    "MixinRecipeGridAligner",
+    "MixinShapedRecipe",
     "MixinStatusEffect"
   ],
   "injectors": {

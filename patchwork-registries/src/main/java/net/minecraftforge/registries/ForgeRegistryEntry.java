@@ -24,6 +24,16 @@ import net.minecraft.util.Identifier;
 public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
 	private Identifier name;
 
+	public final IForgeRegistryEntry setRegistryName(String name) {
+		setRegistryName(new Identifier(name));
+		return this;
+	}
+
+	public final IForgeRegistryEntry setRegistryName(String domain, String name) {
+		setRegistryName(new Identifier(domain, name));
+		return this;
+	}
+
 	@Override
 	public final IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.name = name;
