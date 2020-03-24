@@ -17,7 +17,7 @@
   },
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.fml.PatchworkFML"
+      "net.patchworkmc.impl.fml.PatchworkFML"
     ]
   },
   "description": "Implementation of FML's mod-facing interface.",

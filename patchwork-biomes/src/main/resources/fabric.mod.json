@@ -19,7 +19,7 @@
   "description": "Implementation of the Forge Biomes API.",
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.biomes.PatchworkBiomes"
+      "net.patchworkmc.impl.biomes.PatchworkBiomes"
     ]
   },
   "mixins": [

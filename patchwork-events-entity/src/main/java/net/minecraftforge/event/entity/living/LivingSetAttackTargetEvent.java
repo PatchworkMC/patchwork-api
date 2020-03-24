@@ -28,7 +28,7 @@ import net.minecraft.entity.mob.MobEntity;
  * <p>This event is fired whenever a {@link MobEntity} sets a target to attack in
  * {@link MobEntity#setTarget(LivingEntity)}.</p>
  *
- * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingSetAttackTarget(LivingEntity, LivingEntity)}.</p>
+ * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#onLivingSetAttackTarget(LivingEntity, LivingEntity)}.</p>
  *
  * <p>{@link #target} contains the newly targeted Entity.</p>
  *

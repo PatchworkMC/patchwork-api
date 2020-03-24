@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.biomes",
+  "package": "net.patchworkmc.mixin.biomes",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinBiome"

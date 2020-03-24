@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.enumhacks",
+  "package": "net.patchworkmc.mixin.enumhacks",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "BannerPatternAccessor",

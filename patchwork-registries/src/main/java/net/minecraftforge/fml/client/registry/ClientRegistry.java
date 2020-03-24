@@ -32,7 +32,7 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.client.render.BlockEntityRendererRegistry;
 
-import com.patchworkmc.impl.registries.AddedKeybinds;
+import net.patchworkmc.impl.registries.AddedKeybinds;
 
 public class ClientRegistry {
 	private static Map<Class<? extends Entity>, Identifier> entityShaderMap = new ConcurrentHashMap<>();

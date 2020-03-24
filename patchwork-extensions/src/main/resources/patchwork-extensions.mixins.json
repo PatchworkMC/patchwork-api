@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.extension",
+  "package": "net.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinEntityType",

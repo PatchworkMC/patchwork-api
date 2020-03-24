@@ -12,9 +12,9 @@ plugins {
 def ENV = System.getenv()
 
 class Globals {
-	static def baseVersion = "0.3.0"
+	static def baseVersion = "0.4.0"
 	static def mcVersion = "1.14.4"
-	static def yarnVersion = "+build.15"
+	static def yarnVersion = "+build.16"
 }
 
 def getSubprojectVersion(project, version) {
@@ -50,7 +50,7 @@ allprojects {
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 
-	group = "com.patchworkmc.patchwork-api"
+	group = "net.patchworkmc.patchwork-api"
 
 	dependencies {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"

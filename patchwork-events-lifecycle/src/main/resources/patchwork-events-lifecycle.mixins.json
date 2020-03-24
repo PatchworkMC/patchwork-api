@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.event.lifecycle",
+  "package": "net.patchworkmc.mixin.event.lifecycle",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinMinecraftServerSubclass",

@@ -32,7 +32,7 @@ import net.minecraft.entity.damage.DamageSource;
  * {@link net.minecraft.entity.player.PlayerEntity#onDeath(DamageSource)}, and
  * {@link net.minecraft.server.network.ServerPlayerEntity#onDeath(DamageSource)}.</p>
  *
- * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingDeath(LivingEntity, DamageSource)}.</p>
+ * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#onLivingDeath(LivingEntity, DamageSource)}.</p>
  *
  * <p>{@link #source} contains the {@link DamageSource} that caused the {@link LivingEntity} to die.</p>
  *

@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.item",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ItemTagsAccessor",
+    "MixinAxeItem",
+    "MixinEnchantedBookItem",
+    "MixinItem",
+    "MixinItemSettings",
+    "MixinPotionItems",
+    "MixinSpawnEggItem"
+  ],
+  "client": [
+    "client.MixinItem",
+    "client.MixinItemSettings"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
