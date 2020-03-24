@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.client.registry;
 
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 
 public interface IRenderFactory<T extends Entity> {

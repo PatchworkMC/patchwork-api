@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.gui",
+  "package": "net.patchworkmc.mixin.gui",
   "compatibilityLevel": "JAVA_8",
   "client": [
     "MixinAbstractInventoryScreen",
@@ -10,6 +10,7 @@
     "MixinScreen"
   ],
   "injectors": {
-    "defaultRequire": 1
+    "defaultRequire": 1,
+    "maxShiftBy": 2
   }
 }

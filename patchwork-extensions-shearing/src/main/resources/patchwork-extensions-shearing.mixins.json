@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.extensions.shearing",
+  "package": "net.patchworkmc.mixin.extensions.shearing",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDispenserBehavior",

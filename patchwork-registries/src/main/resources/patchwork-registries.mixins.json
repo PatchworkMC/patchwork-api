@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.registries",
+  "package": "net.patchworkmc.mixin.registries",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinActivity",
@@ -17,7 +17,6 @@
     "MixinEntityType",
     "MixinFeature",
     "MixinFluid",
-    "MixinGameOptions",
     "MixinItem",
     "MixinMemoryModuleType",
     "MixinPaintingMotive",
@@ -33,6 +32,10 @@
     "MixinStatusEffect",
     "MixinSurfaceBuilder",
     "MixinVillagerProfession"
+  ],
+  "client": [
+    "MixinGameOptions",
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

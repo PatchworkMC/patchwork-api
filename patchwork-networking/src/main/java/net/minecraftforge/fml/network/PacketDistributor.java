@@ -131,7 +131,7 @@ public class PacketDistributor<T> {
 	// TODO: Fix Checkstyle on lambda returns
 	// CHECKSTYLE.OFF: Indentation - lambda returns are broken
 	private Consumer<Packet<?>> playerConsumer(final Supplier<ServerPlayerEntity> player) {
-		return packet -> player.get().networkHandler.client.send(packet);
+		return packet -> player.get().networkHandler.connection.send(packet);
 	}
 
 	private Consumer<Packet<?>> playerListDimConsumer(final Supplier<DimensionType> dimensionType) {

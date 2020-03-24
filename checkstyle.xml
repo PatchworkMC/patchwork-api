@@ -69,7 +69,7 @@
 		<module name="UnusedImports"/>
 
 		<module name="ImportOrder">
-			<property name="groups" value="java,javax,*,net.minecraft,net.fabricmc,com.patchworkmc"/>
+			<property name="groups" value="java,javax,*,net.minecraft,net.fabricmc,net.patchworkmc"/>
 			<property name="ordered"
 					  value="false"/><!-- the plugin orders alphabetically without considering separators.. -->
 			<property name="separated" value="true"/>
@@ -161,7 +161,7 @@
 		<module name="PackageName">
 			<!-- require a package either in patchwork or forge -->
 			<property name="format"
-					  value="^com\.patchworkmc|^net\.minecraftforge|^cpw\.mods\.modlauncher\.api"/>
+					  value="^net\.patchworkmc|^net\.minecraftforge|^cpw\.mods\.modlauncher\.api"/>
 		</module>
 
 		<!--<module name="InvalidJavadocPosition"/>-->

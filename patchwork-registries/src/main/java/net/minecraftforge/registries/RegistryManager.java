@@ -24,7 +24,7 @@ import java.util.Map;
 
 import net.minecraft.util.Identifier;
 
-import com.patchworkmc.impl.registries.RegistryClassMapping;
+import net.patchworkmc.impl.registries.RegistryClassMapping;
 
 public class RegistryManager {
 	public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");

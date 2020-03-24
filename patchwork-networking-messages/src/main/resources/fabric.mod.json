@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-networking-messages",
+  "name": "Patchwork Networking Messages",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-networking-messages/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.6.2",
+    "fabric-networking-v0": "*",
+    "patchwork-fml": "*",
+    "patchwork-networking": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessages"
+    ]
+  },
+  "mixins": [
+    "patchwork-networking-messages.mixins.json"
+  ],
+  "description": "Implementation of some messages part of the Forge Networking API, including entity spawn packets.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

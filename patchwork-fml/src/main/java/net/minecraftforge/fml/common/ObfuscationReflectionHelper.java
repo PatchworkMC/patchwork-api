@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.patchworkmc.impl.fml.PatchworkMappingService;
+import net.patchworkmc.impl.fml.PatchworkMappingService;
 
 /**
  * Some reflection helper code.

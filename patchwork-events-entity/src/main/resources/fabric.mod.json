@@ -12,13 +12,14 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.event.entity.EntityEvents"
+      "net.patchworkmc.impl.event.entity.EntityEvents"
     ]
   },
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
-    "patchwork-fml": "*"
+    "patchwork-fml": "*",
+    "patchwork-extensions-item": "*"
   },
   "mixins": [
     "patchwork-events-entity.mixins.json"

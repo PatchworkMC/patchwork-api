@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.patchworkmc.mixin.networking.handler",
+  "package": "net.patchworkmc.mixin.networking.handler",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinServerLoginNetworkHandler",

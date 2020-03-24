@@ -42,10 +42,9 @@ import net.minecraft.stat.StatType;
 import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.pool.StructurePoolElementType;
 import net.minecraft.structure.processor.StructureProcessorType;
-import net.minecraft.structure.rule.RuleTest;
+import net.minecraft.structure.rule.RuleTestType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.village.PointOfInterestType;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.biome.Biome;
@@ -58,9 +57,10 @@ import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
+import net.minecraft.world.poi.PointOfInterestType;
 
-import com.patchworkmc.impl.registries.RegistryClassMapping;
-import com.patchworkmc.impl.registries.RegistryEventDispatcher;
+import net.patchworkmc.impl.registries.RegistryClassMapping;
+import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 /**
  * A class that exposes static references to all vanilla registries.
@@ -134,7 +134,7 @@ public class ForgeRegistries {
 		POTION_TYPES = wrap("potion", Potion.class);
 		RECIPE_SERIALIZERS = wrap("recipe_serializer", RecipeSerializer.class);
 		wrap("recipe_type", RecipeType.class);
-		wrap("rule_test", RuleTest.class);
+		wrap("rule_test", RuleTestType.class);
 		SCHEDULES = wrap("schedule", Schedule.class);
 		SENSOR_TYPES = wrap("sensor_type", SensorType.class);
 		SOUND_EVENTS = wrap("sound_event", SoundEvent.class);

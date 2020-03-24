@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.patchworkmc.impl.Patchwork"
+      "net.patchworkmc.impl.Patchwork"
     ]
   },
   "depends": {

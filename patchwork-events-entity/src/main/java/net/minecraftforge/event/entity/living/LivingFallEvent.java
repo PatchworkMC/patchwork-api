@@ -29,14 +29,14 @@ import net.minecraft.entity.LivingEntity;
  *
  * <p>For players that are able to fly, {@link net.minecraftforge.event.entity.player.PlayerFlyableFallEvent} will be fired instead.</p>
  *
- * <p>This event is fired via {@link com.patchworkmc.impl.event.entity.EntityEvents#onLivingFall(LivingEntity, float, float)}.</p>
+ * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#onLivingFall(LivingEntity, float, float)}.</p>
  *
  * <p>{@link #distance} contains the distance the {@link LivingEntity} is to fall. If this event is cancelled, this value is set to 0.0F.</p>
  *
  * <p>This event is cancellable.
  * If this event is cancelled, the {@link LivingEntity} does not take fall damage.</p>
  *
- * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
+ * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
  */
 public class LivingFallEvent extends LivingEvent {
 	private float distance;
