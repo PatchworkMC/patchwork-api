@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extension;
 
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import org.spongepowered.asm.mixin.Mixin;

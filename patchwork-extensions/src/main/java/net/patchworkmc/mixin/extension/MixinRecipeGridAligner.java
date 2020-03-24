@@ -1,4 +1,4 @@
-package com.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extension;
 
 import java.util.Iterator;
 
