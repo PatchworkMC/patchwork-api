@@ -1,6 +1,5 @@
 package net.minecraftforge.forgespi.language;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,6 +8,7 @@ import java.lang.annotation.ElementType;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,46 +16,66 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.CustomValue;
 
 public class ModFileScanData {
-	private Runnable initFunc;
+	private static final Logger LOGGER = LogManager.getLogger();
+
+	private String modid;
+	private boolean initialized = false;
 	private AnnotationStorage annotationStorage;
 	private Set<AnnotationData> annotationData;
 
 	public ModFileScanData(String modid) {
-		initFunc = ()
-				-> {
-			ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid)
-					.orElseThrow(
-							() -> new RuntimeException("Cannot get mod container for " + modid)
-					);
-			Path annotationJsonPath = modContainer.getPath("annotations.json");
+		this.modid = modid;
+	}
 
-			try {
-				InputStream outputStream = Files.newInputStream(annotationJsonPath);
-				Gson gson = new Gson();
-				annotationStorage = gson.fromJson(
-						new InputStreamReader(outputStream), AnnotationStorage.class
+	private void init() {
+		initialized = true;
+
+		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid)
+				.orElseThrow(
+						() -> new RuntimeException("Cannot get mod container for " + modid)
 				);
-				annotationData = annotationStorage.entries.stream()
-						.map(entry -> getAnnotationData(entry))
-						.collect(Collectors.toSet());
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		};
+		CustomValue customValue = FabricLoader.INSTANCE.getModContainer(modid)
+				.orElseThrow(() -> new RuntimeException())
+				.getMetadata()
+				.getCustomValue("patchwork:annotations");
+		if (customValue == null) {
+			LOGGER.error("ModFileScanData is being accessed but cannot find annotation storage");
+			return;
+		}
+
+		String annotationJsonLocation = customValue.getAsString();
+		Path annotationJsonPath = modContainer.getPath(annotationJsonLocation);
+
+		try {
+			InputStream outputStream = Files.newInputStream(annotationJsonPath);
+			Gson gson = new Gson();
+			this.annotationStorage = gson.fromJson(
+					new InputStreamReader(outputStream), AnnotationStorage.class
+			);
+			annotationData = this.annotationStorage.entries.stream()
+					.map(ModFileScanData::getAnnotationData)
+					.collect(Collectors.toSet());
+		} catch (IOException e) {
+			LOGGER.error(String.format(
+					"Could not read annotations from %s (loaded from %s)",
+					modid, modContainer.getRootPath()
+			));
+			e.printStackTrace();
+		}
 	}
 
 	private void initIfNeeded() {
-		if (initFunc != null) {
-			initFunc.run();
-			initFunc = null;
+		if (!initialized) {
+			init();
 		}
 	}
 
@@ -68,10 +88,7 @@ public class ModFileScanData {
 		Type annotationType = Type.getType(entry.annotationType);
 		Type targetInType = Type.getType("L" + entry.targetInClass + ";");
 		return new AnnotationData(
-				annotationType,
-				entry.targetType,
-				targetInType,
-				entry.target
+				annotationType, entry.targetType, targetInType, entry.target
 		);
 	}
 
@@ -85,10 +102,8 @@ public class ModFileScanData {
 		private Map<String, Object> annotationData;
 
 		public AnnotationData(
-				final Type annotationType,
-				final ElementType targetType,
-				final Type clazz,
-				final String memberName
+				final Type annotationType, final ElementType targetType,
+				final Type clazz, final String memberName
 		) {
 			this.annotationType = annotationType;
 			this.targetType = targetType;
@@ -121,13 +136,22 @@ public class ModFileScanData {
 		}
 
 		private void initAnnotationData() {
+			annotationData = new HashMap<>();
+
 			try {
+				// TODO: This *may* load classes in the wrong order, but it shouldn't be an issue
 				Class<?> clazzObj = Class.forName(clazz.getClassName());
 				Class annotationType = Class.forName(this.annotationType.getClassName());
 				Annotation annotationObject = getAnnotationObject(clazzObj, annotationType);
-				Method[] argMethods = annotationObject.getClass().getDeclaredMethods();
 
-				annotationData = new HashMap<>();
+				if (annotationObject == null) {
+					LOGGER.error(String.format("Cannot fetch annotation object %s %s %s %s",
+							annotationType, targetType, clazz, memberName
+					));
+					return;
+				}
+
+				Method[] argMethods = annotationObject.getClass().getDeclaredMethods();
 
 				for (Method argMethod : argMethods) {
 					if (isArgumentMethod(argMethod)) {
@@ -138,7 +162,7 @@ public class ModFileScanData {
 					}
 				}
 			} catch (Throwable e) {
-				throw new RuntimeException(e);
+				LOGGER.error(e);
 			}
 		}
 
@@ -160,28 +184,38 @@ public class ModFileScanData {
 					return clazzObj.getField(memberName)
 							.getAnnotation(annotationType);
 				case METHOD:
-					System.out.println("Not being supported");
-					return null;
+					Type methodType = Type.getType(memberName);
+					Method declaredMethod = clazzObj.getDeclaredMethod(
+							memberName.substring(memberName.indexOf('(')),
+							Arrays.stream(methodType.getArgumentTypes())
+									.map(type -> {
+										try {
+											return Class.forName(type.getClassName());
+										} catch (ClassNotFoundException e) {
+											throw new RuntimeException(e);
+										}
+									}).toArray(Class[]::new)
+					);
+					return declaredMethod.getAnnotation(annotationType);
 				default:
 					return null;
 				}
-			} catch (NoSuchFieldException e) {
+			} catch (NoSuchFieldException | NoSuchMethodException e) {
 				return null;
 			}
 		}
 
 		@Override
 		public boolean equals(final Object obj) {
-			try {
-				AnnotationData dat = (AnnotationData) obj;
-				return (!Objects.isNull(dat))
-						&& Objects.equals(annotationType, dat.annotationType)
-						&& Objects.equals(targetType, dat.targetType)
-						&& Objects.equals(clazz, dat.clazz)
-						&& Objects.equals(memberName, dat.memberName);
-			} catch (ClassCastException e) {
+			if (!(obj instanceof AnnotationData)) {
 				return false;
 			}
+
+			AnnotationData dat = (AnnotationData) obj;
+			return Objects.equals(annotationType, dat.annotationType)
+					&& Objects.equals(targetType, dat.targetType)
+					&& Objects.equals(clazz, dat.clazz)
+					&& Objects.equals(memberName, dat.memberName);
 		}
 
 		@Override
