@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-containers",
+  "version": "${version}",
+  "icon": "assets/patchwork-containers/icon.png",
+  "name": "Patchwork Containers",
+  "description": "Container stuff",
+  "authors": [
+    "PatchworkMC"
+  ],
+  "license": "LGPL-2.1-only",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  },
+  "entrypoints" :{
+  "main":["net.patchworkmc.api.container.TestEntrypoint"]
+  },
+  "mixins": [
+    "patchwork-containers.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
