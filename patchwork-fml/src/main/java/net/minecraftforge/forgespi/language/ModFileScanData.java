@@ -171,6 +171,7 @@ public class ModFileScanData {
 			if (name.equals("toString")) return false;
 			if (name.equals("hashCode")) return false;
 			if (name.equals("getClass")) return false;
+			if (name.equals("equals")) return false;
 
 			return true;
 		}
