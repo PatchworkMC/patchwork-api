@@ -31,8 +31,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.impl.worldtypes.LevelGeneratorTypeFactory;
-
 @Mixin(Dimension.class)
 public class MixinDimension {
 	@Shadow
@@ -42,20 +40,18 @@ public class MixinDimension {
 	@Inject(at = @At("HEAD"), method = "getCloudHeight", cancellable = true)
 	private void getCloudHeight(CallbackInfoReturnable<Float> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
-		IForgeWorldType forgeWorldType = LevelGeneratorTypeFactory.getForgeWorldType(generatorType);
 
-		if (forgeWorldType != null) {
-			info.setReturnValue(forgeWorldType.getCloudHeight());
+		if (generatorType instanceof IForgeWorldType) {
+			info.setReturnValue(((IForgeWorldType) generatorType).getCloudHeight());
 		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "getHorizonShadingRatio", cancellable = true)
 	private void getHorizonShadingRatio(CallbackInfoReturnable<Double> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
-		IForgeWorldType forgeWorldType = LevelGeneratorTypeFactory.getForgeWorldType(generatorType);
 
-		if (forgeWorldType != null) {
-			info.setReturnValue(forgeWorldType.voidFadeMagnitude());
+		if (generatorType instanceof IForgeWorldType) {
+			info.setReturnValue(((IForgeWorldType) generatorType).voidFadeMagnitude());
 		}
 	}
 }

@@ -33,8 +33,6 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorConfig;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.impl.worldtypes.LevelGeneratorTypeFactory;
-
 @Mixin(OverworldDimension.class)
 public abstract class MixinOverworldDimension extends Dimension {
 	public MixinOverworldDimension(World world, DimensionType type) {
@@ -43,11 +41,10 @@ public abstract class MixinOverworldDimension extends Dimension {
 
 	@Inject(method = "createChunkGenerator", at = @At("RETURN"), cancellable = true)
 	private void createChunkGenerator(CallbackInfoReturnable<ChunkGenerator<? extends ChunkGeneratorConfig>> info) {
-		LevelGeneratorType type = this.world.getLevelProperties().getGeneratorType();
-		IForgeWorldType forgeWorldType = LevelGeneratorTypeFactory.getForgeWorldType(type);
+		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
 
-		if (forgeWorldType != null) {
-			info.setReturnValue(forgeWorldType.createChunkGenerator(this.world));
+		if (generatorType instanceof IForgeWorldType) {
+			info.setReturnValue(((IForgeWorldType) generatorType).createChunkGenerator(this.world));
 		}
 	}
 }

@@ -23,40 +23,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import net.minecraftforge.common.extensions.IForgeWorldType;
-
 import net.minecraft.world.level.LevelGeneratorType;
 
 import net.fabricmc.loader.api.FabricLoader;
 
-import net.patchworkmc.mixin.worldtypes.AccessorLevelGeneratorType;
-
-public class LevelGeneratorTypeFactory {
-	// https://github.com/PatchworkMC/YarnForge/blob/1.14.x/patches/minecraft/net/minecraft/world/level/LevelGeneratorType.java.patch#L16
-	// called by mods patched with patchwork patcher
-	public static LevelGeneratorType create(String name, IForgeWorldType forgeWorldType) {
-		LevelGeneratorType result = AccessorLevelGeneratorType.create(getNextID(), name);
-		FORGE_WORLD_TYPES.put(result, forgeWorldType);
-		return result;
-	}
-
+public class PatchworkLevelGeneratorTypes {
 	private static final Field TYPES;
-	private static final BiMap<LevelGeneratorType, IForgeWorldType> FORGE_WORLD_TYPES = HashBiMap.create();
 
-	public static final LevelGeneratorType getLevelGeneratorType(IForgeWorldType forgeWorldType) {
-		return FORGE_WORLD_TYPES.inverse().get(forgeWorldType);
-	}
-
-	@Nullable
-	public static final IForgeWorldType getForgeWorldType(LevelGeneratorType levelGeneratorType) {
-		return FORGE_WORLD_TYPES.get(levelGeneratorType);
-	}
-
-	private static int getNextID() {
+	public static int getNextID() {
 		LevelGeneratorType[] types;
 
 		try {

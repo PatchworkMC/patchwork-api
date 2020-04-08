@@ -41,13 +41,11 @@ import net.minecraft.world.level.LevelGeneratorType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.patchworkmc.impl.worldtypes.LevelGeneratorTypeFactory;
 import net.patchworkmc.mixin.worldtypes.AccessorBiomeLayers;
 
 public interface IForgeWorldType {
 	default LevelGeneratorType getWorldType() {
-		//return (LevelGeneratorType) this;
-		return LevelGeneratorTypeFactory.getLevelGeneratorType(this); // Patchwork: separate IForgeWorldType and LevelGeneratorType
+		return (LevelGeneratorType) this;
 	}
 
 	/**
