@@ -3,7 +3,12 @@
   "package": "net.patchworkmc.mixin.worldtypes",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "AccessorLevelGeneratorType"
+    "AccessorBiomeLayers",
+    "AccessorLevelGeneratorType",
+    "MixinOverworldDimension"
+  ],
+  "client": [
+    "MixinDimension"
   ],
   "injectors": {
     "defaultRequire": 1

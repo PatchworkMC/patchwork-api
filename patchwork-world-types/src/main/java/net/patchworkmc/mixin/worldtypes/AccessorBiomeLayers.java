@@ -19,15 +19,21 @@
 
 package net.patchworkmc.mixin.worldtypes;
 
+import java.util.function.LongFunction;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.world.level.LevelGeneratorType;
+import net.minecraft.world.biome.layer.BiomeLayers;
+import net.minecraft.world.biome.layer.type.ParentedLayer;
+import net.minecraft.world.biome.layer.util.LayerFactory;
+import net.minecraft.world.biome.layer.util.LayerSampleContext;
+import net.minecraft.world.biome.layer.util.LayerSampler;
 
-@Mixin(LevelGeneratorType.class)
-public interface AccessorLevelGeneratorType {
-	@Invoker("<init>")
-	static LevelGeneratorType create(int id, String name) {
-		throw new RuntimeException("Failed to create invoker: LevelGeneratorType#<init>!");
+@Mixin(BiomeLayers.class)
+public interface AccessorBiomeLayers {
+	@Invoker("stack")
+	static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> stack(long seed, ParentedLayer layer, LayerFactory<T> parent, int count, LongFunction<C> contextProvider) {
+		throw new RuntimeException("Failed to create invoker: BiomeLayers#stack!");
 	}
 }
