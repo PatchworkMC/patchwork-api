@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-world-types",
+  "name": "Patchwork World Types",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-world-types/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.6.2",
+    "patchwork-fml": "*"
+  },
+  "description": "Implementation of the Forge World Type API.",
+  "mixins": [
+    "patchwork-world-types.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.worldtypes",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AccessorLevelGeneratorType"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
