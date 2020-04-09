@@ -17,23 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.worldtypes;
+package net.patchworkmc.mixin.levelgenerators;
 
-import java.util.function.LongFunction;
-
+import net.minecraftforge.common.extensions.IForgeWorldType;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.world.biome.layer.BiomeLayers;
-import net.minecraft.world.biome.layer.type.ParentedLayer;
-import net.minecraft.world.biome.layer.util.LayerFactory;
-import net.minecraft.world.biome.layer.util.LayerSampleContext;
-import net.minecraft.world.biome.layer.util.LayerSampler;
+import net.minecraft.world.level.LevelGeneratorType;
 
-@Mixin(BiomeLayers.class)
-public interface AccessorBiomeLayers {
-	@Invoker("stack")
-	static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> stack(long seed, ParentedLayer layer, LayerFactory<T> parent, int count, LongFunction<C> contextProvider) {
-		throw new RuntimeException("Failed to create invoker: BiomeLayers#stack!");
-	}
+@Mixin(LevelGeneratorType.class)
+public class MixinLevelGeneratorType implements IForgeWorldType {
 }

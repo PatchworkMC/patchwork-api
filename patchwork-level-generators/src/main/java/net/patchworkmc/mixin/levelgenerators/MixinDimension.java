@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.worldtypes;
+package net.patchworkmc.mixin.levelgenerators;
 
 import net.minecraftforge.common.extensions.IForgeWorldType;
 import org.spongepowered.asm.mixin.Final;
@@ -31,6 +31,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelGeneratorType;
 
+import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
+
 @Mixin(Dimension.class)
 public class MixinDimension {
 	@Shadow
@@ -41,7 +43,7 @@ public class MixinDimension {
 	private void getCloudHeight(CallbackInfoReturnable<Float> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
 
-		if (generatorType instanceof IForgeWorldType) {
+		if (generatorType instanceof PatchworkGeneratorType) {
 			info.setReturnValue(((IForgeWorldType) generatorType).getCloudHeight());
 		}
 	}
@@ -50,7 +52,7 @@ public class MixinDimension {
 	private void getHorizonShadingRatio(CallbackInfoReturnable<Double> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
 
-		if (generatorType instanceof IForgeWorldType) {
+		if (generatorType instanceof PatchworkGeneratorType) {
 			info.setReturnValue(((IForgeWorldType) generatorType).voidFadeMagnitude());
 		}
 	}

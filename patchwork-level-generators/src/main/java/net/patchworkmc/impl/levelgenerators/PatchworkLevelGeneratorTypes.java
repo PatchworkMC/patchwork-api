@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.worldtypes;
+package net.patchworkmc.impl.levelgenerators;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -31,11 +31,9 @@ public class PatchworkLevelGeneratorTypes {
 	private static final Field TYPES;
 
 	public static int getNextID() {
-		LevelGeneratorType[] types;
+		LevelGeneratorType[] types = LevelGeneratorType.TYPES;
 
 		try {
-			types = (LevelGeneratorType[]) TYPES.get(null);
-
 			for (int x = 0; x < types.length; x++) {
 				if (types[x] == null) {
 					return x;

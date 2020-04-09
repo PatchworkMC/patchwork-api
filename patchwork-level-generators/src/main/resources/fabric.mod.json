@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-world-types",
-  "name": "Patchwork World Types",
+  "id": "patchwork-level-generators",
+  "name": "Patchwork Level Generators",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-world-types/icon.png",
+  "icon": "assets/patchwork-level-generators/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -18,7 +18,7 @@
   },
   "description": "Implementation of the Forge World Type API.",
   "mixins": [
-    "patchwork-world-types.mixins.json"
+    "patchwork-level-generators.mixins.json"
   ],
   "custom": {
     "modmenu:api": true,

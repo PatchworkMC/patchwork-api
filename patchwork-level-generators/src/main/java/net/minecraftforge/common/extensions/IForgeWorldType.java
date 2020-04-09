@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Random;
 import java.util.function.LongFunction;
 
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +42,7 @@ import net.minecraft.world.level.LevelGeneratorType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import net.patchworkmc.mixin.worldtypes.AccessorBiomeLayers;
+import net.patchworkmc.mixin.levelgenerators.AccessorBiomeLayers;
 
 public interface IForgeWorldType {
 	default LevelGeneratorType getWorldType() {
@@ -56,20 +57,17 @@ public interface IForgeWorldType {
 
 	/**
 	 * Called when the 'Customize' button is pressed on world creation GUI.
-	 *
-	 * @param mc  The Minecraft instance
-	 * @param gui the createworld GUI
 	 */
 	@Environment(EnvType.CLIENT)
-	default void onCustomizeButton(MinecraftClient mc, CreateWorldScreen gui) {
+	default void onCustomizeButton(MinecraftClient client, CreateWorldScreen screen) {
 		if (this == LevelGeneratorType.FLAT) {
-			mc.openScreen(new CustomizeFlatLevelScreen(gui, gui.generatorOptionsTag));
+			client.openScreen(new CustomizeFlatLevelScreen(screen, screen.generatorOptionsTag));
 		} else if (this == LevelGeneratorType.BUFFET) {
-			mc.openScreen(new CustomizeBuffetLevelScreen(gui, gui.generatorOptionsTag));
+			client.openScreen(new CustomizeBuffetLevelScreen(screen, screen.generatorOptionsTag));
 		}
 	}
 
-	default boolean handleSlimeSpawnReduction(java.util.Random random, IWorld world) {
+	default boolean handleSlimeSpawnReduction(Random random, IWorld world) {
 		return this == LevelGeneratorType.FLAT && random.nextInt(4) != 1;
 	}
 
@@ -83,8 +81,6 @@ public interface IForgeWorldType {
 
 	/**
 	 * Get the height to render the clouds for this world type.
-	 *
-	 * @return The height to render clouds at
 	 */
 	default float getCloudHeight() {
 		return 128.0F;
@@ -95,21 +91,21 @@ public interface IForgeWorldType {
 	}
 
 	/**
-	 * Allows modifying the {@link IAreaFactory} used for this type's biome
+	 * Allows modifying the {@link LayerFactory} used for this type's biome
 	 * generation.
 	 *
-	 * @param <T>            The type of {@link IArea}.
-	 * @param <C>            The type of {@link IContextExtended}.
+	 * @param <T>            The type of {@link LayerSampler}.
+	 * @param <C>            The type of {@link LayerSampleContext}.
 	 * @param parentLayer    The parent layer to feed into any layer you return
-	 * @param chunkSettings  The {@link OverworldGenSettings} used to create the
-	 *                       {@link GenLayerBiome}.
+	 * @param settings  The {@link OverworldChunkGeneratorConfig} used to create the
+	 *                       {@link SetBaseBiomesLayer}.
 	 * @param contextFactory A {@link LongFunction} factory to create contexts of
 	 *                       the supplied size.
-	 * @return An {@link IAreaFactory} that representing the Biomes to be generated.
+	 * @return A {@link LayerFactory} that representing the Biomes to be generated.
 	 * @see SetBaseBiomesLayer
 	 */
-	default <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> getBiomeLayer(LayerFactory<T> parentLayer, OverworldChunkGeneratorConfig chunkSettings, LongFunction<C> contextFactory) {
-		parentLayer = (new SetBaseBiomesLayer(getWorldType(), chunkSettings)).create(contextFactory.apply(200L), parentLayer);
+	default <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> getBiomeLayer(LayerFactory<T> parentLayer, OverworldChunkGeneratorConfig settings, LongFunction<C> contextFactory) {
+		parentLayer = (new SetBaseBiomesLayer(getWorldType(), settings)).create(contextFactory.apply(200L), parentLayer);
 		parentLayer = AddBambooJungleLayer.INSTANCE.create(contextFactory.apply(1001L), parentLayer);
 		parentLayer = AccessorBiomeLayers.stack(1000L, ScaleLayer.NORMAL, parentLayer, 2, contextFactory);
 		parentLayer = EaseBiomeEdgeLayer.INSTANCE.create(contextFactory.apply(1000L), parentLayer);
