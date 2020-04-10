@@ -19,41 +19,34 @@
 
 package net.patchworkmc.mixin.levelgenerators;
 
+import java.util.concurrent.Executor;
+
 import net.minecraftforge.common.extensions.IForgeWorldType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkManager;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.Dimension;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
-import net.patchworkmc.impl.levelgenerators.ChunkManagerValues;
+import net.patchworkmc.api.levelgenerators.PatchworkLevelGeneratorType;
 
 @Mixin(ServerWorld.class)
 public abstract class MixinServerWorld {
-	@Inject(method = "method_14168", at = @At("HEAD"), cancellable = true)
-	private static void createChunkGenerator(World world, Dimension dimension, CallbackInfoReturnable<ChunkManager> info) {
+	@Redirect(method = "method_14168", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;createChunkGenerator()Lnet/minecraft/world/gen/chunk/ChunkGenerator;"))
+	private static ChunkGenerator<?> createChunkGenerator(Dimension dimension, WorldSaveHandler saveHandler, Executor executor, MinecraftServer minecraftServer, WorldGenerationProgressListener progressListener, World world, Dimension dimensionArg) {
 		LevelGeneratorType generatorType = world.getLevelProperties().getGeneratorType();
 
-		if (generatorType instanceof PatchworkGeneratorType) {
-			info.setReturnValue(new ServerChunkManager((ServerWorld) world,
-					ChunkManagerValues.file,
-					ChunkManagerValues.dataFixer,
-					ChunkManagerValues.structureManager,
-					ChunkManagerValues.workerExecutor,
-					((IForgeWorldType) generatorType).createChunkGenerator(world),
-					ChunkManagerValues.viewDistance,
-					ChunkManagerValues.progressListener,
-					() -> {
-				return ChunkManagerValues.server.getWorld(DimensionType.OVERWORLD).getPersistentStateManager();
-			}));
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
+			return ((IForgeWorldType) generatorType).createChunkGenerator(world);
+		} else {
+			return dimension.createChunkGenerator();
 		}
 	}
 }

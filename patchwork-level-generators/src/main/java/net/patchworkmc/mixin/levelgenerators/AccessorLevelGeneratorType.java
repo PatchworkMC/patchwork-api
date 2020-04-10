@@ -17,12 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.api.levelgenerators;
+package net.patchworkmc.mixin.levelgenerators;
 
-import net.minecraftforge.common.extensions.IForgeWorldType;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-/**
- * Used by Patchwork to mark forge level generator types. Added in the patching phase by patcher.
- */
-public interface PatchworkGeneratorType extends IForgeWorldType {
+import net.minecraft.world.level.LevelGeneratorType;
+
+@Mixin(LevelGeneratorType.class)
+public interface AccessorLevelGeneratorType {
+	@Accessor("TYPES")
+	static void patchwork$setTypes(LevelGeneratorType[] types) {
+		throw new RuntimeException("Failed to create accessor: LevelGeneratorType#TYPES!");
+	}
 }

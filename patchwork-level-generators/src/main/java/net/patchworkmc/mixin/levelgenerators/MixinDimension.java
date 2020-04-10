@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkLevelGeneratorType;
 
 @Mixin(Dimension.class)
 public class MixinDimension {
@@ -43,7 +43,7 @@ public class MixinDimension {
 	private void getCloudHeight(CallbackInfoReturnable<Float> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
 
-		if (generatorType instanceof PatchworkGeneratorType) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
 			info.setReturnValue(((IForgeWorldType) generatorType).getCloudHeight());
 		}
 	}
@@ -52,7 +52,7 @@ public class MixinDimension {
 	private void getHorizonShadingRatio(CallbackInfoReturnable<Double> info) {
 		LevelGeneratorType generatorType = this.world.getLevelProperties().getGeneratorType();
 
-		if (generatorType instanceof PatchworkGeneratorType) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
 			info.setReturnValue(((IForgeWorldType) generatorType).voidFadeMagnitude());
 		}
 	}

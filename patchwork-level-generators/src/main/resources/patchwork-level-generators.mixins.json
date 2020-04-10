@@ -4,9 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "AccessorBiomeLayers",
+    "AccessorLevelGeneratorType",
     "MixinBiomeLayers",
     "MixinLevelGeneratorType",
-    "MixinMinecraftServer",
     "MixinServerWorld"
   ],
   "client": [

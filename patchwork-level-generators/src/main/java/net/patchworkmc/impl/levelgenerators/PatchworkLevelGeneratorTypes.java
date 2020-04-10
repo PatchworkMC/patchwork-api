@@ -19,47 +19,25 @@
 
 package net.patchworkmc.impl.levelgenerators;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.patchworkmc.mixin.levelgenerators.AccessorLevelGeneratorType;
 
 public class PatchworkLevelGeneratorTypes {
-	private static final Field TYPES;
-
 	public static int getNextID() {
 		LevelGeneratorType[] types = LevelGeneratorType.TYPES;
 
-		try {
-			for (int x = 0; x < types.length; x++) {
-				if (types[x] == null) {
-					return x;
-				}
+		for (int x = 0; x < types.length; x++) {
+			if (types[x] == null) {
+				return x;
 			}
-
-			int old = types.length;
-			TYPES.set(null, Arrays.copyOf(types, old + 16));
-			return old;
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException(e);
 		}
-	}
 
-	static {
-		try {
-			TYPES = LevelGeneratorType.class.getDeclaredField(FabricLoader.getInstance().isDevelopmentEnvironment() ? "TYPES" : "field_9279");
-			// make accessible
-			TYPES.setAccessible(true);
-			// make non final
-			Field modifiers = Field.class.getDeclaredField("modifiers");
-			modifiers.setAccessible(true);
-			modifiers.setInt(TYPES, TYPES.getModifiers() & ~Modifier.FINAL);
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
+		int old = types.length;
+		AccessorLevelGeneratorType.patchwork$setTypes(Arrays.copyOf(types, old + 16));
+		return old;
 	}
 }
 

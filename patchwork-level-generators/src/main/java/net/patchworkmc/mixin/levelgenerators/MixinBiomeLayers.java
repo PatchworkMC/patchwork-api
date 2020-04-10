@@ -55,7 +55,7 @@ import net.minecraft.world.biome.layer.util.LayerSampler;
 import net.minecraft.world.gen.chunk.OverworldChunkGeneratorConfig;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkLevelGeneratorType;
 
 @Mixin(BiomeLayers.class)
 public class MixinBiomeLayers {
@@ -66,7 +66,7 @@ public class MixinBiomeLayers {
 
 	@Inject(at = @At("HEAD"), method = "build", cancellable = true)
 	private static <T extends LayerSampler, C extends LayerSampleContext<T>> void build(LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProvider, CallbackInfoReturnable<ImmutableList<LayerFactory<T>>> info) {
-		if (generatorType instanceof PatchworkGeneratorType) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
 			LayerFactory<T> continentLayer = ContinentLayer.INSTANCE.create(contextProvider.apply(1L));
 			continentLayer = ScaleLayer.FUZZY.create(contextProvider.apply(2000L), continentLayer);
 

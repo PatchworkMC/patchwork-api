@@ -17,23 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.levelgenerators;
+package net.patchworkmc.api.levelgenerators;
 
-import java.io.File;
-import java.util.concurrent.Executor;
+import net.minecraftforge.common.extensions.IForgeWorldType;
 
-import com.mojang.datafixers.DataFixer;
-
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.WorldGenerationProgressListener;
-import net.minecraft.structure.StructureManager;
-
-public class ChunkManagerValues {
-	public static File file;
-	public static DataFixer dataFixer;
-	public static StructureManager structureManager;
-	public static Executor workerExecutor;
-	public static int viewDistance;
-	public static WorldGenerationProgressListener progressListener;
-	public static MinecraftServer server;
+/**
+ * Used by Patchwork to mark forge level generator types. Added in the patching phase by patcher.
+ */
+public interface PatchworkLevelGeneratorType extends IForgeWorldType {
 }

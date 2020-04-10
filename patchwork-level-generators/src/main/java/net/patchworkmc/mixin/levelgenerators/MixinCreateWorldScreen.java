@@ -26,14 +26,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkLevelGeneratorType;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class MixinCreateWorldScreen extends Screen {
@@ -43,14 +42,12 @@ public abstract class MixinCreateWorldScreen extends Screen {
 
 	@Shadow
 	private int generatorType;
-	@Shadow
-	private MinecraftClient minecraft;
 
 	@Inject(at = @At("RETURN"), method = "method_19926")
 	private void onCustomizeButton(ButtonWidget widget, CallbackInfo info) {
 		LevelGeneratorType generatorType = LevelGeneratorType.TYPES[this.generatorType];
 
-		if (generatorType instanceof PatchworkGeneratorType) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
 			((IForgeWorldType) generatorType).onCustomizeButton(this.minecraft, (CreateWorldScreen) (Object) this);
 		}
 	}
@@ -59,7 +56,7 @@ public abstract class MixinCreateWorldScreen extends Screen {
 	private void onGUICreateWorldPress(CallbackInfo info) {
 		LevelGeneratorType generatorType = LevelGeneratorType.TYPES[this.generatorType];
 
-		if (generatorType instanceof PatchworkGeneratorType) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
 			((IForgeWorldType) generatorType).onGUICreateWorldPress();
 		}
 	}
