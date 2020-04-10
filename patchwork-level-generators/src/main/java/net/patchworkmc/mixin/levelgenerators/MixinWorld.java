@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.level.LevelGeneratorType;
 import net.minecraft.world.level.LevelProperties;
 
-import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
 
 @Mixin(World.class)
 public class MixinWorld {

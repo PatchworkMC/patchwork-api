@@ -107,7 +107,7 @@ public interface IForgeWorldType {
 	default <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> getBiomeLayer(LayerFactory<T> parentLayer, OverworldChunkGeneratorConfig settings, LongFunction<C> contextFactory) {
 		parentLayer = (new SetBaseBiomesLayer(getWorldType(), settings)).create(contextFactory.apply(200L), parentLayer);
 		parentLayer = AddBambooJungleLayer.INSTANCE.create(contextFactory.apply(1001L), parentLayer);
-		parentLayer = AccessorBiomeLayers.stack(1000L, ScaleLayer.NORMAL, parentLayer, 2, contextFactory);
+		parentLayer = AccessorBiomeLayers.patchwork$stack(1000L, ScaleLayer.NORMAL, parentLayer, 2, contextFactory);
 		parentLayer = EaseBiomeEdgeLayer.INSTANCE.create(contextFactory.apply(1000L), parentLayer);
 		return parentLayer;
 	}

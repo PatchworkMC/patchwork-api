@@ -17,9 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.levelgenerators;
+package net.patchworkmc.api.levelgenerators;
 
 import net.minecraftforge.common.extensions.IForgeWorldType;
 
+/**
+ * Used by Patchwork to mark forge level generator types. Added in the patching phase by patcher.
+ */
 public interface PatchworkGeneratorType extends IForgeWorldType {
 }

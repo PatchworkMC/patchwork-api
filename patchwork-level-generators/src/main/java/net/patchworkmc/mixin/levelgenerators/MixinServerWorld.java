@@ -33,8 +33,8 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelGeneratorType;
 
+import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
 import net.patchworkmc.impl.levelgenerators.ChunkManagerValues;
-import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
 
 @Mixin(ServerWorld.class)
 public abstract class MixinServerWorld {
@@ -43,7 +43,15 @@ public abstract class MixinServerWorld {
 		LevelGeneratorType generatorType = world.getLevelProperties().getGeneratorType();
 
 		if (generatorType instanceof PatchworkGeneratorType) {
-			info.setReturnValue(new ServerChunkManager((ServerWorld) world, ChunkManagerValues.file, ChunkManagerValues.dataFixer, ChunkManagerValues.structureManager, ChunkManagerValues.workerExecutor, ((IForgeWorldType) generatorType).createChunkGenerator(world), ChunkManagerValues.viewDistance, ChunkManagerValues.progressListener, () -> {
+			info.setReturnValue(new ServerChunkManager((ServerWorld) world,
+					ChunkManagerValues.file,
+					ChunkManagerValues.dataFixer,
+					ChunkManagerValues.structureManager,
+					ChunkManagerValues.workerExecutor,
+					((IForgeWorldType) generatorType).createChunkGenerator(world),
+					ChunkManagerValues.viewDistance,
+					ChunkManagerValues.progressListener,
+					() -> {
 				return ChunkManagerValues.server.getWorld(DimensionType.OVERWORLD).getPersistentStateManager();
 			}));
 		}

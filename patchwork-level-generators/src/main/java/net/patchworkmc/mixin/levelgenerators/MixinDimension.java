@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
 
 @Mixin(Dimension.class)
 public class MixinDimension {

@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
- 
+
 package net.patchworkmc.mixin.levelgenerators;
 
 import java.util.function.LongFunction;
@@ -55,7 +55,7 @@ import net.minecraft.world.biome.layer.util.LayerSampler;
 import net.minecraft.world.gen.chunk.OverworldChunkGeneratorConfig;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
 
 @Mixin(BiomeLayers.class)
 public class MixinBiomeLayers {
@@ -69,14 +69,18 @@ public class MixinBiomeLayers {
 		if (generatorType instanceof PatchworkGeneratorType) {
 			LayerFactory<T> continentLayer = ContinentLayer.INSTANCE.create(contextProvider.apply(1L));
 			continentLayer = ScaleLayer.FUZZY.create(contextProvider.apply(2000L), continentLayer);
+
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(1L), continentLayer);
 			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2001L), continentLayer);
+
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(50L), continentLayer);
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(70L), continentLayer);
 			continentLayer = AddIslandLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
+
 			LayerFactory<T> layerFactory2 = OceanTemperatureLayer.INSTANCE.create(contextProvider.apply(2L));
 			layerFactory2 = stack(2001L, ScaleLayer.NORMAL, layerFactory2, 6, contextProvider);
+
 			continentLayer = AddColdClimatesLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(3L), continentLayer);
 			continentLayer = AddClimateLayers.AddTemperateBiomesLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
@@ -84,10 +88,12 @@ public class MixinBiomeLayers {
 			continentLayer = AddClimateLayers.AddSpecialBiomesLayer.INSTANCE.create(contextProvider.apply(3L), continentLayer);
 			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2002L), continentLayer);
 			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2003L), continentLayer);
+
 			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(4L), continentLayer);
 			continentLayer = AddMushroomIslandLayer.INSTANCE.create(contextProvider.apply(5L), continentLayer);
 			continentLayer = AddDeepOceanLayer.INSTANCE.create(contextProvider.apply(4L), continentLayer);
 			continentLayer = stack(1000L, ScaleLayer.NORMAL, continentLayer, 0, contextProvider);
+
 			int biomeSize = 4;
 			int riverSize = biomeSize;
 
@@ -102,13 +108,17 @@ public class MixinBiomeLayers {
 
 			LayerFactory<T> riverLayer = stack(1000L, ScaleLayer.NORMAL, continentLayer, 0, contextProvider);
 			riverLayer = SimpleLandNoiseLayer.INSTANCE.create(contextProvider.apply(100L), riverLayer);
+
 			LayerFactory<T> noiseLayer = ((IForgeWorldType) generatorType).getBiomeLayer(continentLayer, settings, contextProvider);
 			LayerFactory<T> layerFactory5 = stack(1000L, ScaleLayer.NORMAL, riverLayer, 2, contextProvider);
+
 			noiseLayer = AddHillsLayer.INSTANCE.create(contextProvider.apply(1000L), noiseLayer, layerFactory5);
+
 			riverLayer = stack(1000L, ScaleLayer.NORMAL, riverLayer, 2, contextProvider);
 			riverLayer = stack(1000L, ScaleLayer.NORMAL, riverLayer, riverSize, contextProvider);
 			riverLayer = NoiseToRiverLayer.INSTANCE.create(contextProvider.apply(1L), riverLayer);
 			riverLayer = SmoothenShorelineLayer.INSTANCE.create(contextProvider.apply(1000L), riverLayer);
+
 			noiseLayer = AddSunflowerPlainsLayer.INSTANCE.create(contextProvider.apply(1001L), noiseLayer);
 
 			for (int k = 0; k < biomeSize; ++k) {
@@ -126,6 +136,7 @@ public class MixinBiomeLayers {
 			noiseLayer = SmoothenShorelineLayer.INSTANCE.create(contextProvider.apply(1000L), noiseLayer);
 			noiseLayer = AddRiversLayer.INSTANCE.create(contextProvider.apply(100L), noiseLayer, riverLayer);
 			noiseLayer = ApplyOceanTemperatureLayer.INSTANCE.create(contextProvider.apply(100L), noiseLayer, layerFactory2);
+
 			LayerFactory<T> biomeLayer = CellScaleLayer.INSTANCE.create(contextProvider.apply(10L), noiseLayer);
 			info.setReturnValue(ImmutableList.of(noiseLayer, biomeLayer, noiseLayer));
 		}

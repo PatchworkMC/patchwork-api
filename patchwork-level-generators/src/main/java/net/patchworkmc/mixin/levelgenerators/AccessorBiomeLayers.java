@@ -33,7 +33,7 @@ import net.minecraft.world.biome.layer.util.LayerSampler;
 @Mixin(BiomeLayers.class)
 public interface AccessorBiomeLayers {
 	@Invoker("stack")
-	static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> stack(long seed, ParentedLayer layer, LayerFactory<T> parent, int count, LongFunction<C> contextProvider) {
+	static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> patchwork$stack(long seed, ParentedLayer layer, LayerFactory<T> parent, int count, LongFunction<C> contextProvider) {
 		throw new RuntimeException("Failed to create invoker: BiomeLayers#stack!");
 	}
 }

@@ -33,7 +33,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.world.level.LevelGeneratorType;
 
-import net.patchworkmc.impl.levelgenerators.PatchworkGeneratorType;
+import net.patchworkmc.api.levelgenerators.PatchworkGeneratorType;
 
 @Mixin(CreateWorldScreen.class)
 public abstract class MixinCreateWorldScreen extends Screen {
@@ -43,6 +43,7 @@ public abstract class MixinCreateWorldScreen extends Screen {
 
 	@Shadow
 	private int generatorType;
+	@Shadow
 	private MinecraftClient minecraft;
 
 	@Inject(at = @At("RETURN"), method = "method_19926")
