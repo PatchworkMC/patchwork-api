@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.block",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinBlock",
+    "MixinBlockState",
+    "BlockTagsAccessor",
+    "FireBlockAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
