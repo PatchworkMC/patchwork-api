@@ -94,9 +94,9 @@ public interface IForgeBlock {
 	 * between 0 and 1.
 	 *
 	 * <p>Note that entities may reduce slipperiness by a certain factor of their own;
-	 * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
-	 * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
-	 * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
+	 * for {@link LivingEntity}, this is {@code .91}.
+	 * {@link net.minecraft.entity.ItemEntity} uses {@code .98}, and
+	 * {@link net.minecraft.entity.projectile.FishingBobberEntity} uses {@code .92}.
 	 *
 	 * @param state  state of the block
 	 * @param world  the world
@@ -157,6 +157,7 @@ public interface IForgeBlock {
 	 * Determines if this block should set fire and deal fire damage
 	 * to entities coming into contact with it.
 	 *
+	 * @param state The current block state
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return True if the block should deal damage
@@ -167,14 +168,13 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: Block, Block*, PistonBlock*, RepeaterBlock*, WorldRenderer*, ChunkRenderer*, BlockArgumentParser*, FallingBlockEntity*, ChestBlockEntity*, HopperBlockEntity*, Explosion*, World*, WorldChunk*, ChunkRegion*, ChunkHolder*, Forge classes: ForgeHooks, FluidUtil, ForgeHooks*, VanillaInventoryCodeHooks*
 	/**
-	 * Called throughout the code as a replacement for block instanceof BlockContainer
-	 * Moving this to the Block base class allows for mods that wish to extend vanilla
-	 * blocks, and also want to have a tile entity on that block, may.
+	 * Called throughout the code as a replacement for {@code block instanceof} {@link BlockEntityProvider}.
+	 * Allows for blocks to have a block entity conditionally based on block state.
 	 *
-	 * <p>Return true from this function to specify this block has a tile entity.
+	 * <p>Return true from this function to specify this block has a block entity.
 	 *
 	 * @param state State of the current block
-	 * @return True if block has a tile entity, false otherwise
+	 * @return True if block has a block entity, false otherwise
 	 */
 	default boolean hasTileEntity(BlockState state) {
 		return this instanceof BlockEntityProvider;
@@ -182,13 +182,13 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: WorldChunk*, ChunkRegion*
 	/**
-	 * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
+	 * Called throughout the code as a replacement for {@link BlockEntityProvider#createBlockEntity(BlockView)}
 	 * Return the same thing you would from that function.
-	 * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
+	 * This will fall back to {@link BlockEntityProvider#createBlockEntity(BlockView)} if this block is a {@link BlockEntityProvider}
 	 *
 	 * @param state The state of the current block
-	 * @param world The world to create the TE in
-	 * @return A instance of a class extending TileEntity
+	 * @param world The world to create the BE in
+	 * @return An instance of a class extending {@link BlockEntity}
 	 */
 	@Nullable
 	default BlockEntity createTileEntity(BlockState state, BlockView world) {
@@ -226,10 +226,10 @@ public interface IForgeBlock {
 	 *
 	 * @param state       The current state.
 	 * @param world       The current world
-	 * @param player      The player damaging the block, may be null
 	 * @param pos         Block position in world
-	 * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
-	 *                    Can be useful to delay the destruction of tile entities till after harvestBlock
+	 * @param player      The player damaging the block, may be null
+	 * @param willHarvest True if {@link Block#onBroken(IWorld, BlockPos, BlockState)} will be called after this if this method returns true.
+	 *                    Can be useful to delay the destruction of block entities till after onBroken
 	 * @param fluid       The current fluid state at current position
 	 * @return True if the block is actually destroyed.
 	 */
@@ -259,13 +259,13 @@ public interface IForgeBlock {
 	 * Determines if a specified mob type can spawn on this block, returning false will
 	 * prevent any mob from spawning on the block.
 	 *
-	 * @param state The current state
-	 * @param world The current world
-	 * @param pos   Block position in world
-	 * @param type  The Mob Category Type
+	 * @param state        The current state
+	 * @param world        The current world
+	 * @param pos          Block position in world
+	 * @param restriction  The location spawn restriction
 	 * @return True to allow a mob of the specified category to spawn, false to prevent it.
 	 */
-	default boolean canCreatureSpawn(BlockState state, BlockView world, BlockPos pos, SpawnRestriction.Location type, @Nullable EntityType<?> entityType) {
+	default boolean canCreatureSpawn(BlockState state, BlockView world, BlockPos pos, SpawnRestriction.Location restriction, @Nullable EntityType<?> entityType) {
 		return state.allowsSpawning(world, pos, entityType);
 	}
 
@@ -274,10 +274,11 @@ public interface IForgeBlock {
 	 * Returns the position that the sleeper is moved to upon
 	 * waking up, or respawning at the bed.
 	 *
-	 * @param state   The current state
-	 * @param world   The current world
-	 * @param pos     Block position in world
-	 * @param sleeper The sleeper or camera entity, null in some cases.
+	 * @param entityType the sleeper's entity type
+	 * @param state      The current state
+	 * @param world      The current world
+	 * @param pos        Block position in world
+	 * @param sleeper    The sleeper or camera entity, null in some cases.
 	 * @return The spawn position
 	 */
 	default Optional<Vec3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, CollisionView world, BlockPos pos, @Nullable LivingEntity sleeper) {
@@ -292,7 +293,7 @@ public interface IForgeBlock {
 	/**
 	 * Called when a user either starts or stops sleeping in the bed.
 	 *
-	 * @param state
+	 * @param state    The current state
 	 * @param world    The current world
 	 * @param pos      Block position in world
 	 * @param sleeper  The sleeper or camera entity, null in some cases.
@@ -307,7 +308,7 @@ public interface IForgeBlock {
 	// TODO Call locations: Patches: LivingEntity*
 	/**
 	 * Returns the direction of the block. Same values that
-	 * are returned by BlockDirectional. Called every frame tick for every living entity. Be VERY fast.
+	 * are returned by {@link net.minecraft.block.FacingBlock}. Called every frame tick for every living entity. Be VERY fast.
 	 *
 	 * @param state The current state
 	 * @param world The current world
@@ -322,6 +323,7 @@ public interface IForgeBlock {
 	/**
 	 * Determines if the current block is the foot half of the bed.
 	 *
+	 * @param state The current state
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return True if the current block is the foot side of a bed.
@@ -386,13 +388,13 @@ public interface IForgeBlock {
 
 	// This comment is here to note that I didn't miss getting the calls for this method, there just aren't any.
 	/**
-	 * Determines if the current block is replaceable by Ore veins during world generation.
+	 * Determines if the current block is replaceable by ore veins during world generation.
 	 *
 	 * @param state  The current state
 	 * @param world  The current world
 	 * @param pos    Block position in world
-	 * @param target The generic target block the gen is looking for, Standards define stone
-	 *               for overworld generation, and neatherack for the nether.
+	 * @param target The generic target block the gen is looking for, usually stone
+	 *               for overworld generation, and netherrack for the nether.
 	 * @return True to allow this block to be replaced by a ore
 	 */
 	default boolean isReplaceableOreGen(BlockState state, CollisionView world, BlockPos pos, Predicate<BlockState> target) {
@@ -403,6 +405,7 @@ public interface IForgeBlock {
 	/**
 	 * Location sensitive version of getExplosionResistance.
 	 *
+	 * @param state     The current state
 	 * @param world     The current world
 	 * @param pos       Block position in world
 	 * @param exploder  The entity that caused the explosion, can be null
@@ -430,10 +433,14 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Forge classes: ForgeHooks
 	/**
-	 * Called when A user uses the creative pick block button on this block.
+	 * Called when a user uses the creative pick block button on this block.
 	 *
+	 * @param state  The current state
 	 * @param target The full target the player is looking at
-	 * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
+	 * @param world  The world the block is in
+	 * @param pos    The block's position
+	 * @param player The player picking the block
+	 * @return An {@link ItemStack} to add to the player's inventory, empty itemstack if nothing should be added.
 	 */
 	default ItemStack getPickBlock(BlockState state, HitResult target, BlockView world, BlockPos pos, PlayerEntity player) {
 		return this.getBlock().getPickStack(world, pos, state);
@@ -441,10 +448,7 @@ public interface IForgeBlock {
 
 	// No call locations.
 	/**
-	 * Used by getTopSoilidOrLiquidBlock while placing biome decorations, villages, etc
-	 * Also used to determine if the player can spawn in this block.
-	 *
-	 * @return False to disallow spawning.
+	 * Forge javadoc only said where this was used. It isn't used anywhere, so there's really no way to document this.
 	 */
 	default boolean isFoliage(BlockState state, CollisionView world, BlockPos pos) {
 		return false;
@@ -452,31 +456,32 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: LivingEntity*
 	/**
-	 * Allows a block to override the standard EntityLivingBase.updateFallState
+	 * Allows a block to override the standard {@link LivingEntity#fall} particles.
 	 * particles, this is a server side method that spawns particles with
-	 * WorldServer.spawnParticle.
+	 * {@link ServerWorld#spawnParticles}
 	 *
-	 * @param worldserver       The current Server World
+	 * @param state1            This block's state.
+	 * @param serverworld       The {@link ServerWorld} this block is in.
 	 * @param pos               The position of the block.
-	 * @param state2            The state at the specific world/pos
-	 * @param entity            The entity that hit landed on the block
-	 * @param numberOfParticles That vanilla world have spawned
+	 * @param state2            This block's state, but again.
+	 * @param entity            The entity that landed on the block
+	 * @param numberOfParticles Number of particles the vanilla version of this method would spawn.
 	 * @return True to prevent vanilla landing particles from spawning
 	 */
-	default boolean addLandingEffects(BlockState state1, ServerWorld worldserver, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
+	default boolean addLandingEffects(BlockState state1, ServerWorld serverworld, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
 		return false;
 	}
 
 	// TODO Call locations: Patches: Entity*
 	/**
 	 * Allows a block to override the standard vanilla running particles.
-	 * This is called from {@link Entity#spawnRunningParticles} and is called both,
-	 * Client and server side, it's up to the implementor to client check / server check.
+	 * This is called from {@link Entity#spawnSprintingParticles} and is called both
+	 * client and server side, it's up to the implementor to client check / server check.
 	 * By default vanilla spawns particles only on the client and the server methods no-op.
 	 *
-	 * @param state  The BlockState the entity is running on.
+	 * @param state  The state of this block.
 	 * @param world  The world.
-	 * @param pos    The position at the entities feet.
+	 * @param pos    The position at the entity's feet.
 	 * @param entity The entity running on the block.
 	 * @return True to prevent vanilla running particles from spawning.
 	 */
@@ -487,9 +492,8 @@ public interface IForgeBlock {
 	// TODO Call locations: Patches: ParticleManager*
 	/**
 	 * Spawn a digging particle effect in the world, this is a wrapper
-	 * around EffectRenderer.addBlockHitEffects to allow the block more
-	 * control over the particles. Useful when you have entirely different
-	 * texture sheets for different sides/locations in the world.
+	 * around {@link ParticleManager.addBlockBreakParticles} to allow the block more
+	 * control over the particles.
 	 *
 	 * @param state   The current state
 	 * @param world   The current world
@@ -509,6 +513,7 @@ public interface IForgeBlock {
 	 * to host your block. So be sure to do proper sanity checks before assuming
 	 * that the location is this block.
 	 *
+	 * @param state   This block's state
 	 * @param world   The current world
 	 * @param pos     Position to spawn the particle
 	 * @param manager A reference to the current particle manager.
@@ -541,8 +546,7 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: AbstractTreeFeature*
 	/**
-	 * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
-	 * Modder may implement this for custom plants.
+	 * Called when a plant grows on this block.
 	 * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
 	 * so the source location is specified.
 	 * Currently this just changes the block to dirt if it was grass.
@@ -566,6 +570,7 @@ public interface IForgeBlock {
 	 * of plants on this soil will be slightly sped up.
 	 * Only vanilla case is tilledField when it is within range of water.
 	 *
+	 * @param state The current state
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return True if the soil should be considered fertile.
@@ -582,6 +587,7 @@ public interface IForgeBlock {
 	/**
 	 * Determines if this block can be used as the base of a beacon.
 	 *
+	 * @param state  The current state
 	 * @param world  The current world
 	 * @param pos    Block position in world
 	 * @param beacon Beacon position in world
@@ -597,10 +603,11 @@ public interface IForgeBlock {
 	/**
 	 * Gathers how much experience this block drops when broken.
 	 *
-	 * @param state   The current state
-	 * @param world   The world
-	 * @param pos     Block position
-	 * @param fortune
+	 * @param state     The current state
+	 * @param world     The world
+	 * @param pos       Block position
+	 * @param fortune   Level of fortune on the breaker's tool
+	 * @param silktouch Level of silk touch on the breaker's tool
 	 * @return Amount of XP from breaking this block.
 	 */
 	default int getExpDrop(BlockState state, CollisionView world, BlockPos pos, int fortune, int silktouch) {
@@ -639,7 +646,7 @@ public interface IForgeBlock {
 	/**
 	 * Determines the amount of enchanting power this block can provide to an enchanting table.
 	 *
-	 * @param world The World
+	 * @param world The world
 	 * @param pos   Block position in world
 	 * @return The amount of enchanting power this block produces.
 	 */
@@ -649,13 +656,14 @@ public interface IForgeBlock {
 
 	// No call locations.
 	/**
-	 * Gathers how much experience this block drops when broken.
+	 * Re-colors this block in the world.
 	 *
 	 * @param state   The current state
 	 * @param world   The world
 	 * @param pos     Block position
-	 * @param fortune
-	 * @return Amount of XP from breaking this block.
+	 * @param facing  ??? (this method has no usages)
+	 * @param color   Color to recolor to.
+	 * @return if the block was affected
 	 */
 	@SuppressWarnings("unchecked")
 	default boolean recolorBlock(BlockState state, IWorld world, BlockPos pos, Direction facing, DyeColor color) {
@@ -675,7 +683,7 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: World*
 	/**
-	 * Called when a tile entity on a side of this block changes is created or is destroyed.
+	 * Called when a block entity on a side of this block changes is created or is destroyed.
 	 *
 	 * @param world    The world
 	 * @param pos      Block position in world
@@ -704,7 +712,7 @@ public interface IForgeBlock {
 	 * @param world The world
 	 * @param pos   Block position in world
 	 * @param side  The INPUT side of the block to be powered - ie the opposite of this block's output side
-	 * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
+	 * @return Whether weak power should be checked normally
 	 */
 	default boolean shouldCheckWeakPower(BlockState state, CollisionView world, BlockPos pos, Direction side) {
 		return state.isSimpleFullBlock(world, pos);
@@ -716,6 +724,7 @@ public interface IForgeBlock {
 	 * Weak changes are changes 1 block away through a solid block.
 	 * Similar to comparators.
 	 *
+	 * @param state The current state
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return true To be notified of changes
@@ -763,7 +772,7 @@ public interface IForgeBlock {
 	// TODO Call locations: Patches: ChunkRenderer*
 	/**
 	 * Queries if this block should render in a given layer.
-	 * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
+	 * A custom {@link net.minecraft.client.render.model.BakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
 	 */
 	default boolean canRenderInLayer(BlockState state, RenderLayer layer) {
 		return this.getBlock().getRenderLayer() == layer;
@@ -771,13 +780,13 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: ClientPlayerInteractionManager*, WorldRenderer*, Entity*, LivingEntity*, FoxEntity*, HorseBaseEntity*, LlamaEntity*, BlockItem*
 	/**
-	 * Sensitive version of getSoundType.
+	 * Sensitive version of {@link Block#getSoundType}.
 	 *
 	 * @param state  The state
 	 * @param world  The world
 	 * @param pos    The position. Note that the world may not necessarily have {@code state} here!
 	 * @param entity The entity that is breaking/stepping on/placing/hitting/falling on this block, or null if no entity is in this context
-	 * @return A SoundType to use
+	 * @return A {@link BlockSoundGroup} to use
 	 */
 	default BlockSoundGroup getSoundType(BlockState state, CollisionView world, BlockPos pos, @Nullable Entity entity) {
 		return this.getBlock().getSoundGroup(state);
@@ -803,11 +812,11 @@ public interface IForgeBlock {
 	// No call locations.
 	/**
 	 * Use this to change the fog color used when the entity is "inside" a material.
-	 * Vec3d is used here as "r/g/b" 0 - 1 values.
+	 * {@link Vec3d} is used here as "r/g/b" 0 - 1 values.
 	 *
+	 * @param state         The state at the entity viewport.
 	 * @param world         The world.
 	 * @param pos           The position at the entity viewport.
-	 * @param state         The state at the entity viewport.
 	 * @param entity        the entity
 	 * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
 	 * @return The new fog color.
@@ -836,8 +845,7 @@ public interface IForgeBlock {
 
 	// TODO Call locations: Patches: Camera*
 	/**
-	 * Used to determine the state 'viewed' by an entity (see
-	 * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+	 * Used to determine the state 'viewed' by an entity.
 	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
 	 *
 	 * @param state     the state
@@ -852,7 +860,7 @@ public interface IForgeBlock {
 
 	// No call locations.
 	/**
-	 * Gets the {@link IBlockState} to place.
+	 * Gets the {@link BlockState} to place.
 	 *
 	 * @param world  The world the block is being placed in
 	 * @param pos    The position the block is being placed at
@@ -990,7 +998,7 @@ public interface IForgeBlock {
 	 * @param state The current state
 	 * @param world The current world
 	 * @param pos   Block position in world
-	 * @return True to allow the ender dragon to destroy this block
+	 * @return True to allow the entity to destroy this block
 	 */
 	default boolean canEntityDestroy(BlockState state, BlockView world, BlockPos pos, Entity entity) {
 		if (entity instanceof EnderDragonEntity) {
@@ -1030,14 +1038,14 @@ public interface IForgeBlock {
 	// Call locations: Patches: DebugHud (no todo because this works fine without it -- this method should never be overridden anyway.)
 	/**
 	 * Retrieves a list of tags names this is known to be associated with.
-	 * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+	 * This should be used in favor of {@link net.minecraft.tag.TagContainer#getTagsFor}, as this caches the result.
 	 */
 	Set<Identifier> getTags();
 
 	// TODO Call locations: Patches: Explosion*
 	/**
 	 * Called when the block is destroyed by an explosion.
-	 * Useful for allowing the block to take into account tile entities,
+	 * Useful for allowing the block to take into account block entities,
 	 * state, etc. when exploded, before it is removed.
 	 *
 	 * @param world     The current world
