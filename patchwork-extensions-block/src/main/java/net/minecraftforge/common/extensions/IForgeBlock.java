@@ -53,7 +53,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
@@ -263,6 +262,7 @@ public interface IForgeBlock {
 	 * @param world        The current world
 	 * @param pos          Block position in world
 	 * @param restriction  The location spawn restriction
+	 * @param entityType   The type of entity attempting to spawn
 	 * @return True to allow a mob of the specified category to spawn, false to prevent it.
 	 */
 	default boolean canCreatureSpawn(BlockState state, BlockView world, BlockPos pos, SpawnRestriction.Location restriction, @Nullable EntityType<?> entityType) {
@@ -457,7 +457,7 @@ public interface IForgeBlock {
 	// TODO Call locations: Patches: LivingEntity*
 	/**
 	 * Allows a block to override the standard {@link LivingEntity#fall} particles.
-	 * particles, this is a server side method that spawns particles with
+	 * This is a server side method that spawns particles with
 	 * {@link ServerWorld#spawnParticles}
 	 *
 	 * @param state1            This block's state.
@@ -685,6 +685,7 @@ public interface IForgeBlock {
 	/**
 	 * Called when a block entity on a side of this block changes is created or is destroyed.
 	 *
+	 * @param state    The state of this block
 	 * @param world    The world
 	 * @param pos      Block position in world
 	 * @param neighbor Block position of neighbor
@@ -709,6 +710,7 @@ public interface IForgeBlock {
 	/**
 	 * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
 	 *
+	 * @param state This block's state
 	 * @param world The world
 	 * @param pos   Block position in world
 	 * @param side  The INPUT side of the block to be powered - ie the opposite of this block's output side
@@ -862,15 +864,13 @@ public interface IForgeBlock {
 	/**
 	 * Gets the {@link BlockState} to place.
 	 *
-	 * @param world  The world the block is being placed in
-	 * @param pos    The position the block is being placed at
+	 * @param state  ??? (presumably this block's state, but it has not yet been placed?)
 	 * @param facing The side the block is being placed on
-	 * @param hitX   The X coordinate of the hit vector
-	 * @param hitY   The Y coordinate of the hit vector
-	 * @param hitZ   The Z coordinate of the hit vector
-	 * @param meta   The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
-	 * @param placer The entity placing the block
-	 * @param hand   The player hand used to place this block
+	 * @param state2 ???
+	 * @param world  The world the block is being placed in
+	 * @param pos1   ??? (presumably where it's being placed)
+	 * @param pos2   ???
+	 * @param hand   The hand the block is being placed from
 	 * @return The state to be placed in the world
 	 */
 	default BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
@@ -881,6 +881,7 @@ public interface IForgeBlock {
 	/**
 	 * Determines if another block can connect to this block.
 	 *
+	 * @param state  This block's state
 	 * @param world  The current world
 	 * @param pos    The position of this block
 	 * @param facing The side the connecting block is on

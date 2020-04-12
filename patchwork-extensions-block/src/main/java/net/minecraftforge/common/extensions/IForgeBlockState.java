@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.particle.ParticleManager;
@@ -37,7 +38,6 @@ import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
@@ -68,13 +68,13 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Gets the slipperiness at the given location at the given state. Normally
+	 * Gets the slipperiness at the given location of this state. Normally
 	 * between 0 and 1.
 	 *
 	 * <p>Note that entities may reduce slipperiness by a certain factor of their own;
-	 * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
-	 * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
-	 * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
+	 * for {@link LivingEntity}, this is {@code .91}.
+	 * {@link net.minecraft.entity.ItemEntity} uses {@code .98}, and
+	 * {@link net.minecraft.entity.projectile.FishingBobberEntity} uses {@code .92}.
 	 *
 	 * @param world  the world
 	 * @param pos    the position in the world
@@ -86,7 +86,7 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15.
+	 * Get a light value for this block, taking into account the state and coordinates, normal ranges are between 0 and 15.
 	 */
 	default int getLightValue(BlockRenderView world, BlockPos pos) {
 		return patchwork$getForgeBlock().getLightValue(getBlockState(), world, pos);
@@ -123,25 +123,24 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Called throughout the code as a replacement for block instanceof BlockContainer
-	 * Moving this to the Block base class allows for mods that wish to extend vanilla
-	 * blocks, and also want to have a tile entity on that block, may.
+	 * Called throughout the code as a replacement for {@code block instanceof} {@link BlockEntityProvider}.
+	 * Allows for blocks to have a block entity conditionally based on block state.
 	 *
-	 * <p>Return true from this function to specify this block has a tile entity.
+	 * <p>Return true from this function to specify this block has a block entity.
 	 *
-	 * @return True if block has a tile entity, false otherwise
+	 * @return True if block has a block entity, false otherwise
 	 */
 	default boolean hasTileEntity() {
 		return patchwork$getForgeBlock().hasTileEntity(getBlockState());
 	}
 
 	/**
-	 * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
+	 * Called throughout the code as a replacement for {@link BlockEntityProvider#createBlockEntity(BlockView)}
 	 * Return the same thing you would from that function.
-	 * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
+	 * This will fall back to {@link BlockEntityProvider#createBlockEntity(BlockView)} if this block is a {@link BlockEntityProvider}
 	 *
-	 * @param world The world to create the TE in
-	 * @return A instance of a class extending TileEntity
+	 * @param world The world to create the BE in
+	 * @return An instance of a class extending {@link BlockEntity}
 	 */
 	@Nullable
 	default BlockEntity createTileEntity(BlockView world) {
@@ -173,11 +172,11 @@ public interface IForgeBlockState {
 	 * server sides!
 	 *
 	 * @param world       The current world
-	 * @param player      The player damaging the block, may be null
 	 * @param pos         Block position in world
-	 * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
-	 *                    Can be useful to delay the destruction of tile entities till after harvestBlock
-	 * @param fluid       The current fluid and block state for the position in the world.
+	 * @param player      The player damaging the block, may be null
+	 * @param willHarvest True if {@link Block#onBroken(IWorld, BlockPos, BlockState)} will be called after this if this method returns true.
+	 *                    Can be useful to delay the destruction of block entities till after onBroken
+	 * @param fluid       The current fluid state at current position
 	 * @return True if the block is actually destroyed.
 	 */
 	default boolean removedByPlayer(World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
@@ -202,22 +201,24 @@ public interface IForgeBlockState {
 	 * Determines if a specified mob type can spawn on this block, returning false will
 	 * prevent any mob from spawning on the block.
 	 *
-	 * @param world The current world
-	 * @param pos   Block position in world
-	 * @param type  The Mob Category Type
+	 * @param world        The current world
+	 * @param pos          Block position in world
+	 * @param restriction  The location spawn restriction
+	 * @param entityType   The type of entity attempting to spawn
 	 * @return True to allow a mob of the specified category to spawn, false to prevent it.
 	 */
-	default boolean canCreatureSpawn(CollisionView world, BlockPos pos, Location type, EntityType<?> entityType) {
-		return patchwork$getForgeBlock().canCreatureSpawn(getBlockState(), world, pos, type, entityType);
+	default boolean canCreatureSpawn(CollisionView world, BlockPos pos, Location restriction, EntityType<?> entityType) {
+		return patchwork$getForgeBlock().canCreatureSpawn(getBlockState(), world, pos, restriction, entityType);
 	}
 
 	/**
 	 * Returns the position that the sleeper is moved to upon
 	 * waking up, or respawning at the bed.
 	 *
-	 * @param world   The current world
-	 * @param pos     Block position in world
-	 * @param sleeper The sleeper or camera entity, null in some cases.
+	 * @param entityType the sleeper's entity type
+	 * @param world      The current world
+	 * @param pos        Block position in world
+	 * @param sleeper    The sleeper or camera entity, null in some cases.
 	 * @return The spawn position
 	 */
 	default Optional<Vec3d> getBedSpawnPosition(EntityType<?> type, CollisionView world, BlockPos pos, @Nullable LivingEntity sleeper) {
@@ -238,7 +239,7 @@ public interface IForgeBlockState {
 
 	/**
 	 * Returns the direction of the block. Same values that
-	 * are returned by BlockDirectional
+	 * are returned by {@link net.minecraft.block.FacingBlock}. Called every frame tick for every living entity. Be VERY fast.
 	 *
 	 * @param world The current world
 	 * @param pos   Block position in world
@@ -307,12 +308,12 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Determines if the current block is replaceable by Ore veins during world generation.
+	 * Determines if the current block is replaceable by ore veins during world generation.
 	 *
 	 * @param world  The current world
 	 * @param pos    Block position in world
-	 * @param target The generic target block the gen is looking for, Standards define stone
-	 *               for overworld generation, and neatherack for the nether.
+	 * @param target The generic target block the gen is looking for, usually stone
+	 *               for overworld generation, and netherrack for the nether.
 	 * @return True to allow this block to be replaced by a ore
 	 */
 	default boolean isReplaceableOreGen(CollisionView world, BlockPos pos, Predicate<BlockState> target) {
@@ -346,35 +347,35 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Called when A user uses the creative pick block button on this block.
+	 * Called when a user uses the creative pick block button on this block.
 	 *
 	 * @param target The full target the player is looking at
-	 * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
+	 * @param world  The world the block is in
+	 * @param pos    The block's position
+	 * @param player The player picking the block
+	 * @return An {@link ItemStack} to add to the player's inventory, empty itemstack if nothing should be added.
 	 */
 	default ItemStack getPickBlock(HitResult target, BlockView world, BlockPos pos, PlayerEntity player) {
 		return patchwork$getForgeBlock().getPickBlock(getBlockState(), target, world, pos, player);
 	}
 
 	/**
-	 * Used by getTopSoilidOrLiquidBlock while placing biome decorations, villages, etc
-	 * Also used to determine if the player can spawn in this block.
-	 *
-	 * @return False to disallow spawning.
+	 * Forge javadoc only said where this was used. It isn't used anywhere, so there's really no way to document this.
 	 */
 	default boolean isFoliage(CollisionView world, BlockPos pos) {
 		return patchwork$getForgeBlock().isFoliage(getBlockState(), world, pos);
 	}
 
 	/**
-	 * Allows a block to override the standard EntityLivingBase.updateFallState
-	 * particles, this is a server side method that spawns particles with
-	 * WorldServer.spawnParticle.
+	 * Allows a block to override the standard {@link LivingEntity#fall} particles.
+	 * This is a server side method that spawns particles with
+	 * {@link ServerWorld#spawnParticles}
 	 *
-	 * @param worldserver       The current Server World
+	 * @param serverworld       The {@link ServerWorld} this block is in.
 	 * @param pos               The position of the block.
-	 * @param state2            The state at the specific world/pos
-	 * @param entity            The entity that hit landed on the block
-	 * @param numberOfParticles That vanilla world have spawned
+	 * @param state2            This block's state, but again.
+	 * @param entity            The entity that landed on the block
+	 * @param numberOfParticles Number of particles the vanilla version of this method would spawn.
 	 * @return True to prevent vanilla landing particles from spawning
 	 */
 	default boolean addLandingEffects(ServerWorld worldserver, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
@@ -383,12 +384,12 @@ public interface IForgeBlockState {
 
 	/**
 	 * Allows a block to override the standard vanilla running particles.
-	 * This is called from {@link Entity#spawnRunningParticles} and is called both,
-	 * Client and server side, it's up to the implementor to client check / server check.
+	 * This is called from {@link Entity#spawnSprintingParticles} and is called both
+	 * client and server side, it's up to the implementor to client check / server check.
 	 * By default vanilla spawns particles only on the client and the server methods no-op.
 	 *
 	 * @param world  The world.
-	 * @param pos    The position at the entities feet.
+	 * @param pos    The position at the entity's feet.
 	 * @param entity The entity running on the block.
 	 * @return True to prevent vanilla running particles from spawning.
 	 */
@@ -398,9 +399,8 @@ public interface IForgeBlockState {
 
 	/**
 	 * Spawn a digging particle effect in the world, this is a wrapper
-	 * around EffectRenderer.addBlockHitEffects to allow the block more
-	 * control over the particles. Useful when you have entirely different
-	 * texture sheets for different sides/locations in the world.
+	 * around {@link ParticleManager.addBlockBreakParticles} to allow the block more
+	 * control over the particles.
 	 *
 	 * @param world   The current world
 	 * @param target  The target the player is looking at {x/y/z/side/sub}
@@ -450,8 +450,7 @@ public interface IForgeBlockState {
 	}*/
 
 	/**
-	 * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
-	 * Modder may implement this for custom plants.
+	 * Called when a plant grows on this block.
 	 * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
 	 * so the source location is specified.
 	 * Currently this just changes the block to dirt if it was grass.
@@ -494,9 +493,10 @@ public interface IForgeBlockState {
 	/**
 	 * Gathers how much experience this block drops when broken.
 	 *
-	 * @param world   The world
-	 * @param pos     Block position
-	 * @param fortune
+	 * @param world     The world
+	 * @param pos       Block position
+	 * @param fortune   Level of fortune on the breaker's tool
+	 * @param silktouch Level of silk touch on the breaker's tool
 	 * @return Amount of XP from breaking this block.
 	 */
 	default int getExpDrop(CollisionView world, BlockPos pos, int fortune, int silktouch) {
@@ -519,21 +519,21 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * //TODO: Re-Evaluate
-	 * Gathers how much experience this block drops when broken.
+	 * Re-colors this block in the world.
 	 *
 	 * @param state   The current state
 	 * @param world   The world
 	 * @param pos     Block position
-	 * @param fortune
-	 * @return Amount of XP from breaking this block.
+	 * @param facing  ??? (this method has no usages)
+	 * @param color   Color to recolor to.
+	 * @return if the block was affected
 	 */
 	default boolean recolorBlock(IWorld world, BlockPos pos, Direction facing, DyeColor color) {
 		return patchwork$getForgeBlock().recolorBlock(getBlockState(), world, pos, facing, color);
 	}
 
 	/**
-	 * Called when a tile entity on a side of this block changes is created or is destroyed.
+	 * Called when a block entity on a side of this block changes is created or is destroyed.
 	 *
 	 * @param world    The world
 	 * @param pos      Block position in world
@@ -611,20 +611,20 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Queries if this blockstate should render in a given layer.
-	 * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
+	 * Queries if this block should render in a given layer.
+	 * A custom {@link net.minecraft.client.render.model.BakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
 	 */
 	default boolean canRenderInLayer(RenderLayer layer) {
 		return patchwork$getForgeBlock().canRenderInLayer(getBlockState(), layer);
 	}
 
 	/**
-	 * Sensitive version of getSoundType.
+	 * Sensitive version of {@link Block#getSoundType}.
 	 *
 	 * @param world  The world
 	 * @param pos    The position. Note that the world may not necessarily have {@code state} here!
 	 * @param entity The entity that is breaking/stepping on/placing/hitting/falling on this block, or null if no entity is in this context
-	 * @return A SoundType to use
+	 * @return A {@link BlockSoundGroup} to use
 	 */
 	default BlockSoundGroup getSoundType(CollisionView world, BlockPos pos, @Nullable Entity entity) {
 		return patchwork$getForgeBlock().getSoundType(getBlockState(), world, pos, entity);
@@ -643,7 +643,7 @@ public interface IForgeBlockState {
 
 	/**
 	 * Use this to change the fog color used when the entity is "inside" a material.
-	 * Vec3d is used here as "r/g/b" 0 - 1 values.
+	 * {@link Vec3d} is used here as "r/g/b" 0 - 1 values.
 	 *
 	 * @param world         The world.
 	 * @param pos           The position at the entity viewport.
@@ -657,8 +657,7 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Used to determine the state 'viewed' by an entity (see
-	 * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+	 * Used to determine the state 'viewed' by an entity.
 	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
 	 *
 	 * @param world     the world
@@ -671,17 +670,15 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Gets the {@link IBlockState} to place.
+	 * Gets the {@link BlockState} to place.
 	 *
-	 * @param world  The world the block is being placed in
-	 * @param pos    The position the block is being placed at
+	 * @param state  ??? (presumably this block's state, but it has not yet been placed?)
 	 * @param facing The side the block is being placed on
-	 * @param hitX   The X coordinate of the hit vector
-	 * @param hitY   The Y coordinate of the hit vector
-	 * @param hitZ   The Z coordinate of the hit vector
-	 * @param meta   The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
-	 * @param placer The entity placing the block
-	 * @param hand   The player hand used to place this block
+	 * @param state2 ???
+	 * @param world  The world the block is being placed in
+	 * @param pos1   ??? (presumably where it's being placed)
+	 * @param pos2   ???
+	 * @param hand   The hand the block is being placed from
 	 * @return The state to be placed in the world
 	 */
 	default BlockState getStateForPlacement(Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
@@ -809,9 +806,9 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+	 * Get the {@link PathNodeType} for this block. Return {@code null} for vanilla behavior.
 	 *
-	 * @return the PathNodeType
+	 * @return the {@link PathNodeType}
 	 */
 	@Nullable
 	default PathNodeType getAiPathNodeType(BlockView world, BlockPos pos, @Nullable MobEntity entity) {
