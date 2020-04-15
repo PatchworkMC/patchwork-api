@@ -21,33 +21,16 @@ package net.patchworkmc.mixin.levelgenerators;
 
 import java.util.function.LongFunction;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraftforge.common.extensions.IForgeWorldType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.world.biome.layer.AddClimateLayers;
-import net.minecraft.world.biome.layer.AddColdClimatesLayer;
-import net.minecraft.world.biome.layer.AddDeepOceanLayer;
-import net.minecraft.world.biome.layer.AddEdgeBiomesLayer;
-import net.minecraft.world.biome.layer.AddHillsLayer;
-import net.minecraft.world.biome.layer.AddIslandLayer;
-import net.minecraft.world.biome.layer.AddMushroomIslandLayer;
-import net.minecraft.world.biome.layer.AddRiversLayer;
-import net.minecraft.world.biome.layer.AddSunflowerPlainsLayer;
-import net.minecraft.world.biome.layer.ApplyOceanTemperatureLayer;
+import net.minecraft.world.biome.layer.AddBambooJungleLayer;
 import net.minecraft.world.biome.layer.BiomeLayers;
-import net.minecraft.world.biome.layer.CellScaleLayer;
-import net.minecraft.world.biome.layer.ContinentLayer;
-import net.minecraft.world.biome.layer.IncreaseEdgeCurvatureLayer;
-import net.minecraft.world.biome.layer.NoiseToRiverLayer;
-import net.minecraft.world.biome.layer.OceanTemperatureLayer;
-import net.minecraft.world.biome.layer.ScaleLayer;
-import net.minecraft.world.biome.layer.SimpleLandNoiseLayer;
-import net.minecraft.world.biome.layer.SmoothenShorelineLayer;
+import net.minecraft.world.biome.layer.EaseBiomeEdgeLayer;
+import net.minecraft.world.biome.layer.SetBaseBiomesLayer;
 import net.minecraft.world.biome.layer.type.ParentedLayer;
 import net.minecraft.world.biome.layer.util.LayerFactory;
 import net.minecraft.world.biome.layer.util.LayerSampleContext;
@@ -64,81 +47,47 @@ public class MixinBiomeLayers {
 		throw new RuntimeException("Failed to shadow BiomeLayers#stack!");
 	}
 
-	@Inject(at = @At("HEAD"), method = "build", cancellable = true)
-	private static <T extends LayerSampler, C extends LayerSampleContext<T>> void build(LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProvider, CallbackInfoReturnable<ImmutableList<LayerFactory<T>>> info) {
+	@Redirect(method = "build(Lnet/minecraft/world/level/LevelGeneratorType;Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;Ljava/util/function/LongFunction;)Lcom/google/common/collect/ImmutableList;",
+			at = @At(value = "INVOKE", target = "net/minecraft/world/biome/layer/SetBaseBiomesLayer.create(Lnet/minecraft/world/biome/layer/util/LayerSampleContext;Lnet/minecraft/world/biome/layer/util/LayerFactory;)Lnet/minecraft/world/biome/layer/util/LayerFactory;", ordinal = 0))
+	private static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> addForgeBiomeLayers(SetBaseBiomesLayer instance, C contextParam, LayerFactory<T> parentLayer, LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProvider) {
 		if (generatorType instanceof PatchworkLevelGeneratorType) {
-			LayerFactory<T> continentLayer = ContinentLayer.INSTANCE.create(contextProvider.apply(1L));
-			continentLayer = ScaleLayer.FUZZY.create(contextProvider.apply(2000L), continentLayer);
+			return ((IForgeWorldType) generatorType).getBiomeLayer(parentLayer, settings, contextProvider);
+		} else {
+			// vanilla behaviour
+			return instance.create(contextParam, parentLayer);
+		}
+	}
 
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(1L), continentLayer);
-			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2001L), continentLayer);
+	@Redirect(method = "build(Lnet/minecraft/world/level/LevelGeneratorType;Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;Ljava/util/function/LongFunction;)Lcom/google/common/collect/ImmutableList;",
+			at = @At(value = "INVOKE", target = "net/minecraft/world/biome/layer/AddBambooJungleLayer.create(Lnet/minecraft/world/biome/layer/util/LayerSampleContext;Lnet/minecraft/world/biome/layer/util/LayerFactory;)Lnet/minecraft/world/biome/layer/util/LayerFactory;", ordinal = 0))
+	private static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> redirectBambooJungle(AddBambooJungleLayer instance, C contextParam, LayerFactory<T> parentLayer, LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProvider) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
+			return parentLayer;
+		} else {
+			// vanilla behaviour
+			return instance.create(contextParam, parentLayer);
+		}
+	}
 
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(50L), continentLayer);
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(70L), continentLayer);
-			continentLayer = AddIslandLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
+	@Redirect(method = "build(Lnet/minecraft/world/level/LevelGeneratorType;Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;Ljava/util/function/LongFunction;)Lcom/google/common/collect/ImmutableList;",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/layer/BiomeLayers;stack(JLnet/minecraft/world/biome/layer/type/ParentedLayer;Lnet/minecraft/world/biome/layer/util/LayerFactory;ILjava/util/function/LongFunction;)Lnet/minecraft/world/biome/layer/util/LayerFactory;", ordinal = 3))
+	private static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> redirectStack(long seed, ParentedLayer layer, LayerFactory<T> parentLayer, int count, LongFunction<C> contextProvider, LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProviderParam) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
+			return parentLayer;
+		} else {
+			// vanilla behaviour
+			return stack(seed, layer, parentLayer, count, contextProvider);
+		}
+	}
 
-			LayerFactory<T> layerFactory2 = OceanTemperatureLayer.INSTANCE.create(contextProvider.apply(2L));
-			layerFactory2 = stack(2001L, ScaleLayer.NORMAL, layerFactory2, 6, contextProvider);
-
-			continentLayer = AddColdClimatesLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(3L), continentLayer);
-			continentLayer = AddClimateLayers.AddTemperateBiomesLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
-			continentLayer = AddClimateLayers.AddCoolBiomesLayer.INSTANCE.create(contextProvider.apply(2L), continentLayer);
-			continentLayer = AddClimateLayers.AddSpecialBiomesLayer.INSTANCE.create(contextProvider.apply(3L), continentLayer);
-			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2002L), continentLayer);
-			continentLayer = ScaleLayer.NORMAL.create(contextProvider.apply(2003L), continentLayer);
-
-			continentLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(4L), continentLayer);
-			continentLayer = AddMushroomIslandLayer.INSTANCE.create(contextProvider.apply(5L), continentLayer);
-			continentLayer = AddDeepOceanLayer.INSTANCE.create(contextProvider.apply(4L), continentLayer);
-			continentLayer = stack(1000L, ScaleLayer.NORMAL, continentLayer, 0, contextProvider);
-
-			int biomeSize = 4;
-			int riverSize = biomeSize;
-
-			if (settings != null) {
-				biomeSize = settings.getBiomeSize();
-				riverSize = settings.getRiverSize();
-			}
-
-			if (generatorType == LevelGeneratorType.LARGE_BIOMES) {
-				biomeSize = 6;
-			}
-
-			LayerFactory<T> riverLayer = stack(1000L, ScaleLayer.NORMAL, continentLayer, 0, contextProvider);
-			riverLayer = SimpleLandNoiseLayer.INSTANCE.create(contextProvider.apply(100L), riverLayer);
-
-			LayerFactory<T> noiseLayer = ((IForgeWorldType) generatorType).getBiomeLayer(continentLayer, settings, contextProvider);
-			LayerFactory<T> layerFactory5 = stack(1000L, ScaleLayer.NORMAL, riverLayer, 2, contextProvider);
-
-			noiseLayer = AddHillsLayer.INSTANCE.create(contextProvider.apply(1000L), noiseLayer, layerFactory5);
-
-			riverLayer = stack(1000L, ScaleLayer.NORMAL, riverLayer, 2, contextProvider);
-			riverLayer = stack(1000L, ScaleLayer.NORMAL, riverLayer, riverSize, contextProvider);
-			riverLayer = NoiseToRiverLayer.INSTANCE.create(contextProvider.apply(1L), riverLayer);
-			riverLayer = SmoothenShorelineLayer.INSTANCE.create(contextProvider.apply(1000L), riverLayer);
-
-			noiseLayer = AddSunflowerPlainsLayer.INSTANCE.create(contextProvider.apply(1001L), noiseLayer);
-
-			for (int k = 0; k < biomeSize; ++k) {
-				noiseLayer = ScaleLayer.NORMAL.create(contextProvider.apply((long) (1000 + k)), noiseLayer);
-
-				if (k == 0) {
-					noiseLayer = IncreaseEdgeCurvatureLayer.INSTANCE.create(contextProvider.apply(3L), noiseLayer);
-				}
-
-				if (k == 1 || biomeSize == 1) {
-					noiseLayer = AddEdgeBiomesLayer.INSTANCE.create(contextProvider.apply(1000L), noiseLayer);
-				}
-			}
-
-			noiseLayer = SmoothenShorelineLayer.INSTANCE.create(contextProvider.apply(1000L), noiseLayer);
-			noiseLayer = AddRiversLayer.INSTANCE.create(contextProvider.apply(100L), noiseLayer, riverLayer);
-			noiseLayer = ApplyOceanTemperatureLayer.INSTANCE.create(contextProvider.apply(100L), noiseLayer, layerFactory2);
-
-			LayerFactory<T> biomeLayer = CellScaleLayer.INSTANCE.create(contextProvider.apply(10L), noiseLayer);
-			info.setReturnValue(ImmutableList.of(noiseLayer, biomeLayer, noiseLayer));
+	@Redirect(method = "build(Lnet/minecraft/world/level/LevelGeneratorType;Lnet/minecraft/world/gen/chunk/OverworldChunkGeneratorConfig;Ljava/util/function/LongFunction;)Lcom/google/common/collect/ImmutableList;",
+			at = @At(value = "INVOKE", target = "net/minecraft/world/biome/layer/EaseBiomeEdgeLayer.create(Lnet/minecraft/world/biome/layer/util/LayerSampleContext;Lnet/minecraft/world/biome/layer/util/LayerFactory;)Lnet/minecraft/world/biome/layer/util/LayerFactory;", ordinal = 0))
+	private static <T extends LayerSampler, C extends LayerSampleContext<T>> LayerFactory<T> redirectEaseBiomeEdge(EaseBiomeEdgeLayer instance, C contextParam, LayerFactory<T> parentLayer, LevelGeneratorType generatorType, OverworldChunkGeneratorConfig settings, LongFunction<C> contextProvider) {
+		if (generatorType instanceof PatchworkLevelGeneratorType) {
+			return parentLayer;
+		} else {
+			// vanilla behaviour
+			return instance.create(contextParam, parentLayer);
 		}
 	}
 }
