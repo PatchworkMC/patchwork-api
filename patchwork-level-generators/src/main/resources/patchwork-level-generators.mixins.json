@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.levelgenerators",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "AccessorBiomeLayers",
+    "AccessorLevelGeneratorType",
+    "MixinBiomeLayers",
+    "MixinLevelGeneratorType",
+    "MixinServerWorld"
+  ],
+  "client": [
+    "MixinCreateWorldScreen",
+    "MixinDimension",
+    "MixinWorld"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
