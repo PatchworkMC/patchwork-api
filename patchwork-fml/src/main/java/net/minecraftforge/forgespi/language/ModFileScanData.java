@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +43,8 @@ import org.objectweb.asm.Type;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
+import net.fabricmc.loader.metadata.LoaderModMetadata;
+import net.fabricmc.loader.metadata.NestedJarEntry;
 
 public class ModFileScanData {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -58,14 +61,9 @@ public class ModFileScanData {
 	private void init() {
 		initialized = true;
 
-		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid)
-				.orElseThrow(
-						() -> new RuntimeException("Cannot get mod container for " + modid)
-				);
-		CustomValue customValue = FabricLoader.INSTANCE.getModContainer(modid)
-				.orElseThrow(() -> new RuntimeException())
-				.getMetadata()
-				.getCustomValue("patchwork:annotations");
+		ModContainer modContainer = getModContainer(modid);
+		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
+
 		if (customValue == null) {
 			LOGGER.error("ModFileScanData is being accessed but cannot find annotation storage");
 			return;
@@ -85,8 +83,8 @@ public class ModFileScanData {
 					.collect(Collectors.toSet());
 		} catch (IOException e) {
 			LOGGER.error(String.format(
-					"Could not read annotations from %s (loaded from %s)",
-					modid, modContainer.getRootPath()
+					"Could not read annotations from %s %s (loaded from %s)",
+					modid, annotationJsonPath, modContainer.getRootPath()
 			));
 			e.printStackTrace();
 		}
@@ -242,5 +240,23 @@ public class ModFileScanData {
 		public int hashCode() {
 			return Objects.hash(annotationType, targetType, clazz, memberName);
 		}
+	}
+
+	//if it's a jij mod, return parent mod's container
+	private static ModContainer getModContainer(String modid) {
+		return FabricLoader.INSTANCE.getAllMods().stream().filter(modContainer -> {
+			LoaderModMetadata info = ((net.fabricmc.loader.ModContainer) modContainer).getInfo();
+			Collection<NestedJarEntry> jars = info.getJars();
+
+			if (modContainer.getMetadata().getId().equals(modid)) {
+				return false;
+			}
+
+			return jars.stream().anyMatch(
+					jar -> jar.getFile().contains(modid)
+			);
+		}).findAny().orElse(FabricLoader.INSTANCE.getModContainer(modid).orElseThrow(
+				() -> new RuntimeException("Cannot get mod container for " + modid)
+		));
 	}
 }

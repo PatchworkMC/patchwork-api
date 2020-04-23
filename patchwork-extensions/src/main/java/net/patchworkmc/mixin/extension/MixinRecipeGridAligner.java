@@ -30,13 +30,13 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeGridAligner;
 
 @Mixin(RecipeGridAligner.class)
-public class MixinRecipeGridAligner {
+public interface MixinRecipeGridAligner {
 	@ModifyVariable(
 			method = "alignRecipeToGrid",
 			at = @At("HEAD"),
 			ordinal = 0
 	)
-	private int modifyGridWidth(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
+	default int modifyGridWidth(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
 		if (recipe instanceof IShapedRecipe) {
 			return ((IShapedRecipe<?>) recipe).getRecipeWidth();
 		}
@@ -49,7 +49,7 @@ public class MixinRecipeGridAligner {
 			at = @At("HEAD"),
 			ordinal = 1
 	)
-	private int modifyGridHeight(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
+	default int modifyGridHeight(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
 		if (recipe instanceof IShapedRecipe) {
 			return ((IShapedRecipe<?>) recipe).getRecipeHeight();
 		}
