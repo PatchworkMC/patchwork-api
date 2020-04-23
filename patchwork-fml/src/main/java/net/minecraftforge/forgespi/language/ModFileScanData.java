@@ -189,6 +189,7 @@ public class ModFileScanData {
 			if (name.equals("hashCode")) return false;
 			if (name.equals("getClass")) return false;
 			if (name.equals("equals")) return false;
+			if (name.equals("annotationType")) return false;
 
 			return true;
 		}
@@ -202,23 +203,17 @@ public class ModFileScanData {
 					return clazzObj.getField(memberName)
 							.getAnnotation(annotationType);
 				case METHOD:
-					Type methodType = Type.getType(memberName);
-					Method declaredMethod = clazzObj.getDeclaredMethod(
-							memberName.substring(memberName.indexOf('(')),
-							Arrays.stream(methodType.getArgumentTypes())
-									.map(type -> {
-										try {
-											return Class.forName(type.getClassName());
-										} catch (ClassNotFoundException e) {
-											throw new RuntimeException(e);
-										}
-									}).toArray(Class[]::new)
-					);
-					return declaredMethod.getAnnotation(annotationType);
+					//TODO handle overloaded methods
+					String methodName = memberName.substring(0, memberName.indexOf('('));
+					return Arrays.stream(clazzObj.getDeclaredMethods())
+							.filter(method -> method.getName().equals(methodName))
+							.findFirst()
+							.orElseThrow(() -> new RuntimeException("Cannot get method " + memberName))
+							.getAnnotation(annotationType);
 				default:
 					return null;
 				}
-			} catch (NoSuchFieldException | NoSuchMethodException e) {
+			} catch (NoSuchFieldException e) {
 				return null;
 			}
 		}
