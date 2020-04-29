@@ -19,18 +19,11 @@
 
 package net.minecraftforge.fml;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-
 import net.fabricmc.loader.api.FabricLoader;
 
 public class ModList {
 	// Patchwork: initalize directly because there's no args
 	private static ModList INSTANCE = new ModList();
-
-	private Map<String, ModFileInfo> modFileInfoMap = new HashMap<>();
 
 	public static ModList get() {
 		return INSTANCE;
@@ -39,11 +32,5 @@ public class ModList {
 	public boolean isLoaded(String modId) {
 		// Patchwork: use Fabric Loader lookup instead of an internal one
 		return FabricLoader.getInstance().isModLoaded(modId);
-	}
-
-	public ModFileInfo getModFileById(String modId) {
-		return modFileInfoMap.computeIfAbsent(
-			modId, ModFileInfo::new
-		);
 	}
 }
