@@ -22,38 +22,78 @@ package net.patchworkmc.mixin.recipes;
 import java.util.Iterator;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeGridAligner;
 
 @Mixin(RecipeGridAligner.class)
 public interface MixinRecipeGridAligner {
-	@ModifyVariable(
-			method = "alignRecipeToGrid",
-			at = @At("HEAD"),
-			ordinal = 0
-	)
-	default int modifyGridWidth(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
+	@Shadow
+	void acceptAlignedInput(Iterator inputs, int slot, int amount, int gridX, int gridY);
+
+	/**
+	 * @author qouteall
+	 * @reason https://github.com/FabricMC/Mixin/issues/15
+	 */
+	@Overwrite
+	default void alignRecipeToGrid(
+			int gridWidth, int gridHeight, int gridOutputSlot,
+			Recipe<?> recipe, Iterator inputs, int amount
+	) {
+		int width = gridWidth;
+		int height = gridHeight;
+
 		if (recipe instanceof IShapedRecipe) {
-			return ((IShapedRecipe<?>) recipe).getRecipeWidth();
+			IShapedRecipe shapedRecipe = (IShapedRecipe) recipe;
+			width = shapedRecipe.getRecipeWidth();
+			height = shapedRecipe.getRecipeHeight();
 		}
 
-		return gridWidth;
-	}
+		int slot = 0;
 
-	@ModifyVariable(
-			method = "alignRecipeToGrid",
-			at = @At("HEAD"),
-			ordinal = 1
-	)
-	default int modifyGridHeight(int gridWidth, int gridHeight, int gridOutputSlot, Recipe<?> recipe, Iterator<?> inputs, int amount) {
-		if (recipe instanceof IShapedRecipe) {
-			return ((IShapedRecipe<?>) recipe).getRecipeHeight();
+		for (int y = 0; y < gridHeight; ++y) {
+			if (slot == gridOutputSlot) {
+				++slot;
+			}
+
+			boolean bl = (float) height < (float) gridHeight / 2.0F;
+
+			int m = MathHelper.floor((float) gridHeight / 2.0F - (float) height / 2.0F);
+
+			if (bl && m > y) {
+				slot += gridWidth;
+				++y;
+			}
+
+			for (int x = 0; x < gridWidth; ++x) {
+				if (!inputs.hasNext()) {
+					return;
+				}
+
+				bl = (float) width < (float) gridWidth / 2.0F;
+				m = MathHelper.floor((float) gridWidth / 2.0F - (float) width / 2.0F);
+				int o = width;
+
+				boolean bl2 = x < width;
+
+				if (bl) {
+					o = m + width;
+					bl2 = m <= x && x < m + width;
+				}
+
+				if (bl2) {
+					this.acceptAlignedInput(inputs, slot, amount, y, x);
+				} else if (o == x) {
+					slot += gridWidth - x;
+					break;
+				}
+
+				++slot;
+			}
 		}
-
-		return gridHeight;
 	}
 }
