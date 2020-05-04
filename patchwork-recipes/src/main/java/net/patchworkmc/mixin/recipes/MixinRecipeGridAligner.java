@@ -33,7 +33,7 @@ import net.minecraft.recipe.RecipeGridAligner;
 @Mixin(RecipeGridAligner.class)
 public interface MixinRecipeGridAligner {
 	@Shadow
-	void acceptAlignedInput(Iterator inputs, int slot, int amount, int gridX, int gridY);
+	void acceptAlignedInput(Iterator<?> inputs, int slot, int amount, int gridX, int gridY);
 
 	/**
 	 * @author qouteall
@@ -42,13 +42,13 @@ public interface MixinRecipeGridAligner {
 	@Overwrite
 	default void alignRecipeToGrid(
 			int gridWidth, int gridHeight, int gridOutputSlot,
-			Recipe<?> recipe, Iterator inputs, int amount
+			Recipe<?> recipe, Iterator<?> inputs, int amount
 	) {
 		int width = gridWidth;
 		int height = gridHeight;
 
 		if (recipe instanceof IShapedRecipe) {
-			IShapedRecipe shapedRecipe = (IShapedRecipe) recipe;
+			IShapedRecipe<?> shapedRecipe = (IShapedRecipe<?>) recipe;
 			width = shapedRecipe.getRecipeWidth();
 			height = shapedRecipe.getRecipeHeight();
 		}
