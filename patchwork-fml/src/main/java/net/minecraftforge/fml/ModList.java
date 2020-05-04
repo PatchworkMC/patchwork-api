@@ -20,9 +20,12 @@
 package net.minecraftforge.fml;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -31,6 +34,8 @@ public class ModList {
 	private static ModList INSTANCE = new ModList();
 
 	private Map<String, ModFileInfo> modFileInfoMap = new HashMap<>();
+
+	private List<ModFileScanData> allScanDataCache;
 
 	public static ModList get() {
 		return INSTANCE;
@@ -42,8 +47,18 @@ public class ModList {
 	}
 
 	public ModFileInfo getModFileById(String modId) {
-		return modFileInfoMap.computeIfAbsent(
-			modId, ModFileInfo::new
-		);
+		return modFileInfoMap.computeIfAbsent(modId, ModFileInfo::new);
+	}
+
+	public List<ModFileScanData> getAllScanData() {
+		if (allScanDataCache == null) {
+			allScanDataCache = FabricLoader.getInstance().getAllMods()
+					.stream()
+					.map(modContainer -> modContainer.getMetadata().getId())
+					.map(modid -> getModFileById(modid).getFile().getScanResult())
+					.collect(Collectors.toList());
+		}
+
+		return allScanDataCache;
 	}
 }

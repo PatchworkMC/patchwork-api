@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -62,7 +63,8 @@ public class ModFileScanData {
 		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
 
 		if (customValue == null) {
-			LOGGER.error("ModFileScanData is being accessed but cannot find annotation storage");
+			LOGGER.error("ModFileScanData: Tried to access the scanned annotation data for " + modid + ", but it is missing");
+			annotationData = new HashSet<>();
 			return;
 		}
 
@@ -87,14 +89,11 @@ public class ModFileScanData {
 		}
 	}
 
-	private void initIfNeeded() {
+	public Set<AnnotationData> getAnnotations() {
 		if (!initialized) {
 			init();
 		}
-	}
 
-	public Set<AnnotationData> getAnnotations() {
-		initIfNeeded();
 		return annotationData;
 	}
 
