@@ -175,7 +175,7 @@ public class ModFileScanData {
 					}
 				}
 			} catch (Throwable e) {
-				LOGGER.error(e);
+				LOGGER.catching(e);
 			}
 		}
 
@@ -190,26 +190,22 @@ public class ModFileScanData {
 			return true;
 		}
 
-		private Annotation getAnnotationObject(Class<?> clazzObj, Class annotationType) {
-			try {
-				switch (targetType) {
-				case TYPE:
-					return clazzObj.getAnnotation(annotationType);
-				case FIELD:
-					return clazzObj.getField(memberName)
-							.getAnnotation(annotationType);
-				case METHOD:
-					//TODO handle overloaded methods
-					String methodName = memberName.substring(0, memberName.indexOf('('));
-					return Arrays.stream(clazzObj.getDeclaredMethods())
-							.filter(method -> method.getName().equals(methodName))
-							.findFirst()
-							.orElseThrow(() -> new RuntimeException("Cannot get method " + memberName))
-							.getAnnotation(annotationType);
-				default:
-					return null;
-				}
-			} catch (NoSuchFieldException e) {
+		private Annotation getAnnotationObject(Class<?> clazzObj, Class annotationType) throws Throwable {
+			switch (targetType) {
+			case TYPE:
+				return clazzObj.getAnnotation(annotationType);
+			case FIELD:
+				return clazzObj.getField(memberName)
+						.getAnnotation(annotationType);
+			case METHOD:
+				//TODO handle overloaded methods
+				String methodName = memberName.substring(0, memberName.indexOf('('));
+				return Arrays.stream(clazzObj.getDeclaredMethods())
+						.filter(method -> method.getName().equals(methodName))
+						.findFirst()
+						.orElseThrow(() -> new RuntimeException("Cannot get method " + memberName))
+						.getAnnotation(annotationType);
+			default:
 				return null;
 			}
 		}
