@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -43,8 +42,6 @@ import org.objectweb.asm.Type;
 import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
-import net.fabricmc.loader.metadata.LoaderModMetadata;
-import net.fabricmc.loader.metadata.NestedJarEntry;
 
 public class ModFileScanData {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -239,19 +236,20 @@ public class ModFileScanData {
 
 	//if it's a jij mod, return parent mod's container
 	private static ModContainer getModContainer(String modid) {
-		return FabricLoader.INSTANCE.getAllMods().stream().filter(modContainer -> {
-			LoaderModMetadata info = ((net.fabricmc.loader.ModContainer) modContainer).getInfo();
-			Collection<NestedJarEntry> jars = info.getJars();
+		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid)
+				.orElseThrow(() -> new RuntimeException("Cannot get mod container " + modid));
 
-			if (modContainer.getMetadata().getId().equals(modid)) {
-				return false;
-			}
+		CustomValue customValue = modContainer.getMetadata().getCustomValue("modmenu:parent");
 
-			return jars.stream().anyMatch(
-					jar -> jar.getFile().contains(modid)
-			);
-		}).findAny().orElse(FabricLoader.INSTANCE.getModContainer(modid).orElseThrow(
-				() -> new RuntimeException("Cannot get mod container for " + modid)
-		));
+		if (customValue == null) {
+			//it's not a jij mod
+			return modContainer;
+		}
+
+		String parentModid = customValue.getAsString();
+
+		ModContainer parentModContainer = FabricLoader.INSTANCE.getModContainer(parentModid)
+				.orElseThrow(() -> new RuntimeException("Cannot get mod container " + parentModid));
+		return parentModContainer;
 	}
 }
