@@ -6,7 +6,8 @@
     "MixinBlock",
     "MixinBlockState",
     "BlockTagsAccessor",
-    "FireBlockAccessor"
+    "FireBlockAccessor",
+    "MixinBedBlock"
   ],
   "injectors": {
     "defaultRequire": 1

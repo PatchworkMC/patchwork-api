@@ -250,7 +250,7 @@ public interface IForgeBlock {
 	 * @return True to treat this as a bed
 	 */
 	default boolean isBed(BlockState state, BlockView world, BlockPos pos, @Nullable Entity player) {
-		return this.getBlock() instanceof BedBlock;
+		return false;
 	}
 
 	//TODO Call locations: Patches: SpawnHelper*
@@ -826,18 +826,18 @@ public interface IForgeBlock {
 	@Environment(EnvType.CLIENT)
 	default Vec3d getFogColor(BlockState state, CollisionView world, BlockPos pos, Entity entity, Vec3d originalColor, float partialTicks) {
 		if (state.getMaterial() == Material.WATER) {
-			float f12 = 0.0F;
+			float visibility = 0.0F;
 
 			if (entity instanceof LivingEntity) {
 				LivingEntity ent = (LivingEntity) entity;
-				f12 = (float) EnchantmentHelper.getRespiration(ent) * 0.2F;
+				visibility = (float) EnchantmentHelper.getRespiration(ent) * 0.2F;
 
 				if (ent.hasStatusEffect(StatusEffects.WATER_BREATHING)) {
-					f12 = f12 * 0.3F + 0.6F;
+					visibility = visibility * 0.3F + 0.6F;
 				}
 			}
 
-			return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
+			return new Vec3d(0.02F + visibility, 0.02F + visibility, 0.2F + visibility);
 		} else if (state.getMaterial() == Material.LAVA) {
 			return new Vec3d(0.6F, 0.1F, 0.0F);
 		}

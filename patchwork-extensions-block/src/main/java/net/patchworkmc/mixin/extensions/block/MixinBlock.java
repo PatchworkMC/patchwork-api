@@ -43,9 +43,6 @@ public class MixinBlock implements IForgeBlock {
 	@Shadow
 	@Final
 	private float slipperiness;
-	@Shadow
-	@Final
-	private int harvestLevel;
 
 	@Unique
 	private Set<Identifier> cachedTags;
@@ -59,7 +56,7 @@ public class MixinBlock implements IForgeBlock {
 
 	@Override
 	public int getHarvestLevel(BlockState state) {
-		return -1; // TODO implement getHarvestLevel, really sucks for vanilla blocks so i'm putting it off
+		throw new UnsupportedOperationException("Harvest levels not yet implemented"); // TODO implement getHarvestLevel, really sucks for vanilla blocks so i'm putting it off
 	}
 
 	@Override
