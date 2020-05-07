@@ -86,6 +86,7 @@ public interface IForgeBlock {
 	}
 
 	// Asterisks indicate IForgeBlockState calls. All methods can be assumed to be called from IForgeBlockState.
+	// Note that some of these methods may be overridden in patches to vanilla blocks, but I can't figure out how to check for that easily. Just, well, check when you implement one.
 
 	// TODO Call locations: Patches: FlyingEntity*, LivingEntity*, BoatEntity*, ExperienceOrbEntity*, ItemEntity*
 	/**

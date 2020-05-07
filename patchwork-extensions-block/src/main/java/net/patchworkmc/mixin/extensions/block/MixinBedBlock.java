@@ -22,6 +22,7 @@ package net.patchworkmc.mixin.extensions.block;
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
+import net.minecraftforge.common.extensions.IForgeBlock;
 
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
@@ -30,7 +31,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 @Mixin(BedBlock.class)
-public class MixinBedBlock {
+public abstract class MixinBedBlock implements IForgeBlock {
+	@Override
 	public boolean isBed(BlockState state, BlockView world, BlockPos pos, @Nullable Entity player) {
 		return true;
 	}
