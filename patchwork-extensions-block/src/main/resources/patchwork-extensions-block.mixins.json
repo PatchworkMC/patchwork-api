@@ -3,11 +3,11 @@
   "package": "net.patchworkmc.mixin.extensions.block",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinBedBlock",
     "MixinBlock",
     "MixinBlockState",
     "BlockTagsAccessor",
-    "FireBlockAccessor",
-    "MixinBedBlock"
+    "FireBlockAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
