@@ -47,11 +47,14 @@ public interface MixinRecipeGridAligner {
 		int width = gridWidth;
 		int height = gridHeight;
 
+		// change start
 		if (recipe instanceof IShapedRecipe) {
 			IShapedRecipe<?> shapedRecipe = (IShapedRecipe<?>) recipe;
 			width = shapedRecipe.getRecipeWidth();
 			height = shapedRecipe.getRecipeHeight();
 		}
+
+		// change end
 
 		int slot = 0;
 
