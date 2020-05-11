@@ -28,6 +28,8 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.CustomValue;
 
 public class ModList {
 	// Patchwork: initalize directly because there's no args
@@ -47,7 +49,25 @@ public class ModList {
 	}
 
 	public ModFileInfo getModFileById(String modId) {
-		return modFileInfoMap.computeIfAbsent(modId, ModFileInfo::new);
+		return modFileInfoMap.computeIfAbsent(
+				modId,
+				k -> {
+					String annotationHolderModid = getAnnotationHolderModid(modId);
+
+					if (annotationHolderModid == null) {
+						//Fabric mod
+						return new ModFileInfo();
+					}
+
+					if (annotationHolderModid.equals(modId)) {
+						//Patched mod and is not jij
+						return new ModFileInfo(annotationHolderModid);
+					}
+
+					//jij patched mod
+					return getModFileById(annotationHolderModid);
+				}
+		);
 	}
 
 	public List<ModFileScanData> getAllScanData() {
@@ -56,9 +76,31 @@ public class ModList {
 					.stream()
 					.map(modContainer -> modContainer.getMetadata().getId())
 					.map(modid -> getModFileById(modid).getFile().getScanResult())
+					.distinct()
 					.collect(Collectors.toList());
 		}
 
 		return allScanDataCache;
+	}
+
+	//return null if it's a Fabric mod
+	public static String getAnnotationHolderModid(String modid) {
+		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modid).orElseThrow(
+				() -> new RuntimeException("No Mod Container for " + modid)
+		);
+
+		if (!ModFileInfo.isForgeMod(modContainer)) {
+			return null;
+		}
+
+		//if it's a Forge mod, modmenu:parent can only be added by the patcher
+		CustomValue parent = modContainer.getMetadata().getCustomValue("modmenu:parent");
+
+		if (parent == null) {
+			//it's not a jij mod
+			return modid;
+		}
+
+		return parent.getAsString();
 	}
 }

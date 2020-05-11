@@ -52,14 +52,22 @@ public class ModFileScanData {
 	private AnnotationStorage annotationStorage;
 	private Set<AnnotationData> annotationData;
 
-	public ModFileScanData(String modid) {
-		this.modid = modid;
+	public ModFileScanData(String annotationHolderModid) {
+		this.modid = annotationHolderModid;
+	}
+
+	//create empty mod file scan data for Fabric mods
+	public ModFileScanData() {
+		initialized = true;
+		annotationData = new HashSet<>();
 	}
 
 	private void init() {
 		initialized = true;
 
-		ModContainer modContainer = getModContainer(modid);
+		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid).orElseThrow(
+				() -> new RuntimeException("Cannot get mod container " + modid)
+		);
 		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
 
 		if (customValue == null) {

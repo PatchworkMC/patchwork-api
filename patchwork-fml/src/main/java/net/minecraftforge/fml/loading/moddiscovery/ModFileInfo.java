@@ -19,6 +19,9 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.CustomValue;
+
 public class ModFileInfo {
 	private ModFile modFile;
 
@@ -26,7 +29,24 @@ public class ModFileInfo {
 		modFile = new ModFile(modid);
 	}
 
+	//create empty mod file info for Fabric mods
+	public ModFileInfo() {
+		modFile = new ModFile();
+	}
+
 	public ModFile getFile() {
 		return modFile;
+	}
+
+	public static boolean isForgeMod(ModContainer modContainer) {
+		CustomValue source = modContainer.getMetadata().getCustomValue("patchwork:source");
+
+		if (source == null) {
+			return false;
+		}
+
+		CustomValue.CvObject object = source.getAsObject();
+		String loader = object.get("loader").getAsString();
+		return loader.equals("forge");
 	}
 }
