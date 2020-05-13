@@ -93,8 +93,7 @@ public class ModList {
 			return null;
 		}
 
-		//if it's a Forge mod, modmenu:parent can only be added by the patcher
-		CustomValue parent = modContainer.getMetadata().getCustomValue("modmenu:parent");
+		CustomValue parent = modContainer.getMetadata().getCustomValue("patchwork:parent");
 
 		if (parent == null) {
 			//it's not a jij mod
