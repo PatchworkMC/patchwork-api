@@ -236,23 +236,4 @@ public class ModFileScanData {
 			return Objects.hash(annotationType, targetType, clazz, memberName);
 		}
 	}
-
-	//if it's a jij mod, return parent mod's container
-	private static ModContainer getModContainer(String modid) {
-		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid)
-				.orElseThrow(() -> new RuntimeException("Cannot get mod container " + modid));
-
-		CustomValue customValue = modContainer.getMetadata().getCustomValue("modmenu:parent");
-
-		if (customValue == null) {
-			//it's not a jij mod
-			return modContainer;
-		}
-
-		String parentModid = customValue.getAsString();
-
-		ModContainer parentModContainer = FabricLoader.INSTANCE.getModContainer(parentModid)
-				.orElseThrow(() -> new RuntimeException("Cannot get mod container " + parentModid));
-		return parentModContainer;
-	}
 }
