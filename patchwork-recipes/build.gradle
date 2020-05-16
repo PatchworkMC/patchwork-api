@@ -1,0 +1,2 @@
+archivesBaseName = "patchwork-recipes"
+version = getSubprojectVersion(project, "0.1.0")
