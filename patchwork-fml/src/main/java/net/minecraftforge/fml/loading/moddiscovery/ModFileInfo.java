@@ -17,33 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml;
+package net.minecraftforge.fml.loading.moddiscovery;
 
-import java.util.HashMap;
-import java.util.Map;
+public class ModFileInfo {
+	private ModFile modFile;
 
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-
-import net.fabricmc.loader.api.FabricLoader;
-
-public class ModList {
-	// Patchwork: initalize directly because there's no args
-	private static ModList INSTANCE = new ModList();
-
-	private Map<String, ModFileInfo> modFileInfoMap = new HashMap<>();
-
-	public static ModList get() {
-		return INSTANCE;
+	public ModFileInfo(String modid) {
+		modFile = new ModFile(modid);
 	}
 
-	public boolean isLoaded(String modId) {
-		// Patchwork: use Fabric Loader lookup instead of an internal one
-		return FabricLoader.getInstance().isModLoaded(modId);
-	}
-
-	public ModFileInfo getModFileById(String modId) {
-		return modFileInfoMap.computeIfAbsent(
-			modId, ModFileInfo::new
-		);
+	public ModFile getFile() {
+		return modFile;
 	}
 }
