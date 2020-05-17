@@ -26,12 +26,16 @@ import java.util.stream.Collectors;
 
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
 
 public class ModList {
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	// Patchwork: initalize directly because there's no args
 	private static ModList INSTANCE = new ModList();
 
@@ -55,7 +59,7 @@ public class ModList {
 					String annotationHolderModid = getAnnotationHolderModid(modId);
 
 					if (annotationHolderModid == null) {
-						//Fabric mod
+						//Fabric mod or invalid mod
 						return new ModFileInfo();
 					}
 
@@ -83,13 +87,17 @@ public class ModList {
 		return allScanDataCache;
 	}
 
-	//return null if it's a Fabric mod
-	public static String getAnnotationHolderModid(String modid) {
-		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modid).orElseThrow(
-				() -> new RuntimeException("No Mod Container for " + modid)
-		);
+	//return null if it does not have annotation data
+	private static String getAnnotationHolderModid(String modid) {
+		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modid).orElse(null);
 
-		if (!ModFileInfo.isForgeMod(modContainer)) {
+		if (modContainer == null) {
+			LOGGER.error("Trying to access annotation data of a missing mod " + modid);
+			LOGGER.catching(new Throwable());
+			return null;
+		}
+
+		if (!isForgeMod(modContainer)) {
 			return null;
 		}
 
@@ -101,5 +109,17 @@ public class ModList {
 		}
 
 		return parent.getAsString();
+	}
+
+	public static boolean isForgeMod(ModContainer modContainer) {
+		CustomValue source = modContainer.getMetadata().getCustomValue("patchwork:source");
+
+		if (source == null) {
+			return false;
+		}
+
+		CustomValue.CvObject object = source.getAsObject();
+		String loader = object.get("loader").getAsString();
+		return loader.equals("forge");
 	}
 }

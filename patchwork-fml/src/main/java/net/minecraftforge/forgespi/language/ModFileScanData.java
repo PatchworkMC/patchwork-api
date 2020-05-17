@@ -28,8 +28,8 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -40,39 +40,37 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
-import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
 
 public class ModFileScanData {
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	private String modid;
+	public static final ModFileScanData EMPTY = new ModFileScanData();
+
+	ModContainer modContainer;
 	private boolean initialized = false;
 	private AnnotationStorage annotationStorage;
 	private Set<AnnotationData> annotationData;
 
-	public ModFileScanData(String annotationHolderModid) {
-		this.modid = annotationHolderModid;
+	public ModFileScanData(ModContainer modContainer) {
+		this.modContainer = modContainer;
 	}
 
 	//create empty mod file scan data for Fabric mods
-	public ModFileScanData() {
+	private ModFileScanData() {
 		initialized = true;
-		annotationData = new HashSet<>();
+		annotationData = Collections.emptySet();
 	}
 
 	private void init() {
 		initialized = true;
 
-		ModContainer modContainer = FabricLoader.INSTANCE.getModContainer(modid).orElseThrow(
-				() -> new RuntimeException("Cannot get mod container " + modid)
-		);
 		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
 
 		if (customValue == null) {
-			LOGGER.error("ModFileScanData: Tried to access the scanned annotation data for " + modid + ", but it is missing");
-			annotationData = new HashSet<>();
+			LOGGER.error("ModFileScanData: Tried to access the scanned annotation data for " + getModid() + ", but it is missing");
+			annotationData = Collections.emptySet();
 			return;
 		}
 
@@ -91,9 +89,10 @@ public class ModFileScanData {
 		} catch (IOException e) {
 			LOGGER.error(String.format(
 					"Could not read annotations from %s %s (loaded from %s)",
-					modid, annotationJsonPath, modContainer.getRootPath()
+					getModid(), annotationJsonPath, modContainer.getRootPath()
 			));
 			e.printStackTrace();
+			annotationData = Collections.emptySet();
 		}
 	}
 
@@ -111,6 +110,10 @@ public class ModFileScanData {
 		return new AnnotationData(
 				annotationType, entry.targetType, targetInType, entry.target
 		);
+	}
+
+	public String getModid() {
+		return modContainer.getMetadata().getId();
 	}
 
 	public static class AnnotationData {
