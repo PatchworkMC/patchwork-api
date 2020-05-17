@@ -59,7 +59,7 @@ public class ModList {
 					String annotationHolderModid = getAnnotationHolderModid(modId);
 
 					if (annotationHolderModid == null) {
-						//Fabric mod or invalid mod
+						//non-patched mod or invalid mod
 						return new ModFileInfo();
 					}
 
@@ -97,7 +97,7 @@ public class ModList {
 			return null;
 		}
 
-		if (!isForgeMod(modContainer)) {
+		if (!isPatchedMod(modContainer)) {
 			return null;
 		}
 
@@ -111,7 +111,7 @@ public class ModList {
 		return parent.getAsString();
 	}
 
-	public static boolean isForgeMod(ModContainer modContainer) {
+	public static boolean isPatchedMod(ModContainer modContainer) {
 		CustomValue source = modContainer.getMetadata().getCustomValue("patchwork:source");
 
 		if (source == null) {

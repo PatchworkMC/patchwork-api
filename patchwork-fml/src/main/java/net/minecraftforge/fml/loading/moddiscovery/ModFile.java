@@ -30,7 +30,7 @@ public class ModFile {
 		modFileScanData = new ModFileScanData(fabricModContainer);
 	}
 
-	//create empty mod file for Fabric mods
+	//create empty mod file for non-patched mods
 	public ModFile() {
 		modFileScanData = ModFileScanData.EMPTY;
 	}

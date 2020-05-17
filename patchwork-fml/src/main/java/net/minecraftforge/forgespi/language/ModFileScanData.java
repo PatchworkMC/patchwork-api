@@ -209,15 +209,23 @@ public class ModFileScanData {
 				return clazzObj.getField(memberName)
 						.getAnnotation(annotationType);
 			case METHOD:
-				//TODO handle overloaded methods
 				String methodName = memberName.substring(0, memberName.indexOf('('));
-				return Arrays.stream(clazzObj.getDeclaredMethods())
-						.filter(method -> method.getName().equals(methodName))
-						.findFirst()
-						.orElseThrow(() -> new RuntimeException("Cannot get method " + memberName))
-						.getAnnotation(annotationType);
+				Method[] methods = Arrays.stream(clazzObj.getDeclaredMethods())
+					.filter(method -> method.getName().equals(methodName))
+					.toArray(Method[]::new);
+				if (methods.length == 0) {
+					throw new RuntimeException("Cannot find method " + methodName);
+				}
+
+				if (methods.length > 1) {
+					//TODO handle overloaded methods
+
+					throw new RuntimeException("Currently Cannot Handle Overloaded Methods");
+				}
+
+				return methods[0].getAnnotation(annotationType);
 			default:
-				return null;
+				throw new RuntimeException("Invalid annotation type " + targetType);
 			}
 		}
 
