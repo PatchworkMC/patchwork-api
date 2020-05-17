@@ -30,7 +30,6 @@ public class ModFileInfo {
 		);
 	}
 
-	//create empty mod file info for Fabric mods
 	public ModFileInfo() {
 		modFile = new ModFile();
 	}
