@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -40,32 +40,37 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
-import net.fabricmc.loader.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
-import net.fabricmc.loader.metadata.LoaderModMetadata;
-import net.fabricmc.loader.metadata.NestedJarEntry;
 
 public class ModFileScanData {
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	private String modid;
+	public static final ModFileScanData EMPTY = new ModFileScanData();
+
+	ModContainer modContainer;
 	private boolean initialized = false;
 	private AnnotationStorage annotationStorage;
 	private Set<AnnotationData> annotationData;
 
-	public ModFileScanData(String modid) {
-		this.modid = modid;
+	public ModFileScanData(ModContainer modContainer) {
+		this.modContainer = modContainer;
+	}
+
+	//create empty mod file scan data for Fabric mods
+	private ModFileScanData() {
+		initialized = true;
+		annotationData = Collections.emptySet();
 	}
 
 	private void init() {
 		initialized = true;
 
-		ModContainer modContainer = getModContainer(modid);
 		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
 
 		if (customValue == null) {
-			LOGGER.error("ModFileScanData is being accessed but cannot find annotation storage");
+			LOGGER.error("ModFileScanData: Tried to access the scanned annotation data for " + getModid() + ", but it is missing");
+			annotationData = Collections.emptySet();
 			return;
 		}
 
@@ -84,20 +89,18 @@ public class ModFileScanData {
 		} catch (IOException e) {
 			LOGGER.error(String.format(
 					"Could not read annotations from %s %s (loaded from %s)",
-					modid, annotationJsonPath, modContainer.getRootPath()
+					getModid(), annotationJsonPath, modContainer.getRootPath()
 			));
 			e.printStackTrace();
-		}
-	}
-
-	private void initIfNeeded() {
-		if (!initialized) {
-			init();
+			annotationData = Collections.emptySet();
 		}
 	}
 
 	public Set<AnnotationData> getAnnotations() {
-		initIfNeeded();
+		if (!initialized) {
+			init();
+		}
+
 		return annotationData;
 	}
 
@@ -107,6 +110,10 @@ public class ModFileScanData {
 		return new AnnotationData(
 				annotationType, entry.targetType, targetInType, entry.target
 		);
+	}
+
+	public String getModid() {
+		return modContainer.getMetadata().getId();
 	}
 
 	public static class AnnotationData {
@@ -179,7 +186,7 @@ public class ModFileScanData {
 					}
 				}
 			} catch (Throwable e) {
-				LOGGER.error(e);
+				LOGGER.catching(e);
 			}
 		}
 
@@ -194,27 +201,31 @@ public class ModFileScanData {
 			return true;
 		}
 
-		private Annotation getAnnotationObject(Class<?> clazzObj, Class annotationType) {
-			try {
-				switch (targetType) {
-				case TYPE:
-					return clazzObj.getAnnotation(annotationType);
-				case FIELD:
-					return clazzObj.getField(memberName)
-							.getAnnotation(annotationType);
-				case METHOD:
-					//TODO handle overloaded methods
-					String methodName = memberName.substring(0, memberName.indexOf('('));
-					return Arrays.stream(clazzObj.getDeclaredMethods())
-							.filter(method -> method.getName().equals(methodName))
-							.findFirst()
-							.orElseThrow(() -> new RuntimeException("Cannot get method " + memberName))
-							.getAnnotation(annotationType);
-				default:
-					return null;
+		private Annotation getAnnotationObject(Class<?> clazzObj, Class annotationType) throws Throwable {
+			switch (targetType) {
+			case TYPE:
+				return clazzObj.getAnnotation(annotationType);
+			case FIELD:
+				return clazzObj.getField(memberName)
+						.getAnnotation(annotationType);
+			case METHOD:
+				String methodName = memberName.substring(0, memberName.indexOf('('));
+				Method[] methods = Arrays.stream(clazzObj.getDeclaredMethods())
+					.filter(method -> method.getName().equals(methodName))
+					.toArray(Method[]::new);
+				if (methods.length == 0) {
+					throw new RuntimeException("Cannot find method " + methodName);
 				}
-			} catch (NoSuchFieldException e) {
-				return null;
+
+				if (methods.length > 1) {
+					//TODO handle overloaded methods
+
+					throw new RuntimeException("Currently Cannot Handle Overloaded Methods");
+				}
+
+				return methods[0].getAnnotation(annotationType);
+			default:
+				throw new RuntimeException("Invalid annotation type " + targetType);
 			}
 		}
 
@@ -235,23 +246,5 @@ public class ModFileScanData {
 		public int hashCode() {
 			return Objects.hash(annotationType, targetType, clazz, memberName);
 		}
-	}
-
-	//if it's a jij mod, return parent mod's container
-	private static ModContainer getModContainer(String modid) {
-		return FabricLoader.INSTANCE.getAllMods().stream().filter(modContainer -> {
-			LoaderModMetadata info = ((net.fabricmc.loader.ModContainer) modContainer).getInfo();
-			Collection<NestedJarEntry> jars = info.getJars();
-
-			if (modContainer.getMetadata().getId().equals(modid)) {
-				return false;
-			}
-
-			return jars.stream().anyMatch(
-					jar -> jar.getFile().contains(modid)
-			);
-		}).findAny().orElse(FabricLoader.INSTANCE.getModContainer(modid).orElseThrow(
-				() -> new RuntimeException("Cannot get mod container for " + modid)
-		));
 	}
 }

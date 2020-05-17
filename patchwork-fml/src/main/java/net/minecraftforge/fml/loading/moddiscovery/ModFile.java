@@ -21,11 +21,17 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
-public class ModFile {
-	private ModFileScanData modFileScanData;
+import net.fabricmc.loader.api.ModContainer;
 
-	public ModFile(String modid) {
-		modFileScanData = new ModFileScanData(modid);
+public class ModFile {
+	private final ModFileScanData modFileScanData;
+
+	public ModFile(ModContainer fabricModContainer) {
+		modFileScanData = new ModFileScanData(fabricModContainer);
+	}
+
+	public ModFile() {
+		modFileScanData = ModFileScanData.EMPTY;
 	}
 
 	public ModFileScanData getScanResult() {

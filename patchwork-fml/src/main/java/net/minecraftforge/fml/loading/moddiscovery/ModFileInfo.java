@@ -19,11 +19,19 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.fabricmc.loader.FabricLoader;
+
 public class ModFileInfo {
 	private ModFile modFile;
 
 	public ModFileInfo(String modid) {
-		modFile = new ModFile(modid);
+		modFile = new ModFile(FabricLoader.INSTANCE.getModContainer(modid)
+				.orElseThrow(() -> new RuntimeException("Cannot get mod container for " + modid))
+		);
+	}
+
+	public ModFileInfo() {
+		modFile = new ModFile();
 	}
 
 	public ModFile getFile() {
