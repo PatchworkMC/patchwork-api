@@ -85,10 +85,10 @@ public class Patchwork implements ModInitializer {
 			throw new RuntimeException("Failed to get Patchwork entrypoints!", t);
 		}
 
-		Throwable error = null;
+		RuntimeException error = null;
 
 		for (ForgeInitializer initializer : entrypoints) {
-			LOGGER.info("Constructing Forge mod: " + initializer.getModId());
+			LOGGER.info("Constructing Patchwork mod: " + initializer.getModId());
 
 			FMLModContainer container = new FMLModContainer(initializer.getModId());
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
@@ -97,10 +97,10 @@ public class Patchwork implements ModInitializer {
 				initializer.onForgeInitialize();
 			} catch (Throwable t) {
 				if (error == null) {
-					error = t;
-				} else {
-					error.addSuppressed(t);
+					error = new RuntimeException("Failed to construct Patchwork mods");
 				}
+
+				error.addSuppressed(t);
 			}
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
@@ -109,7 +109,7 @@ public class Patchwork implements ModInitializer {
 		}
 
 		if (error != null) {
-			throw new RuntimeException("Failed to construct Forge mods", error);
+			throw error;
 		}
 
 		// Send initialization events
