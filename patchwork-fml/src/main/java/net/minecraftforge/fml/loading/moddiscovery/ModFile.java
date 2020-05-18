@@ -26,8 +26,8 @@ import net.fabricmc.loader.api.ModContainer;
 public class ModFile {
 	private final ModFileScanData modFileScanData;
 
-	public ModFile(ModContainer fabricModContainer) {
-		modFileScanData = new ModFileScanData(fabricModContainer);
+	public ModFile(ModContainer fabricModContainer, String annotationJsonLocation) {
+		modFileScanData = new ModFileScanData(fabricModContainer, annotationJsonLocation);
 	}
 
 	public ModFile() {

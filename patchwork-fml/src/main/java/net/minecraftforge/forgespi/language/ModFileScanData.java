@@ -20,7 +20,6 @@
 package net.minecraftforge.forgespi.language;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -41,23 +40,24 @@ import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
 import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.metadata.CustomValue;
 
 public class ModFileScanData {
 	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Gson GSON = new Gson();
 
 	public static final ModFileScanData EMPTY = new ModFileScanData();
 
-	ModContainer modContainer;
+	private ModContainer modContainer;
+	private String annotationJsonLocation;
 	private boolean initialized = false;
-	private AnnotationStorage annotationStorage;
 	private Set<AnnotationData> annotationData;
 
-	public ModFileScanData(ModContainer modContainer) {
+	public ModFileScanData(ModContainer modContainer, String annotationJsonLocation) {
 		this.modContainer = modContainer;
+		this.annotationJsonLocation = annotationJsonLocation;
 	}
 
-	//create empty mod file scan data for Fabric mods
+	// Create empty mod file scan data for Fabric mods
 	private ModFileScanData() {
 		initialized = true;
 		annotationData = Collections.emptySet();
@@ -66,24 +66,14 @@ public class ModFileScanData {
 	private void init() {
 		initialized = true;
 
-		CustomValue customValue = modContainer.getMetadata().getCustomValue("patchwork:annotations");
-
-		if (customValue == null) {
-			LOGGER.error("ModFileScanData: Tried to access the scanned annotation data for " + getModid() + ", but it is missing");
-			annotationData = Collections.emptySet();
-			return;
-		}
-
-		String annotationJsonLocation = customValue.getAsString();
 		Path annotationJsonPath = modContainer.getPath(annotationJsonLocation);
 
 		try {
-			InputStream outputStream = Files.newInputStream(annotationJsonPath);
-			Gson gson = new Gson();
-			this.annotationStorage = gson.fromJson(
-					new InputStreamReader(outputStream), AnnotationStorage.class
-			);
-			annotationData = this.annotationStorage.entries.stream()
+			InputStreamReader reader = new InputStreamReader(Files.newInputStream(annotationJsonPath));
+
+			AnnotationStorage annotationStorage = GSON.fromJson(reader, AnnotationStorage.class);
+
+			annotationData = annotationStorage.entries.stream()
 					.map(ModFileScanData::getAnnotationData)
 					.collect(Collectors.toSet());
 		} catch (IOException e) {
@@ -165,7 +155,7 @@ public class ModFileScanData {
 			try {
 				// TODO: This *may* load classes in the wrong order, but it shouldn't be an issue
 				Class<?> clazzObj = Class.forName(clazz.getClassName());
-				Class annotationType = Class.forName(this.annotationType.getClassName());
+				Class<?> annotationType = Class.forName(this.annotationType.getClassName());
 				Annotation annotationObject = getAnnotationObject(clazzObj, annotationType);
 
 				if (annotationObject == null) {
