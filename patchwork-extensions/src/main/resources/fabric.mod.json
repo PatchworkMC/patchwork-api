@@ -11,7 +11,7 @@
   "icon": "assets/patchwork-extensions/icon.png",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.4.0",
+    "fabricloader": ">=0.8.4",
     "fabric": "*"
   },
   "mixins": [

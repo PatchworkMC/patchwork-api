@@ -13,7 +13,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.6.2"
+    "fabricloader": ">=0.8.4"
   },
   "mixins": [
     "patchwork-loot.mixins.json"

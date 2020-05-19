@@ -44,19 +44,15 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T> {
 	private final List<Runnable> listeners = Lists.newArrayList();
 	private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
 
-	// For EventBus
-	public AttachCapabilitiesEvent() {
-		this(null, null);
-	}
-
 	public AttachCapabilitiesEvent(Class<T> type, T object) {
 		super(type);
 		this.object = object;
 	}
 
 	/**
-	 * Retrieves the object that is being created.<br>
-	 * <b>Note:</b> Object creation is still incomplete at this point
+	 * Retrieves the object that is being created.
+	 *
+	 * <p><b>Note:</b> Object creation is still incomplete at this point
 	 */
 	public T getObject() {
 		return this.object;

@@ -133,11 +133,6 @@ public class ModConfig {
 	public static class ModConfigEvent extends Event {
 		private final ModConfig config;
 
-		// For EventBus
-		public ModConfigEvent() {
-			this(null);
-		}
-
 		ModConfigEvent(final ModConfig config) {
 			this.config = config;
 		}
@@ -148,22 +143,12 @@ public class ModConfig {
 	}
 
 	public static class Loading extends ModConfigEvent {
-		// For EventBus
-		public Loading() {
-			super();
-		}
-
 		Loading(final ModConfig config) {
 			super(config);
 		}
 	}
 
 	public static class ConfigReloading extends ModConfigEvent {
-		// For EventBus
-		public ConfigReloading() {
-			super();
-		}
-
 		ConfigReloading(final ModConfig config) {
 			super(config);
 		}

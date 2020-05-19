@@ -27,11 +27,6 @@ import net.minecraft.server.MinecraftServer;
  * @author cpw
  */
 public class FMLServerStartedEvent extends ServerLifecycleEvent {
-	// For EventBus
-	public FMLServerStartedEvent() {
-		super();
-	}
-
 	public FMLServerStartedEvent(final MinecraftServer server) {
 		super(server);
 	}

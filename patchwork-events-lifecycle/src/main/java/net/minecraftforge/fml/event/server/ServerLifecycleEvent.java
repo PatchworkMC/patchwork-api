@@ -26,13 +26,6 @@ import net.minecraft.server.MinecraftServer;
 public class ServerLifecycleEvent extends Event {
 	protected final MinecraftServer server;
 
-	// For Eventbus
-	public ServerLifecycleEvent() {
-		super();
-
-		server = null;
-	}
-
 	public ServerLifecycleEvent(MinecraftServer server) {
 		this.server = server;
 	}

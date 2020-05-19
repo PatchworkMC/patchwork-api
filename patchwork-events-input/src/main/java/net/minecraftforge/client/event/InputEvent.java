@@ -31,11 +31,6 @@ public class InputEvent extends Event {
 		private final int button;
 		private final int mods;
 
-		// For EventBus
-		public RawMouseEvent() {
-			this(-1, -1, -1);
-		}
-
 		public RawMouseEvent(int button, int action, int mods) {
 			this.button = button;
 			this.action = action;
@@ -89,11 +84,6 @@ public class InputEvent extends Event {
 		private final int action;
 		private final int mods;
 
-		// For EventBus
-		public MouseInputEvent() {
-			this(-1, -1, -1);
-		}
-
 		public MouseInputEvent(int button, int action, int mods) {
 			this.button = button;
 			this.action = action;
@@ -145,11 +135,6 @@ public class InputEvent extends Event {
 		private final boolean middleDown;
 		private final boolean rightDown;
 
-		// For EventBus
-		public MouseScrollEvent() {
-			this(-1, false, false, false, -1, -1);
-		}
-
 		public MouseScrollEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY) {
 			this.scrollDelta = scrollDelta;
 			this.leftDown = leftDown;
@@ -198,11 +183,6 @@ public class InputEvent extends Event {
 		private final int action;
 		private final int modifiers;
 
-		// For EventBus
-		public KeyInputEvent() {
-			this(-1, -1, -1, -1);
-		}
-
 		public KeyInputEvent(int key, int scanCode, int action, int modifiers) {
 			this.key = key;
 			this.scanCode = scanCode;
@@ -222,7 +202,7 @@ public class InputEvent extends Event {
 
 		/**
 		 * Platform-specific scan code.
-		 * Used for {@link InputMappings#getInputByCode(int, int)}
+		 * Used for {@link net.minecraft.client.util.InputUtil#getKeyCode(int, int)}
 		 *
 		 * <p>The scan code is unique for every key, regardless of whether it has a key code.
 		 * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending

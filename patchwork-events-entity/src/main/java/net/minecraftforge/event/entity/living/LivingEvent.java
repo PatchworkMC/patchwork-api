@@ -33,11 +33,6 @@ import net.minecraft.entity.LivingEntity;
 public class LivingEvent extends EntityEvent {
 	private final LivingEntity livingEntity;
 
-	// For EventBus
-	public LivingEvent() {
-		this(null);
-	}
-
 	public LivingEvent(LivingEntity entity) {
 		super(entity);
 
@@ -62,11 +57,6 @@ public class LivingEvent extends EntityEvent {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class LivingUpdateEvent extends LivingEvent {
-		// For EventBus
-		public LivingUpdateEvent() {
-			super();
-		}
-
 		public LivingUpdateEvent(LivingEntity entity) {
 			super(entity);
 		}

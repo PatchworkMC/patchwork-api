@@ -43,12 +43,6 @@ public class LivingAttackEvent extends LivingEvent {
 	private final DamageSource source;
 	private final float damage;
 
-	// For EventBus
-	public LivingAttackEvent() {
-		this.source = null;
-		this.damage = 0f;
-	}
-
 	public LivingAttackEvent(LivingEntity entity, DamageSource source, float damage) {
 		super(entity);
 		this.source = source;

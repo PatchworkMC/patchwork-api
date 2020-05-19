@@ -37,11 +37,6 @@ import net.minecraftforge.fml.ModContainer;
  * @see #getIMCStream(Predicate)
  */
 public class InterModProcessEvent extends ModLifecycleEvent {
-	// For EventBus
-	public InterModProcessEvent() {
-		super();
-	}
-
 	public InterModProcessEvent(final ModContainer container) {
 		super(container);
 	}

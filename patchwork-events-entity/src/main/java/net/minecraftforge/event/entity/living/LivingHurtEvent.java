@@ -41,14 +41,10 @@ import net.minecraft.entity.damage.DamageSource;
 public class LivingHurtEvent extends LivingEvent {
 	private final DamageSource source;
 	private float amount;
-	// For EventBus
-	public LivingHurtEvent() {
-		this.source = null;
-		this.amount = 0;
-	}
 
 	public LivingHurtEvent(LivingEntity entity, DamageSource source, float amount) {
 		super(entity);
+
 		this.source = source;
 		this.amount = amount;
 	}

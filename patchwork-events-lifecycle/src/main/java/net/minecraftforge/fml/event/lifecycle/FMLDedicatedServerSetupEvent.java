@@ -41,11 +41,6 @@ import net.minecraft.server.dedicated.DedicatedServer;
 public class FMLDedicatedServerSetupEvent extends ModLifecycleEvent {
 	private final Supplier<DedicatedServer> server;
 
-	// For EventBus
-	public FMLDedicatedServerSetupEvent() {
-		this(null, null);
-	}
-
 	public FMLDedicatedServerSetupEvent(Supplier<DedicatedServer> server, ModContainer container) {
 		super(container);
 

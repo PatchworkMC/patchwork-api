@@ -38,13 +38,6 @@ import net.minecraft.entity.player.PlayerEntity;
 public class AttackEntityEvent extends PlayerEvent {
 	private final Entity target;
 
-	// For EventBus
-	public AttackEntityEvent() {
-		super();
-
-		this.target = null;
-	}
-
 	public AttackEntityEvent(PlayerEntity player, Entity target) {
 		super(player);
 

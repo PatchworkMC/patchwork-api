@@ -26,11 +26,6 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraft.util.Identifier;
 
 public class RegistryEvent<T> extends GenericEvent<T> {
-	// For EventBus (Required for post() to work)
-	public RegistryEvent() {
-		this(null);
-	}
-
 	RegistryEvent(Class<T> clazz) {
 		super(clazz);
 	}
@@ -38,14 +33,6 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 	public static class Register<V extends IForgeRegistryEntry<V>> extends RegistryEvent<V> {
 		private final IForgeRegistry<V> registry;
 		private final Identifier name;
-
-		// For EventBus (Required for post() to work)
-		public Register() {
-			super(null);
-
-			this.registry = null;
-			this.name = null;
-		}
 
 		public Register(IForgeRegistry<V> registry) {
 			this(registry.getRegistryName(), registry);

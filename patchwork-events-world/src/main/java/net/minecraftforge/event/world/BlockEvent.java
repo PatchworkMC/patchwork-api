@@ -32,11 +32,6 @@ public class BlockEvent extends Event {
 	private final BlockPos pos;
 	private final BlockState state;
 
-	// For EventBus
-	public BlockEvent() {
-		this(null, null, null);
-	}
-
 	public BlockEvent(IWorld world, BlockPos pos, BlockState state) {
 		this.pos = pos;
 		this.world = world;
@@ -67,11 +62,6 @@ public class BlockEvent extends Event {
 		 */
 		private final PlayerEntity player;
 		private int exp;
-
-		// For EventBus
-		public BreakEvent() {
-			this(null, null, null, null);
-		}
 
 		public BreakEvent(World world, BlockPos pos, BlockState state, PlayerEntity player) {
 			super(world, pos, state);
