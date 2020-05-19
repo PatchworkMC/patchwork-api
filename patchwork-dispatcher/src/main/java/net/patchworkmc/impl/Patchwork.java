@@ -82,10 +82,10 @@ public class Patchwork implements ModInitializer {
 		try {
 			entrypoints = FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class);
 		} catch (Throwable t) {
-			throw new RuntimeException("Failed to get Patchwork entrypoints!", t);
+			throw new PatchworkInitializationException("Failed to get Patchwork entrypoints!", t);
 		}
 
-		RuntimeException error = null;
+		PatchworkInitializationException error = null;
 
 		for (ForgeInitializer initializer : entrypoints) {
 			LOGGER.info("Constructing Patchwork mod: " + initializer.getModId());
@@ -97,7 +97,7 @@ public class Patchwork implements ModInitializer {
 				initializer.onForgeInitialize();
 			} catch (Throwable t) {
 				if (error == null) {
-					error = new RuntimeException("Failed to construct Patchwork mods");
+					error = new PatchworkInitializationException("Failed to construct Patchwork mods");
 				}
 
 				error.addSuppressed(t);
