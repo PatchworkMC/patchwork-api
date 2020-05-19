@@ -109,7 +109,7 @@ public class ModList {
 
 	public List<ModFileScanData> getAllScanData() {
 		if (allScanDataCache == null) {
-			// Even though ModFIleScanData lacks an implementation of Object#equals, the default implementation tests
+			// Even though ModFileScanData lacks an implementation of Object#equals, the default implementation tests
 			// for equality using object identity (a == b). In this case there is only one instance of ModFileScanData
 			// for a given mod file (mod files can be shared by multiple mod containers), therefore comparison by object
 			// identity alone (`==`) is sufficient.
