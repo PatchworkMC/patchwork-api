@@ -21,14 +21,15 @@ This will be changed once we update to 1.15.
 ## What is the general flow of contribution?
 
 1. Pick a feature to implement. There are a few ways to do this:
-    * Checking the `#wishlist` channel on the Discord server
+    * Checking the `#wishlist` channel on the [Discord server](https://discord.gg/YYZtNBG)
     * Scrolling through the [issue tracker](https://github.com/PatchworkMC/patchwork-api/issues)
     * Picking something to implement yourself
 2. Locate mods to test the feature
     * It's important to make sure that you have a way to test what you're implementing. We all accidentally introduce bugs, and it's important to eliminate the more obvious ones through testing first.
     * In addition, this also helps verify that the feature being implemented is actually used. Our time is limited, and it's good to make sure that we're spending it wisely.
+    * For larger mods, it's often better to find a smaller mod using that feature instead. One option is to make a [test mod](https://github.com/PatchworkMC/patchwork-testmods) and submit a PR for it. However, please make sure that there is an existing mod using this feature, for the reason stated above.
 3. Determine the correct module to put the feature in, or make a new module.
-    * If you're not sure what to do, ask on Discord in #api.
+    * If you're not sure what to do, ask on [Discord](https://discord.gg/YYZtNBG) in `#api`.
     * In general, look at existing modules to see the naming conventions.
 4. Implement the feature and get it running.
 5. Clean up the code so that it adheres to Patchwork's standards.
