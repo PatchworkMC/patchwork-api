@@ -44,13 +44,6 @@ import net.minecraft.entity.damage.DamageSource;
 public class LivingDeathEvent extends LivingEvent {
 	private final DamageSource source;
 
-	// For EventBus
-	public LivingDeathEvent() {
-		super();
-
-		this.source = null;
-	}
-
 	public LivingDeathEvent(LivingEntity entity, DamageSource source) {
 		super(entity);
 		this.source = source;

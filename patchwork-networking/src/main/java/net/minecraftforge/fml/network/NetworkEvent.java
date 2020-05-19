@@ -50,14 +50,6 @@ public class NetworkEvent extends Event {
 	private final Supplier<Context> source;
 	private final int loginIndex;
 
-	// For EventBus
-	public NetworkEvent() {
-		super();
-		this.payload = null;
-		this.source = null;
-		this.loginIndex = -1;
-	}
-
 	private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 		this.payload = payload.getInternalData();
 		this.source = source;
@@ -93,44 +85,24 @@ public class NetworkEvent extends Event {
 	}
 
 	public static class ServerCustomPayloadEvent extends NetworkEvent {
-		// For EventBus
-		public ServerCustomPayloadEvent() {
-			super();
-		}
-
 		ServerCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
 
 	public static class ClientCustomPayloadEvent extends NetworkEvent {
-		// For EventBus
-		public ClientCustomPayloadEvent() {
-			super();
-		}
-
 		ClientCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
 
 	public static class ServerCustomPayloadLoginEvent extends ServerCustomPayloadEvent {
-		// For EventBus
-		public ServerCustomPayloadLoginEvent() {
-			super();
-		}
-
 		ServerCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source) {
 			super(payload, source);
 		}
 	}
 
 	public static class ClientCustomPayloadLoginEvent extends ClientCustomPayloadEvent {
-		// For EventBus
-		public ClientCustomPayloadLoginEvent() {
-			super();
-		}
-
 		ClientCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source) {
 			super(payload, source);
 		}
@@ -139,12 +111,6 @@ public class NetworkEvent extends Event {
 	public static class GatherLoginPayloadsEvent extends Event {
 		private final List<NetworkRegistry.LoginPayload> collected;
 		private final boolean isLocal;
-
-		// For EventBus
-		public GatherLoginPayloadsEvent() {
-			this.collected = null;
-			this.isLocal = false;
-		}
 
 		public GatherLoginPayloadsEvent(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
 			this.collected = loginPayloadList;
@@ -161,11 +127,6 @@ public class NetworkEvent extends Event {
 	}
 
 	public static class LoginPayloadEvent extends NetworkEvent {
-		// For EventBus
-		public LoginPayloadEvent() {
-			super();
-		}
-
 		LoginPayloadEvent(final PacketByteBuf payload, final Supplier<Context> source, final int loginIndex) {
 			super(payload, source, loginIndex);
 		}
@@ -182,12 +143,6 @@ public class NetworkEvent extends Event {
 	 */
 	public static class ChannelRegistrationChangeEvent extends NetworkEvent {
 		private final RegistrationChangeType changeType;
-
-		// For EventBus
-		public ChannelRegistrationChangeEvent() {
-			super();
-			this.changeType = null;
-		}
 
 		ChannelRegistrationChangeEvent(final Supplier<Context> source, RegistrationChangeType changeType) {
 			super(source);

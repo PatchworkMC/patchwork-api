@@ -59,11 +59,6 @@ import net.minecraft.world.level.LevelProperties;
 public class WorldEvent extends Event {
 	private final IWorld world;
 
-	// For EventBus
-	public WorldEvent() {
-		this.world = null;
-	}
-
 	public WorldEvent(IWorld world) {
 		this.world = world;
 	}
@@ -87,11 +82,6 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Load extends WorldEvent {
-		// For EventBus
-		public Load() {
-			super();
-		}
-
 		public Load(IWorld world) {
 			super(world);
 		}
@@ -113,11 +103,6 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Unload extends WorldEvent {
-		// For EventBus
-		public Unload() {
-			super();
-		}
-
 		public Unload(IWorld world) {
 			super(world);
 		}
@@ -136,11 +121,6 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Save extends WorldEvent {
-		// For EventBus
-		public Save() {
-			super();
-		}
-
 		public Save(IWorld world) {
 			super(world);
 		}
@@ -158,14 +138,6 @@ public class WorldEvent extends Event {
 		private final EntityCategory type;
 		private final BlockPos pos;
 		private final List<SpawnEntry> list;
-
-		// For EventBus
-		public PotentialSpawns() {
-			super();
-			type = null;
-			pos = null;
-			list = null;
-		}
 
 		public PotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<SpawnEntry> oldList) {
 			super(world);
@@ -203,12 +175,6 @@ public class WorldEvent extends Event {
 	 */
 	public static class CreateSpawnPosition extends WorldEvent {
 		private final LevelInfo settings;
-
-		// For EventBus
-		public CreateSpawnPosition() {
-			super();
-			settings = null;
-		}
 
 		public CreateSpawnPosition(IWorld world, LevelInfo settings) {
 			super(world);

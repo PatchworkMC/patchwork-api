@@ -45,7 +45,7 @@ public abstract class MixinAbstractInventoryScreen extends ContainerScreen {
 	@Inject(method = "method_2476", at = @At("RETURN"))
 	private void potionShift(CallbackInfo info) {
 		if (offsetGuiForEffects) {
-			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.PotionShiftEvent())) {
+			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.PotionShiftEvent(this))) {
 				this.x = (this.width - this.containerWidth) / 2;
 			}
 		}

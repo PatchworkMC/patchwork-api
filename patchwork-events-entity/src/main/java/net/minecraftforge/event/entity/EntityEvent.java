@@ -38,11 +38,6 @@ import net.minecraft.entity.EntityPose;
 public class EntityEvent extends Event {
 	private final Entity entity;
 
-	// For EventBus
-	public EntityEvent() {
-		this(null);
-	}
-
 	public EntityEvent(Entity entity) {
 		this.entity = entity;
 	}
@@ -63,11 +58,6 @@ public class EntityEvent extends Event {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class EntityConstructing extends EntityEvent {
-		// For EventBus
-		public EntityConstructing() {
-			super();
-		}
-
 		public EntityConstructing(Entity entity) {
 			super(entity);
 		}
@@ -87,11 +77,6 @@ public class EntityEvent extends Event {
 	 */
 	/* TODO public static class CanUpdate extends EntityEvent {
 		private boolean canUpdate = false;
-
-		// For EventBus
-		public CanUpdate() {
-			super();
-		}
 
 		public CanUpdate(Entity entity) {
 			super(entity);
@@ -123,11 +108,6 @@ public class EntityEvent extends Event {
 		private int newChunkZ;
 		private int oldChunkX;
 		private int oldChunkZ;
-
-		// For EventBus
-		public EnteringChunk() {
-			super();
-		}
 
 		public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
 			super(entity);
@@ -186,16 +166,6 @@ public class EntityEvent extends Event {
 		private final EntityDimensions size;
 		private final float oldHeight;
 		private float newHeight;
-
-		// For EventBus
-		public EyeHeight() {
-			super();
-
-			this.pose = null;
-			this.size = null;
-			this.oldHeight = 0;
-			this.newHeight = 0;
-		}
 
 		public EyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
 			super(entity);

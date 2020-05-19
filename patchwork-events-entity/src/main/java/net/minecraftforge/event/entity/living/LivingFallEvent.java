@@ -42,11 +42,6 @@ public class LivingFallEvent extends LivingEvent {
 	private float distance;
 	private float damageMultiplier;
 
-	// For EventBus
-	public LivingFallEvent() {
-		this(null, 0, 0);
-	}
-
 	public LivingFallEvent(LivingEntity entity, float distance, float damageMultiplier) {
 		super(entity);
 

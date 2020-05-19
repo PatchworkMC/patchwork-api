@@ -31,11 +31,6 @@ public class TickEvent extends Event {
 	public final LogicalSide side;
 	public final Phase phase;
 
-	// For EventBus
-	public TickEvent() {
-		this(null, null, null);
-	}
-
 	public TickEvent(Type type, LogicalSide side, Phase phase) {
 		this.type = type;
 		this.side = side;
@@ -65,11 +60,6 @@ public class TickEvent extends Event {
 	public static class WorldTickEvent extends TickEvent {
 		public final World world;
 
-		// For EventBus
-		public WorldTickEvent() {
-			this(null, null, null);
-		}
-
 		public WorldTickEvent(LogicalSide side, Phase phase, World world) {
 			super(Type.WORLD, side, phase);
 
@@ -79,11 +69,6 @@ public class TickEvent extends Event {
 
 	public static class PlayerTickEvent extends TickEvent {
 		public final PlayerEntity player;
-
-		// For EventBus
-		public PlayerTickEvent() {
-			this(null, null);
-		}
 
 		public PlayerTickEvent(Phase phase, PlayerEntity player) {
 			super(Type.PLAYER, player instanceof ServerPlayerEntity ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);

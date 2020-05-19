@@ -44,14 +44,6 @@ public class LivingSpawnEvent extends LivingEvent {
 	private final double y;
 	private final double z;
 
-	// For EventBus
-	public LivingSpawnEvent() {
-		this.world = null;
-		this.x = 0;
-		this.y = 0;
-		this.z = 0;
-	}
-
 	public LivingSpawnEvent(MobEntity entity, IWorld world, double x, double y, double z) {
 		super(entity);
 		this.world = world;

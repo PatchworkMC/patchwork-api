@@ -41,11 +41,6 @@ import net.minecraft.client.MinecraftClient;
 public class FMLClientSetupEvent extends ModLifecycleEvent {
 	private final Supplier<MinecraftClient> client;
 
-	// For EventBus
-	public FMLClientSetupEvent() {
-		this(null, null);
-	}
-
 	public FMLClientSetupEvent(Supplier<MinecraftClient> client, ModContainer container) {
 		super(container);
 
