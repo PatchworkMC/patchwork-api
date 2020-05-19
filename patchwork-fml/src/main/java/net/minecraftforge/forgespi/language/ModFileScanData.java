@@ -68,9 +68,7 @@ public class ModFileScanData {
 
 		Path annotationJsonPath = modContainer.getPath(annotationJsonLocation);
 
-		try {
-			InputStreamReader reader = new InputStreamReader(Files.newInputStream(annotationJsonPath));
-
+		try(InputStreamReader reader = new InputStreamReader(Files.newInputStream(annotationJsonPath))) {
 			AnnotationStorage annotationStorage = GSON.fromJson(reader, AnnotationStorage.class);
 
 			annotationData = annotationStorage.entries.stream()

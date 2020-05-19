@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,12 +109,17 @@ public class ModList {
 
 	public List<ModFileScanData> getAllScanData() {
 		if (allScanDataCache == null) {
-			allScanDataCache = FabricLoader.getInstance().getAllMods()
+			// Even though ModFIleScanData lacks an implementation of Object#equals, the default implementation tests
+			// for equality using object identity (a == b). In this case there is only one instance of ModFileScanData
+			// for a given mod file (mod files can be shared by multiple mod containers), therefore comparison by object
+			// identity alone (`==`) is sufficient.
+
+			allScanDataCache = Collections.unmodifiableList(FabricLoader.getInstance().getAllMods()
 					.stream()
 					.map(modContainer -> modContainer.getMetadata().getId())
 					.map(modid -> getModFileById(modid).getFile().getScanResult())
 					.distinct()
-					.collect(Collectors.toList());
+					.collect(Collectors.toList()));
 		}
 
 		return allScanDataCache;
