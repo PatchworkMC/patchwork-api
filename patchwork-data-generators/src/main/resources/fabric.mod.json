@@ -17,7 +17,7 @@
   },
   "mixins": [
   ],
-  "description": "Implementation of the Forge's Data Generators.",
+  "description": "Implementation of Forge's Data Generators.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

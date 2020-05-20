@@ -81,7 +81,7 @@ public class GatherDataEvent extends ModLifecycleEvent {
 		private final boolean dev;
 		private final boolean reports;
 		private final boolean validate;
-		private List<DataGenerator> generators = new ArrayList<>();
+		private final List<DataGenerator> generators = new ArrayList<>();
 
 		public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate) {
 			this.mods = mods;
@@ -100,17 +100,17 @@ public class GatherDataEvent extends ModLifecycleEvent {
 
 		public DataGenerator makeGenerator(final Function<Path, Path> pathEnhancer, final boolean shouldExecute) {
 			final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
-			if (shouldExecute) generators.add(generator);
+
+			if (shouldExecute) {
+				generators.add(generator);
+			}
+
 			return generator;
 		}
 
-		public void runAll() {
+		public void runAll() throws IOException {
 			for (DataGenerator generator : generators) {
-				try {
-					generator.run();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				generator.run();
 			}
 		}
 	}
