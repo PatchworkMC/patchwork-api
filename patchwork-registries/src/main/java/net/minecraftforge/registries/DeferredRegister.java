@@ -36,16 +36,17 @@ import net.minecraft.util.Identifier;
 
 /**
  * Utility class to help with managing registry entries.
- * Maintains a list of all suppliers for entries and registers them during the proper Register event.
- * Suppliers should return NEW instances every time.
- * <p>
- * Example Usage:
- * <pre>
- *   private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
- *   private static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
  *
- *   public static final RegistryObject<Block> ROCK_BLOCK = BLOCKS.register("rock", () -> new Block(Block.Properties.create(Material.ROCK)));
- *   public static final RegistryObject<Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
+ * <p>Maintains a list of all suppliers for entries and registers them during the proper Register event.
+ * Suppliers should return NEW instances every time.
+ *
+ * <p>Example Usage:
+ * <pre>
+ *   private static final DeferredRegister&lt;Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, MODID);
+ *   private static final DeferredRegister&lt;Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, MODID);
+ *
+ *   public static final RegistryObject&lt;Block> ROCK_BLOCK = BLOCKS.register("rock", () -> new Block(Block.Properties.create(Material.ROCK)));
+ *   public static final RegistryObject&lt;Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
  *
  *   public ExampleMod() {
  *       ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
