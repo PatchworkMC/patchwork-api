@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.container",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinContainerType",
+    "ScreenProviderAccessor",
+    "MixinScreens"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
