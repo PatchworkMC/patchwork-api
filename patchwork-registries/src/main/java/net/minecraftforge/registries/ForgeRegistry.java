@@ -53,6 +53,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		this.superType = superType;
 	}
 
+	// Added by Patchwork
+	public Registry<V> getVanilla() {
+		return vanilla;
+	}
+
 	@Override
 	public Identifier getRegistryName() {
 		return name;
@@ -100,6 +105,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
 	@Override
 	public boolean containsKey(Identifier key) {
+		// TODO: Apparently containsId only exists on the client???
 		return vanilla.containsId(key);
 	}
 

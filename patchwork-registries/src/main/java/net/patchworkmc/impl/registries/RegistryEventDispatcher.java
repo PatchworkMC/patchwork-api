@@ -90,5 +90,7 @@ public class RegistryEventDispatcher {
 
 			handler.accept(new RegistryEvent.Register(registry));
 		}
+
+		RegistrationCompleteCallback.EVENT.invoker().onRegistrationComplete();
 	}
 }
