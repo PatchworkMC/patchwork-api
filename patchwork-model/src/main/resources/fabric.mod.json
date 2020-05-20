@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-model",
+  "name": "Patchwork Model",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-model/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.4"
+  },
+  "mixins": [
+  ],
+  "description": "Implementation of the Forge's Model System.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
