@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-model",
-  "name": "Patchwork Model",
+  "id": "patchwork-data-generators",
+  "name": "Patchwork Data Generators",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-model/icon.png",
+  "icon": "assets/patchwork-data-generators/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -17,7 +17,7 @@
   },
   "mixins": [
   ],
-  "description": "Implementation of the Forge's Model System.",
+  "description": "Implementation of the Forge's Data Generators.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

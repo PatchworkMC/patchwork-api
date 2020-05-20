@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,7 +105,13 @@ public class GatherDataEvent extends ModLifecycleEvent {
 		}
 
 		public void runAll() {
-			//no-op
+			for (DataGenerator generator : generators) {
+				try {
+					generator.run();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 }

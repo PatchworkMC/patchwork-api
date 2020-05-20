@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 
 import com.google.common.annotations.VisibleForTesting;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 
 import net.minecraft.resource.ZipResourcePack;
 import net.minecraft.resource.DirectoryResourcePack;
@@ -73,23 +74,23 @@ public class ExistingFileHelper {
 	/**
 	 * Check if a given resource exists in the known resource packs.
 	 *
-	 * @param loc        the base location of the resource, e.g. {@code "minecraft:block/stone"}
+	 * @param identifier the base identifier of the resource, e.g. {@code "minecraft:block/stone"}
 	 * @param type       the type of resources to check
 	 * @param pathSuffix a string to append after the path, e.g. {@code ".json"}
 	 * @param pathPrefix a string to append before the path, before a slash, e.g. {@code "models"}
 	 * @return {@code true} if the resource exists in any pack, {@code false} otherwise
 	 */
-	public boolean exists(Identifier loc, ResourceType type, String pathSuffix, String pathPrefix) {
+	public boolean exists(Identifier identifier, ResourceType type, String pathSuffix, String pathPrefix) {
 		if (!enable) {
 			return true;
 		}
 
-		return getManager(type).containsResource(getLocation(loc, pathSuffix, pathPrefix));
+		return getManager(type).containsResource(getLocation(identifier, pathSuffix, pathPrefix));
 	}
 
 	@VisibleForTesting
-	public Resource getResource(Identifier loc, ResourceType type, String pathSuffix, String pathPrefix) throws IOException {
-		return getManager(type).getResource(getLocation(loc, pathSuffix, pathPrefix));
+	public Resource getResource(Identifier identifier, ResourceType type, String pathSuffix, String pathPrefix) throws IOException {
+		return getManager(type).getResource(getLocation(identifier, pathSuffix, pathPrefix));
 	}
 
 	/**
