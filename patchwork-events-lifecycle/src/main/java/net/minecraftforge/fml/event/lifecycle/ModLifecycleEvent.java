@@ -29,13 +29,6 @@ import net.minecraftforge.fml.ModContainer;
 public class ModLifecycleEvent extends Event {
 	private final ModContainer container;
 
-	// For EventBus
-	public ModLifecycleEvent() {
-		this(null);
-
-		this.description();
-	}
-
 	public ModLifecycleEvent(ModContainer container) {
 		this.container = container;
 	}

@@ -47,15 +47,6 @@ public class PlayerInteractEvent extends PlayerEvent {
 	private final Direction face;
 	private ActionResult cancellationResult = ActionResult.PASS;
 
-	// For EventBus
-	public PlayerInteractEvent() {
-		super();
-
-		hand = null;
-		pos = null;
-		face = null;
-	}
-
 	private PlayerInteractEvent(PlayerEntity player, Hand hand, BlockPos pos, @Nullable Direction face) {
 		super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
 		this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
@@ -183,15 +174,9 @@ public class PlayerInteractEvent extends PlayerEvent {
 	public static class EntityInteract extends PlayerInteractEvent {
 		private final Entity target;
 
-		// For EventBus
-		public EntityInteract() {
-			super();
-
-			this.target = null;
-		}
-
 		public EntityInteract(PlayerEntity player, Hand hand, Entity target) {
 			super(player, hand, new BlockPos(target), null);
+
 			this.target = target;
 		}
 
@@ -223,11 +208,6 @@ public class PlayerInteractEvent extends PlayerEvent {
 	public static class RightClickBlock extends PlayerInteractEvent {
 		private Result useBlock = Result.DEFAULT;
 		private Result useItem = Result.DEFAULT;
-
-		// For EventBus
-		public RightClickBlock() {
-			super();
-		}
 
 		public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
 			super(player, hand, pos, face);
@@ -289,11 +269,6 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then continue to other hands.</p>
 	 */
 	public static class RightClickItem extends PlayerInteractEvent {
-		// For EventBus
-		public RightClickItem() {
-			super();
-		}
-
 		public RightClickItem(PlayerEntity player, Hand hand) {
 			super(player, hand, new BlockPos(player), null);
 		}

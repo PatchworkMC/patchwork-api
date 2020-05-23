@@ -43,11 +43,6 @@ public class ChunkWatchEvent extends Event {
 	private final ServerPlayerEntity player;
 	private final ChunkPos pos;
 
-	// For EventBus
-	public ChunkWatchEvent() {
-		this(null, null, null);
-	}
-
 	public ChunkWatchEvent(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {
 		this.player = player;
 		this.pos = pos;
@@ -79,11 +74,6 @@ public class ChunkWatchEvent extends Event {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Watch extends ChunkWatchEvent {
-		// For EventBus
-		public Watch() {
-			super();
-		}
-
 		public Watch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {
 			super(player, pos, world);
 		}

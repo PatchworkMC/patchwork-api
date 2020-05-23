@@ -34,11 +34,6 @@ import net.minecraft.entity.player.PlayerEntity;
 public class PlayerEvent extends LivingEvent {
 	private final PlayerEntity playerEntity;
 
-	// For EventBus
-	public PlayerEvent() {
-		this(null);
-	}
-
 	public PlayerEvent(PlayerEntity player) {
 		super(player);
 		playerEntity = player;
@@ -66,11 +61,6 @@ public class PlayerEvent extends LivingEvent {
 	 * when the player has finished logging in.
 	 */
 	public static class PlayerLoggedInEvent extends PlayerEvent {
-		// For EventBus
-		public PlayerLoggedInEvent() {
-			super(null);
-		}
-
 		public PlayerLoggedInEvent(PlayerEntity player) {
 			super(player);
 		}

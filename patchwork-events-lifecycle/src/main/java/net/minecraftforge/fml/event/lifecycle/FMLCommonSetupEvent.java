@@ -41,11 +41,6 @@ import net.minecraftforge.fml.ModContainer;
  * completed dispatch
  */
 public class FMLCommonSetupEvent extends ModLifecycleEvent {
-	// For EventBus
-	public FMLCommonSetupEvent() {
-		super();
-	}
-
 	public FMLCommonSetupEvent(final ModContainer container) {
 		super(container);
 	}

@@ -28,11 +28,6 @@ import net.minecraftforge.fml.ModContainer;
  * @author cpw
  */
 public class FMLLoadCompleteEvent extends ModLifecycleEvent {
-	// For EventBus
-	public FMLLoadCompleteEvent() {
-		super();
-	}
-
 	public FMLLoadCompleteEvent(final ModContainer container) {
 		super(container);
 	}

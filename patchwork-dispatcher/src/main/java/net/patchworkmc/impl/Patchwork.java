@@ -20,10 +20,13 @@
 package net.patchworkmc.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -39,8 +42,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -76,17 +77,39 @@ public class Patchwork implements ModInitializer {
 
 		// Construct forge mods
 
-		for (ForgeInitializer initializer : FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class)) {
-			LOGGER.info("Constructing Forge mod: " + initializer.getModId());
+		List<ForgeInitializer> entrypoints;
+
+		try {
+			entrypoints = FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class);
+		} catch (Throwable t) {
+			throw new PatchworkInitializationException("Failed to get Patchwork entrypoints!", t);
+		}
+
+		PatchworkInitializationException error = null;
+
+		for (ForgeInitializer initializer : entrypoints) {
+			LOGGER.info("Constructing Patchwork mod: " + initializer.getModId());
 
 			FMLModContainer container = new FMLModContainer(initializer.getModId());
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
-			initializer.onForgeInitialize();
+			try {
+				initializer.onForgeInitialize();
+			} catch (Throwable t) {
+				if (error == null) {
+					error = new PatchworkInitializationException("Failed to construct Patchwork mods");
+				}
+
+				error.addSuppressed(t);
+			}
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 
 			mods.put(initializer, container);
+		}
+
+		if (error != null) {
+			throw error;
 		}
 
 		// Send initialization events

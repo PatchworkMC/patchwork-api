@@ -27,7 +27,8 @@ import net.minecraft.world.Difficulty;
 /**
  * DifficultyChangeEvent is fired when difficulty is changing.
  *
- * <p>TODO: Forge bug: This event is not currently fired. See https://github.com/MinecraftForge/MinecraftForge/issues/6227</p>
+ * <p>TODO: Forge bug: This event is not currently fired.
+ * See <a href="https://github.com/MinecraftForge/MinecraftForge/issues/6227">this bug</a> (closed by stalebot).</p>
  *
  * <p>This event is not cancellable.</p>
  *

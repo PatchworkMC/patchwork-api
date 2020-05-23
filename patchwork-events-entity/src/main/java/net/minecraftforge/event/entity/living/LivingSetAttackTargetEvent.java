@@ -41,14 +41,9 @@ import net.minecraft.entity.mob.MobEntity;
 public class LivingSetAttackTargetEvent extends LivingEvent {
 	private final LivingEntity target;
 
-	// for EventBus
-	public LivingSetAttackTargetEvent() {
-		super();
-		this.target = null;
-	}
-
 	public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target) {
 		super(entity);
+
 		this.target = target;
 	}
 
