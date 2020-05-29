@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +33,15 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 
 public class ModList {
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	// Patchwork: initalize directly because there's no args
+	// Patchwork: initialize directly because there's no args
 	private static ModList INSTANCE = new ModList();
 
-	private Map<String, ModFileInfo> modFileInfoMap = new HashMap<>();
-
+	private Map<ModContainer, ModFileInfo> modFileInfoMap = new HashMap<>();
 	private List<ModFileScanData> allScanDataCache;
 
 	public static ModList get() {
@@ -53,73 +54,74 @@ public class ModList {
 	}
 
 	public ModFileInfo getModFileById(String modId) {
-		return modFileInfoMap.computeIfAbsent(
-				modId,
-				k -> {
-					String annotationHolderModid = getAnnotationHolderModid(modId);
+		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modId).orElse(null);
 
-					if (annotationHolderModid == null) {
-						//non-patched mod or invalid mod
-						return new ModFileInfo();
-					}
+		if (modContainer == null) {
+			return null;
+		}
 
-					if (annotationHolderModid.equals(modId)) {
-						//Patched mod and is not jij
-						return new ModFileInfo(annotationHolderModid);
-					}
+		return getModFileByContainer(modContainer);
+	}
 
-					//jij patched mod
-					return getModFileById(annotationHolderModid);
-				}
-		);
+	private ModFileInfo getModFileByContainer(ModContainer modContainer) {
+		return modFileInfoMap.computeIfAbsent(modContainer, this::createModFileInfo);
+	}
+
+	private ModFileInfo createModFileInfo(ModContainer modContainer) {
+		ModMetadata metadata = modContainer.getMetadata();
+
+		// First try to find a patchwork:annotations entry for this file. If it exists, then this is the "primary" mod
+		// for a given JAR file.
+		CustomValue annotations = metadata.getCustomValue("patchwork:annotations");
+
+		if (annotations != null) {
+			String annotationJsonLocation = annotations.getAsString();
+
+			return new ModFileInfo(modContainer, annotationJsonLocation);
+		}
+
+		// If there is no annotation data indicative of a primary mod file, try to then find the parent (primary) mod ID.
+		// This indicates that this is a dummy JiJ mod created by Patchwork Patcher.
+		CustomValue parent = metadata.getCustomValue("patchwork:parent");
+
+		if (parent != null) {
+			return getModFileById(parent.getAsString());
+		}
+
+		// This mod lacks annotation data or a parent mod ID.
+		// Check to see if it was run through an old version of Patcher (if it lacks both the parent and annotations
+		// attributes but has the source attribute)
+		CustomValue source = modContainer.getMetadata().getCustomValue("patchwork:source");
+
+		if (source != null) {
+			CustomValue.CvObject object = source.getAsObject();
+			String loader = object.get("loader").getAsString();
+
+			if (loader.equals("forge")) {
+				LOGGER.warn("A mod was patched with an old version of Patchwork Patcher, please re-patch it! "
+						+ "No annotation data is available for " + metadata.getId() + " (loaded from " + modContainer.getRootPath() + ")");
+			}
+		}
+
+		// Either a patchwork mod missing annotation data, or a normal Fabric mod.
+		return new ModFileInfo();
 	}
 
 	public List<ModFileScanData> getAllScanData() {
 		if (allScanDataCache == null) {
-			allScanDataCache = FabricLoader.getInstance().getAllMods()
+			// Even though ModFileScanData lacks an implementation of Object#equals, the default implementation tests
+			// for equality using object identity (a == b). In this case there is only one instance of ModFileScanData
+			// for a given mod file (mod files can be shared by multiple mod containers), therefore comparison by object
+			// identity alone (`==`) is sufficient.
+
+			allScanDataCache = Collections.unmodifiableList(FabricLoader.getInstance().getAllMods()
 					.stream()
 					.map(modContainer -> modContainer.getMetadata().getId())
 					.map(modid -> getModFileById(modid).getFile().getScanResult())
 					.distinct()
-					.collect(Collectors.toList());
+					.collect(Collectors.toList()));
 		}
 
 		return allScanDataCache;
-	}
-
-	//return null if it does not have annotation data
-	private static String getAnnotationHolderModid(String modid) {
-		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modid).orElse(null);
-
-		if (modContainer == null) {
-			LOGGER.error("Trying to access annotation data of a missing mod " + modid);
-			LOGGER.catching(new Throwable());
-			return null;
-		}
-
-		if (!isPatchedMod(modContainer)) {
-			return null;
-		}
-
-		CustomValue parent = modContainer.getMetadata().getCustomValue("patchwork:parent");
-
-		if (parent == null) {
-			//it's not a jij mod
-			return modid;
-		}
-
-		return parent.getAsString();
-	}
-
-	public static boolean isPatchedMod(ModContainer modContainer) {
-		CustomValue source = modContainer.getMetadata().getCustomValue("patchwork:source");
-
-		if (source == null) {
-			return false;
-		}
-
-		CustomValue.CvObject object = source.getAsObject();
-		String loader = object.get("loader").getAsString();
-		return loader.equals("forge");
 	}
 }
