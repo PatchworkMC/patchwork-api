@@ -32,15 +32,23 @@ public class GameData {
 	 * current active mod container.
 	 *
 	 * @param name          The name or resource location
-	 * @param warnOverrides If true, logs a warning if domain differs from that of
-	 *                      the currently currently active mod container
-	 *
-	 * @return The {@link net.minecraft.util.Identifier} with given or inferred domain
+	 * @param warnOverrides If false, the prefix is forcefully updated without a warning,
+	 *                      and if true, the prefix is not updated and there is just a
+	 *                      warning message.
+	 * @return The {@link Identifier} with given or inferred domain
 	 */
 	public static Identifier checkPrefix(String name, boolean warnOverrides) {
-		int index = name.lastIndexOf(':');
-		String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
-		name = index == -1 ? name : name.substring(index + 1);
+		int colonIndex = name.lastIndexOf(':');
+
+		if (colonIndex == -1) {
+			String prefix = ModLoadingContext.get().getActiveNamespace();
+
+			return new Identifier(prefix, name);
+		}
+
+		String oldPrefix = name.substring(0, colonIndex).toLowerCase(Locale.ROOT);
+
+		String newName = name.substring(colonIndex + 1);
 		String prefix = ModLoadingContext.get().getActiveNamespace();
 
 		if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0) {
@@ -48,6 +56,6 @@ public class GameData {
 			prefix = oldPrefix;
 		}
 
-		return new Identifier(prefix, name);
+		return new Identifier(prefix, newName);
 	}
 }
