@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import com.google.common.collect.Maps;
 
 public final class ToolType {
-	private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
+	private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case and use _ to separate words.
 	private static final Map<String, ToolType> values = Maps.newHashMap();
 
 	public static final ToolType AXE = get("axe");
@@ -39,7 +39,7 @@ public final class ToolType {
 
 	public static ToolType get(String name) {
 		if (VALID_NAME.matcher(name).find()) {
-			throw new IllegalArgumentException("ToolType.create() called with invalid name: " + name);
+			throw new IllegalArgumentException("ToolType.get() called with invalid name: " + name);
 		}
 
 		return values.computeIfAbsent(name, k -> new ToolType(name));
