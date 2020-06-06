@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
@@ -123,6 +124,17 @@ public class ModFileScanData {
 			this.memberName = memberName;
 		}
 
+		public AnnotationData(
+				Type annotationType, ElementType targetType, Type clazz,
+				String memberName, Map<String, Object> annotationData
+		) {
+			this.annotationType = annotationType;
+			this.targetType = targetType;
+			this.clazz = clazz;
+			this.memberName = memberName;
+			this.annotationData = annotationData;
+		}
+
 		public Type getAnnotationType() {
 			return annotationType;
 		}
@@ -167,10 +179,9 @@ public class ModFileScanData {
 
 				for (Method argMethod : argMethods) {
 					if (isArgumentMethod(argMethod)) {
-						annotationData.put(
-								argMethod.getName(),
-								argMethod.invoke(annotationObject)
-						);
+						Object object = argMethod.invoke(annotationObject);
+
+						annotationData.put(argMethod.getName(), processArgumentObject(object));
 					}
 				}
 			} catch (Throwable e) {
@@ -199,15 +210,14 @@ public class ModFileScanData {
 			case METHOD:
 				String methodName = memberName.substring(0, memberName.indexOf('('));
 				Method[] methods = Arrays.stream(clazzObj.getDeclaredMethods())
-					.filter(method -> method.getName().equals(methodName))
-					.toArray(Method[]::new);
+						.filter(method -> method.getName().equals(methodName))
+						.toArray(Method[]::new);
 				if (methods.length == 0) {
 					throw new RuntimeException("Cannot find method " + methodName);
 				}
 
 				if (methods.length > 1) {
 					//TODO handle overloaded methods
-
 					throw new RuntimeException("Currently Cannot Handle Overloaded Methods");
 				}
 
@@ -234,5 +244,24 @@ public class ModFileScanData {
 		public int hashCode() {
 			return Objects.hash(annotationType, targetType, clazz, memberName);
 		}
+	}
+
+	private static Object processArgumentObject(Object object) {
+		if (object instanceof Object[]) {
+			return Arrays.stream((Object[]) object)
+					.map(ModFileScanData::processArgumentObject)
+					.collect(Collectors.toList());
+		}
+
+		if (object instanceof Enum) {
+			Enum enumObject = (Enum) object;
+			String className = enumObject.getDeclaringClass().getName();
+			return new ModAnnotation.EnumHolder(
+					className.replace('.', '/'),
+					enumObject.toString()
+			);
+		}
+
+		return object;
 	}
 }
