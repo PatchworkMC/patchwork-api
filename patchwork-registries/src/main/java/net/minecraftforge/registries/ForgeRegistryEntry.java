@@ -31,6 +31,14 @@ public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
 		return this;
 	}
 
+	public final IForgeRegistryEntry setRegistryName(String name) {
+		return setRegistryName(new Identifier(name));
+	}
+
+	public final IForgeRegistryEntry setRegistryName(String modID, String name) {
+		return setRegistryName(new Identifier(modID, name));
+	}
+
 	@Override
 	public final Identifier getRegistryName() {
 		return this.name;
