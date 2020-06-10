@@ -5,6 +5,7 @@
   "mixins": [
     "MixinEntityType",
     "MixinEntityTypeBuilder",
+    "MixinPlayerAdvancementTracker",
     "MixinStatusEffect"
   ],
   "injectors": {

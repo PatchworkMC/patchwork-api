@@ -33,8 +33,8 @@ import net.minecraft.util.math.Vec3d;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayerEntity {
-	public FakePlayer(ServerWorld world, GameProfile name) {
-		super(world.getServer(), world, name, new ServerPlayerInteractionManager(world));
+	public FakePlayer(ServerWorld world, GameProfile profile) {
+		super(world.getServer(), world, profile, new ServerPlayerInteractionManager(world));
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class FakePlayer extends ServerPlayerEntity {
 	}
 
 	@Override
-	public void addChatMessage(Text chatComponent, boolean actionBar) {
+	public void addChatMessage(Text text, boolean actionBar) {
 	}
 
 	@Override
@@ -51,10 +51,9 @@ public class FakePlayer extends ServerPlayerEntity {
 	}
 
 	@Override
-	public void increaseStat(Stat par1StatBase, int par2) {
+	public void increaseStat(Stat stat, int num) {
 	}
 
-	//@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
 	@Override
 	public boolean isInvulnerableTo(DamageSource source) {
 		return true;
@@ -74,6 +73,6 @@ public class FakePlayer extends ServerPlayerEntity {
 	}
 
 	@Override
-	public void setClientSettings(ClientSettingsC2SPacket pkt) {
+	public void setClientSettings(ClientSettingsC2SPacket packet) {
 	}
 }
