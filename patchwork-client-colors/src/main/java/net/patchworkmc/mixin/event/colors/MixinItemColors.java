@@ -17,19 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common;
+package net.patchworkmc.mixin.event.colors;
 
-import net.minecraftforge.eventbus.api.BusBuilder;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColors;
 
-public class MinecraftForge {
-	/**
-	 * The core Forge EventBus, all events for Forge will be fired on this. You should use this to register all your
-	 * listeners.
-	 */
-	public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().build();
+import net.patchworkmc.impl.event.colors.ColorEvents;
+
+@Mixin(ItemColors.class)
+public class MixinItemColors {
+	@Inject(method = "create", at = @At("RETURN"))
+	private static void onCreate(BlockColors blockColors, CallbackInfoReturnable<ItemColors> cir) {
+		ColorEvents.onItemColorsInit(cir.getReturnValue(), blockColors);
+	}
 }

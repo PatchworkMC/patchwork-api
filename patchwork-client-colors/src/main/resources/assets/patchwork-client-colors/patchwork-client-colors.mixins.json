@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.event.colors",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinItemColors"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

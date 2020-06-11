@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.patchworkmc.impl.event.colors.ColorEvents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraftforge.api.distmarker.Dist;
@@ -119,6 +120,7 @@ public class Patchwork implements ModInitializer {
 
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
 			dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
+			ColorEvents.registerEventDispatcher(event -> dispatch(mods, event));
 		});
 
 		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
