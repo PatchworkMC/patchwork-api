@@ -21,10 +21,6 @@ package net.minecraftforge.common;
 
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MinecraftForge {
 	/**
