@@ -17,6 +17,11 @@
   "mixins": [
     "patchwork-extensions.mixins.json"
   ],
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.extension.PatchworkExtensions"
+    ]
+  },
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
