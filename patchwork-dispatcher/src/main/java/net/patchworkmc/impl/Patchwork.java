@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.patchworkmc.impl.event.colors.ColorEvents;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraftforge.api.distmarker.Dist;
@@ -51,6 +50,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
+import net.patchworkmc.impl.event.colors.ColorEvents;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork implements ModInitializer {
