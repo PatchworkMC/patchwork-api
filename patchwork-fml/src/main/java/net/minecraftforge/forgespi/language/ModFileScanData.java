@@ -111,7 +111,6 @@ public class ModFileScanData {
 		private final Type clazz;
 		private final String memberName;
 
-		//lazy evaluated
 		private Map<String, Object> annotationData;
 
 		public AnnotationData(
@@ -178,10 +177,10 @@ public class ModFileScanData {
 				Method[] argMethods = annotationObject.getClass().getDeclaredMethods();
 
 				for (Method argMethod : argMethods) {
-					if (isArgumentMethod(argMethod)) {
+					if (isElementGetter(argMethod)) {
 						Object object = argMethod.invoke(annotationObject);
 
-						annotationData.put(argMethod.getName(), processArgumentObject(object));
+						annotationData.put(argMethod.getName(), processElementObject(object));
 					}
 				}
 			} catch (Throwable e) {
@@ -189,7 +188,7 @@ public class ModFileScanData {
 			}
 		}
 
-		private static boolean isArgumentMethod(Method method) {
+		private static boolean isElementGetter(Method method) {
 			String name = method.getName();
 			if (name.equals("toString")) return false;
 			if (name.equals("hashCode")) return false;
@@ -246,10 +245,10 @@ public class ModFileScanData {
 		}
 	}
 
-	private static Object processArgumentObject(Object object) {
+	private static Object processElementObject(Object object) {
 		if (object instanceof Object[]) {
 			return Arrays.stream((Object[]) object)
-					.map(ModFileScanData::processArgumentObject)
+					.map(ModFileScanData::processElementObject)
 					.collect(Collectors.toList());
 		}
 
