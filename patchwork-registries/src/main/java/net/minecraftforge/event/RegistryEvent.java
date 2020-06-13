@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -33,7 +34,7 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 	/**
 	 * Register new registries when you receive this event.
 	 */
-	public static class NewRegistry extends net.minecraftforge.eventbus.api.Event {
+	public static class NewRegistry extends Event {
 		@Override
 		public String toString() {
 			return "RegistryEvent.NewRegistry";

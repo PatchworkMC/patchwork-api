@@ -65,9 +65,9 @@ public class Patchwork implements ModInitializer {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			Event event = provider.apply(container);
-			LOGGER.info("Firing event for modid " + container.getModId() + " : " + event.toString());
+			LOGGER.debug("Firing event for modid {} : {}", container.getModId(), event.toString());
 			container.getEventBus().post(event);
-			LOGGER.info("Fired event for modid " + container.getModId() + " : " + event.toString());
+			LOGGER.debug("Fired event for modid {} : {}", container.getModId(), event.toString());
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 		}

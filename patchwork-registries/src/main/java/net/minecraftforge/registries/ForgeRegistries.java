@@ -39,9 +39,11 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.stat.StatType;
+import net.minecraft.structure.StructurePieceType;
+import net.minecraft.structure.pool.StructurePoolElementType;
+import net.minecraft.structure.processor.StructureProcessorType;
 import net.minecraft.structure.rule.RuleTestType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.biome.Biome;
@@ -52,6 +54,7 @@ import net.minecraft.world.gen.carver.Carver;
 import net.minecraft.world.gen.chunk.ChunkGeneratorType;
 import net.minecraft.world.gen.decorator.Decorator;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 import net.minecraft.world.poi.PointOfInterestType;
 
@@ -141,42 +144,21 @@ public class ForgeRegistries {
 		wrap("custom_stat", Identifier.class);
 		wrap("recipe_type", RecipeType.class);
 		wrap("rule_test", RuleTestType.class);
-		/*wrap("structure_feature", StructureFeature.class);
+		wrap("structure_feature", StructureFeature.class);
 		wrap("structure_piece", StructurePieceType.class);
 		wrap("structure_pool_element", StructurePoolElementType.class);
-		wrap("structure_processor", StructureProcessorType.class);*/
+		wrap("structure_processor", StructureProcessorType.class);
 		wrap("villager_type", VillagerType.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T> IForgeRegistry wrap(String name, Class superClazz) {
 		Identifier identifier = new Identifier("minecraft", name);
-		Registry registry = Registry.REGISTRIES.get(identifier);
 
-		RegistryBuilder builder = new RegistryBuilder();
-		builder.setName(identifier);
-		builder.setType(superClazz);
-		builder.add(new VanillaWrapper<>(registry));
-		ForgeRegistry wrapped = (ForgeRegistry) builder.create();
-
-		return wrapped;
+		return RegistryManager.ACTIVE.wrapVanilla(identifier, superClazz);
 	}
 
 	public static void init() {
 		// No-op, just so this class can get loaded.
-	}
-
-	private static class VanillaWrapper<T extends IForgeRegistryEntry<T>> implements IForgeRegistry.AddCallback<T> {
-		private final Registry<T> vanilla;
-		private VanillaWrapper(Registry<T> vanilla) {
-			this.vanilla = vanilla;
-		}
-
-		@Override
-		public void onAdd(IForgeRegistryInternal<T> owner, RegistryManager stage, int id, T obj, T oldObj) {
-			IForgeRegistryEntry entry = (IForgeRegistryEntry) obj;
-			Identifier name = entry.getRegistryName();
-			Registry.register(this.vanilla, name, obj);
-		}
 	}
 }

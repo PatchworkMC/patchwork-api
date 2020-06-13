@@ -19,8 +19,6 @@
 
 package net.minecraftforge.registries;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,18 +29,22 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 
+import net.patchworkmc.impl.registries.ForgeRegistryProvider;
+import net.patchworkmc.impl.registries.VanillaRegistry;
+
+// TODO: unimplemented features: saveToDisk, legacyName, sync, dump
 public class RegistryManager {
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
 
 	private final String name;
-	private final Map<Identifier, ForgeRegistry> registries;
 	private BiMap<Class<? extends IForgeRegistryEntry<?>>, Identifier> superTypes = HashBiMap.create();
 
-	public RegistryManager(String name) {
+	private RegistryManager(String name) {
 		this.name = name;
-		this.registries = new HashMap<>();
 	}
 
 	public String getName() {
@@ -56,7 +58,13 @@ public class RegistryManager {
 
 	@SuppressWarnings("unchecked")
 	public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(Identifier key) {
-		return (ForgeRegistry<V>) this.registries.get(key);
+		Registry<?> vanillaRegistry = Registry.REGISTRIES.get(key);
+
+		if (vanillaRegistry instanceof ForgeRegistryProvider) {
+			return ((ForgeRegistryProvider) vanillaRegistry).getForgeRegistry();
+		}
+
+		return null;
 	}
 
 	public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> clazz) {
@@ -92,7 +100,7 @@ public class RegistryManager {
 	}
 
 	public Set<Identifier> getRegistryNames() {
-		return this.registries.keySet();
+		return Registry.REGISTRIES.getIds();
 	}
 
 	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
@@ -102,22 +110,13 @@ public class RegistryManager {
 
 		if (!overlappedTypes.isEmpty()) {
 			Class<?> foundType = overlappedTypes.iterator().next();
-			LOGGER.error(
-					"Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-					foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
-			throw new IllegalArgumentException(
-					"Duplicate registry parent type found - you can only have one registry for a particular super type");
+			throwSuperClassOverlapException(foundType, builder.getType());
 		}
 
 		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
-		registries.put(name, reg);
+		MutableRegistry vanillaReg = (MutableRegistry) reg.getVanilla();
+		Registry.REGISTRIES.add(name, vanillaReg);
 		superTypes.put(builder.getType(), name);
-		//if (builder.getSaveToDisc())
-		//	this.persisted.add(name);
-		//if (builder.getSync())
-		//	this.synced.add(name);
-		//for (ResourceLocation legacyName : builder.getLegacyNames())
-		//	addLegacyName(legacyName, name);
 
 		return getRegistry(name);
 	}
@@ -134,5 +133,41 @@ public class RegistryManager {
 		}
 
 		findSuperTypes(type.getSuperclass(), types);
+	}
+
+	private void throwSuperClassOverlapException(Class<?> foundType, Class<?> superClazz) {
+		LOGGER.error(
+				"Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
+				foundType, superTypes.get(foundType), name, superClazz, superClazz);
+		throw new IllegalArgumentException(
+				"Duplicate registry parent type found - you can only have one registry for a particular super type");
+	}
+
+	@SuppressWarnings("unchecked")
+	public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Class<V> superClazz) {
+		Registry<V> registry = (Registry<V>) Registry.REGISTRIES.get(identifier);
+
+		Set<Class<?>> parents = Sets.newHashSet();
+		findSuperTypes(superClazz, parents);
+		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
+
+		if (!overlappedTypes.isEmpty()) {
+			Class<?> foundType = overlappedTypes.iterator().next();
+
+			if (overlappedTypes.size() == 1) {
+				@SuppressWarnings("rawtypes")
+				ForgeRegistry<V> existing = (ForgeRegistry<V>) this.getRegistry((Class<V>) foundType);
+				((VanillaRegistry) registry).setForgeRegistry(existing);
+				return (IForgeRegistry<V>) existing;
+			} else {
+				throwSuperClassOverlapException(foundType, superClazz);
+			}
+		}
+
+		ForgeRegistry wrapped = new ForgeRegistry<>(identifier, registry, superClazz);
+		((VanillaRegistry) registry).setForgeRegistry(wrapped);
+		superTypes.put(superClazz, identifier);
+
+		return wrapped;
 	}
 }

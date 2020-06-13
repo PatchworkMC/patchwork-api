@@ -27,6 +27,7 @@
     "MixinRecipeSerializerSubclass",
     "MixinSchedule",
     "MixinSensorType",
+    "MixinSimpleRegistry",
     "MixinSoundEvent",
     "MixinStatType",
     "MixinStatusEffect",
