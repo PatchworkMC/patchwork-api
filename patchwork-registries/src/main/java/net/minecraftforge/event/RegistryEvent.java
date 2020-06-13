@@ -30,6 +30,16 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 		super(clazz);
 	}
 
+	/**
+	 * Register new registries when you receive this event.
+	 */
+	public static class NewRegistry extends net.minecraftforge.eventbus.api.Event {
+		@Override
+		public String toString() {
+			return "RegistryEvent.NewRegistry";
+		}
+	}
+
 	public static class Register<V extends IForgeRegistryEntry<V>> extends RegistryEvent<V> {
 		private final IForgeRegistry<V> registry;
 		private final Identifier name;
@@ -50,6 +60,11 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 
 		public Identifier getName() {
 			return name;
+		}
+
+		@Override
+		public String toString() {
+			return "RegistryEvent.Register<" + registry.getRegistryName() + ">";
 		}
 	}
 }
