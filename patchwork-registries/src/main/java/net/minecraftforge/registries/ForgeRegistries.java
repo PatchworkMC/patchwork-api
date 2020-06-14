@@ -140,6 +140,7 @@ public class ForgeRegistries {
 		CHUNK_STATUS = wrap("chunk_status", ChunkStatus.class);
 
 		// TODO: Patchwork Project, check these
+		// TODO: Forge mods register to "forge:moddimensions", ModDimension.class
 		wrap("dimension_type", DimensionType.class);
 		wrap("custom_stat", Identifier.class);
 		wrap("recipe_type", RecipeType.class);
@@ -155,7 +156,7 @@ public class ForgeRegistries {
 	private static <T> IForgeRegistry wrap(String name, Class superClazz) {
 		Identifier identifier = new Identifier("minecraft", name);
 
-		return RegistryManager.ACTIVE.wrapVanilla(identifier, superClazz);
+		return RegistryManager.ACTIVE.getRegistry(superClazz);
 	}
 
 	public static void init() {

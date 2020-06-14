@@ -29,11 +29,9 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
 import net.patchworkmc.impl.registries.ForgeRegistryProvider;
-import net.patchworkmc.impl.registries.VanillaRegistry;
 
 // TODO: unimplemented features: saveToDisk, legacyName, sync, dump
 public class RegistryManager {
@@ -100,7 +98,8 @@ public class RegistryManager {
 	}
 
 	public Set<Identifier> getRegistryNames() {
-		return Registry.REGISTRIES.getIds();
+		// These types are known to MinecraftForge
+		return this.superTypes.values();
 	}
 
 	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
@@ -114,8 +113,6 @@ public class RegistryManager {
 		}
 
 		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
-		MutableRegistry vanillaReg = (MutableRegistry) reg.getVanilla();
-		Registry.REGISTRIES.add(name, vanillaReg);
 		superTypes.put(builder.getType(), name);
 
 		return getRegistry(name);
@@ -141,33 +138,5 @@ public class RegistryManager {
 				foundType, superTypes.get(foundType), name, superClazz, superClazz);
 		throw new IllegalArgumentException(
 				"Duplicate registry parent type found - you can only have one registry for a particular super type");
-	}
-
-	@SuppressWarnings("unchecked")
-	public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Class<V> superClazz) {
-		Registry<V> registry = (Registry<V>) Registry.REGISTRIES.get(identifier);
-
-		Set<Class<?>> parents = Sets.newHashSet();
-		findSuperTypes(superClazz, parents);
-		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
-
-		if (!overlappedTypes.isEmpty()) {
-			Class<?> foundType = overlappedTypes.iterator().next();
-
-			if (overlappedTypes.size() == 1) {
-				@SuppressWarnings("rawtypes")
-				ForgeRegistry<V> existing = (ForgeRegistry<V>) this.getRegistry((Class<V>) foundType);
-				((VanillaRegistry) registry).setForgeRegistry(existing);
-				return (IForgeRegistry<V>) existing;
-			} else {
-				throwSuperClassOverlapException(foundType, superClazz);
-			}
-		}
-
-		ForgeRegistry wrapped = new ForgeRegistry<>(identifier, registry, superClazz);
-		((VanillaRegistry) registry).setForgeRegistry(wrapped);
-		superTypes.put(superClazz, identifier);
-
-		return wrapped;
 	}
 }

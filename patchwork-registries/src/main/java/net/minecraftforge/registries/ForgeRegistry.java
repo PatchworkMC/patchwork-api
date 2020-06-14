@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Maps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -40,31 +40,39 @@ import org.apache.logging.log4j.MarkerManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.MutableRegistry;
+
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 import net.patchworkmc.impl.registries.ExtendedVanillaRegistry;
+import net.patchworkmc.impl.registries.VanillaRegistry;
 
-public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryModifiable<V>, IForgeRegistryInternal<V> {
+public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
+		IForgeRegistryModifiable<V>, IForgeRegistryInternal<V>, RegistryEntryAddedCallback<V> {
 	public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
 	private static Logger LOGGER = LogManager.getLogger();
 	private final Identifier name;
 	private final boolean isVanilla;
 	private final Registry<V> vanilla;
 	private final Class<V> superType;
-	private final Map<Identifier, ?> slaves = Maps.newHashMap();
+	private final Map<Identifier, ?> slaves = new HashMap<>();
 	private final CreateCallback<V> create;
 	private final AddCallback<V> add;
 	private final ClearCallback<V> clear;
 	private final RegistryManager stage;
+	private final boolean allowOverrides;
 	private final boolean isModifiable;
 
 	private boolean isFrozen = false;
+	private V oldValue; // context of AddCallback, does not use elsewhere
 
 	/**
-	 * Called by RegistryBuilder, for moded registries.
+	 * Called by RegistryBuilder, for modded registries.
 	 * @param stage
 	 * @param name
 	 * @param builder
 	 */
+	@SuppressWarnings("unchecked")
 	public ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
 		this.stage = stage;
 		this.name = name;
@@ -72,36 +80,38 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		this.create = builder.getCreate();
 		this.add = builder.getAdd();
 		this.clear = builder.getClear();
+		this.allowOverrides = builder.getAllowOverrides();
 		this.isModifiable = builder.getAllowModifications();
 
-		this.vanilla = new ExtendedVanillaRegistry<>(this);
-		this.isVanilla = false;
+		Registry<V> vanilla = builder.getVanillaRegistry();
+
+		if (vanilla == null) {
+			// Forge modded registry
+			this.vanilla = new ExtendedVanillaRegistry<>(this);
+			Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
+			this.isVanilla = false;
+		} else {
+			// Vanilla registry
+			this.vanilla = vanilla;
+			((VanillaRegistry) this.vanilla).setForgeRegistry(this);
+			this.isVanilla = true;
+		}
+
+		// Fabric hooks
+		// TODO: Some vanilla registry types are not patched yet, add this check to avoid crash
+		if (IForgeRegistryEntry.class.isAssignableFrom(this.superType)) {
+			RegistryEntryAddedCallback.event(this.vanilla).register(this);
+		}
 
 		if (this.create != null) {
 			this.create.onCreate(this, stage);
 		}
 	}
 
-	/**
-	 * For vanilla registeries.
-	 * @param name
-	 * @param vanilla
-	 * @param superType
-	 */
-	public ForgeRegistry(Identifier name, Registry<V> vanilla, Class<V> superType) {
-		this.name = name;
-		this.vanilla = vanilla;
-		this.superType = superType;
-
-		this.create = null;
-		this.add = null;
-		this.clear = null;
-		this.stage = null;
-		this.isModifiable = false;
-		this.isVanilla = true;
-
-		if (this.create != null) {
-			this.create.onCreate(this, stage);
+	@Override
+	public void onEntryAdded(int rawId, Identifier id, V newValue) {
+		if (this.add != null) {
+			this.add.onAdd(this, this.stage, rawId, newValue, this.oldValue);
 		}
 	}
 
@@ -126,17 +136,21 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
 		Optional<V> potentialOldValue = vanilla.getOrEmpty(identifier);
 
-		potentialOldValue.ifPresent(
-				oldValue -> {
-					if (oldValue == value) {
-						LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
+		if (potentialOldValue.isPresent()) {
+			V oldValue = potentialOldValue.get();
 
-						return;
-					} else {
-						throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, oldValue, value));
-					}
-				}
-		);
+			if (oldValue == value) {
+				LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
+
+				return;
+			} else if (this.allowOverrides) {
+				this.oldValue = oldValue;
+			} else {
+				throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, oldValue, value));
+			}
+		} else {
+			this.oldValue = null;
+		}
 
 		Identifier oldIdentifier = vanilla.getId(value);
 
@@ -145,6 +159,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		}
 
 		Registry.register(vanilla, identifier, value);
+		this.oldValue = null; // Clear the onAddEntry context
 	}
 
 	@Override
@@ -219,12 +234,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 	public String toString() {
 		String type = this.isVanilla ? "Vanilla" : "Mod";
 		return type + ", " + this.name.toString();
-	}
-
-	public void onAdd(int idToUse, V value, V oldEntry) {
-		if (this.add != null) {
-			this.add.onAdd(this, this.stage, idToUse, value, oldEntry);
-		}
 	}
 
 	private static class Entry<V> implements Map.Entry<Identifier, V> {

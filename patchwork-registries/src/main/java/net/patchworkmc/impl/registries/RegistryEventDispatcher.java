@@ -41,10 +41,11 @@ public class RegistryEventDispatcher {
 	 */
 	private static List<Identifier> getExpectedOrdering() {
 		List<Identifier> registries = new ArrayList<>(RegistryManager.ACTIVE.getRegistryNames());
-		registries.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
 		registries.remove(Registry.REGISTRIES.getId(Registry.BLOCK));
 		registries.remove(Registry.REGISTRIES.getId(Registry.ITEM));
+
+		registries.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
 		registries.add(0, Registry.REGISTRIES.getId(Registry.BLOCK));
 		registries.add(1, Registry.REGISTRIES.getId(Registry.ITEM));

@@ -35,6 +35,7 @@ import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private static final int MAX_ID = Integer.MAX_VALUE - 1;
@@ -56,6 +57,22 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private DummyFactory<T> dummyFactory;
 	private MissingFactory<T> missingFactory;
 	private Set<Identifier> legacyNames = new HashSet<>();
+
+	private Registry<T> vanilla;
+
+	/**
+	 * Used by the Patchwork Vanilla Wrapper.
+	 * @param vanilla
+	 * @return
+	 */
+	public RegistryBuilder<T> setVanillaRegistry(Registry<T> vanilla) {
+		this.vanilla = vanilla;
+		return this;
+	}
+
+	public Registry<T> getVanillaRegistry() {
+		return this.vanilla;
+	}
 
 	public RegistryBuilder<T> setName(Identifier name) {
 		this.registryName = name;
