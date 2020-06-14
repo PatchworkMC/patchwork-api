@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "MixinItemColors",
-    "MixinBlockColors"
+    "MixinBlockColors",
+    "MixinSpriteAtlasTexture"
   ],
   "injectors": {
     "defaultRequire": 1

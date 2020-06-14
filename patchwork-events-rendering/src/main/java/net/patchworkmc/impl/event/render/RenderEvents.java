@@ -19,9 +19,13 @@
 
 package net.patchworkmc.impl.event.render;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.color.block.BlockColors;
@@ -40,5 +44,13 @@ public class RenderEvents {
 
 	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
 		eventDispatcher.accept(new ColorHandlerEvent.Item(itemColors, blockColors));
+	}
+
+	public static void onTextureStitchPre(SpriteAtlasTexture spriteAtlasTexture, Set<Identifier> set) {
+		eventDispatcher.accept(new TextureStitchEvent.Pre(spriteAtlasTexture, set));
+	}
+
+	public static void onTextureStitchPost(SpriteAtlasTexture spriteAtlasTexture) {
+		eventDispatcher.accept(new TextureStitchEvent.Post(spriteAtlasTexture));
 	}
 }
