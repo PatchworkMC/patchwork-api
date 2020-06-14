@@ -117,7 +117,7 @@ public class RegistryManager {
 		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
 		superTypes.put(builder.getType(), name);
 
-		return getRegistry(name);
+		return reg;
 	}
 
 	private void findSuperTypes(Class<?> type, Set<Class<?>> types) {

@@ -218,8 +218,9 @@ public class GameData {
 	public static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Registry<?> registry) {
 		RegistryBuilder<V> builder = (RegistryBuilder<V>) GameData.getBuilder(identifier);
 
-		if (builder.getType().isAssignableFrom(StructureFeature.class)) {
-			// TODO: StructureFeature Needs slave map impl
+		if (StructureFeature.class.isAssignableFrom(builder.getType())) {
+			// In Forge mods, StructureFeature are registered with IForgeRegistry<Feature>
+			// There is no such thing like IForgeRegistry<StructureFeature>, so simply return null here.
 			return null;
 		}
 

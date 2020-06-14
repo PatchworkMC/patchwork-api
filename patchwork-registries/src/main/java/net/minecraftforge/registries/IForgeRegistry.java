@@ -77,7 +77,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 	 * synchronization, or when a world is loaded.
 	 */
 	interface AddCallback<V extends IForgeRegistryEntry<V>> {
-		void onAdd(IForgeRegistryInternal<?> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
+		void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,10 +37,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import com.google.common.collect.BiMap;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
@@ -74,7 +77,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	 * @param builder
 	 */
 	@SuppressWarnings("unchecked")
-	public ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
+	protected ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
 		this.stage = stage;
 		this.name = name;
 		this.superType = builder.getType();
@@ -160,6 +163,23 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		Registry.register(vanilla, identifier, value);
+
+		// Handle StructureFeature
+		if (value instanceof StructureFeature) {
+			StructureFeature<?> structure = (StructureFeature<?>) value;
+			String key = structure.getName().toLowerCase(Locale.ROOT);
+			Registry.register(Registry.STRUCTURE_FEATURE, key, structure);
+
+			BiMap<String, StructureFeature<?>> map = StructureFeature.STRUCTURES;
+
+			if (this.oldValue != null && this.oldValue instanceof StructureFeature) {
+				String oldName = ((StructureFeature) oldValue).getName();
+				map.remove(oldName.toLowerCase(Locale.ROOT));
+			}
+
+			map.put(key, structure);
+		}
+
 		this.oldValue = null; // Clear the onAddEntry context
 	}
 
@@ -311,7 +331,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		if (this.isVanilla) {
-			LOGGER.debug("Vanilla registery {} is cleared!", this.name);
+			LOGGER.warn("Vanilla registery {} is cleared!", this.name);
 		}
 
 		if (this.clear != null) {

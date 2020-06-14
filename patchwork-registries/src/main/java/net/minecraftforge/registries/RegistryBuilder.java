@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.apache.logging.log4j.LogManager;
 import com.google.common.collect.Lists;
 import net.minecraftforge.registries.IForgeRegistry.AddCallback;
 import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
@@ -80,6 +81,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	}
 
 	public RegistryBuilder<T> setType(Class<T> type) {
+		if (type == null || type.isAssignableFrom(Object.class)) {
+			throw new UnsupportedOperationException("Registry type cannot be Object or null!");
+		}
+
 		this.registryType = type;
 		return this;
 	}
@@ -148,31 +153,37 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	}
 
 	public RegistryBuilder<T> add(ValidateCallback<T> validate) {
+		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.ValidateCallback is not supported by Patchwork yet.");
 		this.validateCallback.add(validate);
 		return this;
 	}
 
 	public RegistryBuilder<T> add(BakeCallback<T> bake) {
+		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.BakeCallback is not supported by Patchwork yet.");
 		this.bakeCallback.add(bake);
 		return this;
 	}
 
 	public RegistryBuilder<T> set(DummyFactory<T> factory) {
+		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.DummyFactory is not supported by Patchwork yet.");
 		this.dummyFactory = factory;
 		return this;
 	}
 
 	public RegistryBuilder<T> set(MissingFactory<T> missing) {
+		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.MissingFactory is not supported by Patchwork yet.");
 		this.missingFactory = missing;
 		return this;
 	}
 
 	public RegistryBuilder<T> disableSaving() {
+		LogManager.getLogger(RegistryBuilder.class).warn("disableSaving() is not implemented by Patchwork yet.");
 		this.saveToDisc = false;
 		return this;
 	}
 
 	public RegistryBuilder<T> disableSync() {
+		LogManager.getLogger(RegistryBuilder.class).warn("disableSync() is not implemented by Patchwork yet.");
 		this.sync = false;
 		return this;
 	}
@@ -188,10 +199,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	}
 
 	public RegistryBuilder<T> legacyName(String name) {
+		LogManager.getLogger(RegistryBuilder.class).warn("legacyName() is not implemented by Patchwork yet.");
 		return legacyName(new Identifier(name));
 	}
 
 	public RegistryBuilder<T> legacyName(Identifier name) {
+		LogManager.getLogger(RegistryBuilder.class).warn("legacyName() is not implemented by Patchwork yet.");
 		this.legacyNames.add(name);
 		return this;
 	}
