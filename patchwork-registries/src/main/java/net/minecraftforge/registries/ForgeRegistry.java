@@ -125,10 +125,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		return superType;
 	}
 
-	public Registry<V> getVanilla() {
-		return this.vanilla;
-	}
-
 	@Override
 	public void register(V value) {
 		Objects.requireNonNull(value, "value must not be null");
@@ -141,10 +137,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 			if (oldValue == value) {
 				LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
-
 				return;
 			} else if (this.allowOverrides) {
 				this.oldValue = oldValue;
+				LOGGER.debug(REGISTRIES, "Registry {}: The object {} {} has been overridden by {}.", this.superType.getSimpleName(), identifier, oldValue, value);
 			} else {
 				throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, oldValue, value));
 			}
@@ -306,7 +302,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		if (this.isLocked()) {
-			throw new IllegalStateException("Attempted to clear the registry to late.");
+			throw new IllegalStateException("Attempted to clear the registry too late.");
 		}
 
 		if (!this.isVanilla) {
@@ -321,21 +317,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		reg.clear();
 	}
 
+	// TODO: implement remove()
 	@Override
 	public V remove(Identifier key) {
-		if (!this.isModifiable) {
-			throw new UnsupportedOperationException("Attempted to remove from a non-modifiable Forge Registry");
-		}
-
-		if (this.isLocked()) {
-			throw new IllegalStateException("Attempted to remove from the registry to late.");
-		}
-
-		if (!this.isVanilla) {
-			throw new UnsupportedOperationException("Vanilla registry does not support remove().");
-		}
-
-		throw new UnsupportedOperationException("Remove() is not implemented for Forge Mod registries.");
+		throw new UnsupportedOperationException("Remove() is not implemented");
 	}
 
 	@SuppressWarnings("unchecked")

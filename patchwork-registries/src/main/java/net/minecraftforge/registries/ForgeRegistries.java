@@ -105,57 +105,47 @@ public class ForgeRegistries {
 		// Make sure all the registries have been setup first.
 		Bootstrap.initialize();
 
-		// Game objects
 		BLOCKS = wrap("block", Block.class);
-		FLUIDS = wrap("fluid", Fluid.class);
 		ITEMS = wrap("item", Item.class);
-		POTIONS = wrap("mob_effect", StatusEffect.class);
-		BIOMES = wrap("biome", Biome.class);
-		SOUND_EVENTS = wrap("sound_event", SoundEvent.class);
-		POTION_TYPES = wrap("potion", Potion.class);
-		ENCHANTMENTS = wrap("enchantment", Enchantment.class);
-		ENTITIES = wrap("entity_type", EntityType.class);
-		TILE_ENTITIES = wrap("block_entity_type", BlockEntityType.class);
-		PARTICLE_TYPES = wrap("particle_type", ParticleType.class);
-		CONTAINERS = wrap("menu", ContainerType.class);
-		PAINTING_TYPES = wrap("motive", PaintingMotive.class);
-		RECIPE_SERIALIZERS = wrap("recipe_serializer", RecipeSerializer.class);
-		STAT_TYPES = wrap("stat_type", StatType.class);
-
-		// Villages
-		PROFESSIONS = wrap("villager_profession", VillagerProfession.class);
-		POI_TYPES = wrap("point_of_interest_type", PointOfInterestType.class);
-		MEMORY_MODULE_TYPES = wrap("memory_module_type", MemoryModuleType.class);
-		SENSOR_TYPES = wrap("sensor_type", SensorType.class);
-		SCHEDULES = wrap("schedule", Schedule.class);
 		ACTIVITIES = wrap("activity", Activity.class);
-
-		// Worldgen
-		WORLD_CARVERS = wrap("carver", Carver.class);
-		SURFACE_BUILDERS = wrap("surface_builder", SurfaceBuilder.class);
-		FEATURES = wrap("feature", Feature.class);
-		DECORATORS = wrap("decorator", Decorator.class);
+		BIOMES = wrap("biome", Biome.class);
 		BIOME_PROVIDER_TYPES = wrap("biome_source_type", BiomeSourceType.class);
+		TILE_ENTITIES = wrap("block_entity_type", BlockEntityType.class);
+		WORLD_CARVERS = wrap("carver", Carver.class);
 		CHUNK_GENERATOR_TYPES = wrap("chunk_generator_type", ChunkGeneratorType.class);
 		CHUNK_STATUS = wrap("chunk_status", ChunkStatus.class);
-
-		// TODO: Patchwork Project, check these
-		// TODO: Forge mods register to "forge:moddimensions", ModDimension.class
-		wrap("dimension_type", DimensionType.class);
 		wrap("custom_stat", Identifier.class);
+		DECORATORS = wrap("decorator", Decorator.class);
+		wrap("dimension_type", DimensionType.class);
+		ENCHANTMENTS = wrap("enchantment", Enchantment.class);
+		ENTITIES = wrap("entity_type", EntityType.class);
+		FEATURES = wrap("feature", Feature.class);
+		FLUIDS = wrap("fluid", Fluid.class);
+		MEMORY_MODULE_TYPES = wrap("memory_module_type", MemoryModuleType.class);
+		CONTAINERS = wrap("menu", ContainerType.class);
+		POTIONS = wrap("mob_effect", StatusEffect.class);
+		PAINTING_TYPES = wrap("motive", PaintingMotive.class);
+		PARTICLE_TYPES = wrap("particle_type", ParticleType.class);
+		POI_TYPES = wrap("point_of_interest_type", PointOfInterestType.class);
+		POTION_TYPES = wrap("potion", Potion.class);
+		RECIPE_SERIALIZERS = wrap("recipe_serializer", RecipeSerializer.class);
 		wrap("recipe_type", RecipeType.class);
 		wrap("rule_test", RuleTestType.class);
+		SCHEDULES = wrap("schedule", Schedule.class);
+		SENSOR_TYPES = wrap("sensor_type", SensorType.class);
+		SOUND_EVENTS = wrap("sound_event", SoundEvent.class);
+		STAT_TYPES = wrap("stat_type", StatType.class);
 		wrap("structure_feature", StructureFeature.class);
 		wrap("structure_piece", StructurePieceType.class);
 		wrap("structure_pool_element", StructurePoolElementType.class);
 		wrap("structure_processor", StructureProcessorType.class);
+		SURFACE_BUILDERS = wrap("surface_builder", SurfaceBuilder.class);
+		PROFESSIONS = wrap("villager_profession", VillagerProfession.class);
 		wrap("villager_type", VillagerType.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T> IForgeRegistry wrap(String name, Class superClazz) {
-		Identifier identifier = new Identifier("minecraft", name);
-
 		return RegistryManager.ACTIVE.getRegistry(superClazz);
 	}
 

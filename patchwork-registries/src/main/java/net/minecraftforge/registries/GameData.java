@@ -93,7 +93,7 @@ public class GameData {
 	public static final Identifier MEMORY_MODULE_TYPES = new Identifier("memory_module_type");
 	public static final Identifier SENSOR_TYPES = new Identifier("sensor_type");
 	public static final Identifier SCHEDULES = new Identifier("schedule");
-	public static final Identifier ACTIVITIES = new Identifier("activities");
+	public static final Identifier ACTIVITIES = new Identifier("activity");
 
 	// Worldgen
 	public static final Identifier WORLD_CARVERS = new Identifier("carver");
@@ -218,7 +218,7 @@ public class GameData {
 	public static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Registry<?> registry) {
 		RegistryBuilder<V> builder = (RegistryBuilder<V>) GameData.getBuilder(identifier);
 
-		if (builder.getType() == StructureFeature.class) {
+		if (builder.getType().isAssignableFrom(StructureFeature.class)) {
 			// TODO: StructureFeature Needs slave map impl
 			return null;
 		}
