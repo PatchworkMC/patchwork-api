@@ -17,22 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.colors;
+package net.patchworkmc.impl.event.render;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import java.util.function.Consumer;
+
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 
-import net.patchworkmc.impl.event.colors.ColorEvents;
+public class RenderEvents {
+	private static Consumer<Event> eventDispatcher;
 
-@Mixin(ItemColors.class)
-public class MixinItemColors {
-	@Inject(method = "create", at = @At("RETURN"))
-	private static void onCreate(BlockColors blockColors, CallbackInfoReturnable<ItemColors> cir) {
-		ColorEvents.onItemColorsInit(cir.getReturnValue(), blockColors);
+	public static void registerEventDispatcher(Consumer<Event> dispatcher) {
+		eventDispatcher = dispatcher;
+	}
+
+	public static void onBlockColorsInit(BlockColors blockColors) {
+		eventDispatcher.accept(new ColorHandlerEvent.Block(blockColors));
+	}
+
+	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
+		eventDispatcher.accept(new ColorHandlerEvent.Item(itemColors, blockColors));
 	}
 }

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-client-colors",
-  "name": "Patchwork Colors",
+  "id": "patchwork-events-rendering",
+  "name": "Patchwork Rendering Events",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-client-colors/icon.png",
+  "icon": "assets/patchwork-events-rendering/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -17,9 +17,9 @@
     "patchwork-fml": "*"
   },
   "mixins": [
-    "patchwork-client-colors.mixins.json"
+    "patchwork-events-rendering.mixins.json"
   ],
-  "description": "Implementation of the Forge Item and Block Color Hooks.",
+  "description": "Implementation of the Minecraft Forge rendering events.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
