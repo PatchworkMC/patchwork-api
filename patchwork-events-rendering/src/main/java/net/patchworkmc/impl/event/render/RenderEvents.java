@@ -22,14 +22,14 @@ package net.patchworkmc.impl.event.render;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.util.Identifier;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 
 public class RenderEvents {
 	private static Consumer<Event> eventDispatcher;
