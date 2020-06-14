@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +63,7 @@ public class RegistryManager {
 			return ((ForgeRegistryProvider) vanillaRegistry).getForgeRegistry();
 		}
 
+		// TODO: should we make fabric registries visible to forge mods?
 		return null;
 	}
 
@@ -80,11 +82,7 @@ public class RegistryManager {
 	}
 
 	public Identifier getName(Class<?> clazz) {
-		if (clazz == null) {
-			return null;
-		}
-
-		do {
+		while (clazz != null && clazz != Object.class) {
 			Identifier existingKey = RegistryManager.ACTIVE.superTypes.get(clazz);
 
 			if (existingKey != null) {
@@ -92,7 +90,7 @@ public class RegistryManager {
 			}
 
 			clazz = clazz.getSuperclass();
-		} while (clazz != null && clazz != Object.class);
+		}
 
 		return null;
 	}
@@ -103,13 +101,17 @@ public class RegistryManager {
 	}
 
 	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
-		Set<Class<?>> parents = Sets.newHashSet();
+		Set<Class<?>> parents = new HashSet<>();
 		findSuperTypes(builder.getType(), parents);
 		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
 
 		if (!overlappedTypes.isEmpty()) {
 			Class<?> foundType = overlappedTypes.iterator().next();
-			throwSuperClassOverlapException(foundType, builder.getType());
+			LOGGER.error(
+					"Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
+					foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
+			throw new IllegalArgumentException(
+					"Duplicate registry parent type found - you can only have one registry for a particular super type");
 		}
 
 		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
@@ -130,13 +132,5 @@ public class RegistryManager {
 		}
 
 		findSuperTypes(type.getSuperclass(), types);
-	}
-
-	private void throwSuperClassOverlapException(Class<?> foundType, Class<?> superClazz) {
-		LOGGER.error(
-				"Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-				foundType, superTypes.get(foundType), name, superClazz, superClazz);
-		throw new IllegalArgumentException(
-				"Duplicate registry parent type found - you can only have one registry for a particular super type");
 	}
 }
