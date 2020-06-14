@@ -34,7 +34,7 @@ import net.minecraft.util.registry.Registry;
 @Mixin(Registry.class)
 public class MixinRegistry {
 	@Inject(at = @At("TAIL"), method = "putDefaultEntry(Ljava/lang/String;Lnet/minecraft/util/registry/MutableRegistry;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/MutableRegistry;")
-	private static <T, R extends MutableRegistry<T>> void putDefaultEntry(String name, R reg, Supplier<T> supplier, CallbackInfoReturnable<R> info) {
+	private static <T, R extends MutableRegistry<T>> void handleNewVanillaRegistry(String name, R reg, Supplier<T> supplier, CallbackInfoReturnable<R> info) {
 		Identifier id = new Identifier(name);
 		GameData.wrapVanilla(id, reg);
 	}

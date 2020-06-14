@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import net.minecraftforge.fml.ModLoadingContext;
 
 import net.minecraft.block.Block;
@@ -68,7 +69,6 @@ import net.minecraft.world.poi.PointOfInterestType;
 public class GameData {
 	// These are needed because some Forge mods access these static public fields
 	// Vanilla registries
-	// Names used here match those in net.minecraft.util.Registry
 
 	// Game objects
 	public static final Identifier BLOCKS = new Identifier("block");
@@ -113,12 +113,9 @@ public class GameData {
 	// Identifier("forge:loot_modifier_serializers");
 
 	private static final Map<Identifier, RegistryBuilder<?>> vanillaWrapperBuilders = new HashMap<>();
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	static {
-		if (!vanillaWrapperBuilders.isEmpty()) {
-			throw new RuntimeException("Duplicated type map initialization!");
-		}
-
 		// Game objects
 		wrap(BLOCKS, Block.class);
 		wrap(FLUIDS, Fluid.class);
@@ -178,10 +175,6 @@ public class GameData {
 		return builder;
 	}
 
-	public static RegistryBuilder<?> getBuilder(Identifier identifier) {
-		return vanillaWrapperBuilders.get(identifier);
-	}
-
 	/**
 	 * Check a name for a domain prefix, and if not present infer it from the
 	 * current active mod container.
@@ -207,7 +200,7 @@ public class GameData {
 		String prefix = ModLoadingContext.get().getActiveNamespace();
 
 		if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0) {
-			LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
+			LOGGER.info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
 			prefix = oldPrefix;
 		}
 
@@ -216,7 +209,12 @@ public class GameData {
 
 	@SuppressWarnings("unchecked")
 	public static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Registry<?> registry) {
-		RegistryBuilder<V> builder = (RegistryBuilder<V>) GameData.getBuilder(identifier);
+		RegistryBuilder<V> builder = (RegistryBuilder<V>) vanillaWrapperBuilders.get(identifier);
+
+		if (builder == null) {
+			LOGGER.debug("Fabric added a Vanilla registry, no ForgeRegistry wrapper.");
+			return null;
+		}
 
 		if (StructureFeature.class.isAssignableFrom(builder.getType())) {
 			// In Forge mods, StructureFeature are registered with IForgeRegistry<Feature>
