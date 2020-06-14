@@ -44,6 +44,7 @@ import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
+import net.patchworkmc.impl.registries.ClearableRegistry;
 import net.patchworkmc.impl.registries.ExtendedVanillaRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
@@ -110,6 +111,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 	@Override
 	public void onEntryAdded(int rawId, Identifier id, V newValue) {
+		if (this.isLocked()) {
+			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", newValue, id));
+		}
+
 		if (this.add != null) {
 			this.add.onAdd(this, this.stage, rawId, newValue, this.oldValue);
 		}
@@ -305,15 +310,15 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException("Attempted to clear the registry too late.");
 		}
 
-		if (!this.isVanilla) {
-			throw new UnsupportedOperationException("Vanilla registry does not support clear().");
+		if (this.isVanilla) {
+			LOGGER.debug("Vanilla registery {} is cleared!", this.name);
 		}
 
 		if (this.clear != null) {
 			this.clear.onClear(this, stage);
 		}
 
-		ExtendedVanillaRegistry<V> reg = (ExtendedVanillaRegistry<V>) this.vanilla;
+		ClearableRegistry reg = (ClearableRegistry) this.vanilla;
 		reg.clear();
 	}
 

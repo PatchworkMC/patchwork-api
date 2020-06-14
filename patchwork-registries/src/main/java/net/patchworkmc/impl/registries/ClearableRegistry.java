@@ -19,27 +19,6 @@
 
 package net.patchworkmc.impl.registries;
 
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import net.minecraft.util.registry.SimpleRegistry;
-
-// TODO: implement default registry
-public class ExtendedVanillaRegistry<V extends IForgeRegistryEntry<V>> extends SimpleRegistry<V> implements ForgeRegistryProvider, ClearableRegistry {
-	private final ForgeRegistry<V> forgeRegistry;
-	public ExtendedVanillaRegistry(ForgeRegistry<V> forgeRegistry) {
-		this.forgeRegistry = forgeRegistry;
-	}
-
-	@Override
-	public void clear() {
-		this.entries.clear();
-		this.indexedEntries.clear();
-		this.randomEntries = null;
-	}
-
-	@Override
-	public ForgeRegistry getForgeRegistry() {
-		return this.forgeRegistry;
-	}
+public interface ClearableRegistry {
+	void clear();
 }
