@@ -21,6 +21,6 @@ package net.patchworkmc.impl.registries;
 
 import net.minecraftforge.registries.ForgeRegistry;
 
-public interface VanillaRegistry extends ForgeRegistryProvider, ClearableRegistry {
+public interface VanillaRegistry extends ForgeRegistryProvider {
 	boolean setForgeRegistry(ForgeRegistry forgeRegistry);
 }

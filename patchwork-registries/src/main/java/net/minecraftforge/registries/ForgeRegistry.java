@@ -47,7 +47,7 @@ import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
-import net.patchworkmc.impl.registries.ClearableRegistry;
+import net.patchworkmc.impl.registries.ModifiableRegistry;
 import net.patchworkmc.impl.registries.ExtendedVanillaRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
@@ -91,7 +91,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 		if (vanilla == null) {
 			// Forge modded registry
-			this.vanilla = new ExtendedVanillaRegistry<>(this);
+			this.vanilla = new ExtendedVanillaRegistry<>(this, builder);
 			Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
 			this.isVanilla = false;
 		} else {
@@ -99,6 +99,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			this.vanilla = vanilla;
 			((VanillaRegistry) this.vanilla).setForgeRegistry(this);
 			this.isVanilla = true;
+
+			// Set the slave map for compatibility
+			this.setSlaveMap(new Identifier("forge", "registry_defaulted_wrapper"), vanilla);
 		}
 
 		// Fabric hooks
@@ -137,6 +140,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	public void register(V value) {
 		Objects.requireNonNull(value, "value must not be null");
 		Identifier identifier = value.getRegistryName();
+
+		if (isLocked()) {
+			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, identifier));
+		}
 
 		Optional<V> potentialOldValue = vanilla.getOrEmpty(identifier);
 
@@ -330,22 +337,32 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException("Attempted to clear the registry too late.");
 		}
 
-		if (this.isVanilla) {
-			LOGGER.warn("Vanilla registery {} is cleared!", this.name);
-		}
-
 		if (this.clear != null) {
 			this.clear.onClear(this, stage);
 		}
 
-		ClearableRegistry reg = (ClearableRegistry) this.vanilla;
-		reg.clear();
+		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support clear().
+		((ModifiableRegistry<V>) this.vanilla).clear();
 	}
 
-	// TODO: implement remove()
 	@Override
 	public V remove(Identifier key) {
-		throw new UnsupportedOperationException("Remove() is not implemented");
+		if (!this.isModifiable) {
+			throw new UnsupportedOperationException("Attempted to remove from a non-modifiable Forge Registry");
+		}
+
+		if (this.isLocked()) {
+			throw new IllegalStateException("Attempted to remove from the registry too late.");
+		}
+
+		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support remove().
+		V removed = ((ModifiableRegistry<V>) this.vanilla).remove(key);
+
+		if (removed != null) {
+			LOGGER.trace(REGISTRIES, "Registry {} remove: {}", this.superType.getSimpleName(), key);
+		}
+
+		return removed;
 	}
 
 	@SuppressWarnings("unchecked")

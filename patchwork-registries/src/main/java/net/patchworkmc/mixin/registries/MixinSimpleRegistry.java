@@ -20,12 +20,8 @@
 package net.patchworkmc.mixin.registries;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import com.google.common.collect.BiMap;
 import net.minecraftforge.registries.ForgeRegistry;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Int2ObjectBiMap;
 import net.minecraft.util.registry.SimpleRegistry;
 
 import net.patchworkmc.impl.registries.VanillaRegistry;
@@ -33,20 +29,6 @@ import net.patchworkmc.impl.registries.VanillaRegistry;
 @Mixin(SimpleRegistry.class)
 public abstract class MixinSimpleRegistry<T> implements VanillaRegistry {
 	private ForgeRegistry forgeRegistry;
-
-	@Shadow
-	protected BiMap<Identifier, T> entries;
-	@Shadow
-	protected Int2ObjectBiMap<T> indexedEntries;
-	@Shadow
-	protected Object[] randomEntries;
-
-	@Override
-	public void clear() {
-		this.entries.clear();
-		this.indexedEntries.clear();
-		this.randomEntries = null;
-	}
 
 	@Override
 	public boolean setForgeRegistry(ForgeRegistry forgeRegistry) {

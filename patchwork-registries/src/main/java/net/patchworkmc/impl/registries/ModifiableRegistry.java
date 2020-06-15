@@ -19,6 +19,9 @@
 
 package net.patchworkmc.impl.registries;
 
-public interface ClearableRegistry {
+import net.minecraft.util.Identifier;
+
+public interface ModifiableRegistry<V> {
+	V remove(Identifier key);
 	void clear();
 }
