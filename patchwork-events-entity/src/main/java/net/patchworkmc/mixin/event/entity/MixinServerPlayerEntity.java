@@ -19,6 +19,8 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,5 +41,12 @@ public class MixinServerPlayerEntity {
 		if (EntityEvents.onLivingDeath(entity, source)) {
 			callback.cancel();
 		}
+	}
+
+	@Inject(method = "copyFrom", at = @At("TAIL"))
+	private void hookCopyFromForCloneEvent(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo info) {
+		@SuppressWarnings("ConstantConditions")
+		ServerPlayerEntity speThis = (ServerPlayerEntity) (Object) this;
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.Clone(speThis, oldPlayer, !alive));
 	}
 }
