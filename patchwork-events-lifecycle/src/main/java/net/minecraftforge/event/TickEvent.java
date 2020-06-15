@@ -49,13 +49,13 @@ public class TickEvent extends Event {
 		public ServerTickEvent(Phase phase) {
 			super(Type.SERVER, LogicalSide.SERVER, phase);
 		}
-	}
+	}*/
 
 	public static class ClientTickEvent extends TickEvent {
 		public ClientTickEvent(Phase phase) {
 			super(Type.CLIENT, LogicalSide.CLIENT, phase);
 		}
-	}*/
+	}
 
 	public static class WorldTickEvent extends TickEvent {
 		public final World world;
