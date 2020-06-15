@@ -8,7 +8,8 @@
     "MixinServerWorld"
   ],
   "client": [
-    "MixinClientWorld"
+    "MixinClientWorld",
+    "MixinMinecraftClient"
   ],
   "injectors": {
     "defaultRequire": 1
