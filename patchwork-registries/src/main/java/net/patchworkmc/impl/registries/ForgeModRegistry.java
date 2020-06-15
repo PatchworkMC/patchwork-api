@@ -25,7 +25,6 @@ import java.util.Iterator;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
-import org.apache.commons.lang3.Validate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -36,23 +35,13 @@ import net.minecraft.util.registry.SimpleRegistry;
  * The vanilla field {@link net.minecraft.util.registry.SimpleRegistry#indexedEntries} is not used.
  * @author Rikka0w0
  */
-public class ExtendedVanillaRegistry<V extends IForgeRegistryEntry<V>> extends SimpleRegistry<V> implements ForgeRegistryProvider, ModifiableRegistry<V> {
+public class ForgeModRegistry<V extends IForgeRegistryEntry<V>> extends SimpleRegistry<V> implements ForgeModRegistryImpl<V> {
 	protected final BiMap<Integer, V> ids = HashBiMap.create();
 	protected final BitSet availabilityMap = new BitSet(256);
-	protected final int min, max;
 
 	private final ForgeRegistry<V> forgeRegistry;
-	public ExtendedVanillaRegistry(ForgeRegistry<V> forgeRegistry, RegistryBuilder<V> builder) {
+	public ForgeModRegistry(ForgeRegistry<V> forgeRegistry, RegistryBuilder<V> builder) {
 		this.forgeRegistry = forgeRegistry;
-		this.min = builder.getMinId();
-		this.max = builder.getMaxId();
-	}
-
-	@Override
-	public void clear() {
-		this.entries.clear();
-		this.indexedEntries.clear();
-		this.randomEntries = null;
 	}
 
 	@Override
@@ -60,46 +49,17 @@ public class ExtendedVanillaRegistry<V extends IForgeRegistryEntry<V>> extends S
 		return this.forgeRegistry;
 	}
 
-	protected int getNextId(int rawId) {
-		int idToUse = rawId;
-
-		if (idToUse < 0 || this.availabilityMap.get(idToUse)) {
-			idToUse = this.availabilityMap.nextClearBit(0);
-		}
-
-		if (idToUse > this.max) {
-			throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
-		}
-
-		return idToUse;
-	}
-
+	/////////////////////////////
+	/// SimpleRegistry
+	/////////////////////////////
 	@Override
 	public <T extends V> T set(int rawId, Identifier id, T entry) {
-		int idToUse;
-		Validate.notNull(id);
-		Validate.notNull(entry);
-		V oldEntry = get(id);
-
-		if (oldEntry != null) {
-			// Replace old
-			idToUse = this.getRawId(oldEntry);
-		} else {
-			// Insert new
-			idToUse = this.getNextId(rawId);
-		}
-
-		this.randomEntries = null;
-		this.entries.put(id, entry);
-		this.ids.put(idToUse, entry);
-		this.availabilityMap.set(idToUse);
-
-		return entry;
+		return this.setImpl(rawId, id, entry);
 	}
 
 	@Override
 	public <T extends V> T add(Identifier id, T entry) {
-		return this.set(-1, id, entry);
+		return this.addImpl(id, entry);
 	}
 
 	@Override
@@ -117,18 +77,26 @@ public class ExtendedVanillaRegistry<V extends IForgeRegistryEntry<V>> extends S
 		return this.ids.values().iterator();
 	}
 
+	/////////////////////////////
+	/// ForgeModRegistryImpl
+	/////////////////////////////
 	@Override
-	public V remove(Identifier key) {
-		V value = this.entries.remove(key);
+	public BiMap<Identifier, V> entries() {
+		return this.entries;
+	}
 
-		if (value != null) {
-			int oldId = this.ids.inverse().remove(value);
+	@Override
+	public BiMap<Integer, V> ids() {
+		return this.ids;
+	}
 
-			if (key == null) {
-				throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
-			}
-		}
+	@Override
+	public BitSet availabilityMap() {
+		return this.availabilityMap;
+	}
 
-		return value;
+	@Override
+	public void randomEntriesClear() {
+		this.randomEntries = null;
 	}
 }

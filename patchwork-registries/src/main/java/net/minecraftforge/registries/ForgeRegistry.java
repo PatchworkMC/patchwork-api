@@ -48,7 +48,8 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
 import net.patchworkmc.impl.registries.ModifiableRegistry;
-import net.patchworkmc.impl.registries.ExtendedVanillaRegistry;
+import net.patchworkmc.impl.registries.ForgeModDefaultRegistry;
+import net.patchworkmc.impl.registries.ForgeModRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
@@ -64,6 +65,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	private final AddCallback<V> add;
 	private final ClearCallback<V> clear;
 	private final RegistryManager stage;
+	public final int min;
+	public final int max;
 	private final boolean allowOverrides;
 	private final boolean isModifiable;
 
@@ -81,6 +84,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		this.stage = stage;
 		this.name = name;
 		this.superType = builder.getType();
+		this.min = builder.getMinId();
+		this.max = builder.getMaxId();
 		this.create = builder.getCreate();
 		this.add = builder.getAdd();
 		this.clear = builder.getClear();
@@ -91,7 +96,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 		if (vanilla == null) {
 			// Forge modded registry
-			this.vanilla = new ExtendedVanillaRegistry<>(this, builder);
+			Identifier defaultKey = builder.getDefault();
+			this.vanilla = defaultKey == null ? new ForgeModRegistry<>(this, builder) : new ForgeModDefaultRegistry<>(this, builder);
 			Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
 			this.isVanilla = false;
 		} else {
