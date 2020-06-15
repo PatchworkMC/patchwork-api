@@ -19,14 +19,15 @@
 
 package net.patchworkmc.mixin.event.lifecycle;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.objectweb.asm.Opcodes;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+
+import net.minecraft.client.MinecraftClient;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
@@ -35,7 +36,7 @@ public class MixinMinecraftClient {
 	// The first thing after that if statement is to start the GUI profiler. Hook before the field
 	// fetch, and thus they always run before anything further down.
 	@Inject(method = "tick()V", at = @At(value = "FIELD", opcode = Opcodes.H_GETFIELD, ordinal = 0,
-		target = "Lnet/minecraft/client/MinecraftClient;profiler:Lnet/minecraft/util/profiler/DisableableProfiler;"))
+					target = "Lnet/minecraft/client/MinecraftClient;profiler:Lnet/minecraft/util/profiler/DisableableProfiler;"))
 	private void hookClientTickStart(CallbackInfo info) {
 		TickEvent.ClientTickEvent event = new TickEvent.ClientTickEvent(TickEvent.Phase.START);
 		MinecraftForge.EVENT_BUS.post(event);
