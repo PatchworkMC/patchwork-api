@@ -13,7 +13,8 @@
     "MixinServerPlayerEntity",
     "MixinServerWorld",
     "MixinSpawnHelper",
-    "MixinWorldChunk"
+    "MixinWorldChunk",
+    "MixinEntityTrackerEntry"
   ],
   "client": [
     "MixinClientWorld",
