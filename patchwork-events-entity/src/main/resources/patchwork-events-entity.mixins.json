@@ -5,6 +5,7 @@
   "mixins": [
     "MixinEntity",
     "MixinEntityType",
+    "MixinExperienceOrbEntity",
     "MixinLivingEntity",
     "MixinMobEntity",
     "MixinMobSpawnerLogic",
