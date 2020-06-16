@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-//import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.gui.screen.Screen;
@@ -31,7 +30,6 @@ import net.minecraft.client.gui.screen.Screen;
  *
  * @author jk-5, Rikka0w0
  */
-//@net.minecraftforge.eventbus.api.Cancelable
 public class GuiOpenEvent extends Event {
 	private Screen gui;
 
@@ -45,5 +43,10 @@ public class GuiOpenEvent extends Event {
 
 	public void setGui(Screen gui) {
 		this.gui = gui;
+	}
+
+	@Override
+	public boolean isCancelable() {
+		return true;
 	}
 }
