@@ -37,7 +37,7 @@ import net.patchworkmc.impl.event.render.RenderEvents;
 
 @Mixin(SpriteAtlasTexture.class)
 public class MixinSpriteAtlasTexture {
-	@Inject(method = "stitch", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "stitch", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/texture/SpriteAtlasTexture;loadSprites(Lnet/minecraft/resource/ResourceManager;Ljava/util/Set;)Ljava/util/Collection;", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void onStitch(ResourceManager resourceManager, Iterable<Identifier> iterable, Profiler profiler, CallbackInfoReturnable<SpriteAtlasTexture.Data> cir, Set<Identifier> set) {
 		RenderEvents.onTextureStitchPre((SpriteAtlasTexture) (Object) this, set);
 	}
