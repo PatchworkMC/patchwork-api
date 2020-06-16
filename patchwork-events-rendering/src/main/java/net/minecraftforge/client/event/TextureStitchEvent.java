@@ -38,8 +38,8 @@ public class TextureStitchEvent extends Event {
 	}
 
 	/**
-	 * Fired when the TextureMap is told to refresh it's stitched texture.
-	 * Called before the {@link net.minecraft.client.texture.SpriteAtlasTexture} are loaded.
+	 * Fired when the {@link SpriteAtlasTexture} is told to refresh it's stitched texture.
+	 * Called before the {@link SpriteAtlasTexture} is loaded.
 	 */
 	public static class Pre extends TextureStitchEvent {
 		private final Set<Identifier> sprites;
@@ -50,7 +50,7 @@ public class TextureStitchEvent extends Event {
 		}
 
 		/**
-		 * Add a sprite to be stitched into the Texture Atlas.
+		 * Add a sprite to be stitched into the texture atlas.
 		 */
 		public boolean addSprite(Identifier sprite) {
 			return this.sprites.add(sprite);
@@ -59,7 +59,7 @@ public class TextureStitchEvent extends Event {
 
 	/**
 	 * This event is fired once the texture map has loaded all textures and
-	 * stitched them together. All Icons should have there locations defined
+	 * stitched them together. All sprites should have there locations defined
 	 * by the time this is fired.
 	 */
 	public static class Post extends TextureStitchEvent {
