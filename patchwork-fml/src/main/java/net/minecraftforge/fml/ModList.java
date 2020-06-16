@@ -19,16 +19,25 @@
 
 package net.minecraftforge.fml;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.google.common.collect.ImmutableList;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -42,6 +51,7 @@ public class ModList {
 	private static ModList INSTANCE = new ModList();
 
 	private Map<ModContainer, ModFileInfo> modFileInfoMap = new HashMap<>();
+	private Map<ModContainer, net.minecraftforge.fml.ModContainer> fabricForgeModMap = new HashMap<>();
 	private List<ModFileScanData> allScanDataCache;
 
 	public static ModList get() {
@@ -53,6 +63,10 @@ public class ModList {
 		return FabricLoader.getInstance().isModLoaded(modId);
 	}
 
+	public List<ModFileInfo> getModFiles() {
+		return ImmutableList.copyOf(modFileInfoMap.values());
+	}
+
 	public ModFileInfo getModFileById(String modId) {
 		ModContainer modContainer = FabricLoader.getInstance().getModContainer(modId).orElse(null);
 
@@ -61,6 +75,39 @@ public class ModList {
 		}
 
 		return getModFileByContainer(modContainer);
+	}
+
+	public void setLoadedMods(final Collection<FMLModContainer> collection) {
+		fabricForgeModMap.clear();
+
+		for (net.minecraftforge.fml.ModContainer fmlContainer: collection) {
+			String modId = fmlContainer.modId;
+			ModContainer fabricModContainer = FabricLoader.getInstance().getModContainer(modId).orElse(null);
+
+			if (fabricModContainer != null) {
+				fmlContainer.setParent(fabricModContainer);
+				fabricForgeModMap.put(fabricModContainer, fmlContainer);
+			} else {
+				throw new RuntimeException("Cannot find the Fabric ModContainer for Forge mod: " + modId);
+			}
+		}
+	}
+
+	public net.minecraftforge.fml.ModContainer getModContainer(ModContainer fabricModContainer) {
+		return fabricForgeModMap.get(fabricModContainer);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Optional<T> getModObjectById(String modId) {
+		return getModContainerById(modId).map(net.minecraftforge.fml.ModContainer::getMod).map(o -> (T) o);
+	}
+
+	public Optional<? extends net.minecraftforge.fml.ModContainer> getModContainerById(String modId) {
+		return Optional.ofNullable(this.fabricForgeModMap.get(modId));
+	}
+
+	public Optional<? extends net.minecraftforge.fml.ModContainer> getModContainerByObject(Object obj) {
+		return this.fabricForgeModMap.values().stream().filter(mc -> mc.getMod() == obj).findFirst();
 	}
 
 	private ModFileInfo getModFileByContainer(ModContainer modContainer) {
@@ -107,6 +154,10 @@ public class ModList {
 		return new ModFileInfo();
 	}
 
+	public int size() {
+		return modFileInfoMap.size();
+	}
+
 	public List<ModFileScanData> getAllScanData() {
 		if (allScanDataCache == null) {
 			// Even though ModFileScanData lacks an implementation of Object#equals, the default implementation tests
@@ -123,5 +174,21 @@ public class ModList {
 		}
 
 		return allScanDataCache;
+	}
+
+	public void forEachModFile(Consumer<ModFile> fileConsumer) {
+		modFileInfoMap.values().stream().map(ModFileInfo::getFile).forEach(fileConsumer);
+	}
+
+	public <T> Stream<T> applyForEachModFile(Function<ModFile, T> function) {
+		return modFileInfoMap.values().stream().map(ModFileInfo::getFile).map(function);
+	}
+
+	public void forEachModContainer(BiConsumer<String, net.minecraftforge.fml.ModContainer> modContainerConsumer) {
+		fabricForgeModMap.forEach((fabric, fml) -> modContainerConsumer.accept(fabric.getMetadata().getId(), fml));
+	}
+
+	public <T> Stream<T> applyForEachModContainer(Function<net.minecraftforge.fml.ModContainer, T> function) {
+		return fabricForgeModMap.values().stream().map(function);
 	}
 }
