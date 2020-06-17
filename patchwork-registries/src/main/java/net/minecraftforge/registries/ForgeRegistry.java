@@ -46,7 +46,7 @@ import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
-import net.patchworkmc.impl.registries.EditableRegistry;
+import net.patchworkmc.impl.registries.RemovableRegistry;
 import net.patchworkmc.impl.registries.ForgeModDefaultRegistry;
 import net.patchworkmc.impl.registries.ForgeModRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
@@ -150,7 +150,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, identifier));
 		}
 
-		V potentialOldValue = vanilla.get(identifier);
+		V potentialOldValue = vanilla.getOrEmpty(identifier).orElse(null);
 
 		if (potentialOldValue != null) {
 			if (potentialOldValue == value) {
@@ -346,8 +346,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support clear().
-		if (this.vanilla instanceof EditableRegistry) {
-			((EditableRegistry<V>) this.vanilla).clear();
+		if (this.vanilla instanceof RemovableRegistry) {
+			((RemovableRegistry<V>) this.vanilla).clear();
 		} else {
 			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
 		}
@@ -366,8 +366,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support remove().
 		V removed = null;
 
-		if (this.vanilla instanceof EditableRegistry) {
-			removed = ((EditableRegistry<V>) this.vanilla).remove(key);
+		if (this.vanilla instanceof RemovableRegistry) {
+			removed = ((RemovableRegistry<V>) this.vanilla).remove(key);
 		} else {
 			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
 		}

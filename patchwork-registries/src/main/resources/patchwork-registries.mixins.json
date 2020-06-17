@@ -18,6 +18,7 @@
     "MixinFeature",
     "MixinFluid",
     "MixinItem",
+    "MixinInt2ObjectBiMap",
     "MixinMemoryModuleType",
     "MixinPaintingMotive",
     "MixinParticleType",

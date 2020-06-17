@@ -19,13 +19,15 @@
 
 package net.patchworkmc.impl.registries;
 
-import java.util.BitSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import com.google.common.collect.BiMap;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Int2ObjectBiMap;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
@@ -35,30 +37,48 @@ import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
  * The vanilla field {@link net.minecraft.util.registry.SimpleRegistry#indexedEntries} is not used.
  * @author Rikka0w0
  */
-public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends ForgeRegistryProvider, EditableRegistry<V> {
+public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends ForgeRegistryProvider, RemovableRegistry<V> {
 	//////////////////////////
 	/// Getters
 	//////////////////////////
+	Int2ObjectBiMap<V> indexedEntries();
 	BiMap<Identifier, V> entries();
-	BiMap<Integer, V> ids();
-	BitSet availabilityMap();
 	void randomEntriesClear();
+	Set<Integer> availabilityMap();
 
 	//////////////////////////
 	/// Implementations
 	//////////////////////////
 	default int getNextId(int rawId) {
-		int idToUse = rawId;
-
-		if (idToUse < 0 || availabilityMap().get(idToUse)) {
-			idToUse = availabilityMap().nextClearBit(getForgeRegistry().min);
+		if (rawId > getForgeRegistry().max) {
+			throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", rawId));
 		}
 
-		if (idToUse > getForgeRegistry().max) {
-			throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
+		if (rawId < 0 || indexedEntries().get(rawId) != null) {
+			// rawId is invalid, not specified or occupied
+
+			Set<Integer> availableIds = availabilityMap();
+
+			if (availableIds.isEmpty()) {
+				// Attempt to place the new entry at the end
+				rawId = entries().size();
+
+				if (indexedEntries().get(rawId) != null) {
+					for (rawId = getForgeRegistry().min; rawId <= getForgeRegistry().max; rawId++) {
+						if (indexedEntries().get(rawId) == null) {
+							break;
+						}
+					}
+				}
+			} else {
+				// Reuse rawId
+				Iterator<Integer> iterator = availableIds.iterator();
+				rawId = iterator.next();
+				iterator.remove();
+			}
 		}
 
-		return idToUse;
+		return rawId;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,8 +98,7 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 
 		randomEntriesClear();
 		entries().put(id, entry);
-		ids().put(idToUse, entry);
-		availabilityMap().set(idToUse);
+		indexedEntries().put(entry, idToUse);
 
 		// To maintain a consistent behavior with vanilla registery and fabric
 		// Needs to fire the onEntryAdded() event here, since SimpleRegistry#set is not called
@@ -99,13 +118,16 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 		V value = entries().remove(key);
 
 		if (value != null) {
-			int oldId = ids().inverse().remove(value);
+			int oldId = ((RemovableInt2ObjectBiMap<V>) (Object) indexedEntries()).patchwork_remove(value);
 
 			if (key == null) {
 				throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
 			}
 
-			availabilityMap().clear(oldId);
+			if (oldId < entries().size()) {
+				availabilityMap().add(oldId);
+			}
+
 			randomEntriesClear();
 		}
 
@@ -114,9 +136,9 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 
 	@Override
 	default void clear() {
+		indexedEntries().clear();
 		entries().clear();
-		ids().clear();
-		availabilityMap().clear(0, availabilityMap().length());
+		availabilityMap().clear();
 		randomEntriesClear();
 	}
 }

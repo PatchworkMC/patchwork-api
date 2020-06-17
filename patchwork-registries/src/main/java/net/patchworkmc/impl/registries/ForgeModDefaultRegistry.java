@@ -19,16 +19,16 @@
 
 package net.patchworkmc.impl.registries;
 
-import java.util.BitSet;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Int2ObjectBiMap;
 import net.minecraft.util.registry.DefaultedRegistry;
 
 /**
@@ -36,8 +36,7 @@ import net.minecraft.util.registry.DefaultedRegistry;
  * @author Rikka0w0
  */
 public class ForgeModDefaultRegistry<V extends IForgeRegistryEntry<V>> extends DefaultedRegistry<V> implements ForgeModRegistryImpl<V> {
-	protected final BiMap<Integer, V> ids = HashBiMap.create();
-	protected final BitSet availabilityMap = new BitSet(256);
+	protected final Set<Integer> availabilityMap = new HashSet<>();
 
 	private final ForgeRegistry<V> forgeRegistry;
 	public ForgeModDefaultRegistry(ForgeRegistry<V> forgeRegistry, RegistryBuilder<V> builder) {
@@ -63,21 +62,6 @@ public class ForgeModDefaultRegistry<V extends IForgeRegistryEntry<V>> extends D
 		return this.addImpl(id, entry);
 	}
 
-	@Override
-	public int getRawId(V entry) {
-		return this.ids.inverse().get(entry);
-	}
-
-	@Override
-	public V get(int index) {
-		return this.ids.get(index);
-	}
-
-	@Override
-	public Iterator<V> iterator() {
-		return this.ids.values().iterator();
-	}
-
 	/////////////////////////////
 	/// ForgeModRegistryImpl
 	/////////////////////////////
@@ -87,12 +71,12 @@ public class ForgeModDefaultRegistry<V extends IForgeRegistryEntry<V>> extends D
 	}
 
 	@Override
-	public BiMap<Integer, V> ids() {
-		return this.ids;
+	public Int2ObjectBiMap<V> indexedEntries() {
+		return this.indexedEntries;
 	}
 
 	@Override
-	public BitSet availabilityMap() {
+	public Set<Integer> availabilityMap() {
 		return this.availabilityMap;
 	}
 
