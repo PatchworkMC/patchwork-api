@@ -35,7 +35,7 @@ import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
  * The vanilla field {@link net.minecraft.util.registry.SimpleRegistry#indexedEntries} is not used.
  * @author Rikka0w0
  */
-public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends ForgeRegistryProvider, ModifiableRegistry<V> {
+public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends ForgeRegistryProvider, EditableRegistry<V> {
 	//////////////////////////
 	/// Getters
 	//////////////////////////

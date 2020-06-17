@@ -171,6 +171,7 @@ public class GameData {
 		RegistryBuilder builder = new RegistryBuilder();
 		builder.setName(id);
 		builder.setType(superClazz);
+		builder.disableOverrides();	// Vanilla registry does not support override, modification is disabled by default
 		vanillaWrapperBuilders.put(id, builder);
 		return builder;
 	}
@@ -212,12 +213,12 @@ public class GameData {
 		RegistryBuilder<V> builder = (RegistryBuilder<V>) vanillaWrapperBuilders.get(identifier);
 
 		if (builder == null) {
-			LOGGER.debug("Fabric added a Vanilla registry, no ForgeRegistry wrapper.");
+			LOGGER.warn("Detected an unknown Vanilla registry with no Patchwork equivalent: %s", identifier);
 			return null;
 		}
 
 		if (StructureFeature.class.isAssignableFrom(builder.getType())) {
-			// In Forge mods, StructureFeature are registered with IForgeRegistry<Feature>
+			// In Forge mods, StructureFeatures are registered with IForgeRegistry<Feature>
 			// There is no such thing like IForgeRegistry<StructureFeature>, so simply return null here.
 			return null;
 		}

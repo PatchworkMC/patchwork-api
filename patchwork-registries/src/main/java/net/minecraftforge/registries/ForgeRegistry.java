@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,7 +46,7 @@ import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
-import net.patchworkmc.impl.registries.ModifiableRegistry;
+import net.patchworkmc.impl.registries.EditableRegistry;
 import net.patchworkmc.impl.registries.ForgeModDefaultRegistry;
 import net.patchworkmc.impl.registries.ForgeModRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
@@ -151,19 +150,17 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, identifier));
 		}
 
-		Optional<V> potentialOldValue = vanilla.getOrEmpty(identifier);
+		V potentialOldValue = vanilla.get(identifier);
 
-		if (potentialOldValue.isPresent()) {
-			V oldValue = potentialOldValue.get();
-
-			if (oldValue == value) {
+		if (potentialOldValue != null) {
+			if (potentialOldValue == value) {
 				LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
 				return;
 			} else if (this.allowOverrides) {
-				this.oldValue = oldValue;
-				LOGGER.debug(REGISTRIES, "Registry {}: The object {} {} has been overridden by {}.", this.superType.getSimpleName(), identifier, oldValue, value);
+				this.oldValue = potentialOldValue;
+				LOGGER.debug(REGISTRIES, "Registry {}: The object {} {} has been overridden by {}.", this.superType.getSimpleName(), identifier, potentialOldValue, value);
 			} else {
-				throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, oldValue, value));
+				throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, potentialOldValue, value));
 			}
 		} else {
 			this.oldValue = null;
@@ -177,6 +174,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 		Registry.register(vanilla, identifier, value);
 
+		// TODO: make a Patchwork callback
 		// Handle StructureFeature
 		if (value instanceof StructureFeature) {
 			StructureFeature<?> structure = (StructureFeature<?>) value;
@@ -186,7 +184,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			BiMap<String, StructureFeature<?>> map = StructureFeature.STRUCTURES;
 
 			if (this.oldValue != null && this.oldValue instanceof StructureFeature) {
-				String oldName = ((StructureFeature) oldValue).getName();
+				String oldName = ((StructureFeature) potentialOldValue).getName();
 				map.remove(oldName.toLowerCase(Locale.ROOT));
 			}
 
@@ -348,7 +346,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support clear().
-		((ModifiableRegistry<V>) this.vanilla).clear();
+		if (this.vanilla instanceof EditableRegistry) {
+			((EditableRegistry<V>) this.vanilla).clear();
+		} else {
+			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
+		}
 	}
 
 	@Override
@@ -362,7 +364,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support remove().
-		V removed = ((ModifiableRegistry<V>) this.vanilla).remove(key);
+		V removed = null;
+
+		if (this.vanilla instanceof EditableRegistry) {
+			removed = ((EditableRegistry<V>) this.vanilla).remove(key);
+		} else {
+			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
+		}
 
 		if (removed != null) {
 			LOGGER.trace(REGISTRIES, "Registry {} remove: {}", this.superType.getSimpleName(), key);
