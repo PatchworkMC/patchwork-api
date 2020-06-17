@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinEntity",
+    "MixinEntityTrackerEntry",
     "MixinEntityType",
     "MixinLivingEntity",
     "MixinMobEntity",
@@ -13,8 +14,7 @@
     "MixinServerPlayerEntity",
     "MixinServerWorld",
     "MixinSpawnHelper",
-    "MixinWorldChunk",
-    "MixinEntityTrackerEntry"
+    "MixinWorldChunk"
   ],
   "client": [
     "MixinClientWorld",
