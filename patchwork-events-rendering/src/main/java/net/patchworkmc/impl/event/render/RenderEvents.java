@@ -17,17 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.event.colors;
+package net.patchworkmc.impl.event.render;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 
-public class ColorEvents {
+public class RenderEvents {
 	private static Consumer<Event> eventDispatcher;
 
 	public static void registerEventDispatcher(Consumer<Event> dispatcher) {
@@ -40,5 +44,13 @@ public class ColorEvents {
 
 	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
 		eventDispatcher.accept(new ColorHandlerEvent.Item(itemColors, blockColors));
+	}
+
+	public static void onTextureStitchPre(SpriteAtlasTexture spriteAtlasTexture, Set<Identifier> set) {
+		eventDispatcher.accept(new TextureStitchEvent.Pre(spriteAtlasTexture, set));
+	}
+
+	public static void onTextureStitchPost(SpriteAtlasTexture spriteAtlasTexture) {
+		eventDispatcher.accept(new TextureStitchEvent.Post(spriteAtlasTexture));
 	}
 }

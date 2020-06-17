@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.colors;
+package net.patchworkmc.mixin.event.render;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,14 +25,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.color.item.ItemColors;
 
-import net.patchworkmc.impl.event.colors.ColorEvents;
+import net.patchworkmc.impl.event.render.RenderEvents;
 
-@Mixin(ItemColors.class)
-public class MixinItemColors {
+@Mixin(BlockColors.class)
+public class MixinBlockColors {
 	@Inject(method = "create", at = @At("RETURN"))
-	private static void onCreate(BlockColors blockColors, CallbackInfoReturnable<ItemColors> cir) {
-		ColorEvents.onItemColorsInit(cir.getReturnValue(), blockColors);
+	private static void onCreate(CallbackInfoReturnable<BlockColors> cir) {
+		RenderEvents.onBlockColorsInit(cir.getReturnValue());
 	}
 }
