@@ -38,7 +38,7 @@ public class TextureStitchEvent extends Event {
 	}
 
 	/**
-	 * Fired when the {@link SpriteAtlasTexture} is told to refresh it's stitched texture.
+	 * Fired when the {@link SpriteAtlasTexture} is told to refresh its stitched texture.
 	 * Called before the {@link SpriteAtlasTexture} is loaded.
 	 */
 	public static class Pre extends TextureStitchEvent {
