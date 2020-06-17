@@ -19,10 +19,10 @@
 
 package net.patchworkmc.mixin.gui;
 
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -31,23 +31,47 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.OutOfMemoryScreen;
 import net.minecraft.client.gui.screen.Screen;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
-	private static final String methodOpenScreen = "openScreen(Lnet/minecraft/client/gui/screen/Screen;)V";
-	private static final String methodScreenRemoved = "net/minecraft/client/gui/screen/Screen.removed()V";
-	private static final String fieldCurrentScreen = "net/minecraft/client/MinecraftClient.currentScreen:Lnet/minecraft/client/gui/screen/Screen;";
-	private static final String constTitleScreenClass = "classValue=net/minecraft/client/gui/screen/TitleScreen";
+	private static final String PATCHWORK_YARN_MTD_OPENSCREEN = "openScreen(Lnet/minecraft/client/gui/screen/Screen;)V";
+	private static final String PATCHWORK_YARN_MTD_SCREEN_REMOVE = "net/minecraft/client/gui/screen/Screen.removed()V";
 
-	private static boolean patchwork_openScreenCancelled;
+	// net.minecraft.client.gui.TitleScreen --> net.minecraft.class_442
+	private static final String PATCHWORK_YARN_CLS_TITLESCREEN = "classValue=net/minecraft/client/gui/screen/TitleScreen";
+	private static final String PATCHWORK_REOBF_CLS_TITLESCREEN = "classValue=net/minecraft/class_442";
+
+	private static final Screen PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER = new OutOfMemoryScreen();
+	private static Screen patchwork_oldScreen;
 
 	@Shadow
 	public Screen currentScreen;
 
-	@Redirect(method = methodOpenScreen, at = @At(value = "INVOKE", target = methodScreenRemoved))
+	@Redirect(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "INVOKE", target = PATCHWORK_YARN_MTD_SCREEN_REMOVE))
 	private void patchwork_suppressScreenRemoved(Screen screen) {
 		// No-op (handled in patchwork_fireOpenEvent)
+	}
+
+	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
+	public Screen patchwork_yarn_fireOpenEvent(Screen screen) {
+		return patchwork_impl_fireOpenEvent(screen);
+	}
+
+	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
+	public Screen patchwork_reobf_fireOpenEvent(Screen screen) {
+		return patchwork_impl_fireOpenEvent(screen);
+	}
+
+	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN), cancellable = true, require = 0)
+	public void patchwork_yarn_cancelOpening(Screen screen, CallbackInfo callback) {
+		patchwork_impl_cancelOpening(screen, callback);
+	}
+
+	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN), cancellable = true, require = 0)
+	public void patchwork_reobf_cancelOpening(Screen screen, CallbackInfo callback) {
+		patchwork_impl_cancelOpening(screen, callback);
 	}
 
 	/**
@@ -63,33 +87,30 @@ public class MixinMinecraftClient {
 	 * MinecraftClient.getInstance().executeTask(() -> MinecraftClient.getInstance().openScreen(screen));
 	 * </pre>
 	 */
-	@ModifyVariable(method = methodOpenScreen, at = @At(value = "CONSTANT", args = constTitleScreenClass))
-	public Screen patchwork_fireOpenEvent(Screen screen) {
+	private Screen patchwork_impl_fireOpenEvent(Screen screen) {
 		// This is called just before: if (screen instanceof TitleScreen ... )
-		Screen old = this.currentScreen;
+		// We need to save a copy of currentScreen, just in case if it gets changed during GuiOpenEvent
+		patchwork_oldScreen = this.currentScreen;
 		GuiOpenEvent event = new GuiOpenEvent(screen);
 
 		if (MinecraftForge.EVENT_BUS.post(event)) {
-			patchwork_openScreenCancelled = true;
-			return screen;
+			return PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER;
+		} else {
+			return event.getGui();
 		}
-
-		patchwork_openScreenCancelled = false;
-
-		screen = event.getGui();
-
-		if (old != null && screen != old) {
-			old.removed();
-		}
-
-		return screen;
 	}
 
-	@Inject(method = methodOpenScreen, at = @At(value = "FIELD", target = fieldCurrentScreen, opcode = Opcodes.PUTFIELD), cancellable = true)
-	public void patchwork_cancelOpening(Screen currentScreen, CallbackInfo callback) {
-		if (patchwork_openScreenCancelled) {
-			patchwork_openScreenCancelled = false;
+	private void patchwork_impl_cancelOpening(Screen screen, CallbackInfo callback) {
+		if (screen == PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER) {
+			patchwork_oldScreen = null;
 			callback.cancel();
+			return;
 		}
+
+		if (patchwork_oldScreen != null && screen != patchwork_oldScreen) {
+			patchwork_oldScreen.removed();
+		}
+
+		patchwork_oldScreen = null;
 	}
 }
