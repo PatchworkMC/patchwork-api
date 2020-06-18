@@ -22,7 +22,6 @@ package net.minecraftforge.registries;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -60,20 +59,19 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private MissingFactory<T> missingFactory;
 	private Set<Identifier> legacyNames = new HashSet<>();
 
-	private Supplier<Registry<T>> vanilla;
 	private Identifier vanillaId;
 
 	/**
 	 * Used by the Patchwork Vanilla Wrapper.
 	 */
-	public RegistryBuilder<T> setVanillaRegistry(Identifier vanillaId, Supplier<Registry<T>> vanilla) {
-		this.vanilla = vanilla;
+	public RegistryBuilder<T> setVanillaRegistryId(Identifier vanillaId) {
 		this.vanillaId = vanillaId;
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Registry<T> getVanillaRegistry() {
-		return this.vanilla == null ? null : this.vanilla.get();
+		return this.vanillaId == null ? null : (Registry<T>) Registry.REGISTRIES.get(this.vanillaId);
 	}
 
 	public Identifier getVanillaId() {

@@ -51,7 +51,6 @@ import net.minecraft.structure.pool.StructurePoolElementType;
 import net.minecraft.structure.processor.StructureProcessorType;
 import net.minecraft.structure.rule.RuleTestType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.biome.Biome;
@@ -65,6 +64,8 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
 import net.minecraft.world.poi.PointOfInterestType;
+
+import net.patchworkmc.impl.registries.FeatureCallbacks;
 
 public class GameData {
 	// These are needed because some Forge mods access these static public fields
@@ -144,7 +145,7 @@ public class GameData {
 		// Worldgen
 		wrap(WORLD_CARVERS, Carver.class);
 		wrap(SURFACE_BUILDERS, SurfaceBuilder.class);
-		wrap(FEATURES, Feature.class);
+		wrap(FEATURES, Feature.class).addCallback(FeatureCallbacks.INSTANCE);
 		wrap(DECORATORS, Decorator.class);
 		wrap(BIOME_PROVIDER_TYPES, BiomeSourceType.class);
 		wrap(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class);
@@ -176,7 +177,7 @@ public class GameData {
 		builder.setName(forgeId);
 		builder.setType(superClazz);
 		builder.disableOverrides();	// Vanilla registry does not support override, modification is disabled by default
-		builder.setVanillaRegistry(vanillaId, () -> Registry.REGISTRIES.get(vanillaId));
+		builder.setVanillaRegistryId(vanillaId);
 		vanillaWrapperBuilders.put(forgeId, builder);
 		return builder;
 	}
