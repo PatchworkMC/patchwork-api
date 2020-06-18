@@ -19,7 +19,9 @@
 
 package net.minecraftforge.registries;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,13 +36,16 @@ import net.minecraft.util.registry.Registry;
 
 import net.patchworkmc.impl.registries.ForgeRegistryProvider;
 
-// TODO: unimplemented features: saveToDisk, legacyName, sync, dump
+//TODO: unimplemented features: saveToDisk, legacyName, sync, dump
 public class RegistryManager {
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
 
 	private final String name;
+	// Class->Forge's identifier
 	private BiMap<Class<? extends IForgeRegistryEntry<?>>, Identifier> superTypes = HashBiMap.create();
+	// Forge's identifier->Vanilla identifier, e.g: activities->activity
+	private Map<Identifier, Identifier> vanillaRegistryIds = new HashMap<>();
 
 	private RegistryManager(String name) {
 		this.name = name;
@@ -55,8 +60,25 @@ public class RegistryManager {
 		return (Class<V>) this.superTypes.inverse().get(key);
 	}
 
+	/**
+	 * @param key the forge or vanilla identifier of the registry
+	 * @return Map forge registry name to vanilla, if such mapping exists
+	 */
+	public Identifier getVanillaRegistryId(Identifier key) {
+		if (vanillaRegistryIds.containsKey(key)) {
+			key = vanillaRegistryIds.get(key);
+		}
+
+		return key;
+	}
+
+	/**
+	 * @param key the forge or vanilla identifier of the registry
+	 * @return the ForgeRegistry instance, null if not found
+	 */
 	@SuppressWarnings("unchecked")
 	public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(Identifier key) {
+		key = getVanillaRegistryId(key);
 		Registry<?> vanillaRegistry = Registry.REGISTRIES.get(key);
 
 		if (vanillaRegistry instanceof ForgeRegistryProvider) {
@@ -100,7 +122,7 @@ public class RegistryManager {
 		return this.superTypes.values();
 	}
 
-	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
+	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier forgeName, RegistryBuilder<V> builder) {
 		Set<Class<?>> parents = new HashSet<>();
 		findSuperTypes(builder.getType(), parents);
 		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
@@ -109,13 +131,18 @@ public class RegistryManager {
 			Class<?> foundType = overlappedTypes.iterator().next();
 			LOGGER.error(
 					"Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
-					foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
+					foundType, superTypes.get(foundType), forgeName, builder.getType(), builder.getType());
 			throw new IllegalArgumentException(
 					"Duplicate registry parent type found - you can only have one registry for a particular super type");
 		}
 
-		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
-		superTypes.put(builder.getType(), name);
+		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, forgeName, builder);
+		superTypes.put(builder.getType(), forgeName);
+		Identifier vanillaId = builder.getVanillaId();
+
+		if (vanillaId != null && !vanillaId.equals(forgeName)) {
+			vanillaRegistryIds.put(forgeName, vanillaId);
+		}
 
 		return reg;
 	}

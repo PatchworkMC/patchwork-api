@@ -93,7 +93,7 @@ public class GameData {
 	public static final Identifier MEMORY_MODULE_TYPES = new Identifier("memory_module_type");
 	public static final Identifier SENSOR_TYPES = new Identifier("sensor_type");
 	public static final Identifier SCHEDULES = new Identifier("schedule");
-	public static final Identifier ACTIVITIES = new Identifier("activity");
+	public static final Identifier ACTIVITIES = new Identifier("activities");
 
 	// Worldgen
 	public static final Identifier WORLD_CARVERS = new Identifier("carver");
@@ -139,7 +139,7 @@ public class GameData {
 		wrap(MEMORY_MODULE_TYPES, MemoryModuleType.class);
 		wrap(SENSOR_TYPES, SensorType.class);
 		wrap(SCHEDULES, Schedule.class);
-		wrap(ACTIVITIES, Activity.class);
+		wrap(ACTIVITIES, new Identifier("activity"), Activity.class);
 
 		// Worldgen
 		wrap(WORLD_CARVERS, Carver.class);
@@ -166,13 +166,18 @@ public class GameData {
 		wrap(new Identifier(name), superClazz);
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static RegistryBuilder<?> wrap(Identifier id, Class superClazz) {
+		return wrap(id, id, superClazz);
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	private static RegistryBuilder<?> wrap(Identifier forgeId, final Identifier vanillaId, Class superClazz) {
 		RegistryBuilder builder = new RegistryBuilder();
-		builder.setName(id);
+		builder.setName(forgeId);
 		builder.setType(superClazz);
 		builder.disableOverrides();	// Vanilla registry does not support override, modification is disabled by default
-		vanillaWrapperBuilders.put(id, builder);
+		builder.setVanillaRegistry(vanillaId, () -> Registry.REGISTRIES.get(vanillaId));
+		vanillaWrapperBuilders.put(forgeId, builder);
 		return builder;
 	}
 
@@ -209,11 +214,11 @@ public class GameData {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier identifier, Registry<?> registry) {
-		RegistryBuilder<V> builder = (RegistryBuilder<V>) vanillaWrapperBuilders.get(identifier);
+	public static <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> wrapVanilla(Identifier forgeId) {
+		RegistryBuilder<V> builder = (RegistryBuilder<V>) vanillaWrapperBuilders.get(forgeId);
 
 		if (builder == null) {
-			LOGGER.warn("Detected an unknown Vanilla registry with no Patchwork equivalent: %s", identifier);
+			LOGGER.warn("Detected an unknown Vanilla registry with no Patchwork equivalent: %s", forgeId);
 			return null;
 		}
 
@@ -223,7 +228,6 @@ public class GameData {
 			return null;
 		}
 
-		builder.setVanillaRegistry((Registry<V>) registry);
 		return builder.create();
 	}
 }

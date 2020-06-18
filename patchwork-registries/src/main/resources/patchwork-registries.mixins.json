@@ -26,7 +26,6 @@
     "MixinPotion",
     "MixinRecipeSerializer",
     "MixinRecipeSerializerSubclass",
-    "MixinRegistry",
     "MixinSchedule",
     "MixinSensorType",
     "MixinSimpleRegistry",

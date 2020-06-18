@@ -55,7 +55,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		IForgeRegistryModifiable<V>, IForgeRegistryInternal<V>, RegistryEntryAddedCallback<V> {
 	public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
 	private static Logger LOGGER = LogManager.getLogger();
-	private final Identifier name;
+	private final Identifier name;	// The forge name
 	private final boolean isVanilla;
 	private final Registry<V> vanilla;
 	private final Class<V> superType;
@@ -75,7 +75,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	/**
 	 * Called by RegistryBuilder, for modded registries.
 	 * @param stage
-	 * @param name
+	 * @param name the forge name
 	 * @param builder
 	 */
 	@SuppressWarnings("unchecked")
@@ -133,7 +133,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 	@Override
 	public Identifier getRegistryName() {
-		return name;
+		return name;			// The forge name of registry
 	}
 
 	@Override
@@ -265,7 +265,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	@Override
 	public String toString() {
 		String type = this.isVanilla ? "Vanilla" : "Mod";
-		return type + ", " + this.name.toString();
+		Identifier vanillaId = RegistryManager.ACTIVE.getVanillaRegistryId(this.name);
+		String vanillaName = vanillaId.equals(this.name) ? "" : "(" + vanillaId.toString() + ")";
+		return type + ", " + this.name.toString() + vanillaName;
 	}
 
 	private static class Entry<V> implements Map.Entry<Identifier, V> {
