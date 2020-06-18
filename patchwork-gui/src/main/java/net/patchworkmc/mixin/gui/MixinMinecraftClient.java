@@ -31,8 +31,9 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.OutOfMemoryScreen;
 import net.minecraft.client.gui.screen.Screen;
+
+import net.patchworkmc.impl.gui.GuiOpenEventCancelMarker;
 
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
@@ -43,7 +44,6 @@ public class MixinMinecraftClient {
 	private static final String PATCHWORK_YARN_CLS_TITLESCREEN = "classValue=net/minecraft/client/gui/screen/TitleScreen";
 	private static final String PATCHWORK_REOBF_CLS_TITLESCREEN = "classValue=net/minecraft/class_442";
 
-	private static final Screen PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER = new OutOfMemoryScreen();
 	private static Screen patchwork_oldScreen;
 
 	@Shadow
@@ -54,6 +54,13 @@ public class MixinMinecraftClient {
 		// No-op (handled in patchwork_fireOpenEvent)
 	}
 
+	/**
+	 * patchwork_yarn_fireOpenEvent and patchwork_yarn_cancelOpening use @(value = "CONSTANT", args = xxx),
+	 * the classname specified in "args" is not processed by obfuscator, so we need to have 2 @ModifyVariable
+	 * here to make it work in both
+	 * the development(method name PATCHWORK_YARN_CLS_xxx) and
+	 * the obfuscated environment(PATCHWORK_REOBF_CLS_xxx).
+	 */
 	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
 	public Screen patchwork_yarn_fireOpenEvent(Screen screen) {
 		return patchwork_impl_fireOpenEvent(screen);
@@ -75,8 +82,7 @@ public class MixinMinecraftClient {
 	}
 
 	/**
-	 * Sets the argument Screen as the main (topmost visible) screen.
-	 * <br>
+	 * <p>Sets the argument Screen as the main (topmost visible) screen.</p>
 	 * <strong>WARNING</strong>: This method is not thread-safe. Opening GUIs from a
 	 * thread other than the main thread may cause many different issues, including
 	 * the GUI being rendered before it has initialized (leading to unusual
@@ -86,6 +92,8 @@ public class MixinMinecraftClient {
 	 * <pre>
 	 * MinecraftClient.getInstance().executeTask(() -> MinecraftClient.getInstance().openScreen(screen));
 	 * </pre>
+	 *
+	 * @return the screen object which can be replaced during the GuiOpenEvent.
 	 */
 	private Screen patchwork_impl_fireOpenEvent(Screen screen) {
 		// This is called just before: if (screen instanceof TitleScreen ... )
@@ -94,14 +102,14 @@ public class MixinMinecraftClient {
 		GuiOpenEvent event = new GuiOpenEvent(screen);
 
 		if (MinecraftForge.EVENT_BUS.post(event)) {
-			return PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER;
+			return GuiOpenEventCancelMarker.INSTANCE;
 		} else {
 			return event.getGui();
 		}
 	}
 
 	private void patchwork_impl_cancelOpening(Screen screen, CallbackInfo callback) {
-		if (screen == PATCHWORK_GUIOPENEVENT_CANCEL_MAKRER) {
+		if (screen == GuiOpenEventCancelMarker.INSTANCE) {
 			patchwork_oldScreen = null;
 			callback.cancel();
 			return;
