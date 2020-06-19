@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs.
@@ -66,13 +67,43 @@ public class PlayerEvent extends LivingEvent {
 		}
 	}
 
+	/**
+	 * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
+	 */
+	public static class StartTracking extends PlayerEvent {
+		private final Entity target;
+
+		public StartTracking(PlayerEntity player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public Entity getTarget() {
+			return target;
+		}
+	}
+
+	/**
+	 * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
+	 */
+	public static class StopTracking extends PlayerEvent {
+		private final Entity target;
+
+		public StopTracking(PlayerEntity player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public Entity getTarget() {
+			return target;
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
 	NameFormat
 	Clone
-	StartTracking
-	StopTracking
 	LoadFromFile
 	SaveToFile
 	Visibility
