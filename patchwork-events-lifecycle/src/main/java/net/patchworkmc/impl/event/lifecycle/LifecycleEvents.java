@@ -19,11 +19,19 @@
 
 package net.patchworkmc.impl.event.lifecycle;
 
+import java.nio.file.Path;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.loading.FileUtils;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -59,6 +67,20 @@ public class LifecycleEvents implements ModInitializer {
 
 	public static void handleServerStarted(final MinecraftServer server) {
 		MinecraftForge.EVENT_BUS.post(new FMLServerStartedEvent(server));
+	}
+
+	public static void handleServerAboutToStart(final MinecraftServer server) {
+		ServerLifecycleHooks.currentServer = server;
+		LogicalSidedProvider.setServer(() -> server);
+		ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
+		// TODO: ResourcePackLoader.loadResourcePacks(currentServer.getDataPackManager(), ServerLifecycleHooks::buildPackFinder);
+		MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
+	}
+
+	private static Path getServerConfigPath(final MinecraftServer server) {
+		final Path serverConfig = server.getLevelStorage().resolveFile(server.getLevelName(), "serverconfig").toPath();
+		FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+		return serverConfig;
 	}
 
 	@Override
