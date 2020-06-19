@@ -27,8 +27,13 @@ public abstract class PlayerXpEvent extends PlayerEvent {
 		super(player);
 	}
 
-	// For legacy reasons, the instances of this class should actually be of
-	// type PlayerPickupXpEvent
+	/**
+	 * An event representing a player picking up an XP orb entity.
+	 * <p>
+	 * For legacy reasons, the instances of this class should actually be of
+	 * type {@link PlayerPickupXpEvent}
+	 * </p>
+	 */
 	public static class PickupXp extends CancelablePlayerXpEvent {
 		private final ExperienceOrbEntity orb;
 
