@@ -29,6 +29,8 @@ import net.minecraftforge.event.TickEvent;
 
 import net.minecraft.client.MinecraftClient;
 
+import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
+
 @Mixin(MinecraftClient.class)
 public class MixinMinecraftClient {
 	// If this used HEAD, it doesn't run at exactly the same time as in Forge - itemUseCooldown
@@ -46,5 +48,10 @@ public class MixinMinecraftClient {
 	private void hookClientTickEnd(CallbackInfo info) {
 		TickEvent.ClientTickEvent event = new TickEvent.ClientTickEvent(TickEvent.Phase.END);
 		MinecraftForge.EVENT_BUS.post(event);
+	}
+
+	@Inject(method = "init", at = @At("RETURN"))
+	private void hookClientInit(CallbackInfo ci) {
+		LifecycleEvents.onClientInitialized();
 	}
 }

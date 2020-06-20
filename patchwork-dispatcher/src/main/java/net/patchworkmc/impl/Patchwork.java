@@ -46,10 +46,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.dedicated.DedicatedServer;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
+import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 import net.patchworkmc.impl.event.render.RenderEvents;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
@@ -132,7 +134,11 @@ public class Patchwork implements ModInitializer {
 
 		dispatch(mods, InterModEnqueueEvent::new);
 		dispatch(mods, InterModProcessEvent::new);
-		dispatch(mods, FMLLoadCompleteEvent::new);
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+			dispatch(mods, FMLLoadCompleteEvent::new);
+		} else {
+			LifecycleEvents.setClientInitializedCallback(() -> dispatch(mods, FMLLoadCompleteEvent::new));
+		}
 
 		MinecraftForge.EVENT_BUS.start();
 	}
