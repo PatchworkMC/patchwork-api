@@ -134,6 +134,7 @@ public class Patchwork implements ModInitializer {
 
 		dispatch(mods, InterModEnqueueEvent::new);
 		dispatch(mods, InterModProcessEvent::new);
+
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
 			dispatch(mods, FMLLoadCompleteEvent::new);
 		} else {
