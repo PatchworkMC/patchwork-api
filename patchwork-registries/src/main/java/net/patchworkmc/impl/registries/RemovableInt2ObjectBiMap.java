@@ -20,5 +20,5 @@
 package net.patchworkmc.impl.registries;
 
 public interface RemovableInt2ObjectBiMap<K> {
-	int patchwork_remove(K object);
+	int patchwork$remove(K object);
 }

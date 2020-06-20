@@ -50,7 +50,7 @@ public abstract class MixinInt2ObjectBiMap<K> implements RemovableInt2ObjectBiMa
 	}
 
 	@Override
-	public int patchwork_remove(K object) {
+	public int patchwork$remove(K object) {
 		Int2ObjectBiMap<K> me = (Int2ObjectBiMap<K>) (Object) this;
 		int index = getIdealIndex(object);
 		index = findIndex(object, index);

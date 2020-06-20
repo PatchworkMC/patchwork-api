@@ -22,5 +22,5 @@ package net.patchworkmc.impl.registries;
 import net.minecraftforge.registries.ForgeRegistry;
 
 public interface VanillaRegistry extends ForgeRegistryProvider {
-	boolean setForgeRegistry(ForgeRegistry forgeRegistry);
+	boolean patchwork$setForgeRegistry(ForgeRegistry forgeRegistry);
 }

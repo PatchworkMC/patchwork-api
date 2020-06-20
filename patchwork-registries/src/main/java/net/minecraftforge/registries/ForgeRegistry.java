@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -36,12 +35,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import com.google.common.collect.BiMap;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.util.registry.MutableRegistry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
@@ -55,7 +52,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		IForgeRegistryModifiable<V>, IForgeRegistryInternal<V>, RegistryEntryAddedCallback<V> {
 	public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
 	private static Logger LOGGER = LogManager.getLogger();
-	private final Identifier name;	// The forge name
+	private final Identifier name; // The forge name
 	private final boolean isVanilla;
 	private final Registry<V> vanilla;
 	private final Class<V> superType;
@@ -70,7 +67,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	private final boolean isModifiable;
 
 	private boolean isFrozen = false;
-	private V oldValue; // context of AddCallback, does not use elsewhere
+	private V oldValue; // context of AddCallback, is not used elsewhere
 
 	/**
 	 * Called by RegistryBuilder, for modded registries.
@@ -102,7 +99,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		} else {
 			// Vanilla registry
 			this.vanilla = vanilla;
-			((VanillaRegistry) this.vanilla).setForgeRegistry(this);
+			((VanillaRegistry) this.vanilla).patchwork$setForgeRegistry(this);
 			this.isVanilla = true;
 
 			// Set the slave map for compatibility
@@ -173,24 +170,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		Registry.register(vanilla, identifier, value);
-
-		// TODO: make a Patchwork callback
-		// Handle StructureFeature
-		if (value instanceof StructureFeature) {
-			StructureFeature<?> structure = (StructureFeature<?>) value;
-			String key = structure.getName().toLowerCase(Locale.ROOT);
-			Registry.register(Registry.STRUCTURE_FEATURE, key, structure);
-
-			BiMap<String, StructureFeature<?>> map = StructureFeature.STRUCTURES;
-
-			if (this.oldValue != null && this.oldValue instanceof StructureFeature) {
-				String oldName = ((StructureFeature) potentialOldValue).getName();
-				map.remove(oldName.toLowerCase(Locale.ROOT));
-			}
-
-			map.put(key, structure);
-		}
-
 		this.oldValue = null; // Clear the onAddEntry context
 	}
 

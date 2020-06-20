@@ -20,13 +20,14 @@
 package net.minecraftforge.registries;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
-import com.google.common.collect.Lists;
+import org.apache.logging.log4j.Logger;
 import net.minecraftforge.registries.IForgeRegistry.AddCallback;
 import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
 import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
@@ -46,11 +47,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private Identifier optionalDefaultKey;
 	private int minId = 0;
 	private int maxId = MAX_ID;
-	private List<AddCallback<T>> addCallback = Lists.newArrayList();
-	private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
-	private List<CreateCallback<T>> createCallback = Lists.newArrayList();
-	private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
-	private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
+	private List<AddCallback<T>> addCallback = new LinkedList<>();
+	private List<ClearCallback<T>> clearCallback = new LinkedList<>();
+	private List<CreateCallback<T>> createCallback = new LinkedList<>();
+	private List<ValidateCallback<T>> validateCallback = new LinkedList<>();
+	private List<BakeCallback<T>> bakeCallback = new LinkedList<>();
 	private boolean saveToDisc = true;
 	private boolean sync = true;
 	private boolean allowOverrides = true;
@@ -60,6 +61,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private Set<Identifier> legacyNames = new HashSet<>();
 
 	private Identifier vanillaId;
+	private static final Logger LOGGER = LogManager.getLogger(RegistryBuilder.class);
 
 	/**
 	 * Used by the Patchwork Vanilla Wrapper.
@@ -156,37 +158,37 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	}
 
 	public RegistryBuilder<T> add(ValidateCallback<T> validate) {
-		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.ValidateCallback is not supported by Patchwork yet.");
+		LOGGER.warn("IForgeRegistry.ValidateCallback is not supported by Patchwork yet.");
 		this.validateCallback.add(validate);
 		return this;
 	}
 
 	public RegistryBuilder<T> add(BakeCallback<T> bake) {
-		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.BakeCallback is not supported by Patchwork yet.");
+		LOGGER.warn("IForgeRegistry.BakeCallback is not supported by Patchwork yet.");
 		this.bakeCallback.add(bake);
 		return this;
 	}
 
 	public RegistryBuilder<T> set(DummyFactory<T> factory) {
-		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.DummyFactory is not supported by Patchwork yet.");
+		LOGGER.warn("IForgeRegistry.DummyFactory is not supported by Patchwork yet.");
 		this.dummyFactory = factory;
 		return this;
 	}
 
 	public RegistryBuilder<T> set(MissingFactory<T> missing) {
-		LogManager.getLogger(RegistryBuilder.class).warn("IForgeRegistry.MissingFactory is not supported by Patchwork yet.");
+		LOGGER.warn("IForgeRegistry.MissingFactory is not supported by Patchwork yet.");
 		this.missingFactory = missing;
 		return this;
 	}
 
 	public RegistryBuilder<T> disableSaving() {
-		LogManager.getLogger(RegistryBuilder.class).warn("disableSaving() is not implemented by Patchwork yet.");
+		LOGGER.warn("disableSaving() is not implemented by Patchwork yet.");
 		this.saveToDisc = false;
 		return this;
 	}
 
 	public RegistryBuilder<T> disableSync() {
-		LogManager.getLogger(RegistryBuilder.class).warn("disableSync() is not implemented by Patchwork yet.");
+		LOGGER.warn("disableSync() is not implemented by Patchwork yet.");
 		this.sync = false;
 		return this;
 	}
@@ -202,12 +204,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	}
 
 	public RegistryBuilder<T> legacyName(String name) {
-		LogManager.getLogger(RegistryBuilder.class).warn("legacyName() is not implemented by Patchwork yet.");
+		LOGGER.warn("legacyName() is not implemented by Patchwork yet.");
 		return legacyName(new Identifier(name));
 	}
 
 	public RegistryBuilder<T> legacyName(Identifier name) {
-		LogManager.getLogger(RegistryBuilder.class).warn("legacyName() is not implemented by Patchwork yet.");
+		LOGGER.warn("legacyName() is not implemented by Patchwork yet.");
 		this.legacyNames.add(name);
 		return this;
 	}

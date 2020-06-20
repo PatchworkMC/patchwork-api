@@ -31,7 +31,7 @@ public abstract class MixinSimpleRegistry<T> implements VanillaRegistry {
 	private ForgeRegistry forgeRegistry;
 
 	@Override
-	public boolean setForgeRegistry(ForgeRegistry forgeRegistry) {
+	public boolean patchwork$setForgeRegistry(ForgeRegistry forgeRegistry) {
 		if (this.forgeRegistry == null) {
 			this.forgeRegistry = forgeRegistry;
 			return true;
@@ -41,7 +41,7 @@ public abstract class MixinSimpleRegistry<T> implements VanillaRegistry {
 	}
 
 	@Override
-	public ForgeRegistry getForgeRegistry() {
+	public ForgeRegistry patchwork$getForgeRegistry() {
 		return this.forgeRegistry;
 	}
 }

@@ -50,7 +50,7 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 	/// Implementations
 	//////////////////////////
 	default int getNextId(int rawId) {
-		if (rawId > getForgeRegistry().max) {
+		if (rawId > patchwork$getForgeRegistry().max) {
 			throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", rawId));
 		}
 
@@ -64,7 +64,7 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 				rawId = entries().size();
 
 				if (indexedEntries().get(rawId) != null) {
-					for (rawId = getForgeRegistry().min; rawId <= getForgeRegistry().max; rawId++) {
+					for (rawId = patchwork$getForgeRegistry().min; rawId <= patchwork$getForgeRegistry().max; rawId++) {
 						if (indexedEntries().get(rawId) == null) {
 							break;
 						}
@@ -118,7 +118,7 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 		V value = entries().remove(key);
 
 		if (value != null) {
-			int oldId = ((RemovableInt2ObjectBiMap<V>) (Object) indexedEntries()).patchwork_remove(value);
+			int oldId = ((RemovableInt2ObjectBiMap<V>) (Object) indexedEntries()).patchwork$remove(value);
 
 			if (key == null) {
 				throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");

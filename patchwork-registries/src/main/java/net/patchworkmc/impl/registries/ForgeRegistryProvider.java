@@ -22,5 +22,5 @@ package net.patchworkmc.impl.registries;
 import net.minecraftforge.registries.ForgeRegistry;
 
 public interface ForgeRegistryProvider {
-	ForgeRegistry getForgeRegistry();
+	ForgeRegistry patchwork$getForgeRegistry();
 }

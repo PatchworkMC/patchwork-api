@@ -44,7 +44,7 @@ public class ForgeModRegistry<V extends IForgeRegistryEntry<V>> extends SimpleRe
 	}
 
 	@Override
-	public ForgeRegistry getForgeRegistry() {
+	public ForgeRegistry patchwork$getForgeRegistry() {
 		return this.forgeRegistry;
 	}
 

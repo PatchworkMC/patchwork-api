@@ -82,7 +82,7 @@ public class RegistryManager {
 		Registry<?> vanillaRegistry = Registry.REGISTRIES.get(key);
 
 		if (vanillaRegistry instanceof ForgeRegistryProvider) {
-			return ((ForgeRegistryProvider) vanillaRegistry).getForgeRegistry();
+			return ((ForgeRegistryProvider) vanillaRegistry).patchwork$getForgeRegistry();
 		}
 
 		// TODO: should we make fabric registries visible to forge mods?

@@ -45,7 +45,7 @@ public class ForgeModDefaultRegistry<V extends IForgeRegistryEntry<V>> extends D
 	}
 
 	@Override
-	public ForgeRegistry getForgeRegistry() {
+	public ForgeRegistry patchwork$getForgeRegistry() {
 		return this.forgeRegistry;
 	}
 
