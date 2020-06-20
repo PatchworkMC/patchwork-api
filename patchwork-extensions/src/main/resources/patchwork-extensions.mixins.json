@@ -3,8 +3,10 @@
   "package": "net.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinEntity",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
+    "MixinServerPlayerEntity",
     "MixinStatusEffect"
   ],
   "injectors": {
