@@ -6,6 +6,7 @@
     "MixinEntity",
     "MixinEntityTrackerEntry",
     "MixinEntityType",
+    "MixinExperienceOrbEntity",
     "MixinLivingEntity",
     "MixinMobEntity",
     "MixinMobSpawnerLogic",

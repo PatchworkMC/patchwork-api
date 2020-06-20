@@ -19,6 +19,8 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -127,5 +129,29 @@ public class MixinPlayerEntity {
 		if (!EntityEvents.attackEntity(player, target)) {
 			callback.cancel();
 		}
+	}
+
+	@ModifyVariable(method = "addExperience", at = @At("HEAD"), ordinal = 0)
+	private int onAddExperience(int points) {
+		@SuppressWarnings("ConstantConditions")
+		PlayerEntity player = (PlayerEntity) (Object) this;
+
+		PlayerXpEvent.XpChange event = new PlayerXpEvent.XpChange(player, points);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		// The only effect of passing in zero is a call to addScore(0), which shouldn't have any effect.
+		return event.isCanceled() ? 0 : event.getAmount();
+	}
+
+	@ModifyVariable(method = "addExperienceLevels", at = @At("HEAD"), ordinal = 0)
+	private int onAddExperienceLevels(int levels) {
+		@SuppressWarnings("ConstantConditions")
+		PlayerEntity player = (PlayerEntity) (Object) this;
+
+		PlayerXpEvent.LevelChange event = new PlayerXpEvent.LevelChange(player, levels);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		// There are no effects from passing in zero levels, so do that if we've been canceled
+		return event.isCanceled() ? 0 : event.getLevels();
 	}
 }
