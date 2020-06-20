@@ -9,6 +9,7 @@
   ],
   "client": [
     "MixinClientWorld",
+    "MixinIntegratedServer",
     "MixinMinecraftClient"
   ],
   "server": [
