@@ -22,31 +22,27 @@ package net.patchworkmc.mixin.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.Entity;
+import net.minecraft.server.network.EntityTrackerEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import net.patchworkmc.impl.event.entity.EntityEvents;
+@Mixin(EntityTrackerEntry.class)
+public class MixinEntityTrackerEntry {
+	@Shadow
+	private Entity entity;
 
-@Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity {
-	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
-	private void hookDeath(DamageSource source, CallbackInfo callback) {
-		LivingEntity entity = (LivingEntity) (Object) this;
-
-		if (EntityEvents.onLivingDeath(entity, source)) {
-			callback.cancel();
-		}
+	@Inject(method = "startTracking", at = @At("TAIL"))
+	private void hookEventStartTracking(ServerPlayerEntity player, CallbackInfo callback) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.StartTracking(player, entity));
 	}
 
-	@Inject(method = "copyFrom", at = @At("TAIL"))
-	private void hookCopyFromForCloneEvent(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo info) {
-		@SuppressWarnings("ConstantConditions")
-		ServerPlayerEntity speThis = (ServerPlayerEntity) (Object) this;
-		MinecraftForge.EVENT_BUS.post(new PlayerEvent.Clone(speThis, oldPlayer, !alive));
+	@Inject(method = "stopTracking", at = @At("TAIL"))
+	private void hookEventStopTracking(ServerPlayerEntity player, CallbackInfo callback) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.StopTracking(player, entity));
 	}
 }

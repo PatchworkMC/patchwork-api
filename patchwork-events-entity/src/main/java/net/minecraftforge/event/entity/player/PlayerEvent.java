@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs.
@@ -66,13 +67,74 @@ public class PlayerEvent extends LivingEvent {
 		}
 	}
 
+	/**
+	 * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
+	 */
+	public static class StartTracking extends PlayerEvent {
+		private final Entity target;
+
+		public StartTracking(PlayerEntity player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public Entity getTarget() {
+			return target;
+		}
+	}
+
+	/**
+	 * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
+	 */
+	public static class StopTracking extends PlayerEvent {
+		private final Entity target;
+
+		public StopTracking(PlayerEntity player, Entity target) {
+			super(player);
+			this.target = target;
+		}
+
+		public Entity getTarget() {
+			return target;
+		}
+	}
+
+	/*
+	 * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
+	 * Either caused by death, or by traveling from the End to the overworld.
+	 */
+	public static class Clone extends PlayerEvent {
+		private final PlayerEntity original;
+		private final boolean wasDeath;
+
+		public Clone(PlayerEntity newPlayer, PlayerEntity oldPlayer, boolean wasDeath) {
+			super(newPlayer);
+			this.original = oldPlayer;
+			this.wasDeath = wasDeath;
+		}
+
+		/**
+		 * @return The old EntityPlayer that this new entity is a clone of.
+		 */
+		public PlayerEntity getOriginal() {
+			return original;
+		}
+
+		/**
+		 * True if this event was fired because the player died.
+		 * False if it was fired because the entity switched dimensions.
+		 *
+		 * @return Whether this event was caused by the player dying.
+		 */
+		public boolean isWasDeath() {
+			return wasDeath;
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
 	NameFormat
-	Clone
-	StartTracking
-	StopTracking
 	LoadFromFile
 	SaveToFile
 	Visibility
