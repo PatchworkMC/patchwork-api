@@ -207,7 +207,7 @@ public class GameData {
 		String prefix = ModLoadingContext.get().getActiveNamespace();
 
 		if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0) {
-			LOGGER.info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
+			LOGGER.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
 			prefix = oldPrefix;
 		}
 
