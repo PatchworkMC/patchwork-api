@@ -42,7 +42,7 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 
 public class LifecycleEvents implements ModInitializer {
-	private static Runnable clientLoadCallback;
+	private static Runnable loadCompleteCallback;
 
 	public static void fireWorldTickEvent(TickEvent.Phase phase, World world) {
 		LogicalSide side = world.isClient() ? LogicalSide.CLIENT : LogicalSide.SERVER;
@@ -85,12 +85,12 @@ public class LifecycleEvents implements ModInitializer {
 		return serverConfig;
 	}
 
-	public static void setClientInitializedCallback(Runnable callback) {
-		clientLoadCallback = callback;
+	public static void setLoadCompleteCallback(Runnable callback) {
+		loadCompleteCallback = callback;
 	}
 
-	public static void onClientInitialized() {
-		clientLoadCallback.run();
+	public static void handleLoadComplete() {
+		loadCompleteCallback.run();
 	}
 
 	@Override

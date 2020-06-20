@@ -52,6 +52,6 @@ public class MixinMinecraftClient {
 
 	@Inject(method = "init", at = @At("RETURN"))
 	private void hookClientInit(CallbackInfo ci) {
-		LifecycleEvents.onClientInitialized();
+		LifecycleEvents.handleLoadComplete();
 	}
 }
