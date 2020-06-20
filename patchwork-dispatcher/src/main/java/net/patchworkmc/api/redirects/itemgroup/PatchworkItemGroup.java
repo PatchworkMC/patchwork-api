@@ -20,6 +20,7 @@
 package net.patchworkmc.api.redirects.itemgroup;
 
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
@@ -45,11 +46,11 @@ public abstract class PatchworkItemGroup extends ItemGroup {
 		return GROUPS.length - 1;
 	}
 
-	/*// Note: uncomment this in dev
-	public net.minecraft.item.ItemStack createIcon() {
-		return method_7750();
+	@Override
+	public ItemStack createIcon() {
+		return patchwork$createIcon();
 	}
 
-	// TODO: Missing required classpath information in remapper!
-	public abstract net.minecraft.item.ItemStack method_7750();*/
+	// TODO: when remapping in dev this fails (something about classpath context), so we get around it by adding another redirect
+	public abstract ItemStack patchwork$createIcon();
 }
