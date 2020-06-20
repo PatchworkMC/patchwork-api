@@ -83,9 +83,9 @@ public class MixinMinecraftClient {
 
 	/**
 	 * <p>Sets the argument Screen as the main (topmost visible) screen.</p>
-	 * <strong>WARNING</strong>: This method is not thread-safe. Opening GUIs from a
+	 * <strong>WARNING</strong>: This method is not thread-safe. Opening Screens from a
 	 * thread other than the main thread may cause many different issues, including
-	 * the GUI being rendered before it has initialized (leading to unusual
+	 * the Screen being rendered before it has initialized (leading to unusual
 	 * crashes). If on a thread other than the main thread, use
 	 * {@link net.minecraft.client.MinecraftClient#executeTask}:
 	 *
