@@ -50,6 +50,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
+import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 import net.patchworkmc.impl.event.render.RenderEvents;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
@@ -132,7 +133,7 @@ public class Patchwork implements ModInitializer {
 
 		dispatch(mods, InterModEnqueueEvent::new);
 		dispatch(mods, InterModProcessEvent::new);
-		dispatch(mods, FMLLoadCompleteEvent::new);
+		LifecycleEvents.setLoadCompleteCallback(() -> dispatch(mods, FMLLoadCompleteEvent::new));
 
 		MinecraftForge.EVENT_BUS.start();
 	}
