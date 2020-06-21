@@ -19,10 +19,33 @@
 
 package net.patchworkmc.api.levelgenerators;
 
+import java.util.Arrays;
+
 import net.minecraftforge.common.extensions.IForgeWorldType;
 
+import net.minecraft.world.level.LevelGeneratorType;
+
+import net.patchworkmc.mixin.levelgenerators.AccessorLevelGeneratorType;
+
 /**
- * Used by Patchwork to mark forge level generator types. Added in the patching phase by patcher.
+ * Used by Patchwork to mark forge level generator types and implement the forge {@linkplain LevelGeneratorType} constructor. Added in the patching phase by patcher.
  */
-public interface PatchworkLevelGeneratorType extends IForgeWorldType {
+public class PatchworkLevelGeneratorType extends LevelGeneratorType implements IForgeWorldType {
+	public PatchworkLevelGeneratorType(String name) {
+		super(getNextID(), name);
+	}
+
+	private static int getNextID() {
+		LevelGeneratorType[] types = LevelGeneratorType.TYPES;
+
+		for (int x = 0; x < types.length; x++) {
+			if (types[x] == null) {
+				return x;
+			}
+		}
+
+		int old = types.length;
+		AccessorLevelGeneratorType.patchwork$setTypes(Arrays.copyOf(types, old + 16));
+		return old;
+	}
 }
