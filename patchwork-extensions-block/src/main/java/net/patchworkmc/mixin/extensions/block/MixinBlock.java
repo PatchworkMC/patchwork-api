@@ -27,6 +27,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraftforge.common.extensions.IForgeBlock;
 
 import net.minecraft.block.Block;
@@ -38,6 +41,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
 
+import net.patchworkmc.impl.extensions.block.BlockContext;
+
 @Mixin(Block.class)
 public class MixinBlock implements IForgeBlock {
 	@Shadow
@@ -48,6 +53,11 @@ public class MixinBlock implements IForgeBlock {
 	private Set<Identifier> cachedTags;
 	@Unique
 	private int tagVersion;
+
+	@Inject(method = "hasBlockEntity", at = @At("RETURN"), cancellable = true)
+	public void hasBlockEntity(CallbackInfoReturnable<Boolean> info) {
+		info.setReturnValue(BlockContext.block_hasBlockEntity(this));
+	}
 
 	@Override
 	public float getSlipperiness(BlockState state, CollisionView world, BlockPos pos, Entity entity) {

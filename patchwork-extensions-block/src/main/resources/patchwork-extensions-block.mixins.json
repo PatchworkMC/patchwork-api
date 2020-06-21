@@ -6,8 +6,17 @@
     "MixinBedBlock",
     "MixinBlock",
     "MixinBlockState",
+    "MixinChunkHolder",
+    "MixinChunkRegion",
+    "MixinWorld",
+    "MixinWorldChunk",
     "BlockTagsAccessor",
     "FireBlockAccessor"
+  ],
+  "client": [
+    "MixinChunkRenderer",
+    "MixinWorldRenderer",
+    "MixinMinecraftClient"
   ],
   "injectors": {
     "defaultRequire": 1
