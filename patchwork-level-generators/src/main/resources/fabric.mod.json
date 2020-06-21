@@ -19,6 +19,7 @@
   "mixins": [
     "patchwork-level-generators.mixins.json"
   ],
+  "accessWidener": "patchwork-level-generators.accesswidener",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

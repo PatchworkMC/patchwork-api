@@ -1,2 +1,6 @@
 archivesBaseName = "patchwork-level-generators"
 version = getSubprojectVersion(project, "0.1.0")
+
+minecraft {
+	accessWidener "src/main/resources/patchwork-level-generators.accesswidener"
+}
