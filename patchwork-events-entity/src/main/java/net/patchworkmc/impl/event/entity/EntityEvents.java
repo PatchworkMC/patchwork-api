@@ -32,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -43,6 +44,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
@@ -123,6 +125,10 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
+	public static void onPlayerItemPickup(PlayerEntity player, ItemEntity item, ItemStack clone) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
+	}
+
 	public static float getEyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
 		EntityEvent.EyeHeight event = new EntityEvent.EyeHeight(entity, pose, size, defaultHeight);
 		MinecraftForge.EVENT_BUS.post(event);
@@ -179,6 +185,16 @@ public class EntityEvents implements ModInitializer {
 		IForgeItem item = (IForgeItem) stack.getItem();
 
 		return !item.onLeftClickEntity(stack, player, target);
+	}
+
+	public static int onItemPickup(ItemEntity entityItem, PlayerEntity player) {
+		EntityItemPickupEvent event = new EntityItemPickupEvent(player, entityItem);
+
+		if (MinecraftForge.EVENT_BUS.post(event)) {
+			return -1;
+		}
+
+		return event.getResult() == Result.ALLOW ? 1 : 0;
 	}
 
 	@Override

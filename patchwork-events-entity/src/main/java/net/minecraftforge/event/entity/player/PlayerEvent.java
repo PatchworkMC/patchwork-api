@@ -21,6 +21,8 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.event.entity.living.LivingEvent;
 
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.Entity;
 
@@ -131,6 +133,31 @@ public class PlayerEvent extends LivingEvent {
 		}
 	}
 
+	public static class ItemPickupEvent extends PlayerEvent {
+		/**
+		 * Original EntityItem with current remaining stack size.
+		 */
+		private final ItemEntity originalEntity;
+		/**
+		 * Clone item stack, containing the item and amount picked up.
+		 */
+		private final ItemStack stack;
+
+		public ItemPickupEvent(PlayerEntity player, ItemEntity entPickedUp, ItemStack stack) {
+			super(player);
+			this.originalEntity = entPickedUp;
+			this.stack = stack;
+		}
+
+		public ItemStack getStack() {
+			return stack;
+		}
+
+		public ItemEntity getOriginalEntity() {
+			return originalEntity;
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
@@ -138,7 +165,6 @@ public class PlayerEvent extends LivingEvent {
 	LoadFromFile
 	SaveToFile
 	Visibility
-	ItemPickupEvent
 	ItemCraftedEvent
 	ItemSmeltedEvent
 	PlayerLoggedOutEvent
