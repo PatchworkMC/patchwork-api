@@ -63,9 +63,7 @@ public class HookMainEvent {
 
 	@Inject(method = "render", at = @At("RETURN"))
 	private void postMainEvent(float tickDelta, CallbackInfo info) {
-		if (!mainCanceled) {
-			PatchworkGui.post(ALL);
-		}
+		PatchworkGui.post(ALL);
 
 		mainCanceled = false;
 	}
