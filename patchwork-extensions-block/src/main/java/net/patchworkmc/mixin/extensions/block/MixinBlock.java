@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraftforge.common.extensions.IForgeBlock;
 
@@ -40,8 +41,10 @@ import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
+import net.patchworkmc.impl.extensions.block.Signatures;
 
 @Mixin(Block.class)
 public class MixinBlock implements IForgeBlock {
@@ -55,8 +58,14 @@ public class MixinBlock implements IForgeBlock {
 	private int tagVersion;
 
 	@Inject(method = "hasBlockEntity", at = @At("RETURN"), cancellable = true)
-	public void hasBlockEntity(CallbackInfoReturnable<Boolean> info) {
+	public void patchwork_hasBlockEntity(CallbackInfoReturnable<Boolean> info) {
 		info.setReturnValue(BlockContext.block_hasBlockEntity(this));
+	}
+
+	// if (this.hasBlockEntity() && state.getBlock() != newState.getBlock()) {
+	@Redirect(method = "onBlockRemoved", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
+	public boolean patchwork_onBlockRemoved_hasBlockEntity(Block dummy, BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+		return BlockContext.hasBlockEntity(state);
 	}
 
 	@Override
