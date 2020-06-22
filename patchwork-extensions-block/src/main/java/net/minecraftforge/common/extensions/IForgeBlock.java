@@ -762,7 +762,7 @@ public interface IForgeBlock {
 		return tool == getHarvestTool(state);
 	}*/
 
-	// TODO Call locations: Forge classes: ForgeHooksClient
+	// do not bother implementing hooks, deprecated since 1.13
 	/**
 	 * Can return IExtendedBlockState.
 	 */
@@ -770,6 +770,7 @@ public interface IForgeBlock {
 		return state;
 	}
 
+	// do not bother implementing hooks, deprecated since 1.15
 	// TODO Call locations: Patches: ChunkRenderer*
 	/**
 	 * Queries if this block should render in a given layer.
