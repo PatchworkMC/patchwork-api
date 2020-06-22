@@ -133,8 +133,8 @@ public class MixinLivingEntity {
 	 * }</pre>
 	 *
 	 * And thus we can't access the looting level from the end since it's local has
-	 * been discarded. Thus we store it in a field, with an atomic reference to the
-	 * thread currently using it to prevent silent corruption.
+	 * been discarded. Thus we store it in a ThreadLocal, to keep track of it between
+	 * the two methods.
 	 * </p>
 	 */
 	@Unique
