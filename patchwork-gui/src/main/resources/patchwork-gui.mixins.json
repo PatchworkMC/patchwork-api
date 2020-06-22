@@ -3,8 +3,8 @@
   "package": "net.patchworkmc.mixin.gui",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "gameoverlay.HookMainEvent",
-    "gameoverlay.HookStatusBarEvents",
+    "hud.HookMainEvent",
+    "hud.HookStatusBarEvents",
     "screen.MixinAbstractInventoryScreen",
     "screen.MixinGameRenderer",
     "screen.MixinKeyboard",
