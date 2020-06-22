@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.gui.gameoverlay;
+package net.patchworkmc.mixin.gui.hud;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.ALL;
 
