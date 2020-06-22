@@ -25,6 +25,29 @@ import net.minecraft.client.gui.hud.ClientBossBar;
 import net.minecraft.client.util.Window;
 
 public class RenderGameOverlayEvent extends Event {
+	private final float partialTicks;
+	private final Window window;
+	private final ElementType type;
+
+	// For EventBus
+	public RenderGameOverlayEvent() {
+		this.partialTicks = -1;
+		this.window = null;
+		this.type = null;
+	}
+
+	public RenderGameOverlayEvent(float partialTicks, Window window) {
+		this.partialTicks = partialTicks;
+		this.window = window;
+		this.type = null;
+	}
+
+	private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type) {
+		this.partialTicks = parent.getPartialTicks();
+		this.window = parent.getWindow();
+		this.type = type;
+	}
+
 	public float getPartialTicks() {
 		return partialTicks;
 	}
@@ -35,6 +58,11 @@ public class RenderGameOverlayEvent extends Event {
 
 	public ElementType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean isCancelable() {
+		return true;
 	}
 
 	public enum ElementType {
@@ -60,34 +88,6 @@ public class RenderGameOverlayEvent extends Event {
 		// SUBTITLES,
 		// FPS_GRAPH,
 		// VIGNETTE
-	}
-
-	private final float partialTicks;
-	private final Window window;
-	private final ElementType type;
-
-	// For EventBus
-	public RenderGameOverlayEvent() {
-		this.partialTicks = -1;
-		this.window = null;
-		this.type = null;
-	}
-
-	public RenderGameOverlayEvent(float partialTicks, Window window) {
-		this.partialTicks = partialTicks;
-		this.window = window;
-		this.type = null;
-	}
-
-	private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type) {
-		this.partialTicks = parent.getPartialTicks();
-		this.window = parent.getWindow();
-		this.type = type;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return true;
 	}
 
 	public static class Pre extends RenderGameOverlayEvent {
