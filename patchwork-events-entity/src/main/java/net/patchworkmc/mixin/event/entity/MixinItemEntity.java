@@ -19,69 +19,77 @@
 
 package net.patchworkmc.mixin.event.entity;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import java.util.UUID;
 
-import net.minecraft.entity.ItemEntity;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stat.Stats;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(ItemEntity.class)
-public class MixinItemEntity {
-	@Unique
-	private final String ON_PLAYER_COLLISION = "onPlayerCollision";
-
-	@Unique
-	private final ThreadLocal<ItemStack> copy = new ThreadLocal<>();
-
-	@Unique
-	private final ThreadLocal<Integer> result = new ThreadLocal<>();
+public abstract class MixinItemEntity extends Entity {
+	@Shadow
+	private int pickupDelay, age;
 
 	@Shadow
-	private int pickupDelay;
+	private UUID owner;
 
-	@Inject(method = ON_PLAYER_COLLISION, at = @At(value = "INVOKE", target = "net/minecraft/entity/ItemEntity.getStack()Lnet/minecraft/item/ItemStack;"), cancellable = true)
-	public void hookOnPlayerCollide(PlayerEntity player, CallbackInfo ci) {
-		if (pickupDelay > 0) {
-			ci.cancel();
+	@Shadow
+	public abstract ItemStack getStack();
+
+	protected MixinItemEntity(EntityType<? extends ItemEntity> entityType, World world) {
+		super(entityType, world);
+	}
+
+	/**
+	 * @author Rongmario
+	 * @reason <p>To fully adapt {@link ItemEntity#onPlayerCollision} to Forge's patched version, approximately
+	 * 3 injections and 2 redirects is needed. Which at that point, Overwrite might be a better option.</p>
+	 *
+	 * <p>This also eliminates the need of holding 2 references (that might have used ThreadLocal)
+	 * for {@link EntityItemPickupEvent}'s result and a copied ItemStack.</p>
+	 *
+	 * <p>Small changes to Forge's implementation:
+	 * 	  1. pickupDelay is only checked once.
+	 * 	  2. Variables are assigned after the the first return.</p>
+	 */
+	@Overwrite
+	public void onPlayerCollision(PlayerEntity player) {
+		if (!this.world.isClient && this.pickupDelay <= 0) {
+			final ItemEntity entity = (ItemEntity) (Object) this;
+			int result = EntityEvents.onItemPickup(entity, player);
+
+			if (result < 0) {
+				return;
+			}
+
+			ItemStack itemStack = entity.getStack();
+			int i = itemStack.getCount();
+			ItemStack copy = itemStack.copy();
+
+			// TODO: '6000' is hardcoded right now, but Forge has exposed it through IForgeItem#getEntityLifespan
+			if ((this.owner == null || 6000 - this.age <= 200 || this.owner.equals(player.getUuid())) && (result == 1 || i <= 0 || player.inventory.insertStack(itemStack))) {
+				copy.setCount(copy.getCount() - i);
+				EntityEvents.onPlayerItemPickup(player, entity, copy);
+
+				if (itemStack.isEmpty()) {
+					player.sendPickup(entity, i);
+					entity.remove();
+					itemStack.setCount(i);
+				}
+
+				player.increaseStat(Stats.PICKED_UP.getOrCreateStat(itemStack.getItem()), i);
+			}
 		}
-	}
-
-	@Inject(method = ON_PLAYER_COLLISION, at = @At(value = "INVOKE_ASSIGN", target = "net/minecraft/item/ItemStack.getCount()I"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	public void hookOnItemPickup(PlayerEntity player, CallbackInfo ci, ItemStack stack) {
-		int hook = EntityEvents.onItemPickup((ItemEntity) (Object) this, player);
-
-		if (hook < 0) {
-			ci.cancel();
-		}
-
-		result.set(hook);
-		copy.set(stack.copy());
-	}
-
-	@Redirect(method = ON_PLAYER_COLLISION, at = @At(value = "INVOKE", target = "net/minecraft/entity/player/PlayerInventory.insertStack(Lnet/minecraft/item/ItemStack;)Z"))
-	public boolean redirectOnInsertStack(PlayerInventory inventory, ItemStack stack) {
-		return result.get() == 1 || stack.getCount() <= 0 || inventory.insertStack(stack);
-	}
-
-	@Redirect(method = ON_PLAYER_COLLISION, at = @At(value = "INVOKE", target = "net/minecraft/entity/player/PlayerEntity.sendPickup(Lnet/minecraft/entity/Entity;I)V"))
-	public void redirectOnItemPickup(PlayerEntity player, Entity entity, int quantity) {
-		copy.get().setCount(copy.get().getCount() - quantity);
-		EntityEvents.onPlayerItemPickup(player, (ItemEntity) entity, copy.get());
-	}
-
-	@Inject(method = ON_PLAYER_COLLISION, at = @At(value = "INVOKE", target = "net/minecraft/entity/ItemEntity.remove()V"))
-	public void hookAfterIsEmptyCheck(PlayerEntity player, CallbackInfo ci) {
-		player.sendPickup((ItemEntity) (Object) this, ((ItemEntity) (Object) this).getStack().getCount());
 	}
 }
