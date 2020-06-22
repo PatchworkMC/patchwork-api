@@ -21,8 +21,6 @@ package net.patchworkmc.mixin.event.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeEntity;
@@ -140,21 +138,14 @@ public class MixinLivingEntity {
 	 * </p>
 	 */
 	@Unique
-	private final AtomicReference<Thread> dropLevelGuard = new AtomicReference<>(null);
-	@Unique
-	private int dropLootingLevel;
+	private final ThreadLocal<Integer> dropLootingLevel = new ThreadLocal<>();
 
 	@Inject(method = "drop", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/LivingEntity;playerHitTimer : I"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void hookDropForCapturePre(DamageSource src, CallbackInfo info, int lootingLevel) {
 		IForgeEntity forgeEntity = (IForgeEntity) this;
 		forgeEntity.captureDrops(new ArrayList<>());
 
-		// Make sure no other threads are currently in this method first
-		if (!dropLevelGuard.compareAndSet(null, Thread.currentThread())) {
-			throw new ConcurrentModificationException("LivingEntity.drop: Single-threaded local hack used by multiple threads");
-		}
-
-		dropLootingLevel = lootingLevel;
+		dropLootingLevel.set(lootingLevel);
 	}
 
 	@Inject(method = "drop", at = @At("TAIL"))
@@ -163,15 +154,13 @@ public class MixinLivingEntity {
 		IForgeEntity forgeEntity = (IForgeEntity) this;
 		Collection<ItemEntity> drops = forgeEntity.captureDrops(null);
 
-		System.out.println("Looting level " + dropLootingLevel);
-
-		if (!MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, src, drops, dropLootingLevel, playerHitTimer > 0))) {
+		if (!MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, src, drops, dropLootingLevel.get(), playerHitTimer > 0))) {
 			for (ItemEntity item : drops) {
 				forgeEntity.getEntity().world.spawnEntity(item);
 			}
 		}
 
-		dropLevelGuard.set(null);
+		dropLootingLevel.remove();
 	}
 
 	// No shift, because we are specifically not modifying the value for this function call.
