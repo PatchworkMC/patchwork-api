@@ -33,7 +33,7 @@ import net.patchworkmc.impl.extensions.block.Signatures;
 @Mixin(BlockArgumentParser.class)
 public abstract class MixinBlockArgumentParser {
 	// First occurrence: return this.blockState.getBlock().hasBlockEntity();
-	@Redirect(method = "suggestSnbtOrBlockProperties()Z", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
+	@Redirect(method = "suggestSnbtOrBlockProperties", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
 	private boolean patchwork_suggestSnbtOrBlockProperties_hasBlockEntity(Block dummy) {
 		BlockArgumentParser me = (BlockArgumentParser) (Object) this;
 		BlockState blockState = me.getBlockState();

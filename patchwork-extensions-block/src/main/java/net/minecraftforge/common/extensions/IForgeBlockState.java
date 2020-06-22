@@ -155,10 +155,10 @@ public interface IForgeBlockState {
 	 * @param pos    The block's current position
 	 * @param player The player damaging the block
 	 * @return True to spawn the drops
-	 *
+	 */
 	default boolean canHarvestBlock(BlockView world, BlockPos pos, PlayerEntity player) {
 		return patchwork$getForgeBlock().canHarvestBlock(getBlockState(), world, pos, player);
-	}*/
+	}
 
 	/**
 	 * Called when a player removes a block.  This is responsible for

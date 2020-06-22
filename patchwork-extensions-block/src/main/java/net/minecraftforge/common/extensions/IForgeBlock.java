@@ -152,7 +152,6 @@ public interface IForgeBlock {
 		return state.isFullOpaque(world, pos);
 	}
 
-	// TODO Call locations: Patches: World*
 	/**
 	 * Determines if this block should set fire and deal fire damage
 	 * to entities coming into contact with it.
@@ -166,7 +165,6 @@ public interface IForgeBlock {
 		return this == Blocks.FIRE || this == Blocks.LAVA;
 	}
 
-	// TODO Call locations: Patches: Block, Block*, PistonBlock*, RepeaterBlock*, WorldRenderer*, ChunkRenderer*, BlockArgumentParser*, FallingBlockEntity*, ChestBlockEntity*, HopperBlockEntity*, Explosion*, World*, WorldChunk*, ChunkRegion*, ChunkHolder*, Forge classes: ForgeHooks, FluidUtil, ForgeHooks*, VanillaInventoryCodeHooks*
 	/**
 	 * Called throughout the code as a replacement for {@code block instanceof} {@link BlockEntityProvider}.
 	 * Allows for blocks to have a block entity conditionally based on block state.
@@ -180,7 +178,6 @@ public interface IForgeBlock {
 		return this instanceof BlockEntityProvider;
 	}
 
-	// TODO Call locations: Patches: WorldChunk*, ChunkRegion*
 	/**
 	 * Called throughout the code as a replacement for {@link BlockEntityProvider#createBlockEntity(BlockView)}
 	 * Return the same thing you would from that function.
@@ -199,7 +196,6 @@ public interface IForgeBlock {
 		return null;
 	}
 
-	/* TODO IForgeBlock#canHarvestBlock indirectly requires ToolType (via ForgeHooks#canHarvestBlock)
 	/**
 	 * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 	 *
@@ -207,12 +203,14 @@ public interface IForgeBlock {
 	 * @param pos    The block's current position
 	 * @param player The player damaging the block
 	 * @return True to spawn the drops
-	 *
+	 */
 	default boolean canHarvestBlock(BlockState state, BlockView world, BlockPos pos, PlayerEntity player) {
-		return ForgeHooks.canHarvestBlock(state, player, world, pos);
-	}*/
+		return player.isUsingEffectiveTool(state);
+		// TODO IForgeBlock#canHarvestBlock indirectly requires ToolType (via ForgeHooks#canHarvestBlock)
+		// This is just a stub
+		//return ForgeHooks.canHarvestBlock(state, player, world, pos);
+	}
 
-	// TODO Call locations: Patches: ServerPlayerInteractionManager*
 	/**
 	 * Called when a player removes a block.  This is responsible for
 	 * actually destroying the block, and the block is intact at time of call.

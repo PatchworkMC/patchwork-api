@@ -15,6 +15,7 @@
     "MixinHopperBlockEntity",
     "MixinFallingBlockEntity",
     "MixinPistonBlock",
+    "MixinServerPlayerInteractionManager",
     "MixinSpongeBlock",
     "MixinWorld",
     "MixinWorldChunk",
@@ -23,6 +24,7 @@
   ],
   "client": [
     "MixinChunkRenderer",
+    "MixinClientPlayerInteractionManager",
     "MixinWorldRenderer",
     "MixinMinecraftClient"
   ],
