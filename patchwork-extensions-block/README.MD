@@ -1,4 +1,4 @@
-1. `boolean hasTileEntity()` and `BlockEntity createTileEntity(BlockView world)`
+1. `IForgeBlockState.hasTileEntity` and `IForgeBlockState.createTileEntity`
 ```
 * OK net.minecraft.command.arguments.BlockArgumentParser
 * OK net.minecraft.block.entity.HopperBlockEntity
@@ -15,5 +15,10 @@
 * OK net.minecraft.world.explosion.Explosion (net.minecraft.world.Explosion)
 * OK net.minecraft.world.chunk.WorldChunk (net.minecraft.world.chunk.Chunk)
 * OK net.minecraft.world.ChunkRegion (net.minecraft.world.gen.WorldGenRegion)
+* OK net.minecraft.world.World
+```
+
+1. `IForgeBlockState.isBurning`
+```
 * OK net.minecraft.world.World
 ```

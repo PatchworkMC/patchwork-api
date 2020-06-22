@@ -22,9 +22,12 @@ package net.patchworkmc.mixin.extensions.block;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import net.minecraftforge.common.extensions.IForgeBlockState;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
@@ -34,7 +37,20 @@ import net.patchworkmc.impl.extensions.block.Signatures;
 public abstract class MixinWorld {
 	// if (blockState.getBlock().hasBlockEntity()) {
 	@Redirect(method = "breakBlock", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	public Block patchwork_breakBlock_getBlock(BlockState blockstate) {
+	private Block patchwork_breakBlock_getBlock(BlockState blockstate) {
 		return BlockContext.hasBlockEntityBlockMarker(blockstate);
+	}
+
+	////////////////////////////////////////////////////////
+	/// doesAreaContainFireSource - IForgeBlock.isBurning
+	////////////////////////////////////////////////////////
+	// This really should be included in the Fabric API!
+	// Block block = this.getBlockState(pooledMutable.set(o, p, q)).getBlock();
+	// if (block == Blocks.FIRE || block == Blocks.LAVA) {
+	@Redirect(method = "doesAreaContainFireSource", at = @At(value = "INVOKE", target = Signatures.World_getBlockState, ordinal = 0))
+	private BlockState patchwork_doesAreaContainFireSource_getBlockState(World world, BlockPos blockPos) {
+		BlockState blockState = world.getBlockState(blockPos);
+		boolean isBurning = ((IForgeBlockState) blockState).isBurning(world, blockPos);
+		return isBurning ? Blocks.FIRE.getDefaultState() : Blocks.WATER.getDefaultState();
 	}
 }

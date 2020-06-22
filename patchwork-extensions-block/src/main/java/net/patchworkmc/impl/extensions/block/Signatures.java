@@ -25,4 +25,6 @@ public class Signatures {
 	public static final String Block_hasBlockEntity = "net/minecraft/block/Block.hasBlockEntity()Z";
 	public static final String BlockState_getBlock = "net/minecraft/block/BlockState.getBlock()Lnet/minecraft/block/Block;";
 	public static final String BlockEntityProvider_createBlockEntity = "net/minecraft/block/BlockEntityProvider.createBlockEntity(Lnet/minecraft/world/BlockView;)Lnet/minecraft/block/entity/BlockEntity;";
+	public static final String Blocks_FIRE = "net/minecraft/block/Blocks.FIRE:Lnet/minecraft/block/Block;";
+	public static final String World_getBlockState = "net/minecraft/world/World.getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;";
 }
