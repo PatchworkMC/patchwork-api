@@ -33,10 +33,10 @@ import net.minecraft.entity.damage.DamageSource;
  * <p>This event is fired whenever an Entity dies and drops items in {@link LivingEntity#onDeath(DamageSource)}.</p>
  *
  * <p>
- * {@link #source} contains the DamageSource that caused the drop to occur.<br>
- * {@link #drops} contains the ArrayList of EntityItems that will be dropped.<br>
- * {@link #lootingLevel} contains the amount of loot that will be dropped.<br>
- * {@link #recentlyHit} determines whether the Entity doing the drop has recently been damaged.<br>
+ * {@link #source} contains the {@link DamageSource} that caused the drop to occur.<br>
+ * {@link #drops} contains the Collection of {@link ItemEntity}s that will be dropped.<br>
+ * {@link #lootingLevel} contains the level of Looting used to kill the entity doing the drop.<br>
+ * {@link #recentlyHit} determines whether the entity doing the drop has recently been damaged by a player or tamed wolf.<br>
  * </p>
  *
  * <p>This event is cancelable. If this event is canceled, the Entity does not drop anything.</p>
