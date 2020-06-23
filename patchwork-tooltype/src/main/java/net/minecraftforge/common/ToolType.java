@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 
 public final class ToolType {
 	private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case and use _ to separate words.
-	private static final Map<String, ToolType> values = Maps.newHashMap();
+	private static final Map<String, ToolType> values = new HashMap<>();
 
 	public static final ToolType AXE = get("axe");
 	public static final ToolType PICKAXE = get("pickaxe");

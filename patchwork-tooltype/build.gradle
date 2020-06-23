@@ -1,0 +1,3 @@
+archivesBaseName = "patchwork-tooltype"
+version = getSubprojectVersion(project, "0.1.0")
+

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-extensions-item",
-  "name": "Patchwork Item Extensions",
+  "id": "patchwork-tooltype",
+  "name": "Patchwork ToolType",
   "version": "${version}",
-  "description": "Implements the Minecraft Forge extensions API for items",
+  "description": "Includes the Minecraft Forge ToolType class",
   "environment": "*",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-extensions-item/icon.png",
+  "icon": "assets/patchwork-tooltype/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -16,12 +16,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.8.4",
-    "fabric": "*",
-    "patchwork-tooltype": "*"
+    "fabric": "*"
   },
-  "mixins": [
-    "patchwork-extensions-item.mixins.json"
-  ],
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
