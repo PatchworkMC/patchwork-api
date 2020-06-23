@@ -19,10 +19,9 @@
 
 package net.minecraftforge.common;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Maps;
 
 public final class ToolType {
 	private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case and use _ to separate words.
