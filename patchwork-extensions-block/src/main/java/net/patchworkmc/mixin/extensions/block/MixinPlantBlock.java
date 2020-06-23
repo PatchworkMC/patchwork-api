@@ -47,7 +47,9 @@ public class MixinPlantBlock implements IPlantable {
 	@Override
 	public BlockState getPlant(BlockView world, BlockPos pos) {
 		final BlockState blockState = world.getBlockState(pos);
-		if (blockState.getBlock() != (Object) this) return ((Block) (Object) this).getDefaultState();
+		if (blockState.getBlock() != (Object) this) {
+			return ((Block) (Object) this).getDefaultState();
+		}
 		return blockState;
 	}
 }
