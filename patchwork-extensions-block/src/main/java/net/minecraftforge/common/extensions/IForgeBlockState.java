@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.IPlantable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -428,7 +430,6 @@ public interface IForgeBlockState {
 		return patchwork$getForgeBlock().addDestroyEffects(getBlockState(), world, pos, manager);
 	}
 
-	/* TODO IForgeBlockState#canSustainPlant requires IPlantable
 	/**
 	 * Determines if this block can support the passed in plant, allowing it to be planted and grow.
 	 * Some examples:
@@ -444,10 +445,10 @@ public interface IForgeBlockState {
 	 * @param facing    The direction relative to the given position the plant wants to be, typically its UP
 	 * @param plantable The plant that wants to check
 	 * @return True to allow the plant to be planted/stay.
-	 *
+	 */
 	default boolean canSustainPlant(BlockView world, BlockPos pos, Direction facing, IPlantable plantable) {
 		return patchwork$getForgeBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
-	}*/
+	}
 
 	/**
 	 * Called when a plant grows on this block.
