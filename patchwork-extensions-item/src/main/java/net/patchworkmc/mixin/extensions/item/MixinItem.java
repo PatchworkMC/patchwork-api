@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -50,7 +51,7 @@ import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {
-	@Unique private Map<Object /* TODO: ToolType */, Integer> toolClasses;
+	@Unique private Map<ToolType, Integer> toolClasses;
 	protected boolean canRepair;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
@@ -81,12 +82,12 @@ public abstract class MixinItem implements IForgeItem {
 	}
 
 	@Override
-	public Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack) {
+	public Set<ToolType> getToolTypes(ItemStack stack) {
 		return toolClasses.keySet();
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+	public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
 		return toolClasses.getOrDefault(tool, -1);
 	}
 
