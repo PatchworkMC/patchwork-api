@@ -113,29 +113,17 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	public RegistryBuilder<T> addCallback(Object inst) {
 		if (inst instanceof AddCallback) {
 			this.add((AddCallback<T>) inst);
-		}
-
-		if (inst instanceof ClearCallback) {
+		} else if (inst instanceof ClearCallback) {
 			this.add((ClearCallback<T>) inst);
-		}
-
-		if (inst instanceof CreateCallback) {
+		} else if (inst instanceof CreateCallback) {
 			this.add((CreateCallback<T>) inst);
-		}
-
-		if (inst instanceof ValidateCallback) {
+		} else if (inst instanceof ValidateCallback) {
 			this.add((ValidateCallback<T>) inst);
-		}
-
-		if (inst instanceof BakeCallback) {
+		} else if (inst instanceof BakeCallback) {
 			this.add((BakeCallback<T>) inst);
-		}
-
-		if (inst instanceof DummyFactory) {
+		} else if (inst instanceof DummyFactory) {
 			this.set((DummyFactory<T>) inst);
-		}
-
-		if (inst instanceof MissingFactory) {
+		} else if (inst instanceof MissingFactory) {
 			this.set((MissingFactory<T>) inst);
 		}
 
