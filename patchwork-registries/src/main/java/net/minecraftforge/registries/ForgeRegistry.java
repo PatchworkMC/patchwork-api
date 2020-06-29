@@ -107,7 +107,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		}
 
 		// Fabric hooks
-		// TODO: Some vanilla registry types are not patched yet, add this check to avoid crash
+		// TODO: Some vanilla registry types are not patched yet, this check is added to avoid a crash
 		if (IForgeRegistryEntry.class.isAssignableFrom(this.superType)) {
 			RegistryEntryAddedCallback.event(this.vanilla).register(this);
 		}
