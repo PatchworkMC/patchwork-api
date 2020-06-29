@@ -111,7 +111,7 @@ public interface ForgeModRegistryImpl<V extends IForgeRegistryEntry<V>> extends 
 	}
 
 	//////////////////////////
-	/// ModifiableRegistry<V>
+	/// RemovableRegistry<V>
 	//////////////////////////
 	@Override
 	default V remove(Identifier key) {

@@ -57,9 +57,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	private final Registry<V> vanilla;
 	private final Class<V> superType;
 	private final Map<Identifier, ?> slaves = new HashMap<>();
-	private final CreateCallback<V> create;
-	private final AddCallback<V> add;
-	private final ClearCallback<V> clear;
+	private final CreateCallback<V> createCallback;
+	private final AddCallback<V> addCallback;
+	private final ClearCallback<V> clearCallback;
 	private final RegistryManager stage;
 	public final int min;
 	public final int max;
@@ -82,9 +82,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		this.superType = builder.getType();
 		this.min = builder.getMinId();
 		this.max = builder.getMaxId();
-		this.create = builder.getCreate();
-		this.add = builder.getAdd();
-		this.clear = builder.getClear();
+		this.createCallback = builder.getCreate();
+		this.addCallback = builder.getAdd();
+		this.clearCallback = builder.getClear();
 		this.allowOverrides = builder.getAllowOverrides();
 		this.isModifiable = builder.getAllowModifications();
 
@@ -112,8 +112,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			RegistryEntryAddedCallback.event(this.vanilla).register(this);
 		}
 
-		if (this.create != null) {
-			this.create.onCreate(this, stage);
+		if (this.createCallback != null) {
+			this.createCallback.onCreate(this, stage);
 		}
 	}
 
@@ -123,8 +123,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", newValue, id));
 		}
 
-		if (this.add != null) {
-			this.add.onAdd(this, this.stage, rawId, newValue, this.oldValue);
+		if (this.addCallback != null) {
+			this.addCallback.onAdd(this, this.stage, rawId, newValue, this.oldValue);
 		}
 	}
 
@@ -322,8 +322,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 			throw new IllegalStateException("Attempted to clear the registry too late.");
 		}
 
-		if (this.clear != null) {
-			this.clear.onClear(this, stage);
+		if (this.clearCallback != null) {
+			this.clearCallback.onClear(this, stage);
 		}
 
 		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support clear().
