@@ -27,6 +27,7 @@ import net.minecraftforge.fml.ModContainer;
 
 public class FMLModContainer extends ModContainer {
 	private final IEventBus eventBus;
+	private Object instance;
 
 	public FMLModContainer(String id) {
 		super(id);
@@ -46,5 +47,19 @@ public class FMLModContainer extends ModContainer {
 
 	private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] listeners, int i, Throwable throwable) {
 		// TODO
+	}
+
+	@Override
+	protected void acceptEvent(final Event e) {
+		this.eventBus.post(e);
+	}
+
+	@Override
+	public Object getMod() {
+		return this.instance;
+	}
+
+	public void setMod(Object instance) {
+		this.instance = instance;
 	}
 }

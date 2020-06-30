@@ -21,13 +21,15 @@ package net.minecraftforge.fml;
 
 import java.util.EnumMap;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 
 // TODO: Stub
-public class ModContainer {
+public abstract class ModContainer {
 	protected final String modId;
 	protected final String namespace;
 	protected final EnumMap<ModConfig.Type, ModConfig> configs;
+	private net.fabricmc.loader.api.ModContainer fabricModContainer;
 
 	public ModContainer(String modId) {
 		this.modId = modId;
@@ -46,5 +48,18 @@ public class ModContainer {
 
 	public void addConfig(final ModConfig modConfig) {
 		configs.put(modConfig.getType(), modConfig);
+	}
+
+	public final void setParent(net.fabricmc.loader.api.ModContainer fabricModContainer) {
+		this.fabricModContainer = fabricModContainer;
+	}
+
+	public final net.fabricmc.loader.api.ModContainer getParent() {
+		return this.fabricModContainer;
+	}
+
+	public abstract Object getMod();
+
+	protected void acceptEvent(Event e) {
 	}
 }
