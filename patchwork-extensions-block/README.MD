@@ -1,5 +1,4 @@
 1. `IForgeBlockState.hasTileEntity` and `IForgeBlockState.createTileEntity`
-	// TODO Call locations: Patches: Block, Block*, PistonBlock*, RepeaterBlock*, WorldRenderer*, ChunkRenderer*, BlockArgumentParser*, FallingBlockEntity*, ChestBlockEntity*, HopperBlockEntity*, Explosion*, World*, WorldChunk*, ChunkRegion*, ChunkHolder*, Forge classes: ForgeHooks, FluidUtil, ForgeHooks*, VanillaInventoryCodeHooks*
 ```
 * OK net.minecraft.command.arguments.BlockArgumentParser
 * OK net.minecraft.block.entity.HopperBlockEntity
