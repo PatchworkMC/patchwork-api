@@ -42,12 +42,12 @@ public abstract class MixinExplosion {
 	private static final ThreadLocal<Object> affectWorld_blockState = BlockContext.createContext();
 	@Inject(method = "affectWorld", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.BEFORE, target = Signatures.Block_hasBlockEntity, ordinal = 0))
 	private void patchwork_affectWorld_hasBlockEntity_before(boolean bl, CallbackInfo ci, boolean bl2, Iterator var3, BlockPos blockPos, BlockState blockState, Block block) {
-		BlockContext.pushContext(affectWorld_blockState, blockState);
+		BlockContext.setContext(affectWorld_blockState, blockState);
 	}
 
 	@Redirect(method = "affectWorld", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
 	public boolean patchwork_affectWorld_hasBlockEntity(Block dummy) {
-		BlockState blockState = BlockContext.popContext(affectWorld_blockState);
+		BlockState blockState = BlockContext.releaseContext(affectWorld_blockState);
 		return BlockContext.hasBlockEntity(blockState);
 	}
 }

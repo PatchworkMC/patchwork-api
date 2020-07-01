@@ -40,11 +40,11 @@ public class BlockContext {
 		return ThreadLocal.withInitial(() -> BlockContext.CLEAN_MARKER);
 	}
 
-	public static void pushContext(ThreadLocal<Object> stack, Object value) {
+	public static void setContext(ThreadLocal<Object> stack, Object value) {
 		Object oldValue = stack.get();
 
 		if (oldValue != CLEAN_MARKER) {
-			throw new RuntimeException("The context is not clean.");
+			throw new IllegalStateException("The context is not clean.");
 		}
 
 		stack.set(value);
@@ -55,7 +55,7 @@ public class BlockContext {
 		Object oldValue = stack.get();
 
 		if (oldValue == CLEAN_MARKER) {
-			throw new RuntimeException("The context is not set.");
+			throw new IllegalStateException("The context is not set.");
 		}
 
 		return (T) stack.get();
@@ -73,11 +73,11 @@ public class BlockContext {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T popContext(ThreadLocal<Object> stack) {
+	public static <T> T releaseContext(ThreadLocal<Object> stack) {
 		Object oldValue = stack.get();
 
 		if (oldValue == CLEAN_MARKER) {
-			throw new RuntimeException("The context is not set.");
+			throw new IllegalStateException("The context is not set.");
 		}
 
 		stack.set(CLEAN_MARKER);
@@ -94,10 +94,10 @@ public class BlockContext {
 	 * @return
 	 */
 	public static boolean hasBlockEntity(BlockState blockState) {
-		pushContext(hasBlockEntity_blockState, blockState);
+		setContext(hasBlockEntity_blockState, blockState);
 		Block block = blockState.getBlock();
 		boolean ret = block.hasBlockEntity();
-		popContext(hasBlockEntity_blockState);
+		releaseContext(hasBlockEntity_blockState);
 		return ret;
 	}
 

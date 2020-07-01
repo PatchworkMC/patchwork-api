@@ -48,7 +48,7 @@ public abstract class MixinChunkRegion {
 		boolean hasBlockEntity = BlockContext.hasBlockEntity(blockState);
 
 		if (hasBlockEntity) {
-			BlockContext.pushContext(getBlockEntity_blockState, blockState);
+			BlockContext.setContext(getBlockEntity_blockState, blockState);
 		}
 
 		return BlockContext.hasBlockEntityBlockMarker(hasBlockEntity);
@@ -57,7 +57,7 @@ public abstract class MixinChunkRegion {
 	// blockEntity = ((BlockEntityProvider)block).createBlockEntity(this.world);
 	@Redirect(method = "getBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockEntityProvider_createBlockEntity, ordinal = 0))
 	public BlockEntity patchwork_getBlockEntity_createBlockEntity(BlockEntityProvider dummy, BlockView view) {
-		IForgeBlockState forgeBlockState = BlockContext.popContext(getBlockEntity_blockState);
+		IForgeBlockState forgeBlockState = BlockContext.releaseContext(getBlockEntity_blockState);
 		return forgeBlockState.createTileEntity(view);
 	}
 

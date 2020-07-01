@@ -36,14 +36,14 @@ public abstract class MixinChunkRenderer {
 	// Block block = blockState.getBlock();
 	@Redirect(method = "rebuildChunk", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
 	public Block patchwork_rebuildChunk_getBlock(BlockState blockstate) {
-		BlockContext.pushContext(rebuildChunk_blockState, blockstate);
+		BlockContext.setContext(rebuildChunk_blockState, blockstate);
 		return blockstate.getBlock();
 	}
 
 	// if (block.hasBlockEntity()) {
 	@Redirect(method = "rebuildChunk", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
 	public boolean patchwork_rebuildChunk_hasBlockEntity(Block dummy) {
-		BlockState blockState = BlockContext.popContext(rebuildChunk_blockState);
+		BlockState blockState = BlockContext.releaseContext(rebuildChunk_blockState);
 		return BlockContext.hasBlockEntity(blockState);
 	}
 }

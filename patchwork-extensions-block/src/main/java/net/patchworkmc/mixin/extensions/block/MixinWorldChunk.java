@@ -20,6 +20,7 @@
 package net.patchworkmc.mixin.extensions.block;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -48,6 +49,7 @@ public abstract class MixinWorldChunk {
 	 * @return the blockEntity created by IForgeBlock.createTileEntity(BlockState, World)
 	 * , null if the block(blockstate) does not have a BlockEntity
 	 */
+	@Unique
 	private BlockEntity patchwork_createBlockEntity(BlockState blockState) {
 		BlockEntity blockEntity = null;
 
@@ -81,7 +83,7 @@ public abstract class MixinWorldChunk {
 		BlockEntity blockEntity = patchwork_createBlockEntity(blockState);
 
 		if (blockEntity != null) {
-			BlockContext.pushContext(loadBlockEntity_blockEntity, blockEntity);
+			BlockContext.setContext(loadBlockEntity_blockEntity, blockEntity);
 		}
 
 		return BlockContext.hasBlockEntityBlockMarker(blockEntity != null);
@@ -89,7 +91,7 @@ public abstract class MixinWorldChunk {
 
 	@Redirect(method = "loadBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockEntityProvider_createBlockEntity, ordinal = 0))
 	public BlockEntity patchwork_loadBlockEntity_createBlockEntity(BlockEntityProvider dummy, BlockView view) {
-		BlockEntity blockEntity = BlockContext.popContext(loadBlockEntity_blockEntity);
+		BlockEntity blockEntity = BlockContext.releaseContext(loadBlockEntity_blockEntity);
 		return blockEntity;
 	}
 
@@ -100,34 +102,34 @@ public abstract class MixinWorldChunk {
 	// } else if (block2 != block && block2 instanceof BlockEntityProvider) {
 	@Inject(method = "setBlockState", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "CONSTANT", args = Signatures.PATCHWORK_YARN_CLS_BLOCKENTITYPROVIDER, ordinal = 0), require = 0)
 	public void patchwork_yarn_setBlockState_instanceof_BlockEntityProvider(BlockPos pos, BlockState state, boolean bl, CallbackInfoReturnable<BlockState> cir, int i, int j, int k, ChunkSection chunkSection, boolean bl2, BlockState blockState, Block block, Block block2) {
-		BlockContext.pushContext(loadBlockEntity_blockState2, blockState);
+		BlockContext.setContext(loadBlockEntity_blockState2, blockState);
 	}
 
 	@Inject(method = "setBlockState", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "CONSTANT", args = Signatures.PATCHWORK_REOBF_CLS_BLOCKENTITYPROVIDER, ordinal = 0), require = 0)
 	public void patchwork_reobf_setBlockState_instanceof_BlockEntityProvider(BlockPos pos, BlockState state, boolean bl, CallbackInfoReturnable<BlockState> cir, int i, int j, int k, ChunkSection chunkSection, boolean bl2, BlockState blockState, Block block, Block block2) {
-		BlockContext.pushContext(loadBlockEntity_blockState2, blockState);
+		BlockContext.setContext(loadBlockEntity_blockState2, blockState);
 	}
 
 	@ModifyConstant(method = "setBlockState", constant = @Constant(classValue = BlockEntityProvider.class, ordinal = 0))
 	public boolean patchwork_setBlockState_instanceof_BlockEntityProvider(Object object, Class<?> clazz) {
-		BlockState blockState2 = BlockContext.popContext(loadBlockEntity_blockState2);
+		BlockState blockState2 = BlockContext.releaseContext(loadBlockEntity_blockState2);
 		return BlockContext.hasBlockEntity(blockState2);
 	}
 
 	// if (block2 instanceof BlockEntityProvider) {
 	@Inject(method = "setBlockState", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "CONSTANT", args = Signatures.PATCHWORK_YARN_CLS_BLOCKENTITYPROVIDER, ordinal = 1), require = 0)
 	public void patchwork_yarn_setBlockState_instanceof_BlockEntityProvider_1(BlockPos pos, BlockState state, boolean bl, CallbackInfoReturnable<BlockState> cir, int i, int j, int k, ChunkSection chunkSection, boolean bl2, BlockState blockState, Block block, Block block2) {
-		BlockContext.pushContext(loadBlockEntity_blockState2, blockState);
+		BlockContext.setContext(loadBlockEntity_blockState2, blockState);
 	}
 
 	@Inject(method = "setBlockState", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "CONSTANT", args = Signatures.PATCHWORK_REOBF_CLS_BLOCKENTITYPROVIDER, ordinal = 1), require = 0)
 	public void patchwork_reobf_setBlockState_instanceof_BlockEntityProvider_1(BlockPos pos, BlockState state, boolean bl, CallbackInfoReturnable<BlockState> cir, int i, int j, int k, ChunkSection chunkSection, boolean bl2, BlockState blockState, Block block, Block block2) {
-		BlockContext.pushContext(loadBlockEntity_blockState2, blockState);
+		BlockContext.setContext(loadBlockEntity_blockState2, blockState);
 	}
 
 	@ModifyConstant(method = "setBlockState", constant = @Constant(classValue = BlockEntityProvider.class, ordinal = 1))
 	public boolean patchwork_setBlockState_instanceof_BlockEntityProvider_1(Object object, Class<?> clazz) {
-		BlockState blockState2 = BlockContext.popContext(loadBlockEntity_blockState2);
+		BlockState blockState2 = BlockContext.releaseContext(loadBlockEntity_blockState2);
 		return BlockContext.hasBlockEntity(blockState2);
 	}
 
