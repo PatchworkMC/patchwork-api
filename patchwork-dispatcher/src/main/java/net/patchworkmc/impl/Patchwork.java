@@ -53,6 +53,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.patchworkmc.api.ForgeInitializer;
 import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 import net.patchworkmc.impl.event.render.RenderEvents;
+import net.patchworkmc.impl.modelloader.ModelEventDispatcher;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork implements ModInitializer {
@@ -122,6 +123,7 @@ public class Patchwork implements ModInitializer {
 		dispatch(mods, FMLCommonSetupEvent::new);
 
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+			ModelEventDispatcher.fireModelRegistryEvent();
 			dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
 			RenderEvents.registerEventDispatcher(event -> dispatch(mods, event));
 		});
