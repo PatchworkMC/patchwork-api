@@ -3,28 +3,11 @@
   "package": "net.patchworkmc.mixin.extensions.block",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinBlockArgumentParser",
-    "MixinAbstractRedstoneGateBlock",
     "MixinBedBlock",
     "MixinBlock",
     "MixinBlockState",
-    "MixinChestBlockEntity",
-    "MixinChunkHolder",
-    "MixinChunkRegion",
-    "MixinExplosion",
-    "MixinHopperBlockEntity",
-    "MixinFallingBlockEntity",
-    "MixinPistonBlock",
-    "MixinSpongeBlock",
-    "MixinWorld",
-    "MixinWorldChunk",
     "BlockTagsAccessor",
     "FireBlockAccessor"
-  ],
-  "client": [
-    "MixinChunkRenderer",
-    "MixinWorldRenderer",
-    "MixinMinecraftClient"
   ],
   "injectors": {
     "defaultRequire": 1

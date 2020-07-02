@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,16 +25,26 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.block.PistonBlock;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
 import net.patchworkmc.impl.extensions.block.Signatures;
 
-@Mixin(WorldRenderer.class)
-public abstract class MixinWorldRenderer {
-	// if (blockState.getBlock().hasBlockEntity()) {
-	@Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	public Block patchwork_renderEntities_getBlock(BlockState blockstate) {
+@Mixin(PistonBlock.class)
+public abstract class MixinPistonBlock {
+	// public static boolean isMovable(BlockState state, World world, BlockPos pos, Direction motionDir, boolean canBreak, Direction pistonDir) {
+	// return !block.hasBlockEntity();
+	@Redirect(method = "isMovable", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
+	private static boolean patchwork_isMovable_getBlock(Block dummy, BlockState state, World world, BlockPos pos, Direction motionDir, boolean canBreak, Direction pistonDir) {
+		return BlockContext.hasBlockEntity(state);
+	}
+
+	// BlockEntity blockEntity = blockState4.getBlock().hasBlockEntity() ? world.getBlockEntity(blockPos5) : null;
+	@Redirect(method = "move", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 1))
+	private Block patchwork_move_getBlock(BlockState blockstate) {
 		return BlockContext.hasBlockEntityBlockMarker(blockstate);
 	}
 }

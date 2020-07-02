@@ -17,24 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import net.minecraftforge.common.extensions.IForgeBlock;
 
-import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
 
-@Mixin(AbstractRedstoneGateBlock.class)
-public abstract class MixinAbstractRedstoneGateBlock {
-	@Redirect(method = "neighborUpdate", at = @At(value = "INVOKE", target = "net/minecraft/block/AbstractRedstoneGateBlock.hasBlockEntity()Z", ordinal = 0))
-	public boolean patchwork_neighborUpdate_hasBlockEntity(AbstractRedstoneGateBlock dummy, BlockState state, World world, BlockPos pos, Block block, BlockPos neighborPos, boolean moved) {
-		return BlockContext.hasBlockEntity(state);
+@Mixin(Block.class)
+public abstract class MixinBlock {
+	@Inject(method = "hasBlockEntity", at = @At("RETURN"), cancellable = true)
+	public void patchwork_hasBlockEntity(CallbackInfoReturnable<Boolean> info) {
+		info.setReturnValue(BlockContext.block_hasBlockEntity((IForgeBlock) this));
 	}
 }

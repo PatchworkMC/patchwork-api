@@ -17,27 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.render.WorldRenderer;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
+import net.patchworkmc.impl.extensions.block.Signatures;
 
-@Mixin(FallingBlockEntity.class)
-public abstract class MixinFallingBlockEntity {
-	////////////////////////
-	/// tick()
-	////////////////////////
-	// } else if (block2 != block && block2 instanceof BlockEntityProvider) {
-	@ModifyConstant(method = "tick", constant = @Constant(classValue = BlockEntityProvider.class, ordinal = 0))
-	public boolean patchwork_tick_instanceof_BlockEntityProvider(Object object, Class<?> clazz) {
-		FallingBlockEntity me = (FallingBlockEntity) (Object) this;
-		// Forge: return ((Block) object).hasBlockEntity();
-		return BlockContext.hasBlockEntity(me.getBlockState());
+@Mixin(WorldRenderer.class)
+public abstract class MixinWorldRenderer {
+	// if (blockState.getBlock().hasBlockEntity()) {
+	@Redirect(method = "renderEntities", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
+	private Block patchwork_renderEntities_getBlock(BlockState blockstate) {
+		return BlockContext.hasBlockEntityBlockMarker(blockstate);
 	}
 }

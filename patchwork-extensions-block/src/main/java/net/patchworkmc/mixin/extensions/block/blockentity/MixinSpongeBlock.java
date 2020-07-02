@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,16 +25,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.World;
+import net.minecraft.block.SpongeBlock;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
 import net.patchworkmc.impl.extensions.block.Signatures;
 
-@Mixin(World.class)
-public abstract class MixinWorld {
-	// if (blockState.getBlock().hasBlockEntity()) {
-	@Redirect(method = "breakBlock", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	private Block patchwork_breakBlock_getBlock(BlockState blockstate) {
+@Mixin(SpongeBlock.class)
+public abstract class MixinSpongeBlock {
+	@Redirect(method = "absorbWater", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 3))
+	private Block patchwork_absorbWater_getBlock(BlockState blockstate) {
 		return BlockContext.hasBlockEntityBlockMarker(blockstate);
 	}
 }

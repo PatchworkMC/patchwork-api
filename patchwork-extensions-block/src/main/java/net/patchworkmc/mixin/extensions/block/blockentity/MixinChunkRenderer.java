@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,21 +25,25 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.render.chunk.ChunkRenderer;
 
 import net.patchworkmc.impl.extensions.block.BlockContext;
 import net.patchworkmc.impl.extensions.block.Signatures;
 
-@Mixin(MinecraftClient.class)
-public abstract class MixinMinecraftClient {
-	// if (bl && Screen.hasControlDown() && block.hasBlockEntity()) {
-	@Redirect(method = "doItemPick", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
-	public boolean patchwork_doItemPick_hasBlockEntity(Block dummy) {
-		MinecraftClient me = (MinecraftClient) (Object) this;
-		BlockPos blockPos = ((BlockHitResult) me.crosshairTarget).getBlockPos();
-		BlockState blockState = me.world.getBlockState(blockPos);
+@Mixin(ChunkRenderer.class)
+public abstract class MixinChunkRenderer {
+	private static final ThreadLocal<Object> rebuildChunk_blockState = BlockContext.createContext();
+	// Block block = blockState.getBlock();
+	@Redirect(method = "rebuildChunk", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
+	private Block patchwork_rebuildChunk_getBlock(BlockState blockstate) {
+		BlockContext.setContext(rebuildChunk_blockState, blockstate);
+		return blockstate.getBlock();
+	}
+
+	// if (block.hasBlockEntity()) {
+	@Redirect(method = "rebuildChunk", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
+	private boolean patchwork_rebuildChunk_hasBlockEntity(Block dummy) {
+		BlockState blockState = BlockContext.releaseContext(rebuildChunk_blockState);
 		return BlockContext.hasBlockEntity(blockState);
 	}
 }

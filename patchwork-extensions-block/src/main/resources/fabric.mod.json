@@ -14,7 +14,8 @@
     "fabricloader": ">=0.8.4"
   },
   "mixins": [
-    "patchwork-extensions-block.mixins.json"
+    "patchwork-extensions-block.mixins.json",
+    "patchwork-extensions-block-blockentity.mixins.json"
   ],
   "custom": {
     "modmenu:api": true,

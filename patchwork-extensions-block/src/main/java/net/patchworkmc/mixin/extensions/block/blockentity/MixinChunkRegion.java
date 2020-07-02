@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block;
+package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -44,7 +44,7 @@ public abstract class MixinChunkRegion {
 	// Block block = this.getBlockState(pos).getBlock();
 	// if (!(block instanceof BlockEntityProvider)) {
 	@Redirect(method = "getBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	public Block patchwork_getBlockEntity_getBlock_0(BlockState blockState) {
+	private Block patchwork_getBlockEntity_getBlock_0(BlockState blockState) {
 		boolean hasBlockEntity = BlockContext.hasBlockEntity(blockState);
 
 		if (hasBlockEntity) {
@@ -56,14 +56,14 @@ public abstract class MixinChunkRegion {
 
 	// blockEntity = ((BlockEntityProvider)block).createBlockEntity(this.world);
 	@Redirect(method = "getBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockEntityProvider_createBlockEntity, ordinal = 0))
-	public BlockEntity patchwork_getBlockEntity_createBlockEntity(BlockEntityProvider dummy, BlockView view) {
+	private BlockEntity patchwork_getBlockEntity_createBlockEntity(BlockEntityProvider dummy, BlockView view) {
 		IForgeBlockState forgeBlockState = BlockContext.releaseContext(getBlockEntity_blockState);
 		return forgeBlockState.createTileEntity(view);
 	}
 
 	// if (chunk.getBlockState(pos).getBlock() instanceof BlockEntityProvider) {
 	@Redirect(method = "getBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 1))
-	public Block patchwork_getBlockEntity_getBlock_1(BlockState blockState) {
+	private Block patchwork_getBlockEntity_getBlock_1(BlockState blockState) {
 		return BlockContext.hasBlockEntityBlockMarker(blockState);
 	}
 
@@ -72,13 +72,13 @@ public abstract class MixinChunkRegion {
 	////////////////////////
 	// if (block.hasBlockEntity()) {
 	@Redirect(method = "setBlockState", at = @At(value = "INVOKE", target = Signatures.Block_hasBlockEntity, ordinal = 0))
-	public boolean patchwork_setBlockState_hasBlockEntity(Block block, BlockPos pos, BlockState state, int flags) {
+	private boolean patchwork_setBlockState_hasBlockEntity(Block block, BlockPos pos, BlockState state, int flags) {
 		return BlockContext.hasBlockEntity(state);
 	}
 
 	// chunk.setBlockEntity(pos, ((BlockEntityProvider)block).createBlockEntity(this));
 	@Redirect(method = "setBlockState", at = @At(value = "INVOKE", target = Signatures.BlockEntityProvider_createBlockEntity, ordinal = 0))
-	public BlockEntity patchwork_setBlockState_createBlockEntity(BlockEntityProvider dummy, BlockView view, BlockPos pos, BlockState state, int flags) {
+	private BlockEntity patchwork_setBlockState_createBlockEntity(BlockEntityProvider dummy, BlockView view, BlockPos pos, BlockState state, int flags) {
 		return ((IForgeBlockState) state).createTileEntity(view);
 	}
 
@@ -92,7 +92,7 @@ public abstract class MixinChunkRegion {
 	/// breakBlock
 	///////////////////////
 	@Redirect(method = "breakBlock", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	public Block patchwork_breakBlock_getBlock(BlockState blockstate) {
+	private Block patchwork_breakBlock_getBlock(BlockState blockstate) {
 		return BlockContext.hasBlockEntityBlockMarker(blockstate);
 	}
 }
