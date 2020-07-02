@@ -89,8 +89,8 @@ public class ModelLoader extends net.minecraft.client.render.model.ModelLoader i
 		BakedModel missingModel = modelRegistry.get(MISSING);
 
 		for (Map.Entry<Identifier, Exception> entry : loadingExceptions.entrySet()) {
-			// ignoring pure ResourceLocation arguments, all things we care about pass
-			// ModelResourceLocation
+			// ignoring pure Identifier arguments, all things we care about pass
+			// ModelIdentifier
 			if (entry.getKey() instanceof ModelIdentifier) {
 				LOGGER.debug(MODELLOADING, "Model {} failed to load: {}", entry.getKey().toString(),
 						entry.getValue().getLocalizedMessage());
