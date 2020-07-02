@@ -39,9 +39,9 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
-import net.patchworkmc.impl.modelloader.AbstractModelLoader;
+import net.patchworkmc.impl.modelloader.SpecialModelProvider;
 
-public class ModelLoader extends net.minecraft.client.render.model.ModelLoader implements AbstractModelLoader {
+public class ModelLoader extends net.minecraft.client.render.model.ModelLoader implements SpecialModelProvider {
 	private static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
 	private static Set<Identifier> specialModels = new HashSet<>();
 	private static final Logger LOGGER = LogManager.getLogger();

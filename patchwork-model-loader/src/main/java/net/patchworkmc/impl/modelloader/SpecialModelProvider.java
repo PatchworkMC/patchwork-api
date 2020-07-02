@@ -23,7 +23,7 @@ import java.util.Set;
 
 import net.minecraft.util.Identifier;
 
-public interface AbstractModelLoader {
+public interface SpecialModelProvider {
 	default Set<Identifier> getSpecialModels() {
 		return java.util.Collections.emptySet();
 	}

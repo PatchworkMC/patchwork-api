@@ -34,10 +34,10 @@ import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
-import net.patchworkmc.impl.modelloader.AbstractModelLoader;
+import net.patchworkmc.impl.modelloader.SpecialModelProvider;
 
 @Mixin(ModelLoader.class)
-public abstract class MixinModelLoader implements AbstractModelLoader {
+public abstract class MixinModelLoader implements SpecialModelProvider {
 	@Shadow
 	@Final
 	private Map<Identifier, UnbakedModel> modelsToBake;
