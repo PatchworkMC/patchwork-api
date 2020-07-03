@@ -19,25 +19,18 @@
 
 package net.patchworkmc.mixin.resource;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.VanillaResourceType;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.options.LanguageOptionsScreen;
+import net.minecraft.client.render.model.BakedModelManager;
 
 import net.patchworkmc.impl.resource.TypedResourceLoader;
 
-@Mixin(value = LanguageOptionsScreen.class)
-public abstract class MixinLanguageOptionsScreen {
-	// TODO: Does not work after reobf
-	@SuppressWarnings("rawtypes")
-	@Redirect(require = 0, method = "method_19820(Lnet/minecraft/client/gui/widget/ButtonWidget/ButtonWidget;)V", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
-	protected CompletableFuture patchwork_init_reloadResources(MinecraftClient mc) {
-		TypedResourceLoader.patchwork$refreshResources(mc, VanillaResourceType.LANGUAGES);
-		return null;
+@Mixin(BakedModelManager.class)
+public abstract class MixinBakedModelManager implements TypedResourceLoader {
+	@Override
+	public IResourceType getResourceType() {
+		return VanillaResourceType.MODELS;
 	}
 }
