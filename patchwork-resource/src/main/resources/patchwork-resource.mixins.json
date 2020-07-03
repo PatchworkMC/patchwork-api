@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.resource",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+  	"MixinLanguageManager",
+    "MixinLanguageOptionsScreen",
+    "MixinSynchronousResourceReloadListener"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

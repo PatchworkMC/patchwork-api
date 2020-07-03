@@ -34,6 +34,7 @@ include 'patchwork-networking'
 include 'patchwork-networking-messages'
 include 'patchwork-recipes'
 include 'patchwork-registries'
+include 'patchwork-resource'
 include 'patchwork-tooltype'
 include 'patchwork-vanilla-patches'
 
