@@ -20,6 +20,7 @@
 package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import net.minecraftforge.common.extensions.IForgeBlockState;
@@ -40,6 +41,7 @@ public abstract class MixinChunkRegion {
 	////////////////////////
 	/// getBlockEntity()
 	////////////////////////
+	@Unique
 	private static final ThreadLocal<Object> getBlockEntity_blockState = BlockContext.createContext();
 	// Block block = this.getBlockState(pos).getBlock();
 	// if (!(block instanceof BlockEntityProvider)) {

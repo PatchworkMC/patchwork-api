@@ -77,6 +77,7 @@ public abstract class MixinWorldChunk {
 	// Block block = this.getBlockState(pos).getBlock();
 	// if (block instanceof BlockEntityProvider) {
 	//     blockEntity3 = ((BlockEntityProvider)block).createBlockEntity(this.world);
+	@Unique
 	private static final ThreadLocal<Object> loadBlockEntity_blockEntity = BlockContext.createContext();
 	@Redirect(method = "loadBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
 	private Block patchwork_loadBlockEntity_getBlock(BlockState blockState) {
@@ -98,6 +99,7 @@ public abstract class MixinWorldChunk {
 	////////////////////////
 	/// setBlockState()
 	////////////////////////
+	@Unique
 	private static final ThreadLocal<Object> loadBlockEntity_blockState2 = BlockContext.createContext();
 	// } else if (block2 != block && block2 instanceof BlockEntityProvider) {
 	@Inject(method = "setBlockState", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "CONSTANT", args = Signatures.PATCHWORK_YARN_CLS_BLOCKENTITYPROVIDER, ordinal = 0), require = 0)

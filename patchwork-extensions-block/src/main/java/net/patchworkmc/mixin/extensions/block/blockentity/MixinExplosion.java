@@ -22,6 +22,7 @@ package net.patchworkmc.mixin.extensions.block.blockentity;
 import java.util.Iterator;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,6 +40,7 @@ import net.patchworkmc.impl.extensions.block.Signatures;
 
 @Mixin(Explosion.class)
 public abstract class MixinExplosion {
+	@Unique
 	private static final ThreadLocal<Object> affectWorld_blockState = BlockContext.createContext();
 	@Inject(method = "affectWorld", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.BEFORE, target = Signatures.Block_hasBlockEntity, ordinal = 0))
 	private void patchwork_affectWorld_hasBlockEntity_before(boolean bl, CallbackInfo ci, boolean bl2, Iterator var3, BlockPos blockPos, BlockState blockState, Block block) {

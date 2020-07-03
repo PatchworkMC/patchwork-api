@@ -20,6 +20,7 @@
 package net.patchworkmc.mixin.extensions.block.blockentity;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -32,6 +33,7 @@ import net.patchworkmc.impl.extensions.block.Signatures;
 
 @Mixin(ChunkRenderer.class)
 public abstract class MixinChunkRenderer {
+	@Unique
 	private static final ThreadLocal<Object> rebuildChunk_blockState = BlockContext.createContext();
 	// Block block = blockState.getBlock();
 	@Redirect(method = "rebuildChunk", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
