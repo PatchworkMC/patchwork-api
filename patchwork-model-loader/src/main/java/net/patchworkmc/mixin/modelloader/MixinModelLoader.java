@@ -40,8 +40,10 @@ import net.patchworkmc.impl.modelloader.SpecialModelProvider;
 
 @Mixin(ModelLoader.class)
 public abstract class MixinModelLoader implements SpecialModelProvider {
-	private static final ModelIdentifier patchwork$trident = new ModelIdentifier("minecraft:trident_in_hand#inventory");
-	private static final Logger patchwork$logger = LogManager.getLogger(ModelLoader.class);
+	@Unique
+	private static final ModelIdentifier TRIDENT_INV = new ModelIdentifier("minecraft:trident_in_hand#inventory");
+	@Unique
+	private static final Logger LOGGER = LogManager.getLogger(ModelLoader.class);
 
 	@Shadow
 	@Final
@@ -64,15 +66,22 @@ public abstract class MixinModelLoader implements SpecialModelProvider {
 	@Shadow
 	private void addModel(ModelIdentifier modelId) { }
 
+	/**
+	 * Due to the limitation of mixin, when targeting a constructor, we cannot use injection points other than "TAIL".
+	 * There are multiple occurrence of addModel in the constructor, Forge inserts the patch after adding model for the trident.
+	 * Here we just do another check to ensure that the injection point is correct.
+	 * @param me
+	 * @param modelId
+	 */
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = Signatures.ModelLoader_addModel, ordinal = 2))
 	private void patchwork_addModel_return(ModelLoader me, ModelIdentifier modelId) {
 		addModel(modelId);
 
-		if (modelId.equals(patchwork$trident)) {
-			patchwork$logger.debug("Patchwork is loading special models for Forge mods");
+		if (modelId.equals(TRIDENT_INV)) {
+			LOGGER.debug("Patchwork is loading special models for Forge mods");
 			patchwork$loadSpecialModel();
 		} else {
-			patchwork$logger.warn("Patchwork was unable to load special models for Forge mods");
+			LOGGER.warn("Patchwork was unable to load special models for Forge mods");
 		}
 	}
 }
