@@ -23,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -61,6 +62,8 @@ import net.minecraft.world.World;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+
+import javax.annotation.Nonnull;
 
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
@@ -125,10 +128,6 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
-	public static void onPlayerItemPickup(PlayerEntity player, ItemEntity item, ItemStack clone) {
-		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
-	}
-
 	public static float getEyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
 		EntityEvent.EyeHeight event = new EntityEvent.EyeHeight(entity, pose, size, defaultHeight);
 		MinecraftForge.EVENT_BUS.post(event);
@@ -187,14 +186,26 @@ public class EntityEvents implements ModInitializer {
 		return !item.onLeftClickEntity(stack, player, target);
 	}
 
-	public static int onItemPickup(ItemEntity entityItem, PlayerEntity player) {
-		EntityItemPickupEvent event = new EntityItemPickupEvent(player, entityItem);
+	public static void firePlayerItemPickupEvent(PlayerEntity player, ItemEntity item, ItemStack clone) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
+	}
 
-		if (MinecraftForge.EVENT_BUS.post(event)) {
+	public static boolean onItemPickup(ItemEntity entityItem, PlayerEntity player) {
+		return MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(player, entityItem));
+	}
+
+	public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item) {
+		if (item.isEmpty()) {
+			return -1;
+		}
+		ItemExpireEvent event = new ItemExpireEvent(entity, 6000);
+		// TODO: ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
+
+		if (!MinecraftForge.EVENT_BUS.post(event)) {
 			return -1;
 		}
 
-		return event.getResult() == Result.ALLOW ? 1 : 0;
+		return event.getExtraLife();
 	}
 
 	@Override
