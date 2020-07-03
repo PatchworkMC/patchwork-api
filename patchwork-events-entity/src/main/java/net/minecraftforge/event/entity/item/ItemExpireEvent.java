@@ -29,7 +29,6 @@ import net.minecraft.entity.ItemEntity;
  */
 
 public class ItemExpireEvent extends ItemEvent {
-
 	private int extraLife;
 
 	/**

@@ -63,8 +63,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 
-import javax.annotation.Nonnull;
-
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
 
@@ -194,10 +192,11 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(player, entityItem));
 	}
 
-	public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item) {
+	public static int onItemExpire(ItemEntity entity, ItemStack item) {
 		if (item.isEmpty()) {
 			return -1;
 		}
+
 		ItemExpireEvent event = new ItemExpireEvent(entity, 6000);
 		// TODO: ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
 

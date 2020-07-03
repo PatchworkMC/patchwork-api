@@ -19,18 +19,9 @@
 
 package net.patchworkmc.mixin.event.entity;
 
-import net.minecraft.world.World;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-
-import net.patchworkmc.impl.event.entity.EntityEvents;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -38,6 +29,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.World;
+
+import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(ItemEntity.class)
 public abstract class MixinItemEntity {
@@ -52,20 +52,20 @@ public abstract class MixinItemEntity {
 
 	// TODO -> Forge has exposed 'lifespan' (hardcoded to 6000) through IForgeItemStack/IForgeItem#getEntityLifespan
 	/*
-	@Inject(method = "<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At("RETURN"))
-	private void modifyLifespan(World world, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
-		this.lifespan = stack.getItem() == null ? 6000 : ((IForgeItemStack) stack).getEntityLifespan(world);
-	}
+		@Inject(method = "<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At("RETURN"))
+		private void modifyLifespan(World world, double x, double y, double z, ItemStack stack, CallbackInfo ci) {
+			this.lifespan = stack.getItem() == null ? 6000 : ((IForgeItemStack) stack).getEntityLifespan(world);
+		}
 	 */
 
 	// TODO -> Forge has a callback at IForgeItemStack/IForgeItem#onEntityItemUpdate
 	/*
-	@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-	private void onUpdate(CallbackInfo ci) {
-		if ((IForgeItemStack) stack).onEntityItemUpdate((ItemEntity) (Object) this) {
-			ci.cancel();
+		@Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+		private void onUpdate(CallbackInfo ci) {
+			if ((IForgeItemStack) stack).onEntityItemUpdate((ItemEntity) (Object) this) {
+				ci.cancel();
+			}
 		}
-	}
 	 */
 
 	@ModifyConstant(method = "tick", constant = @Constant(intValue = 6000))
@@ -79,8 +79,7 @@ public abstract class MixinItemEntity {
 
 		if (hook < 0) {
 			item.remove();
-		}
-		else {
+		} else {
 			this.lifespan += hook;
 		}
 	}
@@ -125,9 +124,9 @@ public abstract class MixinItemEntity {
 	}
 
 	/*
-	@ModifyConstant(method = "setDespawnImmediately", constant = @Constant(intValue = 5999))
-	private int setAge(World world) {
-		return ((IForgeItemStack) stack).getEntityLifespan(((ItemEntity) (Object) this).world) - 1;
-	}
+		@ModifyConstant(method = "setDespawnImmediately", constant = @Constant(intValue = 5999))
+		private int setAge(World world) {
+			return ((IForgeItemStack) stack).getEntityLifespan(((ItemEntity) (Object) this).world) - 1;
+		}
 	 */
 }
