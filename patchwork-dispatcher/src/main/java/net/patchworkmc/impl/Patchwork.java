@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
@@ -66,7 +67,10 @@ public class Patchwork implements ModInitializer {
 		for (FMLModContainer container : mods.values()) {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
-			container.getEventBus().post(provider.apply(container));
+			Event event = provider.apply(container);
+			LOGGER.debug("Firing event for modid {} : {}", container.getModId(), event.toString());
+			container.getEventBus().post(event);
+			LOGGER.debug("Fired event for modid {} : {}", container.getModId(), event.toString());
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 		}
@@ -118,6 +122,7 @@ public class Patchwork implements ModInitializer {
 		ModList.get().setLoadedMods(mods.values());
 		// Send initialization events
 
+		dispatch(mods, new RegistryEvent.NewRegistry());
 		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 		dispatch(mods, FMLCommonSetupEvent::new);
 

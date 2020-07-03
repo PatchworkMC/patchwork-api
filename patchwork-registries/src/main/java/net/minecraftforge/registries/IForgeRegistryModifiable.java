@@ -21,34 +21,10 @@ package net.minecraftforge.registries;
 
 import net.minecraft.util.Identifier;
 
-public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
-	private Identifier registryName;
+public interface IForgeRegistryModifiable<V extends IForgeRegistryEntry<V>> extends IForgeRegistry<V> {
+	void clear();
 
-	@Override
-	public final IForgeRegistryEntry setRegistryName(Identifier name) {
-		return setRegistryName(name.toString());
-	}
+	V remove(Identifier key);
 
-	public final IForgeRegistryEntry setRegistryName(String name) {
-		if (getRegistryName() != null) {
-			throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-		}
-
-		this.registryName = GameData.checkPrefix(name, true);
-		return this;
-	}
-
-	public final IForgeRegistryEntry setRegistryName(String modID, String name) {
-		return setRegistryName(modID + ":" + name);
-	}
-
-	@Override
-	public final Identifier getRegistryName() {
-		return this.registryName;
-	}
-
-	@Override
-	public Class<V> getRegistryType() {
-		return (Class<V>) getClass();
-	}
+	boolean isLocked();
 }

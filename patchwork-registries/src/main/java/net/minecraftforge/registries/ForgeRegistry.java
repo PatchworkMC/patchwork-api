@@ -21,11 +21,11 @@ package net.minecraftforge.registries;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,23 +39,98 @@ import org.apache.logging.log4j.MarkerManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.MutableRegistry;
 
-public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistry<V> {
+import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
+
+import net.patchworkmc.impl.registries.RemovableRegistry;
+import net.patchworkmc.impl.registries.ForgeModDefaultRegistry;
+import net.patchworkmc.impl.registries.ForgeModRegistry;
+import net.patchworkmc.impl.registries.VanillaRegistry;
+
+public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
+		IForgeRegistryModifiable<V>, IForgeRegistryInternal<V>, RegistryEntryAddedCallback<V> {
 	public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
 	private static Logger LOGGER = LogManager.getLogger();
-	private Identifier name;
-	private Registry<V> vanilla;
-	private Class<V> superType;
+	private final Identifier name; // The forge name
+	private final boolean isVanilla;
+	private final Registry<V> vanilla;
+	private final Class<V> superType;
+	private final Map<Identifier, ?> slaves = new HashMap<>();
+	private final CreateCallback<V> createCallback;
+	private final AddCallback<V> addCallback;
+	private final ClearCallback<V> clearCallback;
+	private final RegistryManager stage;
+	public final int min;
+	public final int max;
+	private final boolean allowOverrides;
+	private final boolean isModifiable;
 
-	public ForgeRegistry(Identifier name, Registry<V> vanilla, Class<V> superType) {
+	private boolean isFrozen = false;
+	private V oldValue; // context of AddCallback, is not used elsewhere
+
+	/**
+	 * Called by RegistryBuilder, for modded registries.
+	 * @param stage
+	 * @param name the forge name
+	 * @param builder
+	 */
+	@SuppressWarnings("unchecked")
+	protected ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
+		this.stage = stage;
 		this.name = name;
-		this.vanilla = vanilla;
-		this.superType = superType;
+		this.superType = builder.getType();
+		this.min = builder.getMinId();
+		this.max = builder.getMaxId();
+		this.createCallback = builder.getCreate();
+		this.addCallback = builder.getAdd();
+		this.clearCallback = builder.getClear();
+		this.allowOverrides = builder.getAllowOverrides();
+		this.isModifiable = builder.getAllowModifications();
+
+		Registry<V> vanilla = builder.getVanillaRegistry();
+
+		if (vanilla == null) {
+			// Forge modded registry
+			Identifier defaultKey = builder.getDefault();
+			this.vanilla = defaultKey == null ? new ForgeModRegistry<>(this, builder) : new ForgeModDefaultRegistry<>(this, builder);
+			Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
+			this.isVanilla = false;
+		} else {
+			// Vanilla registry
+			this.vanilla = vanilla;
+			((VanillaRegistry) this.vanilla).patchwork$setForgeRegistry(this);
+			this.isVanilla = true;
+
+			// Set the slave map for compatibility
+			this.setSlaveMap(new Identifier("forge", "registry_defaulted_wrapper"), vanilla);
+		}
+
+		// Fabric hooks
+		// TODO: Some vanilla registry types are not patched yet, this check is added to avoid a crash
+		if (IForgeRegistryEntry.class.isAssignableFrom(this.superType)) {
+			RegistryEntryAddedCallback.event(this.vanilla).register(this);
+		}
+
+		if (this.createCallback != null) {
+			this.createCallback.onCreate(this, stage);
+		}
+	}
+
+	@Override
+	public void onEntryAdded(int rawId, Identifier id, V newValue) {
+		if (this.isLocked()) {
+			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", newValue, id));
+		}
+
+		if (this.addCallback != null) {
+			this.addCallback.onAdd(this, this.stage, rawId, newValue, this.oldValue);
+		}
 	}
 
 	@Override
 	public Identifier getRegistryName() {
-		return name;
+		return name;			// The forge name of registry
 	}
 
 	@Override
@@ -68,19 +143,25 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		Objects.requireNonNull(value, "value must not be null");
 		Identifier identifier = value.getRegistryName();
 
-		Optional<V> potentialOldValue = vanilla.getOrEmpty(identifier);
+		if (isLocked()) {
+			throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, identifier));
+		}
 
-		potentialOldValue.ifPresent(
-				oldValue -> {
-					if (oldValue == value) {
-						LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
+		V potentialOldValue = vanilla.getOrEmpty(identifier).orElse(null);
 
-						return;
-					} else {
-						throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, oldValue, value));
-					}
-				}
-		);
+		if (potentialOldValue != null) {
+			if (potentialOldValue == value) {
+				LOGGER.warn(REGISTRIES, "Registry {}: The object {} has been registered twice for the same name {}.", this.superType.getSimpleName(), value, identifier);
+				return;
+			} else if (this.allowOverrides) {
+				this.oldValue = potentialOldValue;
+				LOGGER.debug(REGISTRIES, "Registry {}: The object {} {} has been overridden by {}.", this.superType.getSimpleName(), identifier, potentialOldValue, value);
+			} else {
+				throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", identifier, potentialOldValue, value));
+			}
+		} else {
+			this.oldValue = null;
+		}
 
 		Identifier oldIdentifier = vanilla.getId(value);
 
@@ -89,6 +170,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		}
 
 		Registry.register(vanilla, identifier, value);
+		this.oldValue = null; // Clear the onAddEntry context
 	}
 
 	@Override
@@ -159,6 +241,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		return vanilla.stream().iterator();
 	}
 
+	@Override
+	public String toString() {
+		String type = this.isVanilla ? "Vanilla" : "Mod";
+		Identifier vanillaId = RegistryManager.ACTIVE.getVanillaRegistryId(this.name);
+		String vanillaName = vanillaId.equals(this.name) ? "" : "(" + vanillaId.toString() + ")";
+		return type + ", " + this.name.toString() + vanillaName;
+	}
+
 	private static class Entry<V> implements Map.Entry<Identifier, V> {
 		private Identifier identifier;
 		private V value;
@@ -203,5 +293,82 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 		public int hashCode() {
 			return identifier.hashCode() * 33 + value.hashCode();
 		}
+	}
+
+	/**
+	 * Used to control the times where people can modify this registry.
+	 * Users should only ever register things in the Register<?> events!
+	 */
+	public void freeze() {
+		this.isFrozen = true;
+	}
+
+	public void unfreeze() {
+		this.isFrozen = false;
+	}
+
+	@Override
+	public boolean isLocked() {
+		return this.isFrozen;
+	}
+
+	@Override
+	public void clear() {
+		if (!this.isModifiable) {
+			throw new UnsupportedOperationException("Attempted to clear a non-modifiable Forge Registry");
+		}
+
+		if (this.isLocked()) {
+			throw new IllegalStateException("Attempted to clear the registry too late.");
+		}
+
+		if (this.clearCallback != null) {
+			this.clearCallback.onClear(this, stage);
+		}
+
+		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support clear().
+		if (this.vanilla instanceof RemovableRegistry) {
+			((RemovableRegistry<V>) this.vanilla).clear();
+		} else {
+			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
+		}
+	}
+
+	@Override
+	public V remove(Identifier key) {
+		if (!this.isModifiable) {
+			throw new UnsupportedOperationException("Attempted to remove from a non-modifiable Forge Registry");
+		}
+
+		if (this.isLocked()) {
+			throw new IllegalStateException("Attempted to remove from the registry too late.");
+		}
+
+		// If it is modifiable, it must be a forge mod registry, vanilla registries do not support remove().
+		V removed = null;
+
+		if (this.vanilla instanceof RemovableRegistry) {
+			removed = ((RemovableRegistry<V>) this.vanilla).remove(key);
+		} else {
+			LOGGER.error("Attempted to clear a non-modifiable or vanilla registry");
+		}
+
+		if (removed != null) {
+			LOGGER.trace(REGISTRIES, "Registry {} remove: {}", this.superType.getSimpleName(), key);
+		}
+
+		return removed;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getSlaveMap(Identifier name, Class<T> type) {
+		return (T) this.slaves.get(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setSlaveMap(Identifier name, Object obj) {
+		((Map<Identifier, Object>) this.slaves).put(name, obj);
 	}
 }
