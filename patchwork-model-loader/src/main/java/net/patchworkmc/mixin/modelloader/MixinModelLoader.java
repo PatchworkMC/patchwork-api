@@ -21,23 +21,28 @@ package net.patchworkmc.mixin.modelloader;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
+import net.patchworkmc.impl.modelloader.Signatures;
 import net.patchworkmc.impl.modelloader.SpecialModelProvider;
 
 @Mixin(ModelLoader.class)
 public abstract class MixinModelLoader implements SpecialModelProvider {
+	private static final ModelIdentifier patchwork$trident = new ModelIdentifier("minecraft:trident_in_hand#inventory");
+	private static final Logger patchwork$logger = LogManager.getLogger(ModelLoader.class);
+
 	@Shadow
 	@Final
 	private Map<Identifier, UnbakedModel> modelsToBake;
@@ -56,16 +61,18 @@ public abstract class MixinModelLoader implements SpecialModelProvider {
 		}
 	}
 
-	private static final ModelIdentifier patchwork$trident = new ModelIdentifier("minecraft:trident_in_hand#inventory");
+	@Shadow
+	private void addModel(ModelIdentifier modelId) { }
 
-	// In mixin, we can only target RETURN in a constructor, so this is the workaround...
-	// this.addModel(new ModelIdentifier("minecraft:trident_in_hand#inventory"));
-	// patchwork$loadSpecialModel();
-	// profiler.swap("textures");
-	@Inject(method = "addModel", at = @At("TAIL"))
-	private void patchwork_addModel_return(ModelIdentifier modelId, CallbackInfo ci) {
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = Signatures.ModelLoader_addModel, ordinal = 2))
+	private void patchwork_addModel_return(ModelLoader me, ModelIdentifier modelId) {
+		addModel(modelId);
+
 		if (modelId.equals(patchwork$trident)) {
+			patchwork$logger.debug("Patchwork is loading special models for Forge mods");
 			patchwork$loadSpecialModel();
+		} else {
+			patchwork$logger.warn("Patchwork was unable to load special models for Forge mods");
 		}
 	}
 }

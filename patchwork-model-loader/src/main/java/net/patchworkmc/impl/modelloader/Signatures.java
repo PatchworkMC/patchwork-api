@@ -29,4 +29,6 @@ public class Signatures {
 			+ "Lnet/minecraft/util/profiler/Profiler;"
 			+ ")"
 			+ "Lnet/minecraft/client/render/model/ModelLoader;";
+
+	public static final String ModelLoader_addModel = "net/minecraft/client/render/model/ModelLoader.addModel(Lnet/minecraft/client/util/ModelIdentifier;)V";
 }
