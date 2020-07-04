@@ -23,16 +23,33 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import net.minecraft.util.thread.ThreadExecutor;
+
+import net.fabricmc.loader.api.FabricLoader;
+
 /**
  * A dummy version of DeferredWorkQueue which instantly completes futures on the same thread that calls it.
+ *
+ * <p>Forge mods use this during loading to defer calls back to the loading thread, but they are already loading
+ * on the main thread under Patchwork.
  */
 public class DeferredWorkQueue {
+	private static void mainThreadCheck() {
+		final Object gameInstance = FabricLoader.getInstance().getGameInstance();
+
+		if (!((ThreadExecutor) gameInstance).isOnThread()) {
+			throw new IllegalStateException("Multiple threads during loading is not supported.");
+		}
+	}
+
 	public static CompletableFuture<Void> runLater(Runnable workToEnqueue) {
+		mainThreadCheck();
 		workToEnqueue.run();
 		return CompletableFuture.completedFuture(null);
 	}
 
 	public static CompletableFuture<Void> runLaterChecked(CheckedRunnable workToEnqueue) {
+		mainThreadCheck();
 		CompletableFuture<Void> future = new CompletableFuture<>();
 
 		try {
@@ -46,10 +63,12 @@ public class DeferredWorkQueue {
 	}
 
 	public static <T> CompletableFuture<T> getLater(Supplier<T> workToEnqueue) {
+		mainThreadCheck();
 		return CompletableFuture.completedFuture(workToEnqueue.get());
 	}
 
 	public static <T> CompletableFuture<T> getLaterChecked(Callable<T> workToEnqueue) {
+		mainThreadCheck();
 		CompletableFuture<T> future = new CompletableFuture<>();
 
 		try {
