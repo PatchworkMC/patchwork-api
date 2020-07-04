@@ -19,22 +19,28 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import java.util.Collection;
+
+import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(Entity.class)
-public abstract class MixinEntity {
+public abstract class MixinEntity implements IForgeEntity {
 	@Shadow
 	private float standingEyeHeight;
 
@@ -44,6 +50,9 @@ public abstract class MixinEntity {
 	@Shadow
 	protected abstract float getEyeHeight(EntityPose pose, EntityDimensions dimensions);
 
+	@Unique
+	private Collection<ItemEntity> captureDrops = null;
+
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void hookConstructor(EntityType<?> type, World world, CallbackInfo ci) {
 		Entity entity = (Entity) (Object) this;
@@ -51,5 +60,24 @@ public abstract class MixinEntity {
 		this.standingEyeHeight = EntityEvents.getEyeHeight(entity, EntityPose.STANDING, dimensions, getEyeHeight(EntityPose.STANDING, dimensions));
 
 		EntityEvents.onEntityConstruct(entity);
+	}
+
+	@Redirect(method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;setToDefaultPickupDelay()V"))
+	private void addToCaptureDrops(ItemEntity entity) {
+		if (this.captureDrops != null) {
+			this.captureDrops.add(entity);
+		}
+	}
+
+	@Override
+	public Collection<ItemEntity> captureDrops() {
+		return captureDrops;
+	}
+
+	@Override
+	public Collection<ItemEntity> captureDrops(Collection<ItemEntity> replacement) {
+		Collection<ItemEntity> cache = this.captureDrops;
+		this.captureDrops = replacement;
+		return cache;
 	}
 }

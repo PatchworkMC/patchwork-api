@@ -20,14 +20,20 @@
 package net.patchworkmc.mixin.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
@@ -48,5 +54,12 @@ public class MixinServerPlayerEntity {
 		@SuppressWarnings("ConstantConditions")
 		ServerPlayerEntity speThis = (ServerPlayerEntity) (Object) this;
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.Clone(speThis, oldPlayer, !alive));
+	}
+
+	@Inject(method = "dropItem", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void addToCaptureDrops(ItemStack stack, boolean drop, boolean trace, CallbackInfoReturnable<ItemEntity> cir, ItemEntity entity) {
+		if (((IForgeEntity) entity).captureDrops() != null) {
+			((IForgeEntity) entity).captureDrops().add(entity);
+		}
 	}
 }

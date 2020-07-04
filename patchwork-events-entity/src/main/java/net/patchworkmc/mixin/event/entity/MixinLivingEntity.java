@@ -109,4 +109,21 @@ public class MixinLivingEntity {
 
 		return EntityEvents.onLivingDamage(entity, source, damage);
 	}
+
+	// TODO: Commented out until LivingDropsEvent is implemented
+	/*
+		@Inject(method = "drop", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/entity/LivingEntity;playerHitTimer:I"))
+		private void beginCaptureDrops(DamageSource source, CallbackInfo ci) {
+			((CaptureDropSupplier) this).captureDrops(Lists.newArrayList());
+		}
+
+		@Inject(method = "drop", at = @At("TAIL"))
+		private void beginCaptureDrops(CallbackInfo ci) {
+			Collection<ItemEntity> drops = ((CaptureDropSupplier) this).captureDrops(null);
+
+			if (!ForgeHooks.onLivingDrops(this, p_213345_1_, drops, i, recentlyHit > 0)) {
+				drops.forEach(e -> world.addEntity(e));
+			}
+		}
+	 */
 }

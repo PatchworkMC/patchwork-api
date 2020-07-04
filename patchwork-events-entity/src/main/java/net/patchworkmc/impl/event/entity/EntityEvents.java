@@ -19,11 +19,14 @@
 
 package net.patchworkmc.impl.event.entity;
 
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -205,6 +208,28 @@ public class EntityEvents implements ModInitializer {
 		}
 
 		return event.getExtraLife();
+	}
+
+	public static ItemEntity onPlayerTossEvent(PlayerEntity player, ItemStack item, boolean includeName) {
+		((IForgeEntity) player).captureDrops(Lists.newArrayList());
+		ItemEntity ret = player.dropItem(item, false, includeName);
+		((IForgeEntity) player).captureDrops(null);
+
+		if (ret == null) {
+			return null;
+		}
+
+		ItemTossEvent event = new ItemTossEvent(ret, player);
+
+		if (MinecraftForge.EVENT_BUS.post(event)) {
+			return null;
+		}
+
+		if (!player.world.isClient) {
+			player.getEntityWorld().spawnEntity(event.getEntityItem());
+		}
+
+		return event.getEntityItem();
 	}
 
 	@Override

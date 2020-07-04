@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-entity",
+  "name": "Patchwork Entity Extensions",
+  "version": "${version}",
+  "description": "Implements the Minecraft Forge extensions API for entities",
+  "environment": "*",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-extensions-entity/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.4",
+    "fabric": "*"
+  },
+  "mixins": [
+    "patchwork-extensions-entity.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
