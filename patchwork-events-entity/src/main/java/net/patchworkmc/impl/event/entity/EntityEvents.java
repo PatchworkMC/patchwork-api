@@ -19,6 +19,8 @@
 
 package net.patchworkmc.impl.event.entity;
 
+import java.util.List;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -32,6 +34,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -40,6 +43,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -50,6 +54,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.IWorld;
@@ -179,6 +184,10 @@ public class EntityEvents implements ModInitializer {
 		IForgeItem item = (IForgeItem) stack.getItem();
 
 		return !item.onLeftClickEntity(stack, player, target);
+	}
+
+	public static void onItemTooltip(ItemStack itemStack, PlayerEntity entityPlayer, List<Text> list, TooltipContext flags) {
+		MinecraftForge.EVENT_BUS.post(new ItemTooltipEvent(itemStack, entityPlayer, list, flags));
 	}
 
 	@Override
