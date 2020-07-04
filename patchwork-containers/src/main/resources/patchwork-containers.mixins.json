@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.containers",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinAbstractFurnaceBlockEntity",
+    "MixinBrewingStandBlockEntity",
+    "MixinChestBlockEntity",
+    "MixinContainerType",
+    "MixinHorseBaseEntity",
+    "MixinLivingEntity",
+    "MixinLockableContainerBlockEntity",
+    "MixinPlayerEntity",
+    "MixinStorageMinecartEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

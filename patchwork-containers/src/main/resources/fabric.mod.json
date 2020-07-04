@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-containers",
+  "name": "Patchwork Containers",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-containers/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.4"
+  },
+  "mixins": [
+    "patchwork-containers.mixins.json"
+  ],
+  "description": "Implementation of Forge's Container API.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  },
+  "accessWidener": "patchwork-containers.accesswidener"
+}

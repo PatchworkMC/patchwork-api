@@ -54,6 +54,10 @@ public interface CapabilityProviderHolder extends ICapabilityProvider {
 		return getCapabilityProvider().areCapsCompatible((CapabilityProvider) other);
 	}
 
+	default boolean areCapsCompatible(CapabilityProviderHolder other) {
+		return getCapabilityProvider().areCapsCompatible((CapabilityProvider) other.getCapabilityProvider());
+	}
+
 	default boolean areCapsCompatible(CapabilityDispatcher other) {
 		return getCapabilityProvider().areCapsCompatible(other);
 	}
@@ -77,11 +81,23 @@ public interface CapabilityProviderHolder extends ICapabilityProvider {
 
 	@Nonnull
 	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+		if (this instanceof PatchworkGetCapability) {
+			final LazyOptional<T> capability = ((PatchworkGetCapability<T>) this).patchwork$getCapability(cap, side);
+			if (capability != null) {
+				return capability;
+			}
+		}
 		return getCapabilityProvider().getCapability(cap, side);
 	}
 
 	@Nonnull
 	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+		if (this instanceof PatchworkGetCapability) {
+			final LazyOptional<T> capability = ((PatchworkGetCapability<T>) this).patchwork$getCapability(cap);
+			if (capability != null) {
+				return capability;
+			}
+		}
 		return getCapabilityProvider().getCapability(cap);
 	}
 }

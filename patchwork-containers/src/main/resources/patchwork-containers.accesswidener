@@ -1,0 +1,3 @@
+accessWidener v1 named
+extendable class net/minecraft/container/ContainerType$Factory
+accessible method net/minecraft/container/ContainerType <init> (Lnet/minecraft/container/ContainerType$Factory;)V
