@@ -33,11 +33,9 @@ import net.patchworkmc.impl.resource.TypedResourceLoader;
 
 @Mixin(value = LanguageOptionsScreen.class)
 public abstract class MixinLanguageOptionsScreen {
-	// TODO: Does not work after reobf
 	@SuppressWarnings("rawtypes")
-	@Redirect(require = 0, method = "method_19820(Lnet/minecraft/client/gui/widget/ButtonWidget/ButtonWidget;)V", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
+	@Redirect(remap = false, method = "method_19820(Lnet/minecraft/client/gui/widget/ButtonWidget/ButtonWidget;)V", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
 	protected CompletableFuture patchwork_init_reloadResources(MinecraftClient mc) {
-		TypedResourceLoader.patchwork$refreshResources(mc, VanillaResourceType.LANGUAGES);
-		return null;
+		return TypedResourceLoader.patchwork$refreshResources(mc, VanillaResourceType.LANGUAGES);
 	}
 }

@@ -19,6 +19,8 @@
 
 package net.patchworkmc.impl.resource;
 
+import java.util.concurrent.CompletableFuture;
+
 import javax.annotation.Nullable;
 
 import net.minecraftforge.resource.IResourceType;
@@ -35,13 +37,12 @@ public interface TypedResourceLoader {
 
 	/**
 	 * Called by vanilla hooks and ForgeHooksClient.
-	 * @param mc
-	 * @param types
 	 */
-	static void patchwork$refreshResources(MinecraftClient mc, VanillaResourceType... types) {
+	static CompletableFuture<Void> patchwork$refreshResources(MinecraftClient mc, VanillaResourceType... types) {
 		SelectiveReloadStateHandler.INSTANCE.beginReload(ReloadRequirements.include(types));
-		mc.reloadResources();
+		CompletableFuture<Void> ret = mc.reloadResources();
 		SelectiveReloadStateHandler.INSTANCE.endReload();
+		return ret;
 	}
 
 	@Nullable
