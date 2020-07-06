@@ -36,7 +36,7 @@ import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(ItemStack.class)
 public class MixinItemStack {
-	@Inject(method = "getTooltip", at = @At("RETURN"), locals = LocalCapture.PRINT)
+	@Inject(method = "getTooltip", at = @At("RETURN"))
 	private void onGetTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
 		EntityEvents.onItemTooltip((ItemStack) (Object) this, player, cir.getReturnValue(), context);
 	}

@@ -20,8 +20,8 @@
   "client": [
     "MixinClientWorld",
     "MixinClientPlayerEntity",
-    "MixinOtherClientPlayerEntity",
-    "MixinItemStack"
+    "MixinItemStack",
+    "MixinOtherClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1
