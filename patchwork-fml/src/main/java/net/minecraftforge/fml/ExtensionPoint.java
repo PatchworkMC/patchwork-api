@@ -36,8 +36,8 @@ public class ExtensionPoint<T> {
 	 * Compatibility display test for the mod. Used for displaying compatibility
 	 * with remote servers with the same mod, and on disk saves.
 	 *
-	 * <p>The supplier provides my "local" version for sending across the network or
-	 * writing to disk The predicate tests the version from a remote instance or
+	 * <p>The supplier provides the "local" version for sending across the network or
+	 * writing to disk. The predicate tests the version from a remote instance or
 	 * save for acceptability (Boolean is true for network, false for local save)
 	 *
 	 * <p>TODO: Fabric servers do not check for client's mod list,
