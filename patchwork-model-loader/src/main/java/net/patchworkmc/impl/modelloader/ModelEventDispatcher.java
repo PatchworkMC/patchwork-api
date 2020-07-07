@@ -32,7 +32,7 @@ import net.minecraft.util.Identifier;
 
 public class ModelEventDispatcher {
 	/**
-	 * In official forge, ModelRegistryEvent is fired in parallel with FMLClientSetupEvent.
+	 * In Forge, ModelRegistryEvent is fired in parallel with FMLClientSetupEvent.
 	 * Here we fire ModelRegistryEvent before FMLClientSetupEvent.
 	 * The official forge does not set the ModLoadingContext here, so this should be fine.
 	 */
