@@ -67,8 +67,8 @@ public abstract class MixinModelLoader implements SpecialModelProvider {
 	private void addModel(ModelIdentifier modelId) { }
 
 	/**
-	 * Due to the limitation of mixin, when targeting a constructor, we cannot use injection points other than "TAIL".
-	 * There are multiple occurrence of addModel in the constructor, Forge inserts the patch after adding model for the trident.
+	 * Due to the limitations of mixin, when targeting a constructor, we cannot use injection points other than "TAIL".
+	 * There are multiple occurrences of addModel in the constructor, Forge inserts the patch after adding model for the trident.
 	 * Here we just do another check to ensure that the injection point is correct.
 	 * @param me
 	 * @param modelId
