@@ -20,17 +20,13 @@
 package net.patchworkmc.mixin.extension;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.item.ItemColors;
 
 @Mixin(MinecraftClient.class)
-public class MixinMinecraftClient {
-	@Shadow
-	private ItemColors itemColorMap;
-
-	public ItemColors getItemColors() {
-		return this.itemColorMap;
-	}
+public abstract class MixinMinecraftClient {
+	@Accessor("itemColorMap")
+	public abstract ItemColors getItemColors();
 }
