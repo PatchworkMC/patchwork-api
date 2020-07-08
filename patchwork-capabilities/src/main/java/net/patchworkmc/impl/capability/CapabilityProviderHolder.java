@@ -82,22 +82,26 @@ public interface CapabilityProviderHolder extends ICapabilityProvider {
 	@Nonnull
 	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
 		if (this instanceof PatchworkGetCapability) {
-			final LazyOptional<T> capability = ((PatchworkGetCapability<T>) this).patchwork$getCapability(cap, side);
+			final LazyOptional<T> capability = ((PatchworkGetCapability) this).patchwork$getCapability(cap, side);
+
 			if (capability != null) {
 				return capability;
 			}
 		}
+
 		return getCapabilityProvider().getCapability(cap, side);
 	}
 
 	@Nonnull
 	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
 		if (this instanceof PatchworkGetCapability) {
-			final LazyOptional<T> capability = ((PatchworkGetCapability<T>) this).patchwork$getCapability(cap);
+			final LazyOptional<T> capability = ((PatchworkGetCapability) this).patchwork$getCapability(cap, null);
+
 			if (capability != null) {
 				return capability;
 			}
 		}
+
 		return getCapabilityProvider().getCapability(cap);
 	}
 }

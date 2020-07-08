@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,8 @@ package net.minecraftforge.items.wrapper;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 public class PlayerArmorInvWrapper extends RangedWrapper {
@@ -37,17 +37,20 @@ public class PlayerArmorInvWrapper extends RangedWrapper {
 	@Nonnull
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		EquipmentSlot equ = null;
+
 		for (EquipmentSlot s : EquipmentSlot.values()) {
 			if (s.getType() == EquipmentSlot.Type.ARMOR && s.getEntitySlotId() == slot) {
 				equ = s;
 				break;
 			}
 		}
+
 		// check if it's valid for the armor slot
 		// TODO: implement canEquip
 		if (equ != null && slot < 4 && !stack.isEmpty()/* && stack.canEquip(equ, getInventoryPlayer().player)*/) {
 			return super.insertItem(slot, stack, simulate);
 		}
+
 		return stack;
 	}
 

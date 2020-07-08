@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
 
 public class CapabilityItemHandler {
@@ -39,8 +39,10 @@ public class CapabilityItemHandler {
 			public Tag writeNBT(Capability<IItemHandler> capability, IItemHandler instance, Direction side) {
 				ListTag nbtTagList = new ListTag();
 				int size = instance.getSlots();
+
 				for (int i = 0; i < size; i++) {
 					ItemStack stack = instance.getStackInSlot(i);
+
 					if (!stack.isEmpty()) {
 						CompoundTag itemTag = new CompoundTag();
 						itemTag.putInt("Slot", i);
@@ -48,6 +50,7 @@ public class CapabilityItemHandler {
 						nbtTagList.add(itemTag);
 					}
 				}
+
 				return nbtTagList;
 			}
 
@@ -56,8 +59,10 @@ public class CapabilityItemHandler {
 				if (!(instance instanceof IItemHandlerModifiable)) {
 					throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
 				}
+
 				IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) instance;
 				ListTag tagList = (ListTag) base;
+
 				for (int i = 0; i < tagList.size(); i++) {
 					CompoundTag itemTags = tagList.getCompound(i);
 					int j = itemTags.getInt("Slot");
@@ -69,5 +74,4 @@ public class CapabilityItemHandler {
 			}
 		}, ItemStackHandler::new);
 	}
-
 }

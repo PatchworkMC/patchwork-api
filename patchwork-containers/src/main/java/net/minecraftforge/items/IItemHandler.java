@@ -26,31 +26,32 @@ import net.minecraft.item.ItemStack;
 
 public interface IItemHandler {
 	/**
-	 * Returns the number of slots available
+	 * Returns the number of slots available.
 	 *
 	 * @return The number of slots available
-	 **/
+	 */
 	int getSlots();
 
 	/**
 	 * Returns the ItemStack in a given slot.
-	 * <p>
-	 * The result's stack size may be greater than the itemstack's max size.
-	 * <p>
-	 * If the result is empty, then the slot is empty.
+	 *
+	 * <p>The result's stack size may be greater than the itemstack's max size.
+	 *
+	 * <p>If the result is empty, then the slot is empty.
 	 *
 	 * <p>
 	 * <strong>IMPORTANT:</strong> This ItemStack <em>MUST NOT</em> be modified. This method is not for
 	 * altering an inventory's contents. Any implementers who are able to detect
 	 * modification through this method should throw an exception.
 	 * </p>
+	 *
 	 * <p>
 	 * <strong><em>SERIOUSLY: DO NOT MODIFY THE RETURNED ITEMSTACK</em></strong>
 	 * </p>
 	 *
 	 * @param slot Slot to query
 	 * @return ItemStack in given slot. Empty Itemstack if the slot is empty.
-	 **/
+	 */
 	@Nonnull
 	ItemStack getStackInSlot(int slot);
 
@@ -67,7 +68,7 @@ public interface IItemHandler {
 	 * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
 	 * May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
 	 * The returned ItemStack can be safely modified after.
-	 **/
+	 */
 	@Nonnull
 	ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
 
@@ -83,7 +84,7 @@ public interface IItemHandler {
 	 * @param simulate If true, the extraction is only simulated
 	 * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
 	 * The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
-	 **/
+	 */
 	@Nonnull
 	ItemStack extractItem(int slot, int amount, boolean simulate);
 

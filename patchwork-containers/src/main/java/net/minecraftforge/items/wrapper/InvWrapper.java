@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,15 +36,17 @@ public class InvWrapper implements IItemHandlerModifiable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 
 		InvWrapper that = (InvWrapper) o;
 
 		return getInv().equals(that.getInv());
-
 	}
 
 	@Override
@@ -66,21 +68,26 @@ public class InvWrapper implements IItemHandlerModifiable {
 	@Override
 	@Nonnull
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-		if (stack.isEmpty())
+		if (stack.isEmpty()) {
 			return ItemStack.EMPTY;
+		}
 
 		ItemStack stackInSlot = getInv().getInvStack(slot);
 
 		int m;
+
 		if (!stackInSlot.isEmpty()) {
-			if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxCount(), getSlotLimit(slot)))
+			if (stackInSlot.getCount() >= Math.min(stackInSlot.getMaxCount(), getSlotLimit(slot))) {
 				return stack;
+			}
 
-			if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
+			if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot)) {
 				return stack;
+			}
 
-			if (!getInv().isValidInvStack(slot, stack))
+			if (!getInv().isValidInvStack(slot, stack)) {
 				return stack;
+			}
 
 			m = Math.min(stack.getMaxCount(), getSlotLimit(slot)) - stackInSlot.getCount();
 
@@ -96,6 +103,7 @@ public class InvWrapper implements IItemHandlerModifiable {
 			} else {
 				// copy the stack to not modify the original one
 				stack = stack.copy();
+
 				if (!simulate) {
 					ItemStack copy = stack.split(m);
 					copy.increment(stackInSlot.getCount());
@@ -108,13 +116,16 @@ public class InvWrapper implements IItemHandlerModifiable {
 				}
 			}
 		} else {
-			if (!getInv().isValidInvStack(slot, stack))
+			if (!getInv().isValidInvStack(slot, stack)) {
 				return stack;
+			}
 
 			m = Math.min(stack.getMaxCount(), getSlotLimit(slot));
+
 			if (m < stack.getCount()) {
 				// copy the stack to not modify the original one
 				stack = stack.copy();
+
 				if (!simulate) {
 					getInv().setInvStack(slot, stack.split(m));
 					getInv().markDirty();
@@ -128,22 +139,24 @@ public class InvWrapper implements IItemHandlerModifiable {
 					getInv().setInvStack(slot, stack);
 					getInv().markDirty();
 				}
+
 				return ItemStack.EMPTY;
 			}
 		}
-
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (amount == 0)
+		if (amount == 0) {
 			return ItemStack.EMPTY;
+		}
 
 		ItemStack stackInSlot = getInv().getInvStack(slot);
 
-		if (stackInSlot.isEmpty())
+		if (stackInSlot.isEmpty()) {
 			return ItemStack.EMPTY;
+		}
 
 		if (simulate) {
 			if (stackInSlot.getCount() < amount) {

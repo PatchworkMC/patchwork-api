@@ -22,19 +22,28 @@ package net.minecraftforge.items;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
+
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.capability.CapabilityProviderHolder;
 
 public class ItemHandlerHelper {
 	@Nonnull
 	public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate) {
-		if (dest == null || stack.isEmpty())
+		if (dest == null || stack.isEmpty()) {
 			return stack;
+		}
 
 		for (int i = 0; i < dest.getSlots(); i++) {
 			stack = dest.insertItem(i, stack, simulate);
+
 			if (stack.isEmpty()) {
 				return ItemStack.EMPTY;
 			}
@@ -44,8 +53,9 @@ public class ItemHandlerHelper {
 	}
 
 	public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b) {
-		if (a.isEmpty() || !a.isItemEqualIgnoreDamage(b) || a.hasTag() != b.hasTag())
+		if (a.isEmpty() || !a.isItemEqualIgnoreDamage(b) || a.hasTag() != b.hasTag()) {
 			return false;
+		}
 
 		return (!a.hasTag() || a.getTag().equals(b.getTag())) && ((CapabilityProviderHolder) (Object) a).areCapsCompatible((CapabilityProviderHolder) (Object) b);
 	}
@@ -55,29 +65,27 @@ public class ItemHandlerHelper {
 	 * This usually only applies when players pick up items.
 	 */
 	public static boolean canItemStacksStackRelaxed(@Nonnull ItemStack a, @Nonnull ItemStack b) {
-		if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem())
+		if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem()) {
 			return false;
+		}
 
-		if (!a.isStackable())
+		if (!a.isStackable()) {
 			return false;
+		}
 
-		// Metadata value only matters when the item has subtypes
-		// Vanilla stacks non-subtype items with different metadata together
-		// TODO Item subtypes, is this still necessary?
-        /* e.g. a stick with metadata 0 and a stick with metadata 1 stack
-        if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
-            return false;
-*/
-		if (a.hasTag() != b.hasTag())
+		if (a.hasTag() != b.hasTag()) {
 			return false;
+		}
 
 		return (!a.hasTag() || a.getTag().equals(b.getTag())) && ((CapabilityProviderHolder) (Object) a).areCapsCompatible((CapabilityProviderHolder) (Object) b);
 	}
 
 	@Nonnull
 	public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size) {
-		if (size == 0)
+		if (size == 0) {
 			return ItemStack.EMPTY;
+		}
+
 		ItemStack copy = itemStack.copy();
 		copy.setCount(size);
 		return copy;
@@ -90,8 +98,9 @@ public class ItemHandlerHelper {
 	 */
 	@Nonnull
 	public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate) {
-		if (inventory == null || stack.isEmpty())
+		if (inventory == null || stack.isEmpty()) {
 			return stack;
+		}
 
 		// not stackable -> just insert into a new slot
 		if (!stack.isStackable()) {
@@ -103,6 +112,7 @@ public class ItemHandlerHelper {
 		// go through the inventory and try to fill up already existing items
 		for (int i = 0; i < sizeInventory; i++) {
 			ItemStack slot = inventory.getStackInSlot(i);
+
 			if (canItemStacksStackRelaxed(slot, stack)) {
 				stack = inventory.insertItem(i, stack, simulate);
 
@@ -115,9 +125,11 @@ public class ItemHandlerHelper {
 		// insert remainder into empty slots
 		if (!stack.isEmpty()) {
 			// find empty slot
+
 			for (int i = 0; i < sizeInventory; i++) {
 				if (inventory.getStackInSlot(i).isEmpty()) {
 					stack = inventory.insertItem(i, stack, simulate);
+
 					if (stack.isEmpty()) {
 						break;
 					}
@@ -128,10 +140,9 @@ public class ItemHandlerHelper {
 		return stack;
 	}
 
-	/* TODO: PlayerInvWrapper
 	/**
-	 * giveItemToPlayer without preferred slot
-	 *
+	 * giveItemToPlayer without preferred slot.
+	 */
 	public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack) {
 		giveItemToPlayer(player, stack, -1);
 	}
@@ -142,19 +153,23 @@ public class ItemHandlerHelper {
 	 *
 	 * @param player The player to give the item to
 	 * @param stack  The itemstack to insert
-	 *
+	 */
 	public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack, int preferredSlot) {
-		if (stack.isEmpty()) return;
+		if (stack.isEmpty()) {
+			return;
+		}
 
 		IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
 		World world = player.world;
 
 		// try adding it into the inventory
 		ItemStack remainder = stack;
+
 		// insert into preferred slot first
 		if (preferredSlot >= 0 && preferredSlot < inventory.getSlots()) {
 			remainder = inventory.insertItem(preferredSlot, stack, false);
 		}
+
 		// then into the inventory in general
 		if (!remainder.isEmpty()) {
 			remainder = insertItemStacked(inventory, remainder, false);
@@ -162,20 +177,19 @@ public class ItemHandlerHelper {
 
 		// play sound if something got picked up
 		if (remainder.isEmpty() || remainder.getCount() != stack.getCount()) {
-			world.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(),
-					SoundEvents.field_15197, SoundCategory.PLAYERS, 0.2F, ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+			world.playSound(null, player.x, player.y + 0.5, player.z,
+					SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 		}
 
 		// drop remaining itemstack into the world
 		if (!remainder.isEmpty() && !world.isClient) {
-			ItemEntity entityitem = new ItemEntity(world, player.getX(), player.getY() + 0.5, player.getZ(), remainder);
+			ItemEntity entityitem = new ItemEntity(world, player.x, player.y + 0.5, player.z, remainder);
 			entityitem.setPickupDelay(40);
 			entityitem.setVelocity(entityitem.getVelocity().multiply(0, 1, 0));
 
 			world.spawnEntity(entityitem);
 		}
 	}
-	*/
 
 	/**
 	 * This method uses the standard vanilla algorithm to calculate a comparator output for how "full" the inventory is.

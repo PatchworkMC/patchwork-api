@@ -44,6 +44,7 @@ public abstract class MixinContainerType implements IForgeContainerType<Containe
 		if (this.factory instanceof IContainerFactory) {
 			return ((IContainerFactory<?>) this.factory).create(windowId, playerInv, extraData);
 		}
+
 		return create(windowId, playerInv);
 	}
 }

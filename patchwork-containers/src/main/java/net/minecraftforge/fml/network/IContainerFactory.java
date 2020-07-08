@@ -24,13 +24,11 @@ import net.minecraft.container.ContainerType;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.PacketByteBuf;
 
-public interface IContainerFactory<T extends Container> extends ContainerType.Factory<T>
-{
+public interface IContainerFactory<T extends Container> extends ContainerType.Factory<T> {
 	T create(int windowId, PlayerInventory inv, PacketByteBuf data);
 
 	@Override
-	default T create(int syncId, PlayerInventory playerInventory)
-	{
+	default T create(int syncId, PlayerInventory playerInventory) {
 		return create(syncId, playerInventory, null);
 	}
 }

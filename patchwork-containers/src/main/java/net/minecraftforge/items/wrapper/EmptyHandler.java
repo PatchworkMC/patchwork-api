@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,58 +19,51 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.item.ItemStack;
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
 
-public class EmptyHandler implements IItemHandlerModifiable
-{
+public class EmptyHandler implements IItemHandlerModifiable {
 	public static final IItemHandler INSTANCE = new EmptyHandler();
 
 	@Override
-	public int getSlots()
-	{
+	public int getSlots() {
 		return 0;
 	}
 
 	@Override
 	@Nonnull
-	public ItemStack getStackInSlot(int slot)
-	{
+	public ItemStack getStackInSlot(int slot) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
 	@Nonnull
-	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-	{
+	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		return stack;
 	}
 
 	@Override
 	@Nonnull
-	public ItemStack extractItem(int slot, int amount, boolean simulate)
-	{
+	public ItemStack extractItem(int slot, int amount, boolean simulate) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public void setStackInSlot(int slot, @Nonnull ItemStack stack)
-	{
+	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
 		// nothing to do here
 	}
 
 	@Override
-	public int getSlotLimit(int slot)
-	{
+	public int getSlotLimit(int slot) {
 		return 0;
 	}
 
 	@Override
-	public boolean isItemValid(int slot, @Nonnull ItemStack stack)
-	{
+	public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
 		return false;
 	}
 }

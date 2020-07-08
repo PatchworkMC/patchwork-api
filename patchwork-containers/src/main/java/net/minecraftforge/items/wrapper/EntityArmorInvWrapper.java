@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,16 +19,14 @@
 
 package net.minecraftforge.items.wrapper;
 
-
 import net.minecraftforge.items.IItemHandler;
 
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 
 /**
  * Exposes the armor inventory of an {@link LivingEntity} as an {@link IItemHandler} using {@link LivingEntity#getEquippedStack(EquipmentSlot)} and
- * {@link LivingEntity#equipStack(EquipmentSlot, ItemStack).
+ * {@link LivingEntity#equipStack(EquipmentSlot, net.minecraft.item.ItemStack)}.
  */
 public class EntityArmorInvWrapper extends EntityEquipmentInvWrapper {
 	public EntityArmorInvWrapper(final LivingEntity entity) {

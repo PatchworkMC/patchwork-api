@@ -40,8 +40,10 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public boolean canInsert(@Nonnull ItemStack stack) {
-		if (stack.isEmpty())
+		if (stack.isEmpty()) {
 			return false;
+		}
+
 		return itemHandler.isItemValid(index, stack);
 	}
 
@@ -60,7 +62,6 @@ public class SlotItemHandler extends Slot {
 
 	@Override
 	public void onStackChanged(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
-
 	}
 
 	@Override
@@ -76,6 +77,7 @@ public class SlotItemHandler extends Slot {
 
 		IItemHandler handler = this.getItemHandler();
 		ItemStack currentStack = handler.getStackInSlot(index);
+
 		if (handler instanceof IItemHandlerModifiable) {
 			IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
 

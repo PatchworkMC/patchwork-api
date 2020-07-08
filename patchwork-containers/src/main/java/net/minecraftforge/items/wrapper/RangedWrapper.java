@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,6 @@ import net.minecraft.item.ItemStack;
  * Shifting of slot indices is handled automatically for you.
  */
 public class RangedWrapper implements IItemHandlerModifiable {
-
 	private final IItemHandlerModifiable compose;
 	private final int minSlot;
 	private final int maxSlot;
@@ -106,5 +105,4 @@ public class RangedWrapper implements IItemHandlerModifiable {
 	private boolean checkSlot(int localSlot) {
 		return localSlot + minSlot < maxSlot;
 	}
-
 }

@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,8 +30,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -170,9 +170,11 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 	@Override
 	public void setStackInSlot(final int slot, @Nonnull final ItemStack stack) {
 		final EquipmentSlot equipmentSlot = validateSlotIndex(slot);
+
 		if (ItemStack.areEqualIgnoreDamage(entity.getEquippedStack(equipmentSlot), stack)) {
 			return;
 		}
+
 		entity.equipStack(equipmentSlot, stack);
 	}
 

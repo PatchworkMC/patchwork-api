@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,8 @@ package net.minecraftforge.items.wrapper;
 import javax.annotation.Nonnull;
 
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 /**
  * Exposes the player inventory WITHOUT the armor inventory as IItemHandler.
@@ -41,9 +41,11 @@ public class PlayerMainInvWrapper extends RangedWrapper {
 	@Nonnull
 	public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
 		ItemStack rest = super.insertItem(slot, stack, simulate);
+
 		if (rest.getCount() != stack.getCount()) {
 			// the stack in the slot changed, animate it
 			ItemStack inSlot = getStackInSlot(slot);
+
 			if (!inSlot.isEmpty()) {
 				if (getInventoryPlayer().player.world.isClient) {
 					inSlot.setCooldown(5);
@@ -52,6 +54,7 @@ public class PlayerMainInvWrapper extends RangedWrapper {
 				}
 			}
 		}
+
 		return rest;
 	}
 
