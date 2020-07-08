@@ -27,6 +27,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tag.Tag;
 
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
 
 @Mixin(Block.Settings.class)
@@ -38,7 +39,13 @@ public class MixinBlockSettings {
 
 	public Block.Settings harvestLevel(int harvestLevel) {
 		this.miningLevel = new Integer(harvestLevel);
-		return (Block.Settings) (Object) this;
+
+		if (this.miningTool != null) {
+			FabricBlockSettings fabric = FabricBlockSettings.copyOf((Block.Settings) (Object) this);
+			return fabric.breakByTool(this.miningTool, harvestLevel).build();
+		} else {
+			return (Block.Settings) (Object) this;
+		}
 	}
 
 	public Block.Settings harvestTool(ToolType harvestTool) {
@@ -62,6 +69,12 @@ public class MixinBlockSettings {
 			break;
 		}
 
-		return (Block.Settings) (Object) this;
+		FabricBlockSettings fabric = FabricBlockSettings.copyOf((Block.Settings) (Object) this);
+
+		if (this.miningLevel != null) {
+			return fabric.breakByTool(this.miningTool, this.miningLevel.intValue()).build();
+		} else {
+			return fabric.breakByTool(this.miningTool).build();
+		}
 	}
 }
