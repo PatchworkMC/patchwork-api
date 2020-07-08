@@ -16,6 +16,7 @@
   "mixins": [
     "patchwork-extensions-block.mixins.json"
   ],
+  "accessWidener": "patchwork-extensions-block.accesswidener",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

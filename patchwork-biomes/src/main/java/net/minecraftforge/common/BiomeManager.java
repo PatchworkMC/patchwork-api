@@ -20,9 +20,14 @@
 package net.minecraftforge.common;
 
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.WeightedPicker;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 
 import net.fabricmc.fabric.api.biomes.v1.FabricBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
@@ -64,14 +69,61 @@ public class BiomeManager {
 	public static class BiomeEntry extends WeightedPicker.Entry {
 		public final Biome biome;
 
+		public int field_76292_a; // evil hack
+
 		public BiomeEntry(Biome biome, int weight) {
 			super(weight);
 
+			this.field_76292_a = weight;
 			this.biome = biome;
 		}
 
 		private int getWeight() {
 			return this.weight;
 		}
+	}
+
+	// Biomes O' Plenty pokes Forge internals. Fun
+	private static ArrayList<BiomeEntry>[] biomes = setupBiomes();
+
+	private static ArrayList<BiomeEntry>[] setupBiomes() {
+		@SuppressWarnings("unchecked")
+		ArrayList<BiomeEntry>[] currentBiomes = new ArrayList[BiomeType.values().length];
+		List<BiomeEntry> list = new ArrayList<BiomeEntry>();
+
+		list.add(new BiomeEntry(Biomes.FOREST, 10));
+		list.add(new BiomeEntry(Biomes.DARK_FOREST, 10));
+		list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
+		list.add(new BiomeEntry(Biomes.PLAINS, 10));
+		list.add(new BiomeEntry(Biomes.BIRCH_FOREST, 10));
+		list.add(new BiomeEntry(Biomes.SWAMP, 10));
+
+		currentBiomes[BiomeType.WARM.ordinal()] = new ArrayList<BiomeEntry>(list);
+		list.clear();
+
+		list.add(new BiomeEntry(Biomes.FOREST, 10));
+		list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
+		list.add(new BiomeEntry(Biomes.TAIGA, 10));
+		list.add(new BiomeEntry(Biomes.PLAINS, 10));
+
+		currentBiomes[BiomeType.COOL.ordinal()] = new ArrayList<BiomeEntry>(list);
+		list.clear();
+
+		list.add(new BiomeEntry(Biomes.SNOWY_TUNDRA, 30));
+		list.add(new BiomeEntry(Biomes.SNOWY_TAIGA, 10));
+
+		currentBiomes[BiomeType.ICY.ordinal()] = new ArrayList<BiomeEntry>(list);
+		list.clear();
+
+		currentBiomes[BiomeType.DESERT.ordinal()] = new ArrayList<BiomeEntry>(list);
+
+		return currentBiomes;
+	}
+
+	public static ImmutableList<BiomeEntry> getBiomes(BiomeType type) {
+		int idx = type.ordinal();
+		List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
+
+		return list != null ? ImmutableList.copyOf(list) : null;
 	}
 }
