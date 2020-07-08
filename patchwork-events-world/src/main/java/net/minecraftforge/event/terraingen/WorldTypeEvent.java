@@ -30,7 +30,7 @@ public class WorldTypeEvent extends Event {
 		this.worldType = worldType;
 	}
 
-	public LevelGeneratorType getLevelGeneratorType() {
+	public LevelGeneratorType getWorldType() {
 		return worldType;
 	}
 
