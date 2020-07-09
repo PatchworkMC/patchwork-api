@@ -19,16 +19,18 @@
 
 package net.minecraftforge.common;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
+
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.Event.Result;
 
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Event.Result;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnType;
@@ -42,8 +44,6 @@ import net.minecraft.world.MobSpawnerLogic;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.world.WorldEvents;
-
-import java.util.List;
 
 public class ForgeHooks {
 	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
@@ -104,6 +104,4 @@ public class ForgeHooks {
 	public static List<Biome.SpawnEntry> getPotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<Biome.SpawnEntry> oldList) {
 		return WorldEvents.getPotentialSpawns(world, type, pos, oldList);
 	}
-
-
 }
