@@ -8,6 +8,7 @@
     "EntityMixin",
     "ItemEntityMixin",
     "ItemStackMixin",
+    "PersistentStateMixin",
     "ServerWorldMixin",
     "WorldChunkMixin",
     "WorldMixin"
