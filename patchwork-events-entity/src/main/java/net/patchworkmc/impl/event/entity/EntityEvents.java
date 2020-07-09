@@ -49,7 +49,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.IWorld;
@@ -92,7 +91,7 @@ public class EntityEvents implements ModInitializer {
 	}
 
 	// PlayerEvents
-	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
+	public static void onPlayerLoggedIn(PlayerEntity playerEntity) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
 
