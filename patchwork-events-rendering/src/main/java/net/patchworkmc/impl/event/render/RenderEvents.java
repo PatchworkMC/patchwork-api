@@ -23,13 +23,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 
 public class RenderEvents {
 	private static Consumer<Event> eventDispatcher;
@@ -52,5 +59,24 @@ public class RenderEvents {
 
 	public static void onTextureStitchPost(SpriteAtlasTexture spriteAtlasTexture) {
 		eventDispatcher.accept(new TextureStitchEvent.Post(spriteAtlasTexture));
+	}
+
+	/**
+	 * Called by ForgeHooksClient and MixinWorldRenderer.
+	 * @return true if the bounding box rendering is cancelled.
+	 */
+	public static boolean onDrawHighlightEvent(WorldRenderer context, Camera info, HitResult target, int subID, float partialTicks) {
+		switch (target.getType()) {
+		case BLOCK:
+			if (!(target instanceof BlockHitResult)) return false;
+			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
+		case ENTITY:
+			if (!(target instanceof EntityHitResult)) return false;
+			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
+		default:
+			break;
+		}
+
+		return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
 	}
 }
