@@ -74,9 +74,7 @@ public class RenderEvents {
 			if (!(target instanceof EntityHitResult)) return false;
 			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
 		default:
-			break;
+			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
 		}
-
-		return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
 	}
 }
