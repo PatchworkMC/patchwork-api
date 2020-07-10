@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 
 /**
@@ -55,16 +56,6 @@ public class PlayerEvent extends LivingEvent {
 	 */
 	public PlayerEntity getPlayer() {
 		return playerEntity;
-	}
-
-	/**
-	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
-	 * when the player has finished logging in.
-	 */
-	public static class PlayerLoggedInEvent extends PlayerEvent {
-		public PlayerLoggedInEvent(PlayerEntity player) {
-			super(player);
-		}
 	}
 
 	/**
@@ -131,6 +122,59 @@ public class PlayerEvent extends LivingEvent {
 		}
 	}
 
+	/**
+	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
+	 * when the player has finished logging in.
+	 */
+	public static class PlayerLoggedInEvent extends PlayerEvent {
+		public PlayerLoggedInEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
+	public static class PlayerLoggedOutEvent extends PlayerEvent {
+		public PlayerLoggedOutEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
+	public static class PlayerRespawnEvent extends PlayerEvent {
+		private final boolean alive;
+
+		public PlayerRespawnEvent(PlayerEntity player, boolean alive) {
+			super(player);
+			this.alive = alive;
+		}
+
+		/**
+		 * Did this respawn event come from the player conquering the end?
+		 * TODO: Forge should name this to isAlive.
+		 * @return if this respawn was because the player conquered the end
+		 */
+		public boolean isEndConquered() {
+			return this.alive;
+		}
+	}
+
+	public static class PlayerChangedDimensionEvent extends PlayerEvent {
+		private final DimensionType fromDim;
+		private final DimensionType toDim;
+
+		public PlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim) {
+			super(player);
+			this.fromDim = fromDim;
+			this.toDim = toDim;
+		}
+
+		public DimensionType getFrom() {
+			return this.fromDim;
+		}
+
+		public DimensionType getTo() {
+			return this.toDim;
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
@@ -140,8 +184,5 @@ public class PlayerEvent extends LivingEvent {
 	Visibility
 	ItemPickupEvent
 	ItemCraftedEvent
-	ItemSmeltedEvent
-	PlayerLoggedOutEvent
-	PlayerRespawnEvent
-	PlayerChangedDimensionEvent*/
+	ItemSmeltedEvent*/
 }

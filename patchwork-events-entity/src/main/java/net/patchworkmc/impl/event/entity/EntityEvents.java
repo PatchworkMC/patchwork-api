@@ -32,7 +32,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -49,7 +48,6 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.IWorld;
@@ -92,10 +90,6 @@ public class EntityEvents implements ModInitializer {
 	}
 
 	// PlayerEvents
-	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
-		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
-	}
-
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float damage) {
 		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
