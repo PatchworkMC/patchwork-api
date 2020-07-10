@@ -70,7 +70,7 @@ public class BiomeManager {
 	public static class BiomeEntry extends WeightedPicker.Entry {
 		public final Biome biome;
 
-		public int field_76292_a; // evil hack
+		public int field_76292_a; // FIXME: workaround for https://github.com/PatchworkMC/patchwork-patcher/issues/57, will likely break things
 
 		public BiomeEntry(Biome biome, int weight) {
 			super(weight);
