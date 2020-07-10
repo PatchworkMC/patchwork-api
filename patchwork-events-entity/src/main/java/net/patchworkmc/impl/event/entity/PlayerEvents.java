@@ -22,13 +22,14 @@ package net.patchworkmc.impl.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.dimension.DimensionType;
 
 public class PlayerEvents {
-	public static void firePlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim,
-			DimensionType toDim) {
-		System.out.println("firePlayerChangedDimensionEvent");
+	public static void firePlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
 	}
 
@@ -42,5 +43,17 @@ public class PlayerEvents {
 
 	public static void firePlayerRespawnEvent(PlayerEntity player, boolean alive) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, alive));
+	}
+
+	public static void firePlayerItemPickupEvent(PlayerEntity player, ItemEntity item, ItemStack clone) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
+	}
+
+	public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, Inventory craftMatrix) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
+	}
+
+	public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
 	}
 }
