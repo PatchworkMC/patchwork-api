@@ -33,6 +33,7 @@ public abstract class MixinAbstractTreeFeature {
 	@Shadow
 	protected abstract void setToDirt(ModifiableTestableWorld world, BlockPos pos);
 
+	// TODO: How can we make this accessible in fabric mods?
 	protected void setDirtAt(ModifiableTestableWorld reader, BlockPos pos, BlockPos origin) {
 		if (!(reader instanceof IWorld)) {
 			setToDirt(reader, pos);
