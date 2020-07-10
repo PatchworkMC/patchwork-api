@@ -123,6 +123,7 @@ public class BiomeManager {
 
 	public static ImmutableList<BiomeEntry> getBiomes(BiomeType type) {
 		int idx = type.ordinal();
+		// We want to return null instead of throw an exception if the index is out of bounds.
 		List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
 		return list != null ? ImmutableList.copyOf(list) : null;
