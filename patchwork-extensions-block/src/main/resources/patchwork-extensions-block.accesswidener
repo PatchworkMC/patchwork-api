@@ -4,6 +4,8 @@ accessible method net/minecraft/block/StairsBlock <init> (Lnet/minecraft/block/B
 accessible field net/minecraft/block/Block materialColor Lnet/minecraft/block/MaterialColor;
 accessible method net/minecraft/block/DoorBlock <init> (Lnet/minecraft/block/Block$Settings;)V
 accessible method net/minecraft/block/TrapdoorBlock <init> (Lnet/minecraft/block/Block$Settings;)V
-accessible method net/minecraft/class_2440 <init> (Lnet/minecraft/class_2440$class_2441;Lnet/minecraft/class_2248$class_2251;)V
 accessible method net/minecraft/block/WoodButtonBlock <init> (Lnet/minecraft/block/Block$Settings;)V
 accessible field net/minecraft/item/AxeItem STRIPPED_BLOCKS Ljava/util/Map;
+
+# accessible method net/minecraft/block/PressurePlateBlock <init> (Lnet/minecraft/block/PressurePlateBlock$ActivationRule;Lnet/minecraft/Block$Settings;)V
+accessible method net/minecraft/class_2440 <init> (Lnet/minecraft/class_2440$class_2441;Lnet/minecraft/class_2248$class_2251;)V
