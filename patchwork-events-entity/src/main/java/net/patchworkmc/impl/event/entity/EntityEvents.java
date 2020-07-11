@@ -20,6 +20,7 @@
 package net.patchworkmc.impl.event.entity;
 
 import java.util.List;
+import java.util.Collection;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
@@ -28,6 +29,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -47,6 +49,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
@@ -126,6 +129,10 @@ public class EntityEvents implements ModInitializer {
 	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
 		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+	}
+
+	public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
+		return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
 	}
 
 	public static float getEyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
