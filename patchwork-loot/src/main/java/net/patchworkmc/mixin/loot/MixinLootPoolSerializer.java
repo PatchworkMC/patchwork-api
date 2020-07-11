@@ -21,6 +21,8 @@ package net.patchworkmc.mixin.loot;
 
 import java.lang.reflect.Type;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,8 +40,8 @@ import net.patchworkmc.impl.loot.PatchworkLootPool;
 
 @Mixin(LootPool.Serializer.class)
 public class MixinLootPoolSerializer {
-	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true, locals = LocalCapture.PRINT)
-	private void addNameToConstructor(CallbackInfoReturnable<LootPool> cir, JsonObject obj) {
+	@Inject(method = "deserialize", at = @At("RETURN"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+	private void addNameToConstructor(JsonElement elem, Type ty, JsonDeserializationContext ctx, CallbackInfoReturnable<LootPool> cir, JsonObject obj) {
 		LootPool ret = cir.getReturnValue();
 		((PatchworkLootPool) ret).patchwork$setName(LootHooks.readPoolName(obj));
 
