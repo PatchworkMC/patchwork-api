@@ -23,11 +23,26 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.EmptyBlockView;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
 
@@ -56,5 +71,64 @@ public class WorldEvents {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+		MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+	}
+
+	public static BlockEvent.BreakEvent onBlockBreakEvent(World world, GameMode gameMode, ServerPlayerEntity player, BlockPos pos) {
+		boolean preCancelEvent = false;
+
+		ItemStack itemstack = player.getMainHandStack();
+
+		if (!itemstack.isEmpty() && !itemstack.getItem().canMine(world.getBlockState(pos), world, pos, player)) {
+			preCancelEvent = true;
+		}
+
+		// method_21701 => canMine
+		// Isn't the function really canNotMine?
+
+		if (player.method_21701(world, pos, gameMode)) {
+			preCancelEvent = true;
+		}
+
+		// Tell client the block is gone immediately then process events
+		if (world.getBlockEntity(pos) == null) {
+			player.networkHandler.sendPacket(new BlockUpdateS2CPacket(EmptyBlockView.INSTANCE, pos));
+		}
+
+		// Post the block break event
+		BlockState state = world.getBlockState(pos);
+		BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
+		event.setCanceled(preCancelEvent);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		// Handle if the event is canceled
+		if (event.isCanceled()) {
+			// Let the client know the block still exists
+			player.networkHandler.sendPacket(new BlockUpdateS2CPacket(world, pos));
+
+			// Update any block entity data for this block
+			BlockEntity entity = world.getBlockEntity(pos);
+
+			if (entity != null) {
+				BlockEntityUpdateS2CPacket packet = entity.toUpdatePacket();
+
+				if (packet != null) {
+					player.networkHandler.sendPacket(packet);
+				}
+			}
+		}
+
+		return event;
+	}
+
+	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
+		if (watch) {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+		} else {
+			throw new UnsupportedOperationException("Cannot Unwatch a chunk yet");
+		}
 	}
 }
