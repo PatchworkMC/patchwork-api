@@ -39,8 +39,10 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
+import net.patchworkmc.api.gui.ForgeScreen;
+
 @Mixin(Screen.class)
-public abstract class MixinScreen {
+public abstract class MixinScreen implements ForgeScreen {
 	@Shadow
 	@Final
 	protected List<AbstractButtonWidget> buttons;
