@@ -33,7 +33,7 @@ public abstract class PatchworkItemGroup extends ItemGroup {
 	public PatchworkItemGroup(int index, String name) {
 		this(name);
 
-		if (index != -1) {
+		if (index != -1 && index < ItemGroup.GROUPS.length - 1) {
 			throw new IllegalArgumentException("ItemGroup constructor potentially tried to overwrite an existing creative tab!");
 		}
 	}
