@@ -55,12 +55,8 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(phase));
 	}
 
-	public static void onPlayerPreTick(PlayerEntity player) {
-		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.START, player));
-	}
-
-	public static void onPlayerPostTick(PlayerEntity player) {
-		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
+	public static void firePlayerTickEvent(TickEvent.Phase phase, PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(phase, player));
 	}
 
 	public static void handleServerStarting(final MinecraftServer server) {
