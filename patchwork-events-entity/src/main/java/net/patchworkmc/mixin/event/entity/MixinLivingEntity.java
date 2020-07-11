@@ -22,9 +22,7 @@ package net.patchworkmc.mixin.event.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeEntity;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -154,7 +152,7 @@ public class MixinLivingEntity {
 		IForgeEntity forgeEntity = (IForgeEntity) this;
 		Collection<ItemEntity> drops = forgeEntity.captureDrops(null);
 
-		if (!MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, src, drops, dropLootingLevel.get(), playerHitTimer > 0))) {
+		if (!EntityEvents.onLivingDrops(entity, src, drops, dropLootingLevel.get(), playerHitTimer > 0)) {
 			for (ItemEntity item : drops) {
 				forgeEntity.getEntity().world.spawnEntity(item);
 			}
