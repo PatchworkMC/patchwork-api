@@ -30,8 +30,10 @@ import net.minecraft.tag.Tag;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tools.FabricToolTags;
 
+import net.patchworkmc.api.block.IPatchworkBlockSettings;
+
 @Mixin(Block.Settings.class)
-public class MixinBlockSettings {
+public class MixinBlockSettings implements IPatchworkBlockSettings {
 	@Unique
 	private Integer miningLevel;
 	@Unique
