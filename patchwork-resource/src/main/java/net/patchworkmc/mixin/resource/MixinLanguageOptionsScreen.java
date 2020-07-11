@@ -31,7 +31,7 @@ import net.minecraft.client.gui.screen.options.LanguageOptionsScreen;
 
 import net.patchworkmc.impl.resource.TypedResourceLoader;
 
-@Mixin(value = LanguageOptionsScreen.class)
+@Mixin(LanguageOptionsScreen.class)
 public abstract class MixinLanguageOptionsScreen {
 	@SuppressWarnings("rawtypes")
 	@Redirect(remap = false, method = "method_19820(Lnet/minecraft/client/gui/widget/ButtonWidget/ButtonWidget;)V", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
