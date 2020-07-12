@@ -17,7 +17,9 @@ jobs:
       # https://github.com/actions/cache/blob/master/examples.md#java---gradle
       - uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ./*/build
           key: ${{ runner.os }}-gradle-build-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -38,7 +40,9 @@ jobs:
           java-version: 8
       - uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ./*/build
           key: ${{ runner.os }}-gradle-checkstyle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -55,8 +59,10 @@ jobs:
           java-version: 8
       - uses: actions/cache@v2
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-license-${{ hashFiles('**/*.gradle*') }}-license
+          path: |
+            ~/.gradle/caches
+            ./*/build
+          key: ${{ runner.os }}-gradle-license-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
       - uses: eskatos/gradle-command-action@v1
