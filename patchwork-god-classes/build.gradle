@@ -1,4 +1,4 @@
-archivesBaseName = "patchwork-event-dispatcher"
+archivesBaseName = "patchwork-god-classes"
 version = getSubprojectVersion(project, "0.1.0")
 
 dependencies {

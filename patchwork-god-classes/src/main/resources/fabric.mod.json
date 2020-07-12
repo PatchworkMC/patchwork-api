@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-event-dispatcher",
-  "name": "Patchwork Event Dispatcher",
+  "id": "patchwork-god-classes",
+  "name": "Patchwork God Classes",
   "version": "${version}",
   "description": "Implements ForgeHooks, ForgeEventFactory, and more.",
   "environment": "*",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-event-dispatcher/icon.png",
+  "icon": "assets/patchwork-god-classes/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"

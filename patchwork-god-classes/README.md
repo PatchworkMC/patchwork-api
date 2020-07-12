@@ -1,4 +1,4 @@
-# patchwork-event-dispatcher
+# patchwork-god-classes
 
 Implementation of ForgeHooks, ForgeHooksClient, ForgeEventFactory, and BasicEventHooks that dispatches to different patchwork modules.
 
