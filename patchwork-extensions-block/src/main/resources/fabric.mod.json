@@ -15,7 +15,9 @@
   },
   "mixins": [
     "patchwork-extensions-block.mixins.json",
-    "patchwork-extensions-block-blockentity.mixins.json"
+    "patchwork-extensions-block-blockentity.mixins.json",
+    "patchwork-extensions-block-flammable.mixins.json",
+    "patchwork-extensions-block-harvest.mixins.json"
   ],
   "accessWidener": "patchwork-extensions-block.accesswidener",
   "custom": {
