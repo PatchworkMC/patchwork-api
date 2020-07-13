@@ -16,7 +16,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.8.4",
-    "patchwork-fml": "*"
+    "patchwork-fml": "*",
+    "patchwork-events-lifecycle": "*"
   },
   "custom": {
     "modmenu:api": true,
