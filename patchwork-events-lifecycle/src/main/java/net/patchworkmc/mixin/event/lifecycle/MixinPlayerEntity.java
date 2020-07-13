@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.event.lifecycle;
 
+import net.minecraftforge.event.TickEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,11 +33,11 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 public class MixinPlayerEntity {
 	@Inject(method = "tick", at = @At("HEAD"))
 	public void onPlayerPreTick(CallbackInfo callback) {
-		LifecycleEvents.onPlayerPreTick((PlayerEntity) (Object) this);
+		LifecycleEvents.firePlayerTickEvent(TickEvent.Phase.START, (PlayerEntity) (Object) this);
 	}
 
 	@Inject(method = "tick", at = @At("TAIL"))
 	public void onPlayerPostTick(CallbackInfo callback) {
-		LifecycleEvents.onPlayerPostTick((PlayerEntity) (Object) this);
+		LifecycleEvents.firePlayerTickEvent(TickEvent.Phase.END, (PlayerEntity) (Object) this);
 	}
 }
