@@ -18,6 +18,7 @@
     "fabricloader": ">=0.8.4",
     "patchwork-fml": "*",
     "patchwork-capabilities": "*",
+    "patchwork-events-input": "*",
     "patchwork-events-lifecycle": "*"
   },
   "custom": {
