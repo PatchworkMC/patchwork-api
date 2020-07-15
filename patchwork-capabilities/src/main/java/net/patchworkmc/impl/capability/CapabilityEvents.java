@@ -21,19 +21,23 @@ package net.patchworkmc.impl.capability;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 
-public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-	private final T provider;
+public class CapabilityEvents {
+	// This is less restrictive than Forge's implementation, since patchwork can't make vanilla extend stuff at random.
+	@SuppressWarnings("unchecked")
+	@Nullable
+	public static <T> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
+		AttachCapabilitiesEvent<T> event = new AttachCapabilitiesEvent<T>((Class<T>) type, provider);
+		MinecraftForge.EVENT_BUS.post(event);
 
-	public BaseCapabilityProvider(Class<T> baseClass, T provider) {
-		super(baseClass);
-		this.provider = provider;
-	}
-
-	@Override
-	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
+		if (!event.getCapabilities().isEmpty() || parent != null) {
+			return new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent);
+		} else {
+			return null;
+		}
 	}
 }
