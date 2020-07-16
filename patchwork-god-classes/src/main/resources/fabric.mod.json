@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-god-classes",
+  "name": "Patchwork God Classes",
+  "version": "${version}",
+  "description": "Implements ForgeHooks, ForgeEventFactory, and more.",
+  "environment": "*",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-god-classes/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.4",
+    "patchwork-fml": "*"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
