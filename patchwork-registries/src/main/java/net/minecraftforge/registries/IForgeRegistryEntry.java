@@ -39,7 +39,7 @@ public interface IForgeRegistryEntry<V> {
 	 * @param name the unique {@link Identifier}
 	 * @return this instance, to allow for chaining
 	 */
-	IForgeRegistryEntry setRegistryName(Identifier name);
+	V setRegistryName(Identifier name);
 
 	/**
 	 * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one

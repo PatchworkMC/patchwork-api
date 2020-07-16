@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinVillagerProfession implements ExtendedForgeRegistryEntry<Villa
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<VillagerProfession> setRegistryName(Identifier name) {
+	public VillagerProfession setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (VillagerProfession)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

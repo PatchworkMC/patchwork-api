@@ -36,10 +36,10 @@ public class MixinCarver implements ExtendedForgeRegistryEntry<Carver> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Carver> setRegistryName(Identifier name) {
+	public Carver setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (Carver)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

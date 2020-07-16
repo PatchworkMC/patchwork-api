@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBu
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<SurfaceBuilder> setRegistryName(Identifier name) {
+	public SurfaceBuilder setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (SurfaceBuilder)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

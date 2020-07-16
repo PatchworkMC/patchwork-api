@@ -36,10 +36,10 @@ public class MixinContainerType implements ExtendedForgeRegistryEntry<ContainerT
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<ContainerType> setRegistryName(Identifier name) {
+	public ContainerType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (ContainerType)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

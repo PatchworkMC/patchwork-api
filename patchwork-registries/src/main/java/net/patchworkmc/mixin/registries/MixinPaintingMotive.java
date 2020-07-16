@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingM
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<PaintingMotive> setRegistryName(Identifier name) {
+	public PaintingMotive setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (PaintingMotive)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

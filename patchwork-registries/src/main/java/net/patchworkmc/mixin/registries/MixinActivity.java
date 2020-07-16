@@ -36,10 +36,10 @@ public class MixinActivity implements ExtendedForgeRegistryEntry<Activity> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Activity> setRegistryName(Identifier name) {
+	public Activity setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (Activity)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

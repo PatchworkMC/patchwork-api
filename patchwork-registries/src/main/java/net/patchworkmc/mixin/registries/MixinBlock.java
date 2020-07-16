@@ -36,10 +36,10 @@ public class MixinBlock implements ExtendedForgeRegistryEntry<Block> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Block> setRegistryName(Identifier name) {
+	public Block setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (Block)(Object)this;
 	}
 
 	public Identifier getRegistryName() {

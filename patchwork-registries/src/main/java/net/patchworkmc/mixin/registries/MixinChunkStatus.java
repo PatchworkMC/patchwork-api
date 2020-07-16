@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinChunkStatus implements ExtendedForgeRegistryEntry<ChunkStatus>
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<ChunkStatus> setRegistryName(Identifier name) {
+	public ChunkStatus setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (ChunkStatus)(Object)this;
 	}
 
 	public Identifier getRegistryName() {
