@@ -23,10 +23,16 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
@@ -56,5 +62,18 @@ public class WorldEvents {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	// TODO: Is this actually a "world" event?
+	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+		MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+	}
+
+	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
+		if (watch) {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+		} else {
+			throw new UnsupportedOperationException("Cannot Unwatch a chunk yet");
+		}
 	}
 }
