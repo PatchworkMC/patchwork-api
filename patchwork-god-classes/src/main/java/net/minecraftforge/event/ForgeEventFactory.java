@@ -31,15 +31,13 @@ import net.patchworkmc.impl.capability.CapabilityEvents;
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class ForgeEventFactory {
-	// TODO: these keeps the forge restriction of T extends ICapabilityProvider, which patchwork otherwise does not enforce
-	// should it be removed?
 	@Nullable
-	public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider) {
+	public static <T> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider) {
 		return gatherCapabilities(type, provider, null);
 	}
 
 	@Nullable
-	public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
+	public static <T> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
 		return CapabilityEvents.gatherCapabilities(type, provider, parent);
 	}
 }
