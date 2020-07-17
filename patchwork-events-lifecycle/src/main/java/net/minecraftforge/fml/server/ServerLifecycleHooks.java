@@ -51,4 +51,8 @@ public class ServerLifecycleHooks {
 	public static void handleServerStarted(final MinecraftServer server) {
 		LifecycleEvents.handleServerStarted(server);
 	}
+
+	public static void handleServerStopped(final MinecraftServer server) {
+		LifecycleEvents.handleServerStopped(server);
+	}
 }

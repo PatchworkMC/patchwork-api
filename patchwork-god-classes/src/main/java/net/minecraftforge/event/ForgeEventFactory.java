@@ -28,12 +28,16 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.loot.LootManager;
+import net.minecraft.loot.LootTable;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.event.loot.LootEvents;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -64,5 +68,9 @@ public class ForgeEventFactory {
 
 	public static boolean doSpecialSpawn(MobEntity entity, World world, float x, float y, float z, MobSpawnerLogic spawner, SpawnType spawnReason) {
 		return EntityEvents.doSpecialSpawn(entity, world, x, y, z, spawner, spawnReason);
+	}
+
+	public static LootTable loadLootTable(Identifier name, LootTable table, LootManager lootTableManager) {
+		return LootEvents.loadLootTable(name, table, lootTableManager);
 	}
 }
