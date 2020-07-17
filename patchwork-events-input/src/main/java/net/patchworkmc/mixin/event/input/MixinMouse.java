@@ -20,6 +20,7 @@
 package net.patchworkmc.mixin.event.input;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,5 +51,30 @@ public abstract class MixinMouse implements ForgeMouse {
 		if (InputEvents.onMouseScroll((Mouse) (Object) this, scrollDelta)) {
 			info.cancel();
 		}
+	}
+
+	// Methods added by forge
+	@Shadow
+	boolean middleButtonClicked;
+
+	@Shadow
+	double cursorDeltaX;
+
+	@Shadow
+	double cursorDeltaY;
+
+	@Override
+	public boolean isMiddleDown() {
+		return middleButtonClicked;
+	}
+
+	@Override
+	public double getXVelocity() {
+		return cursorDeltaX;
+	}
+
+	@Override
+	public double getYVelocity() {
+		return cursorDeltaY;
 	}
 }
