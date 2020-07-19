@@ -22,6 +22,7 @@ package net.patchworkmc.mixin.loot;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Queues;
@@ -29,6 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,12 +52,12 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 	@Unique
 	private ResourceManager resourceManager;
 
+	// TODO: is reentrancy necessary?
 	@Unique
 	private static ThreadLocal<Deque<LootManager>> lootContext = new ThreadLocal<Deque<LootManager>>();
 
-	// TODO: is reentrancy necessary?
-	@Inject(method = "apply", at = @At("HEAD"))
-	private void getResourceManager(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {
+	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V"))
+	private void handleContext(Map<Identifier, JsonObject> map, BiConsumer<Identifier, JsonObject> consumer, Map<Identifier, JsonObject> sameMap, ResourceManager resourceManager, Profiler profiler) {
 		this.resourceManager = resourceManager;
 		Deque<LootManager> que = lootContext.get();
 
@@ -65,13 +67,13 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 		}
 
 		que.push((LootManager) (Object) this);
-	}
 
-	@Inject(method = "apply", at = @At("RETURN"))
-	private void delResourceManager(CallbackInfo info) {
-		// TODO: what if an exception is thrown?
-		resourceManager = null;
-		lootContext.get().pop();
+		try {
+			map.forEach(consumer);
+		} finally {
+			this.resourceManager = null;
+			lootContext.get().pop();
+		}
 	}
 
 	@Redirect(method = "method_20711", at = @At(value = "INVOKE", target = "com/google/gson/Gson.fromJson (Lcom/google/gson/JsonElement;Ljava/lang/Class;)Ljava/lang/Object;"))
