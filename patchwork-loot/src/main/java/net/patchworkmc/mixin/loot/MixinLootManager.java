@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -71,5 +72,10 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 				LOGGER.error("Couldn't parse loot table {}", id, ex);
 			}
 		});
+	}
+
+	@Overwrite
+	private static void method_20711(ImmutableMap.Builder<Identifier, LootTable> builder, Identifier id, JsonObject obj) {
+		// We are effectively overwriting this lambda with our own, so let's make that explicit by actually overwriting it.
 	}
 }
