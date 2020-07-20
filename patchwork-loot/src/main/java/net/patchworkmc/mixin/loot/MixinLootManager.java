@@ -19,23 +19,24 @@
 
 package net.patchworkmc.mixin.loot;
 
-import java.io.IOException;
-import java.util.Deque;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Queues;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.loot.LootManager;
+import net.minecraft.loot.LootTable;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -45,44 +46,30 @@ import net.patchworkmc.impl.loot.LootHooks;
 
 @Mixin(LootManager.class)
 public abstract class MixinLootManager extends MixinJsonDataLoader {
-	// should this also be part of the static threadlocal?
-	@Unique
-	private ResourceManager resourceManager;
+	@Shadow
+	@Final
+	private static Gson GSON;
 
-	// TODO: is reentrancy necessary?
-	@Unique
-	private static ThreadLocal<Deque<LootManager>> lootContext = new ThreadLocal<Deque<LootManager>>();
+	@Shadow
+	@Final
+	private static Logger LOGGER;
 
-	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V"))
-	private void handleContext(Map<Identifier, JsonObject> map, BiConsumer<Identifier, JsonObject> consumer, Map<Identifier, JsonObject> sameMap, ResourceManager resourceManager, Profiler profiler) {
-		this.resourceManager = resourceManager;
-		Deque<LootManager> que = lootContext.get();
-
-		if (que == null) {
-			que = Queues.newArrayDeque();
-			lootContext.set(que);
-		}
-
-		que.push((LootManager) (Object) this);
-
-		try {
-			map.forEach(consumer);
-		} finally {
-			this.resourceManager = null;
-			lootContext.get().pop();
-		}
+	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V", ordinal = 0))
+	private void cancel_forEach(Map<Identifier, JsonObject> map, BiConsumer<Identifier, JsonObject> consumer) {
+		// ignore this call, we're gonna reintroduce it but with capturing locals
 	}
 
-	@Redirect(method = "method_20711", at = @At(value = "INVOKE", target = "com/google/gson/Gson.fromJson (Lcom/google/gson/JsonElement;Ljava/lang/Class;)Ljava/lang/Object;"))
-	private static Object loadLootTable(Gson GSON, JsonElement elem, Class cls, ImmutableMap.Builder _bld, Identifier id, JsonObject obj) throws IOException {
-		LootManager lootManager = lootContext.get().peek();
-
-		if (lootManager == null) {
-			throw new JsonParseException("Invalid call stack, could not grab loot manager!"); // Should I throw this? Do we care about custom deserializers outside the manager?
-		}
-
-		ResourceManager resourceManager = ((MixinLootManager) (Object) lootManager).resourceManager;
-		Resource res = resourceManager.getResource(((MixinLootManager) (Object) lootManager).getPreparedPath(id));
-		return LootHooks.loadLootTable(GSON, id, elem, res == null || !res.getResourcePackName().equals("Default"), lootManager);
+	@Inject(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void reintroduce_forEach(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info, ImmutableMap.Builder<Identifier, LootTable> builder) {
+		map.forEach((id, jsonObject) -> {
+			try {
+				LootManager lootManager = (LootManager) (Object) this;
+				Resource res = resourceManager.getResource(this.getPreparedPath(id));
+				LootTable lootTable = LootHooks.loadLootTable(GSON, id, jsonObject, res == null || !res.getResourcePackName().equals("Default"), lootManager);
+				builder.put(id, lootTable);
+			} catch (Exception ex) {
+				LOGGER.error("Couldn't parse loot table {}", id, ex);
+			}
+		});
 	}
 }
