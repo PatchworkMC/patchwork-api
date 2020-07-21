@@ -111,7 +111,7 @@ public class ModFileScanData {
 		private final Type clazz;
 		private final String memberName;
 
-		private Map<String, Object> annotationData;
+		private Map<String, Object> elements;
 
 		public AnnotationData(
 				final Type annotationType, final ElementType targetType,
@@ -125,13 +125,13 @@ public class ModFileScanData {
 
 		public AnnotationData(
 				Type annotationType, ElementType targetType, Type clazz,
-				String memberName, Map<String, Object> annotationData
+				String memberName, Map<String, Object> elements
 		) {
 			this.annotationType = annotationType;
 			this.targetType = targetType;
 			this.clazz = clazz;
 			this.memberName = memberName;
-			this.annotationData = annotationData;
+			this.elements = elements;
 		}
 
 		public Type getAnnotationType() {
@@ -151,15 +151,15 @@ public class ModFileScanData {
 		}
 
 		public Map<String, Object> getAnnotationData() {
-			if (annotationData == null) {
+			if (elements == null) {
 				initAnnotationData();
 			}
 
-			return annotationData;
+			return elements;
 		}
 
 		private void initAnnotationData() {
-			annotationData = new HashMap<>();
+			elements = new HashMap<>();
 
 			try {
 				// TODO: This *may* load classes in the wrong order, but it shouldn't be an issue
@@ -174,13 +174,13 @@ public class ModFileScanData {
 					return;
 				}
 
-				Method[] argMethods = annotationObject.getClass().getDeclaredMethods();
+				Method[] elementGetters = annotationObject.getClass().getDeclaredMethods();
 
-				for (Method argMethod : argMethods) {
-					if (isElementGetter(argMethod)) {
-						Object object = argMethod.invoke(annotationObject);
+				for (Method elementGetter : elementGetters) {
+					if (isElementGetter(elementGetter)) {
+						Object value = elementGetter.invoke(annotationObject);
 
-						annotationData.put(argMethod.getName(), processElementObject(object));
+						elements.put(elementGetter.getName(), processElementObject(value));
 					}
 				}
 			} catch (Throwable e) {

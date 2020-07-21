@@ -50,12 +50,6 @@ public class ModAnnotation {
 		this.member = member;
 	}
 
-	/** @deprecated */
-	@Deprecated
-	public ModAnnotation(ElementType type, Type asmType, ModAnnotation parent) {
-		this(asmType, parent);
-	}
-
 	public ModAnnotation(Type asmType, ModAnnotation parent) {
 		this.values = Maps.newHashMap();
 		this.type = parent.type;
@@ -71,10 +65,6 @@ public class ModAnnotation {
 
 	public ElementType getType() {
 		return this.type;
-	}
-
-	public Type getASMType() {
-		return this.asmType;
 	}
 
 	public String getMember() {
