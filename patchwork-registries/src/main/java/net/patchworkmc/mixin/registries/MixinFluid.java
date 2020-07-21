@@ -38,7 +38,7 @@ public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
 	public Fluid setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Fluid)(Object)this;
+		return (Fluid) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

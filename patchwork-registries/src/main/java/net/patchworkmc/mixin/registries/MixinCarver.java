@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -39,7 +38,7 @@ public class MixinCarver implements ExtendedForgeRegistryEntry<Carver> {
 	public Carver setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Carver)(Object)this;
+		return (Carver) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

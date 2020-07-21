@@ -38,7 +38,7 @@ public class MixinPointOfInterestType implements ExtendedForgeRegistryEntry<Poin
 	public PointOfInterestType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (PointOfInterestType)(Object)this;
+		return (PointOfInterestType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

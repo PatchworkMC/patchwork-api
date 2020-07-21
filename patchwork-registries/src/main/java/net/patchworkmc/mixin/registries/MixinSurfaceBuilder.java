@@ -38,7 +38,7 @@ public class MixinSurfaceBuilder implements ExtendedForgeRegistryEntry<SurfaceBu
 	public SurfaceBuilder setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (SurfaceBuilder)(Object)this;
+		return (SurfaceBuilder) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

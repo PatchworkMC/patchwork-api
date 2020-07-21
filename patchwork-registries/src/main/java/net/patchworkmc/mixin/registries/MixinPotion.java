@@ -38,7 +38,7 @@ public class MixinPotion implements ExtendedForgeRegistryEntry<Potion> {
 	public Potion setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Potion)(Object)this;
+		return (Potion) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

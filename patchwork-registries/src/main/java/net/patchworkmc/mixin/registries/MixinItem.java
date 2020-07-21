@@ -38,7 +38,7 @@ public class MixinItem implements ExtendedForgeRegistryEntry<Item> {
 	public Item setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Item)(Object)this;
+		return (Item) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

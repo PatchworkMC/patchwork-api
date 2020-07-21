@@ -38,7 +38,7 @@ public class MixinChunkStatus implements ExtendedForgeRegistryEntry<ChunkStatus>
 	public ChunkStatus setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (ChunkStatus)(Object)this;
+		return (ChunkStatus) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

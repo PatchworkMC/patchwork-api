@@ -38,7 +38,7 @@ public class MixinStatusEffect implements ExtendedForgeRegistryEntry<StatusEffec
 	public StatusEffect setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (StatusEffect)(Object)this;
+		return (StatusEffect) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

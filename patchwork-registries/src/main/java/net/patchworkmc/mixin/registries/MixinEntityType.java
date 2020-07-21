@@ -38,7 +38,7 @@ public class MixinEntityType implements ExtendedForgeRegistryEntry<EntityType> {
 	public EntityType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (EntityType)(Object)this;
+		return (EntityType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

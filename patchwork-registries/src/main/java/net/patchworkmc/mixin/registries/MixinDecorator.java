@@ -38,7 +38,7 @@ public class MixinDecorator implements ExtendedForgeRegistryEntry<Decorator> {
 	public Decorator setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Decorator)(Object)this;
+		return (Decorator) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

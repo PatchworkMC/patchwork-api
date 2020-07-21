@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -39,7 +38,7 @@ public class MixinBiome implements ExtendedForgeRegistryEntry<Biome> {
 	public Biome setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Biome)(Object)this;
+		return (Biome) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

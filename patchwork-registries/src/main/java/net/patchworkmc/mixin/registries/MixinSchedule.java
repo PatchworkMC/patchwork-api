@@ -38,7 +38,7 @@ public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
 	public Schedule setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Schedule)(Object)this;
+		return (Schedule) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

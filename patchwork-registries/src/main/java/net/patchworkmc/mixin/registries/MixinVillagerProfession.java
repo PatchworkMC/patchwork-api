@@ -38,7 +38,7 @@ public class MixinVillagerProfession implements ExtendedForgeRegistryEntry<Villa
 	public VillagerProfession setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (VillagerProfession)(Object)this;
+		return (VillagerProfession) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

@@ -43,7 +43,7 @@ public class MixinRecipeSerializerSubclass implements ExtendedForgeRegistryEntry
 	public RecipeSerializer setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (RecipeSerializer)this;
+		return (RecipeSerializer) this;
 	}
 
 	public Identifier getRegistryName() {

@@ -38,7 +38,7 @@ public class MixinMemoryModuleType implements ExtendedForgeRegistryEntry<MemoryM
 	public MemoryModuleType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (MemoryModuleType)(Object)this;
+		return (MemoryModuleType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

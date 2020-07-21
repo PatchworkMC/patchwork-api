@@ -38,7 +38,7 @@ public class MixinEnchantment implements ExtendedForgeRegistryEntry<Enchantment>
 	public Enchantment setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Enchantment)(Object)this;
+		return (Enchantment) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

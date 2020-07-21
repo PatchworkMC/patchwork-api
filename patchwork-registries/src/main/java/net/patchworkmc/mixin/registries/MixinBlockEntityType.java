@@ -38,7 +38,7 @@ public class MixinBlockEntityType implements ExtendedForgeRegistryEntry<BlockEnt
 	public BlockEntityType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (BlockEntityType)(Object)this;
+		return (BlockEntityType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

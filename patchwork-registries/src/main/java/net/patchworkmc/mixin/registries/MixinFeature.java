@@ -38,7 +38,7 @@ public class MixinFeature implements ExtendedForgeRegistryEntry<Feature> {
 	public Feature setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Feature)(Object)this;
+		return (Feature) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

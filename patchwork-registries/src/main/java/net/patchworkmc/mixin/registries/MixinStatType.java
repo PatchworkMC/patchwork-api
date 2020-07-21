@@ -38,7 +38,7 @@ public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
 	public StatType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (StatType)(Object)this;
+		return (StatType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

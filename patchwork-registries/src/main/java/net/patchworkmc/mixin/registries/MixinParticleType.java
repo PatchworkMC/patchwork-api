@@ -38,7 +38,7 @@ public class MixinParticleType implements ExtendedForgeRegistryEntry<ParticleTyp
 	public ParticleType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (ParticleType)(Object)this;
+		return (ParticleType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {
