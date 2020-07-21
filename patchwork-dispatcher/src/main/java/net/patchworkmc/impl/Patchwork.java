@@ -107,6 +107,10 @@ public class Patchwork implements ModInitializer {
 					error = new PatchworkInitializationException("Failed to construct Patchwork mods");
 				}
 
+				if (t instanceof NoClassDefFoundError || t instanceof NoSuchMethodError || t instanceof NoSuchFieldError) {
+					throw new PatchworkInitializationException("Patchwork mod "+ initializer.getModId() + " tried to access an unimplemented class or class member.", t);
+				}
+
 				error.addSuppressed(t);
 			}
 
