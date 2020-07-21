@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
@@ -73,7 +74,8 @@ public abstract class MixinModelLoader implements SpecialModelProvider {
 	 * @param me
 	 * @param modelId
 	 */
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = Signatures.ModelLoader_addModel, ordinal = 2))
+	@Redirect(slice = @Slice(from = @At(value = "INVOKE_STRING", target = Signatures.Profiler_swap, args = "ldc=special")),
+			method = "<init>", at = @At(value = "INVOKE", target = Signatures.ModelLoader_addModel, ordinal = 0))
 	private void patchwork_addModel_return(ModelLoader me, ModelIdentifier modelId) {
 		addModel(modelId);
 
