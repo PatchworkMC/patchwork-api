@@ -24,6 +24,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
+import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 
 /*
@@ -31,6 +32,10 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class BasicEventHooks {
+	public static void firePlayerLoggedIn(PlayerEntity player) {
+		EntityEvents.onPlayerLoggedIn(player);
+	}
+
 	public static void onPlayerPreTick(PlayerEntity player) {
 		LifecycleEvents.firePlayerTickEvent(TickEvent.Phase.START, player);
 	}
