@@ -44,16 +44,15 @@ public abstract class MixinLootPoolBuilder implements ForgeLootPool.Builder {
 	private void addNameToConstructor(CallbackInfoReturnable<LootPool> cir) {
 		LootPool ret = cir.getReturnValue();
 		((PatchworkLootPool) ret).patchwork$setName(name);
-
-		// is this necessary?
-		cir.setReturnValue(ret);
 	}
 
+	@Override
 	public LootPool.Builder name(String name) {
 		this.name = name;
 		return (LootPool.Builder) (Object) this;
 	}
 
+	@Override
 	public LootPool.Builder bonusRolls(float min, float max) {
 		this.bonusRollsRange = new UniformLootTableRange(min, max);
 		return (LootPool.Builder) (Object) this;

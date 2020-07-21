@@ -31,7 +31,7 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 @Mixin(MinecraftServer.class)
 public class MixinMinecraftServer {
 	@Inject(method = "run", at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.exit ()V"))
-	void serverStoppedHook(CallbackInfo ci) {
+	private void serverStoppedHook(CallbackInfo ci) {
 		LifecycleEvents.handleServerStopped((MinecraftServer) (Object) this);
 	}
 }

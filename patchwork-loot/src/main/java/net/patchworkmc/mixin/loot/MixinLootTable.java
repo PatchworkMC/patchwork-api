@@ -41,10 +41,12 @@ public class MixinLootTable implements ForgeLootTable {
 
 	// TODO: freezing stuff
 
+	@Override
 	public LootPool getPool(String name) {
 		return ((FabricLootSupplier) this).getPools().stream().filter(e -> name.equals(((ForgeLootPool) e).getName())).findFirst().orElse(null);
 	}
 
+	@Override
 	public LootPool removePool(String name) {
 		// checkFrozen();
 		for (int idx = 0; idx < pools.length; ++idx) {
@@ -60,6 +62,7 @@ public class MixinLootTable implements ForgeLootTable {
 		return null;
 	}
 
+	@Override
 	public void addPool(LootPool pool) {
 		// checkFrozen();
 		if (((FabricLootSupplier) this).getPools().stream().anyMatch(e -> e == pool || ((ForgeLootPool) e).getName().equals(((ForgeLootPool) pool).getName()))) {

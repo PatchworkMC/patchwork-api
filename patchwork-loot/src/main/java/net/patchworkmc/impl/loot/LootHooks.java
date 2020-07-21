@@ -39,6 +39,7 @@ import net.minecraft.util.JsonHelper;
 
 import net.patchworkmc.impl.event.loot.LootEvents;
 
+// NOTE: this class is more or less a direct copy of parts of Forge's ForgeHooks.
 public class LootHooks {
 	@Unique
 	private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();

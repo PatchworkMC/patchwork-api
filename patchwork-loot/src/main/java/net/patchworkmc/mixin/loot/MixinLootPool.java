@@ -44,6 +44,7 @@ public class MixinLootPool implements PatchworkLootPool, ForgeLootPool {
 
 	// implementation detail
 	// TODO: if we could have an inner class that was also a mixin, we could set this as protected?
+	@Override
 	public void patchwork$setName(String name) {
 		this.name = name;
 	}
@@ -52,23 +53,28 @@ public class MixinLootPool implements PatchworkLootPool, ForgeLootPool {
 
 	// TODO: freezing stuff
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public LootTableRange getRolls() {
 		return rollsRange;
 	}
 
+	@Override
 	public LootTableRange getBonusRolls() {
 		return this.bonusRollsRange;
 	}
 
+	@Override
 	public void setRolls(UniformLootTableRange v) {
 		// checkFrozen();
 		this.rollsRange = v;
 	}
 
+	@Override
 	public void setBonusRolls(UniformLootTableRange v) {
 		// checkFrozen();
 		this.bonusRollsRange = v;
