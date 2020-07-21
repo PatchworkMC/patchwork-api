@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinStatType implements ExtendedForgeRegistryEntry<StatType> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<StatType> setRegistryName(Identifier name) {
+	public StatType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (StatType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

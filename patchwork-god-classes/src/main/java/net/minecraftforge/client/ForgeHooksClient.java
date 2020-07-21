@@ -19,9 +19,16 @@
 
 package net.minecraftforge.client;
 
+import java.util.Set;
+
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.util.Identifier;
 import net.minecraft.client.Mouse;
 
 import net.patchworkmc.impl.event.input.InputEvents;
+import net.patchworkmc.impl.event.render.RenderEvents;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -42,5 +49,21 @@ public class ForgeHooksClient {
 
 	public static boolean onRawMouseClicked(int button, int action, int mods) {
 		return InputEvents.onRawMouseClicked(button, action, mods);
+	}
+
+	public static void onBlockColorsInit(BlockColors blockColors) {
+		RenderEvents.onBlockColorsInit(blockColors);
+	}
+
+	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
+		RenderEvents.onItemColorsInit(itemColors, blockColors);
+	}
+
+	public static void onTextureStitchedPre(SpriteAtlasTexture map, Set<Identifier> resourceLocations) {
+		RenderEvents.onTextureStitchPre(map, resourceLocations);
+	}
+
+	public static void onTextureStitchedPost(SpriteAtlasTexture map) {
+		RenderEvents.onTextureStitchPost(map);
 	}
 }

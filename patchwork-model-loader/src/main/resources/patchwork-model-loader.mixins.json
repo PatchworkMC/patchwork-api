@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.modelloader",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinBakedModelManager",
+    "MixinModelLoader"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
