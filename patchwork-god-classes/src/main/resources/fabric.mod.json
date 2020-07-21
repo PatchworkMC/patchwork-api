@@ -19,7 +19,8 @@
     "patchwork-fml": "*",
     "patchwork-capabilities": "*",
     "patchwork-events-lifecycle": "*",
-    "patchwork-events-rendering": "*"
+    "patchwork-events-rendering": "*",
+    "patchwork-loot": "*"
   },
   "custom": {
     "modmenu:api": true,

@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.server;
 
+import java.util.concurrent.CountDownLatch;
+
 import net.minecraft.server.MinecraftServer;
 
 import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
@@ -28,6 +30,7 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
  */
 public class ServerLifecycleHooks {
 	public static MinecraftServer currentServer;
+	public static volatile CountDownLatch exitLatch = null;
 
 	public static MinecraftServer getCurrentServer() {
 		return currentServer;
@@ -47,5 +50,9 @@ public class ServerLifecycleHooks {
 
 	public static void handleServerStarted(final MinecraftServer server) {
 		LifecycleEvents.handleServerStarted(server);
+	}
+
+	public static void handleServerStopped(final MinecraftServer server) {
+		LifecycleEvents.handleServerStopped(server);
 	}
 }

@@ -23,6 +23,8 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -33,12 +35,16 @@ import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.loot.LootManager;
+import net.minecraft.loot.LootTable;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.loot.LootHooks;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -97,5 +103,14 @@ public class ForgeHooks {
 
 	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
 		return EntityEvents.attackEntity(player, target);
+	}
+
+	@Nullable
+	public static LootTable loadLootTable(Gson gson, Identifier name, JsonObject data, boolean custom, LootManager lootTableManager) {
+		return LootHooks.loadLootTable(gson, name, data, custom, lootTableManager);
+	}
+
+	public static String readPoolName(JsonObject json) {
+		return LootHooks.readPoolName(json);
 	}
 }

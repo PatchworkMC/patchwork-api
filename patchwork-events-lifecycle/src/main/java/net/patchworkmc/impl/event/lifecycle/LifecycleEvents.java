@@ -20,6 +20,7 @@
 package net.patchworkmc.impl.event.lifecycle;
 
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -91,6 +93,18 @@ public class LifecycleEvents implements ModInitializer {
 
 	public static void handleLoadComplete() {
 		loadCompleteCallback.run();
+	}
+
+	public static void handleServerStopped(final MinecraftServer server) {
+		MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent(server));
+		ServerLifecycleHooks.currentServer = null;
+		LogicalSidedProvider.setServer(null);
+		CountDownLatch latch = ServerLifecycleHooks.exitLatch;
+
+		if (latch != null) {
+			latch.countDown();
+			ServerLifecycleHooks.exitLatch = null;
+		}
 	}
 
 	@Override
