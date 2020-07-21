@@ -25,7 +25,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraft.util.Identifier;
 
 public interface ExtendedForgeRegistryEntry<V> extends IForgeRegistryEntry<V> {
-	default IForgeRegistryEntry setRegistryName(String full) {
+	default V setRegistryName(String full) {
 		String activeNamespace = ModLoadingContext.get().getActiveNamespace();
 
 		if (activeNamespace == null || activeNamespace.equals("minecraft")) {
@@ -47,7 +47,7 @@ public interface ExtendedForgeRegistryEntry<V> extends IForgeRegistryEntry<V> {
 		return this.setRegistryName(identifier);
 	}
 
-	default IForgeRegistryEntry setRegistryName(String namespace, String name) {
+	default V setRegistryName(String namespace, String name) {
 		return this.setRegistryName(new Identifier(namespace, name));
 	}
 }

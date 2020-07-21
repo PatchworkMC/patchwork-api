@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinMemoryModuleType implements ExtendedForgeRegistryEntry<MemoryM
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<MemoryModuleType> setRegistryName(Identifier name) {
+	public MemoryModuleType setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (MemoryModuleType) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

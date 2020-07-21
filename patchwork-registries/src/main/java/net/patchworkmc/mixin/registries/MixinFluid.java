@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinFluid implements ExtendedForgeRegistryEntry<Fluid> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Fluid> setRegistryName(Identifier name) {
+	public Fluid setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (Fluid) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

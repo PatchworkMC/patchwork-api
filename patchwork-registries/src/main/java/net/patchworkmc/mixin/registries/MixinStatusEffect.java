@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinStatusEffect implements ExtendedForgeRegistryEntry<StatusEffec
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<StatusEffect> setRegistryName(Identifier name) {
+	public StatusEffect setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (StatusEffect) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<SoundEvent> setRegistryName(Identifier name) {
+	public SoundEvent setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (SoundEvent) (Object) this;
 	}
 
 	public Identifier getRegistryName() {
