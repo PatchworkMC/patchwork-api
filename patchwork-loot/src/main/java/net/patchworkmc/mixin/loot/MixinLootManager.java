@@ -29,9 +29,10 @@ import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.loot.LootManager;
@@ -39,11 +40,11 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
 import net.patchworkmc.impl.event.loot.LootEvents;
 import net.patchworkmc.impl.loot.LootHooks;
+import net.patchworkmc.impl.loot.WrappedImmutableMapBuilder;
 
 @Mixin(LootManager.class)
 public abstract class MixinLootManager extends MixinJsonDataLoader {
@@ -60,8 +61,7 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 	private void prepareJson(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {
 		map.forEach((id, lootTableObj) -> {
 			try {
-				Resource res = resourceManager.getResource(this.getPreparedPath(id));
-				boolean custom = res == null || !res.getResourcePackName().equals("Default");
+				boolean custom = isLootTableCustom(resourceManager, id);
 				LootManager lootManager = (LootManager) (Object) this;
 				LootHooks.prepareLootTable(id, lootTableObj, custom, lootManager);
 			} catch (IOException ex) {
@@ -70,19 +70,25 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 		});
 	}
 
-	@ModifyVariable(method = "method_20711", at = @At(value = "INVOKE_ASSIGN", target = "com/google/gson/Gson.fromJson (Lcom/google/gson/JsonElement;Ljava/lang/Class;)Ljava/lang/Object;"))
-	private static LootTable modify_lootTable(LootTable table, ImmutableMap.Builder<Identifier, LootTable> builder, Identifier id, JsonObject obj) {
-		// TODO: this is the only reason this implementation doesn't work. again. ugh.
-		//       is there a hacky way we can pass an arbitrary java object as a JsonElement?
+	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "com/google/common/collect/ImmutableMap.builder ()Lcom/google/common/collect/ImmutableMap$Builder;"))
+	private ImmutableMap.Builder<Identifier, LootTable> wrapBuilder(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler) {
 		LootManager lootManager = (LootManager) (Object) this;
+		return new WrappedImmutableMapBuilder<Identifier, LootTable>((id, table) -> {
+			// TODO: handle exception?
+			if (!isLootTableCustom(resourceManager, id)) {
+				table = LootEvents.loadLootTable(id, table, lootManager);
+			}
 
-		if (!JsonHelper.getBoolean(obj, "custom", false)) {
-			table = LootEvents.loadLootTable(id, table, lootManager);
-		}
+			// if (table != null) {
+			// 	table.freeze();
+			// }
+			return table;
+		});
+	}
 
-		// if (ret != null) {
-		// 	ret.freeze();
-		// }
-		return table;
+	@Unique
+	private boolean isLootTableCustom(ResourceManager resourceManager, Identifier id) throws IOException {
+		Resource res = resourceManager.getResource(this.getPreparedPath(id));
+		return res == null || !res.getResourcePackName().equals("Default");
 	}
 }

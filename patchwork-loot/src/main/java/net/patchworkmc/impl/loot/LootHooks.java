@@ -35,10 +35,7 @@ import net.patchworkmc.impl.event.loot.LootEvents;
 
 public class LootHooks {
 	public static void prepareLootTable(Identifier id, JsonObject lootTableObj, boolean custom, LootManager lootTableManager) {
-		// passing 'custom' value into lambda mixin via json after json parsing
-		lootTableObj.addProperty("custom", custom);
-
-		// passing pool names into loot pool deserialization mixin since we have all the information we need now
+		// passing pool names into loot pool deserialization mixin since we have all the information we need right now, but not later
 		if (lootTableObj.has("pools")) {
 			MutableInt poolCount = new MutableInt(0);
 			JsonArray pools = lootTableObj.getAsJsonArray("pools");
