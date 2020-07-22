@@ -23,6 +23,7 @@
   "client": [
     "MixinClientWorld",
     "MixinClientPlayerEntity",
+    "MixinItemStack",
     "MixinOtherClientPlayerEntity"
   ],
   "injectors": {

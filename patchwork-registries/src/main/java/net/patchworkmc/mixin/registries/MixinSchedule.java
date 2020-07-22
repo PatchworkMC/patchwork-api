@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -36,10 +35,10 @@ public class MixinSchedule implements ExtendedForgeRegistryEntry<Schedule> {
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<Schedule> setRegistryName(Identifier name) {
+	public Schedule setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (Schedule) (Object) this;
 	}
 
 	public Identifier getRegistryName() {

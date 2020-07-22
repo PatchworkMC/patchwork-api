@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.resource",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinBakedModelManager",
+    "MixinBlockRenderManager",
+    "MixinFoliageColormapResourceSupplier",
+    "MixinGameRenderer",
+    "MixinGrassColormapResourceSupplier",
+    "MixinItemRenderer",
+    "MixinLanguageManager",
+    "MixinLanguageOptionsScreen",
+    "MixinSearchManager",
+    "MixinSoundManager",
+    "MixinSynchronousResourceReloadListener",
+    "MixinWorldRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

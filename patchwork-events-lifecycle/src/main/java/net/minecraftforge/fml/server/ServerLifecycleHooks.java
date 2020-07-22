@@ -19,15 +19,40 @@
 
 package net.minecraftforge.fml.server;
 
+import java.util.concurrent.CountDownLatch;
+
 import net.minecraft.server.MinecraftServer;
+
+import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 
 /**
  * This is a stub of the ServerLifecycleHooks class in Forge for mods that use getCurrentServer.
  */
 public class ServerLifecycleHooks {
 	public static MinecraftServer currentServer;
+	public static volatile CountDownLatch exitLatch = null;
 
 	public static MinecraftServer getCurrentServer() {
 		return currentServer;
+	}
+
+	// Forge returns `!MinecraftForge.EVENT_BUS.post(...)`, so true == continue, false == cancel.
+	public static boolean handleServerAboutToStart(final MinecraftServer server) {
+		LifecycleEvents.handleServerAboutToStart(server);
+		return true; // patchwork does not allow you to cancel server startup.
+	}
+
+	// Forge returns `!MinecraftForge.EVENT_BUS.post(...)`, so true == continue, false == cancel.
+	public static boolean handleServerStarting(final MinecraftServer server) {
+		LifecycleEvents.handleServerStarting(server);
+		return true; // patchwork does not allow you to cancel server startup.
+	}
+
+	public static void handleServerStarted(final MinecraftServer server) {
+		LifecycleEvents.handleServerStarted(server);
+	}
+
+	public static void handleServerStopped(final MinecraftServer server) {
+		LifecycleEvents.handleServerStopped(server);
 	}
 }

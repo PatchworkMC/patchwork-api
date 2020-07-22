@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml;
 
+import java.util.function.Supplier;
+
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -50,6 +52,17 @@ public class ModLoadingContext {
 		} else {
 			return activeContainer.getNamespace();
 		}
+	}
+
+	/**
+	 * Register an {@link ExtensionPoint} with the mod container.
+	 *
+	 * @param point     The extension point to register
+	 * @param extension An extension operator
+	 * @param           <T> The type signature of the extension operator
+	 */
+	public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
+		getActiveContainer().registerExtensionPoint(point, extension);
 	}
 
 	public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
