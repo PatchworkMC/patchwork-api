@@ -1,0 +1,6 @@
+archivesBaseName = "patchwork-items"
+version = getSubprojectVersion(project, "0.1.0")
+
+dependencies {
+	compile project(path: ':patchwork-capabilities', configuration: 'dev')
+}
