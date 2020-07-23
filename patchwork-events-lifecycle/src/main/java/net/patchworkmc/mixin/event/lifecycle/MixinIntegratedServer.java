@@ -32,7 +32,7 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 @Mixin(IntegratedServer.class)
 public class MixinIntegratedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/integrated/IntegratedServer;loadWorld(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/level/LevelGeneratorType;Lcom/google/gson/JsonElement;)V"))
-	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
-		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
-	}
+	priv​ate v​oid onSer​verAboutToStart(CallbackI​nfoReturnable<B​oolean> ci​r)​ {​
+		LifecycleEven​ts.handleS​erverAboutToStart((Minec​raftServer​) ​(Obje​ct)​ th​is)​;​
+	​}​
 }
