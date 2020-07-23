@@ -72,8 +72,6 @@ public class MixinHopperBlockEntity {
 					LazyOptional<IItemHandler> capability = ((ICapabilityProvider) blockEntity).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction.getOpposite());
 					PatchworkItems.currentSide.set(null);
 					capability.ifPresent(result -> {
-						System.out.println(result);
-
 						if (result instanceof IItemHandlerModifiable) {
 							cir.setReturnValue(new ItemHandlerInventoryWrapper((IItemHandlerModifiable) result));
 						}
