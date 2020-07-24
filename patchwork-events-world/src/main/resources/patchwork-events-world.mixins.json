@@ -4,11 +4,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinChunkGenerator",
+    "MixinFarmlandBlock",
     "MixinMinecraftServer",
+    "MixinSaplingBlock",
     "MixinServerPlayerInteractionManager",
     "MixinServerWorld",
     "MixinSpawnHelper",
-    "MixinThreadedAnvilChunkStorage",
+    "MixinThreadedAnvilChunkStorage"
   ],
   "client": [
     "MixinClientWorld",

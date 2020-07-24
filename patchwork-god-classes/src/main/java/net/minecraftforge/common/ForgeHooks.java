@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -40,10 +41,13 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.event.world.WorldEvents;
 import net.patchworkmc.impl.loot.LootHooks;
 
 /*
@@ -112,5 +116,9 @@ public class ForgeHooks {
 
 	public static String readPoolName(JsonObject json) {
 		return LootHooks.readPoolName(json);
+	}
+
+	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
+		return WorldEvents.onFarmlandTrample(world, pos, state, fallDistance, entity);
 	}
 }

@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -107,6 +108,29 @@ public class BlockEvent extends Event {
 		@Override
 		public boolean isCancelable() {
 			return true;
+		}
+	}
+
+	/**
+	 * Fired when when farmland gets trampled
+	 * This event is cancellable.
+	 */
+	public static class FarmlandTrampleEvent extends BlockEvent {
+		private final Entity entity;
+		private final float fallDistance;
+
+		public FarmlandTrampleEvent(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
+			super(world, pos, state);
+			this.entity = entity;
+			this.fallDistance = fallDistance;
+		}
+
+		public Entity getEntity() {
+			return entity;
+		}
+
+		public float getFallDistance() {
+			return fallDistance;
 		}
 	}
 }

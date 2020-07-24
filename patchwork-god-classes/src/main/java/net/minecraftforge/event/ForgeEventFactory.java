@@ -19,6 +19,8 @@
 
 package net.minecraftforge.event;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -31,6 +33,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
@@ -38,6 +41,7 @@ import net.minecraft.world.World;
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.loot.LootEvents;
+import net.patchworkmc.impl.event.world.WorldEvents;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -72,5 +76,9 @@ public class ForgeEventFactory {
 
 	public static LootTable loadLootTable(Identifier name, LootTable table, LootManager lootTableManager) {
 		return LootEvents.loadLootTable(name, table, lootTableManager);
+	}
+
+	public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos) {
+		return WorldEvents.onSaplingGrowTree(world, rand, pos);
 	}
 }

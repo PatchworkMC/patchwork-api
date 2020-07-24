@@ -21,13 +21,20 @@ package net.patchworkmc.impl.event.world;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
 
@@ -56,5 +63,20 @@ public class WorldEvents {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
+		//TODO: In forge, the possibility of trampling is handled by IForgeEntity.canTrample
+		// Maybe there's a good way to reconcile that to not break any Fabric mods trying to
+		// manipulate crop trampling, but for now I just let the vanilla check do it's thing.
+		BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+		MinecraftForge.EVENT_BUS.post(event);
+		return !event.isCanceled();
+	}
+
+	public static boolean onSaplingGrowTree(IWorld world, Random rand, BlockPos pos) {
+		SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getResult() != Event.Result.DENY;
 	}
 }
