@@ -20,15 +20,21 @@
 package net.patchworkmc.mixin.event.world;
 
 import java.io.IOException;
+import java.util.Map;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
@@ -36,6 +42,16 @@ import net.patchworkmc.impl.event.world.WorldEvents;
 public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> {
 	public MixinMinecraftServer(String name) {
 		super(name);
+	}
+
+	@Shadow
+	@Final
+	private Map<DimensionType, ServerWorld> worlds;
+
+	// Fabric usually fires the event much earlier in the method, so this is just picking a point closer to when Forge would fire it.
+	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "net/minecraft/world/dimension/DimensionType.getAll ()Ljava/lang/Iterable;"))
+	private void fireLoadForOverworld(CallbackInfo info) {
+		WorldEvents.onWorldLoad(worlds.get(DimensionType.OVERWORLD));
 	}
 
 	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close ()V"))

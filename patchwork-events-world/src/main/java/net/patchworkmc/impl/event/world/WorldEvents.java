@@ -29,6 +29,7 @@ import net.minecraft.entity.EntityCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 
 import net.fabricmc.api.ModInitializer;
@@ -64,7 +65,11 @@ public class WorldEvents implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ServerWorldEvents.LOAD.register((server, world) -> {
-			onWorldLoad(world);
+			// Fabric fires this much earlier than Forge does for the overworld
+			// So, we're going to manually fire it for the overworld.
+			if (world.getDimension().getType() != DimensionType.OVERWORLD) {
+				onWorldLoad(world);
+			}
 		});
 	}
 }
