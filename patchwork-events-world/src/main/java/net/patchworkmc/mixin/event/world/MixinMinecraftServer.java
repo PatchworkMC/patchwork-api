@@ -20,12 +20,8 @@
 package net.patchworkmc.mixin.event.world;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -33,7 +29,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
-import net.minecraft.world.dimension.DimensionType;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
@@ -41,48 +36,6 @@ import net.patchworkmc.impl.event.world.WorldEvents;
 public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> {
 	public MixinMinecraftServer(String name) {
 		super(name);
-	}
-
-	@Shadow
-	@Final
-	private Map<DimensionType, ServerWorld> worlds;
-
-	/*
-	// This is a variant of the world load hook that is less likely to break mods and more likely to break on updates.
-	// Should get called once per loop, regardless of which if branch it takes.
-	@Inject(
-		method = "createWorlds",
-		slice = @Slice(
-			from = @At(value = "INVOKE", target = "java/util/Iterator.hasNext ()Z")
-		),
-		at = @At(value = "JUMP", opcode = Opcodes.GOTO),
-		locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void hookCreateWorlds(WorldSaveHandler worldSaveHandler, LevelProperties properties, LevelInfo levelInfo, WorldGenerationProgressListener worldGenerationProgressListener, CallbackInfo ci, ServerWorld serverWorld, ServerWorld serverWorld2, Iterator var7, DimensionType dimensionType) {
-		WorldEvents.onWorldLoad(this.worlds.get(dimensionType));
-	}
-
-	*/
-
-	// This injection gets called at the beginning of each loop, and is used to special case the overworld dimension type.
-	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Iterator.next ()Ljava/lang/Object;"))
-	private Object proxyNextWorldToSpecialCaseOverworld(Iterator<DimensionType> iterator) {
-		DimensionType type = iterator.next();
-
-		if (type == DimensionType.OVERWORLD) {
-			WorldEvents.onWorldLoad(this.worlds.get(type));
-		}
-
-		return type;
-	}
-
-	// This injection handles every other dimension type.
-	@Redirect(method = "createWorlds", at = @At(value = "INVOKE", target = "java/util/Map.put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", ordinal = 1))
-	private Object proxyPutWorld(Map<Object, Object> worlds, Object type, Object world) {
-		worlds.put(type, world);
-		WorldEvents.onWorldLoad((ServerWorld) world);
-
-		return world;
 	}
 
 	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close ()V"))

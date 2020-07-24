@@ -31,7 +31,10 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
 
-public class WorldEvents {
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+
+public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
@@ -56,5 +59,12 @@ public class WorldEvents {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	@Override
+	public void onInitialize() {
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			onWorldLoad(world);
+		});
 	}
 }
