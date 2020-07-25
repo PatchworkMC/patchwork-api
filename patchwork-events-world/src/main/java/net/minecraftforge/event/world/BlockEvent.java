@@ -119,9 +119,9 @@ public class BlockEvent extends Event {
 	 * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
 	 *
 	 * <p>The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
-	 * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
+	 * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.</p>
 	 *
-	 * <p>{@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
+	 * <p>{@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.</p>
 	 */
 	public static class HarvestDropsEvent extends BlockEvent {
 		private final int fortuneLevel;

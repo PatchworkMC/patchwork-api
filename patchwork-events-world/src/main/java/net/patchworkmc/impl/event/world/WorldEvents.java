@@ -64,7 +64,7 @@ public class WorldEvents {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
 	}
 
-	// TODO: Leaving this unimplemented is intentional. See: https://github.com/MinecraftForge/MinecraftForge/issues/5828
+	// TODO: Leaving this unfired is intentional. See: https://github.com/MinecraftForge/MinecraftForge/issues/5828
 	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
 		BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
 		MinecraftForge.EVENT_BUS.post(event);
