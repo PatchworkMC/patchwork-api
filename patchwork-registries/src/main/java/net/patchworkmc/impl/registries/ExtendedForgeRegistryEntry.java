@@ -25,8 +25,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraft.util.Identifier;
 
 @SuppressWarnings("unchecked")
-public interface ExtendedForgeRegistryEntry<V> extends IForgeRegistryEntry<V> {
-	default IForgeRegistryEntry<V> setRegistryName(String full) {
+public interface ExtendedForgeRegistryEntry<V extends IForgeRegistryEntry<V>> extends IForgeRegistryEntry<V> {
+	default V setRegistryName(String full) {
 		String activeNamespace = ModLoadingContext.get().getActiveNamespace();
 
 		if (activeNamespace == null || activeNamespace.equals("minecraft")) {
@@ -45,10 +45,13 @@ public interface ExtendedForgeRegistryEntry<V> extends IForgeRegistryEntry<V> {
 			System.err.printf("Potentially Dangerous alternative prefix `%s` for name `%s`, expected `%s`. This could be a intended override, but in most cases indicates a broken mod.\n", identifier.getNamespace(), identifier.getPath(), activeNamespace);
 		}
 
-		return (IForgeRegistryEntry<V>) this.setRegistryName(identifier);
+		return this.setRegistryName(identifier);
 	}
 
-	default IForgeRegistryEntry<V> setRegistryName(String namespace, String name) {
-		return (IForgeRegistryEntry<V>) this.setRegistryName(new Identifier(namespace, name));
+	default V setRegistryName(String namespace, String name) {
+		return this.setRegistryName(new Identifier(namespace, name));
 	}
+
+	@Override
+	V setRegistryName(Identifier name);
 }
