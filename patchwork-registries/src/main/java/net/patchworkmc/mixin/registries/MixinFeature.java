@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.registries;
 
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -30,15 +31,15 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(Feature.class)
-public class MixinFeature implements ExtendedForgeRegistryEntry<Feature> {
+public class MixinFeature implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public Feature setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (Feature) (Object) this;
+		return this;
 	}
 
 	public Identifier getRegistryName() {
