@@ -7,19 +7,22 @@
     "MixinEntityTrackerEntry",
     "MixinEntityType",
     "MixinExperienceOrbEntity",
+    "MixinHorseBoneWithPlayerGoal",
     "MixinLivingEntity",
     "MixinMobEntity",
     "MixinMobSpawnerLogic",
+    "MixinOcelotEntity",
     "MixinPlayerEntity",
     "MixinPlayerManager",
     "MixinServerPlayerEntity",
     "MixinServerWorld",
     "MixinSpawnHelper",
+    "MixinTameableEntitySubclass",
     "MixinWorldChunk"
   ],
   "client": [
-    "MixinClientWorld",
     "MixinClientPlayerEntity",
+    "MixinClientWorld",
     "MixinItemStack",
     "MixinOtherClientPlayerEntity"
   ],
