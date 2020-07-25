@@ -7,7 +7,7 @@
     "MixinEntityTrackerEntry",
     "MixinEntityType",
     "MixinExperienceOrbEntity",
-    "MixinHorseBoneWithPlayerGoal",
+    "MixinHorseBondWithPlayerGoal",
     "MixinLivingEntity",
     "MixinMobEntity",
     "MixinMobSpawnerLogic",

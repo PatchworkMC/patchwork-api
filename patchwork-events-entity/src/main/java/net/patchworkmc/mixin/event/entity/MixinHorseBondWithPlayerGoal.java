@@ -34,7 +34,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(HorseBondWithPlayerGoal.class)
-public class MixinHorseBoneWithPlayerGoal {
+public class MixinHorseBondWithPlayerGoal {
 	@Shadow
 	@Final
 	private HorseBaseEntity horse;
