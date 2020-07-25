@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-tags",
+  "name": "Patchwork Tags",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-tags/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.8.4",
+    "patchwork-fml": "*"
+  },
+  "description": "Implementation of the Forge Tags API.",
+  "entrypoints": {
+    "main": [
+    ]
+  },
+  "mixins": [
+    "patchwork-tags.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
+

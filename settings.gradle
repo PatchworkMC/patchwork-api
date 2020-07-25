@@ -39,4 +39,5 @@ include 'patchwork-registries'
 include 'patchwork-resource'
 include 'patchwork-tooltype'
 include 'patchwork-vanilla-patches'
+include 'patchwork-tags'
 
