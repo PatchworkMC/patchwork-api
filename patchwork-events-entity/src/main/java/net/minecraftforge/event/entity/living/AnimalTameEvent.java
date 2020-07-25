@@ -27,7 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 /**
  * This event is fired when an {@link AnimalEntity} is tamed.
  *
- * <p>It is fired via ForgeEventFactory#onAnimalTame(EntityAnimal, EntityPlayer).
+ * <p>It is fired via ForgeEventFactory#onAnimalTame(AnimalEntity, PlayerEntity).
  * Forge fires this event for applicable vanilla animals, mods need to fire it themselves.
  * This event is cancellable. If canceled, taming the animal will fail.
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
