@@ -79,7 +79,7 @@ public class WorldEvents implements ModInitializer {
 		return event.getDropChance();
 	}
 
-  public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
+	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
 		if (watch) {
 			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
 		} else {
