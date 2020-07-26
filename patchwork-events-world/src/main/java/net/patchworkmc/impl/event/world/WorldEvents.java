@@ -66,7 +66,7 @@ public class WorldEvents {
 	}
 
 	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
-		//TODO: In forge, the possibility of trampling is handled by IForgeEntity.canTrample
+		// TODO: In forge, the possibility of trampling is handled by IForgeEntity.canTrample
 		// Maybe there's a good way to reconcile that to not break any Fabric mods trying to
 		// manipulate crop trampling, but for now I just let the vanilla check do it's thing.
 		BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);

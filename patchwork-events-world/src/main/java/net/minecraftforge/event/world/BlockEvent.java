@@ -132,5 +132,10 @@ public class BlockEvent extends Event {
 		public float getFallDistance() {
 			return fallDistance;
 		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
 	}
 }

@@ -26,17 +26,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 
 /**
- * SaplingGrowTreeEvent is fired when a sapling grows into a tree.<br>
- * This event is fired during sapling growth in
- * {@link net.minecraft.block.SaplingBlock#generate(IWorld, BlockPos, BlockState, Random)}.<br>
- * <br>
- * {@link #pos} contains the coordinates of the growing sapling. <br>
- * {@link #rand} contains an instance of Random for use. <br>
- * <br>
- * This event is not cancellable.<br>
- * <br>
- * This event has a result.<br>
- * This result determines if the sapling is allowed to grow. <br>
+ * SaplingGrowTreeEvent is fired when a sapling grows into a tree.
+ *
+ * <p>This event is fired during sapling growth in
+ * {@link net.minecraft.block.SaplingBlock#generate(IWorld, BlockPos, BlockState, Random)}.
+ *
+ * <p>{@link #pos} contains the coordinates of the growing sapling.
+ * {@link #rand} contains an instance of Random for use.
+ *
+ * <p>This event is not cancellable.
+ *
+ * <p>This event has a result.
+ * This result determines if the sapling is allowed to grow.
  */
 
 public class SaplingGrowTreeEvent extends WorldEvent {
