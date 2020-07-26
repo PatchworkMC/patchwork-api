@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import net.minecraft.block.BlockState;
@@ -32,12 +33,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.world.World;
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 
-public class WorldEvents {
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+
+public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
@@ -69,5 +77,24 @@ public class WorldEvents {
 		BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
 		MinecraftForge.EVENT_BUS.post(event);
 		return event.getDropChance();
+	}
+
+  public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
+		if (watch) {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+		} else {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+		}
+	}
+
+	@Override
+	public void onInitialize() {
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			// Fabric fires this much earlier than Forge does for the overworld
+			// So, we're going to manually fire it for the overworld.
+			if (world.getDimension().getType() != DimensionType.OVERWORLD) {
+				onWorldLoad(world);
+			}
+		});
 	}
 }
