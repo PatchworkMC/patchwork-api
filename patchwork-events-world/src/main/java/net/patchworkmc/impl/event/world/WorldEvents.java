@@ -23,9 +23,15 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DefaultedList;
+import net.minecraft.world.World;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -64,6 +70,13 @@ public class WorldEvents implements ModInitializer {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	// TODO: Leaving this unfired is intentional. See: https://github.com/MinecraftForge/MinecraftForge/issues/5828
+	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
+		BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getDropChance();
 	}
 
 	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
