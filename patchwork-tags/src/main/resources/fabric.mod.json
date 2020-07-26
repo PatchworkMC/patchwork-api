@@ -12,6 +12,7 @@
   "authors": [
     "PatchworkMC"
   ],
+  "accessWidener": "patchwork-tags.accesswidener",
   "depends": {
     "fabricloader": ">=0.8.4",
     "patchwork-fml": "*"
