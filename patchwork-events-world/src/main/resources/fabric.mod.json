@@ -14,6 +14,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.8.4",
+    "fabric": ">=0.15.0",
     "patchwork-fml": "*"
   },
   "mixins": [

@@ -33,9 +33,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 
-public class WorldEvents {
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+
+public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
@@ -68,5 +72,15 @@ public class WorldEvents {
 		} else {
 			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
 		}
+
+	@Override
+	public void onInitialize() {
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			// Fabric fires this much earlier than Forge does for the overworld
+			// So, we're going to manually fire it for the overworld.
+			if (world.getDimension().getType() != DimensionType.OVERWORLD) {
+				onWorldLoad(world);
+			}
+		});
 	}
 }
