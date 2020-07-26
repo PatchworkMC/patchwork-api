@@ -14,17 +14,9 @@
   ],
   "accessWidener": "patchwork-tags.accesswidener",
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "patchwork-fml": "*"
+    "fabricloader": ">=0.8.4"
   },
   "description": "Implementation of the Forge Tags API.",
-  "entrypoints": {
-    "main": [
-    ]
-  },
-  "mixins": [
-    "patchwork-tags.mixins.json"
-  ],
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
