@@ -50,4 +50,9 @@ public class AnimalTameEvent extends LivingEvent {
 	public PlayerEntity getTamer() {
 		return tamer;
 	}
+
+	@Override
+	public boolean isCancelable() {
+		return true;
+	}
 }
