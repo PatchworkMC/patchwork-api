@@ -19,8 +19,6 @@
 
 package net.patchworkmc.mixin.event.world;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkWatchEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,6 +31,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.ChunkPos;
 
+import net.patchworkmc.impl.event.world.WorldEvents;
+
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class MixinThreadedAnvilChunkStorage {
 	@Shadow
@@ -40,10 +40,8 @@ public class MixinThreadedAnvilChunkStorage {
 
 	@Inject(method = "sendWatchPackets", at = @At("HEAD"))
 	private void fireWatchEvents(ServerPlayerEntity player, ChunkPos pos, Packet<?>[] packets, boolean withinMaxWatchDistance, boolean withinViewDistance, CallbackInfo callback) {
-		if (withinViewDistance && !withinMaxWatchDistance) {
-			ChunkWatchEvent.Watch event = new ChunkWatchEvent.Watch(player, pos, world);
-
-			MinecraftForge.EVENT_BUS.post(event);
+		if (this.world == player.world && withinMaxWatchDistance != withinViewDistance) {
+			WorldEvents.fireChunkWatch(withinViewDistance, player, pos, this.world);
 		}
 	}
 }
