@@ -84,4 +84,9 @@ public class ItemFishedEvent extends PlayerEvent {
 	public FishingBobberEntity getHookEntity() {
 		return hook;
 	}
+
+	@Override
+	public boolean isCancelable() {
+		return true;
+	}
 }
