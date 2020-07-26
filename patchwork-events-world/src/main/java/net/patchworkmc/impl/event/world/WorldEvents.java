@@ -72,6 +72,7 @@ public class WorldEvents implements ModInitializer {
 		} else {
 			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
 		}
+	}
 
 	@Override
 	public void onInitialize() {
