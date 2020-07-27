@@ -3,8 +3,7 @@
   "package": "net.patchworkmc.mixin.keybindings",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "MixinKeybinding",
-    "MixinGameOptions"
+    "MixinKeybinding"
   ],
   "injectors": {
     "defaultRequire": 1

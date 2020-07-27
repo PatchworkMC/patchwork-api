@@ -19,14 +19,9 @@
 
 package net.patchworkmc.impl.keybindings;
 
-public class KeyBindingTypeChecker {
-	private static boolean IS_VANILLA = false;
+import net.minecraftforge.client.settings.IKeyConflictContext;
+import net.minecraftforge.client.settings.KeyModifier;
 
-	public static boolean isModded() {
-		return !IS_VANILLA;
-	}
-
-	public static void setIsVanilla(boolean isVanilla) {
-		IS_VANILLA = isVanilla;
-	}
+public interface ForgeKeyBindingConstruct {
+	void constructForgeKeyBindingOptions(IKeyConflictContext keyConflictContext, KeyModifier keyModifier);
 }
