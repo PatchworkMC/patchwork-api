@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.ModelLoader;
 
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.model.BakedModel;
@@ -50,7 +49,7 @@ public interface IModelGeometry<T extends IModelGeometry<T>> {
 		return Optional.empty();
 	}
 
-	BakedModel bake(IModelConfiguration owner, ModelLoader bakery, Function<Identifier, Sprite> spriteGetter,
+	BakedModel bake(IModelConfiguration owner, net.minecraft.client.render.model.ModelLoader bakery, Function<Identifier, Sprite> spriteGetter,
 			ModelBakeSettings sprite, VertexFormat format, ModelItemPropertyOverrideList overrides);
 
 	Collection<Identifier> getTextureDependencies(IModelConfiguration owner,

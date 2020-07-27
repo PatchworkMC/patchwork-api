@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 
-import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 
@@ -75,10 +74,9 @@ public interface IModelConfiguration {
 	ModelTransformation getCameraTransforms();
 
 	/**
-	 * @return The combined transformation state including vanilla and forge
-	 *         transforms data.
+	 * @return The combined transformation state including vanilla and forge transforms data.
 	 */
-	ModelBakeSettings getCombinedTransform();
+	// ModelBakeSettings getCombinedState(); // Renamed to getCombinedTransform in 1.15
 
 	/**
 	 * Queries the visibility information for the model parts.
