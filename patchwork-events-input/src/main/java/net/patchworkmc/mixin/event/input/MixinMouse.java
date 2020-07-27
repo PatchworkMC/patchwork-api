@@ -19,9 +19,6 @@
 
 package net.patchworkmc.mixin.event.input;
 
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,37 +29,52 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.Mouse;
 
-@Mixin(Mouse.class)
-public abstract class MixinMouse {
-	@Shadow
-	boolean middleButtonClicked;
-	@Shadow
-	abstract boolean wasLeftButtonClicked();
-	@Shadow
-	abstract boolean wasRightButtonClicked();
-	@Shadow
-	abstract double getX();
-	@Shadow
-	abstract double getY();
+import net.patchworkmc.api.input.ForgeMouse;
+import net.patchworkmc.impl.event.input.InputEvents;
 
+@Mixin(Mouse.class)
+public abstract class MixinMouse implements ForgeMouse {
 	@Inject(method = "onMouseButton", at = @At("RETURN"), cancellable = true)
 	private void fireMouseInput(long window, int button, int action, int mods, CallbackInfo info) {
-		MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent(button, action, mods));
+		InputEvents.fireMouseInput(button, action, mods);
 	}
 
 	@Inject(method = "onMouseButton", at = @At(value = "FIELD", ordinal = 3, target = "Lnet/minecraft/client/Mouse;client:Lnet/minecraft/client/MinecraftClient;", shift = Shift.BEFORE), cancellable = true)
 	private void onRawMouseClicked(long window, int button, int action, int mods, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods))) {
+		if (InputEvents.onRawMouseClicked(button, action, mods)) {
 			info.cancel();
 		}
 	}
 
 	@Inject(method = "onMouseScroll", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSpectator()Z", shift = Shift.BEFORE), cancellable = true)
-	private void onMouseScroll(long window, double d, double e, CallbackInfo info, double f, float i) {
-		final Event event = new InputEvent.MouseScrollEvent(f, wasLeftButtonClicked(), middleButtonClicked, wasRightButtonClicked(), getX(), getY());
-
-		if (MinecraftForge.EVENT_BUS.post(event)) {
+	private void onMouseScroll(long window, double d, double e, CallbackInfo info, double scrollDelta, float i) {
+		if (InputEvents.onMouseScroll((Mouse) (Object) this, scrollDelta)) {
 			info.cancel();
 		}
+	}
+
+	// Methods added by forge
+	@Shadow
+	boolean middleButtonClicked;
+
+	@Shadow
+	double cursorDeltaX;
+
+	@Shadow
+	double cursorDeltaY;
+
+	@Override
+	public boolean isMiddleDown() {
+		return middleButtonClicked;
+	}
+
+	@Override
+	public double getXVelocity() {
+		return cursorDeltaX;
+	}
+
+	@Override
+	public double getYVelocity() {
+		return cursorDeltaY;
 	}
 }

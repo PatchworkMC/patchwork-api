@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.registries;
 
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -35,15 +36,15 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin({ShapedRecipe.Serializer.class, ShapelessRecipe.Serializer.class, CookingRecipeSerializer.class, CuttingRecipe.Serializer.class, SpecialRecipeSerializer.class})
-public class MixinRecipeSerializerSubclass implements ExtendedForgeRegistryEntry<RecipeSerializer> {
+public class MixinRecipeSerializerSubclass implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public RecipeSerializer setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return (RecipeSerializer) this;
+		return this;
 	}
 
 	public Identifier getRegistryName() {

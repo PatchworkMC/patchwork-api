@@ -34,10 +34,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.loot.LootEvents;
+import net.patchworkmc.impl.event.world.WorldEvents;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -72,5 +77,9 @@ public class ForgeEventFactory {
 
 	public static LootTable loadLootTable(Identifier name, LootTable table, LootManager lootTableManager) {
 		return LootEvents.loadLootTable(name, table, lootTableManager);
+	}
+
+	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
+		return WorldEvents.fireBlockHarvesting(drops, world, pos, state, fortune, dropChance, silkTouch, player);
 	}
 }
