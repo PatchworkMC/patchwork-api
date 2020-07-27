@@ -29,6 +29,7 @@ import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
 
+// This interface is moved to net.minecraftforge.client.extensions in 1.15
 public interface IForgeUnbakedModel {
 	/**
 	 * @param textureGetter		Where textures will be looked up when baking

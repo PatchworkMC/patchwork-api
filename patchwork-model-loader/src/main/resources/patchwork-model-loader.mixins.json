@@ -3,6 +3,7 @@
   "package": "net.patchworkmc.mixin.modelloader",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "MixinBakedModel",
     "MixinBakedModelManager",
     "MixinItemModelGenerator",
     "MixinJsonUnbakedModel",
