@@ -19,6 +19,9 @@
 
 package net.patchworkmc.impl.event.entity;
 
+import java.util.List;
+import java.util.Collection;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -26,12 +29,14 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -40,16 +45,18 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.IWorld;
@@ -92,7 +99,7 @@ public class EntityEvents implements ModInitializer {
 	}
 
 	// PlayerEvents
-	public static void onPlayerLoggedIn(ServerPlayerEntity playerEntity) {
+	public static void onPlayerLoggedIn(PlayerEntity playerEntity) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
 
@@ -121,6 +128,10 @@ public class EntityEvents implements ModInitializer {
 	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
 		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
+	}
+
+	public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
+		return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
 	}
 
 	public static float getEyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
@@ -179,6 +190,10 @@ public class EntityEvents implements ModInitializer {
 		IForgeItem item = (IForgeItem) stack.getItem();
 
 		return !item.onLeftClickEntity(stack, player, target);
+	}
+
+	public static void onItemTooltip(ItemStack itemStack, PlayerEntity entityPlayer, List<Text> list, TooltipContext flags) {
+		MinecraftForge.EVENT_BUS.post(new ItemTooltipEvent(itemStack, entityPlayer, list, flags));
 	}
 
 	@Override

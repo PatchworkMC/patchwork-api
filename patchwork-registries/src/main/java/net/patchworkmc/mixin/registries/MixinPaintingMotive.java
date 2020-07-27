@@ -31,12 +31,12 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(PaintingMotive.class)
-public class MixinPaintingMotive implements ExtendedForgeRegistryEntry<PaintingMotive> {
+public class MixinPaintingMotive implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<PaintingMotive> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

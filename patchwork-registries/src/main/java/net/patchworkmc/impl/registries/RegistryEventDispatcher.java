@@ -77,7 +77,9 @@ public class RegistryEventDispatcher {
 
 			registry.unfreeze();
 			handler.accept(new RegistryEvent.Register(registry));
-			registry.freeze();
+			// If we freeze the registry here, Fabric mods loaded after us will not be able to register things.
+			// TODO: Find a better location to freeze the registry.
+			// registry.freeze();
 		}
 	}
 }

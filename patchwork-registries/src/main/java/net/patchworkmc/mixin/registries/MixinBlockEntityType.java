@@ -31,19 +31,19 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(BlockEntityType.class)
-public class MixinBlockEntityType implements ExtendedForgeRegistryEntry<BlockEntityType> {
+public class MixinBlockEntityType implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<BlockEntityType> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;
 	}
 
 	public Identifier getRegistryName() {
-		BlockEntityType<?> blockEntityType = (BlockEntityType<?>) (Object) this;
+		BlockEntityType<?> blockEntityType = (BlockEntityType) (Object) this;
 
 		return Identifiers.getOrFallback(Registry.BLOCK_ENTITY, blockEntityType, registryName);
 	}

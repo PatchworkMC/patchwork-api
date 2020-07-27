@@ -21,11 +21,8 @@ package net.patchworkmc.impl.capability;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
 	private final T provider;
@@ -37,13 +34,6 @@ public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
 
 	@Override
 	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		AttachCapabilitiesEvent<T> event = new AttachCapabilitiesEvent<>(baseClass, provider);
-		MinecraftForge.EVENT_BUS.post(event);
-
-		if (!event.getCapabilities().isEmpty() || parent != null) {
-			capabilities = new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent);
-		} else {
-			capabilities = null;
-		}
+		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
 	}
 }

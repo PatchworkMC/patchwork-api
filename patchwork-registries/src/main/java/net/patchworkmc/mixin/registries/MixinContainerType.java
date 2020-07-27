@@ -31,15 +31,15 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(ContainerType.class)
-public class MixinContainerType implements ExtendedForgeRegistryEntry<ContainerType> {
+public class MixinContainerType implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<ContainerType> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
-		return this;
+		return (IForgeRegistryEntry) this;
 	}
 
 	public Identifier getRegistryName() {

@@ -34,7 +34,7 @@ import net.patchworkmc.impl.resource.TypedResourceLoader;
 @Mixin(LanguageOptionsScreen.class)
 public abstract class MixinLanguageOptionsScreen {
 	@SuppressWarnings("rawtypes")
-	@Redirect(method = "method_19820(Lnet/minecraft/client/gui/widget/ButtonWidget/ButtonWidget;)V", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
+	@Redirect(method = "method_19820", at = @At(value = "INVOKE", target = "net/minecraft/client/MinecraftClient.reloadResources()Ljava/util/concurrent/CompletableFuture;"))
 	protected CompletableFuture patchwork_init_reloadResources(MinecraftClient mc) {
 		return TypedResourceLoader.patchwork$refreshResources(mc, VanillaResourceType.LANGUAGES);
 	}

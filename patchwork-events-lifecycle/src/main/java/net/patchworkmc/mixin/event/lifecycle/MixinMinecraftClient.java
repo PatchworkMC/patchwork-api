@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.objectweb.asm.Opcodes;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 
 import net.minecraft.client.MinecraftClient;
@@ -40,14 +39,12 @@ public class MixinMinecraftClient {
 	@Inject(method = "tick()V", at = @At(value = "FIELD", opcode = Opcodes.H_GETFIELD, ordinal = 0,
 					target = "Lnet/minecraft/client/MinecraftClient;profiler:Lnet/minecraft/util/profiler/DisableableProfiler;"))
 	private void hookClientTickStart(CallbackInfo info) {
-		TickEvent.ClientTickEvent event = new TickEvent.ClientTickEvent(TickEvent.Phase.START);
-		MinecraftForge.EVENT_BUS.post(event);
+		LifecycleEvents.fireClientTickEvent(TickEvent.Phase.START);
 	}
 
 	@Inject(method = "tick()V", at = @At("RETURN"))
 	private void hookClientTickEnd(CallbackInfo info) {
-		TickEvent.ClientTickEvent event = new TickEvent.ClientTickEvent(TickEvent.Phase.END);
-		MinecraftForge.EVENT_BUS.post(event);
+		LifecycleEvents.fireClientTickEvent(TickEvent.Phase.END);
 	}
 
 	@Inject(method = "init", at = @At("RETURN"))
