@@ -49,7 +49,6 @@ public abstract class MixinServerPlayerInteractionManager {
 
 		if (exp < 0) {
 			callback.setReturnValue(false);
-			callback.cancel();
 		} else {
 			BlockHarvestManager.pushExpDropStack(exp);
 		}

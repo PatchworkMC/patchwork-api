@@ -125,7 +125,6 @@ public class WorldEvents implements ModInitializer {
 				}
 			}
 
-			System.out.println("onBlockBreakEvent cancelled");
 			return -1; // Cancelled
 		} else {
 			return event.getExpToDrop();
