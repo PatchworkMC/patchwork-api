@@ -24,7 +24,9 @@ import java.util.function.Predicate;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloadListener;
 
-public interface ISelectiveResourceReloadListener extends SynchronousResourceReloadListener {
+import net.patchworkmc.impl.resource.TypedResourceLoader;
+
+public interface ISelectiveResourceReloadListener extends SynchronousResourceReloadListener, TypedResourceLoader {
 	@Override
 	default void apply(ResourceManager resourceManager) {
 		// For compatibility, call the selective version from the non-selective function
