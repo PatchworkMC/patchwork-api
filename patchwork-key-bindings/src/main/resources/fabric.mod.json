@@ -4,7 +4,7 @@
   "name": "Patchwork Keybindings",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-gui/icon.png",
+  "icon": "assets/patchwork-key-bindings/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -13,8 +13,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "patchwork-fml": "*"
+    "fabricloader": ">=0.8.4"
   },
   "mixins": [
     "patchwork-key-bindings.mixins.json"
