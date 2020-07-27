@@ -34,7 +34,7 @@ import net.minecraft.util.DefaultedList;
  *
  * <p>This event is cancellable.
  * Canceling the event will cause the player to receive no items at all.
- * The hook will still take the damage specified
+ * The hook will still take the damage specified</p>
  */
 
 public class ItemFishedEvent extends PlayerEvent {
