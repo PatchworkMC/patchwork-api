@@ -55,6 +55,8 @@ public abstract class MixinFishingBobberEntity {
 		if (event.isCanceled()) {
 			this.remove();
 			cir.setReturnValue(event.getRodDamage());
+		} else {
+			rodDamage.set(event.getRodDamage());
 		}
 	}
 
