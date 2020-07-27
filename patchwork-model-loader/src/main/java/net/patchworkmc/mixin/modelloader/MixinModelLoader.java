@@ -20,6 +20,7 @@
 package net.patchworkmc.mixin.modelloader;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,19 +29,29 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.util.Identifier;
 
+import net.patchworkmc.impl.modelloader.ForgeModelLoader;
+import net.patchworkmc.impl.modelloader.PatchworkModelBakeContext;
 import net.patchworkmc.impl.modelloader.Signatures;
-import net.patchworkmc.impl.modelloader.SpecialModelProvider;
 
-@Mixin(ModelLoader.class)
-public abstract class MixinModelLoader implements SpecialModelProvider {
+@Mixin(value = ModelLoader.class)
+public abstract class MixinModelLoader implements ForgeModelLoader {
 	@Unique
 	private static final ModelIdentifier TRIDENT_INV = new ModelIdentifier("minecraft:trident_in_hand#inventory");
 	@Unique
@@ -85,5 +96,55 @@ public abstract class MixinModelLoader implements SpecialModelProvider {
 		} else {
 			LOGGER.warn("Patchwork was unable to load special models for Forge mods");
 		}
+	}
+
+	///////////////////////////////////////////////////
+	/// ModelLoader.bake and Forge's getBakedModel
+	///////////////////////////////////////////////////
+	@Unique
+	private static final PatchworkModelBakeContext bakeContext = new PatchworkModelBakeContext();
+	@Shadow
+	public abstract BakedModel bake(Identifier identifier, ModelBakeSettings settings);
+
+	@Inject(method = "bake", at = @At("HEAD"))
+	public void bakeExtended_Head(CallbackInfoReturnable<BakedModel> cir) {
+		bakeContext.push(getSpriteMap()::getSprite, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
+	}
+
+	@ModifyArg(method = "bake", at = @At(value = "INVOKE", target = Signatures.ItemModelGenerator_create))
+	private Function<Identifier, Sprite> replaceTextureGetter_ItemModelGenerator_create(Function<Identifier, Sprite> dummy) {
+		return bakeContext.textureGetter();
+	}
+
+	// TODO: Forge seems to forgot this patch, should we keep this?
+	@ModifyArg(method = "bake", at = @At(value = "INVOKE", target = Signatures.JsonUnbakedModel_bake))
+	private Function<Identifier, Sprite> replaceTextureGetter_JsonUnbakedModel_bake(Function<Identifier, Sprite> dummy) {
+		return bakeContext.textureGetter();
+	}
+
+	@ModifyArg(method = "bake", at = @At(value = "INVOKE", target = Signatures.UnbakedModel_bake))
+	private Function<Identifier, Sprite> replaceTextureGetter_UnbakedModel_bake(Function<Identifier, Sprite> dummy) {
+		return bakeContext.textureGetter();
+	}
+
+	@Inject(method = "bake", at = @At("RETURN"))
+	public void bakeExtended_Return(CallbackInfoReturnable<BakedModel> cir) {
+		bakeContext.pop();
+	}
+
+	@Override
+	public BakedModel getBakedModel(Identifier identifier, ModelBakeSettings settings, Function<Identifier, Sprite> textureGetter, VertexFormat vertexFormat) {
+		bakeContext.setExtraParam(textureGetter, vertexFormat);
+		return bake(identifier, settings);
+	}
+
+	///////////////////////////////////////////////////
+	@Shadow
+	@Final
+	private SpriteAtlasTexture spriteAtlas;
+
+	@Override
+	public SpriteAtlasTexture getSpriteMap() {
+		return spriteAtlas;
 	}
 }

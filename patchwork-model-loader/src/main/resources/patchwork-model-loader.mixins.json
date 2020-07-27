@@ -4,7 +4,12 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "MixinBakedModelManager",
-    "MixinModelLoader"
+    "MixinItemModelGenerator",
+    "MixinJsonUnbakedModel",
+    "MixinModelItemPropertyOverrideList",
+    "MixinModelLoader",
+    "MixinUnbakedModel",
+    "MixinWeightedUnbakedModel"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -31,4 +31,13 @@ public class Signatures {
 			+ "Lnet/minecraft/client/render/model/ModelLoader;";
 
 	public static final String ModelLoader_addModel = "net/minecraft/client/render/model/ModelLoader.addModel(Lnet/minecraft/client/util/ModelIdentifier;)V";
+	public static final String ModelLoader_bake = "net/minecraft/client/render/model/ModelLoader.bake(Lnet/minecraft/util/Identifier;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;";
+
+	public static final String JsonHelper_deserialize = "net/minecraft/util/JsonHelper.deserialize(Lcom/google/gson/Gson;Ljava/io/Reader;Ljava/lang/Class;)Ljava/lang/Object;";
+
+	public static final String UnbakedModel_bake = "net/minecraft/client/render/model/UnbakedModel.bake (Lnet/minecraft/client/render/model/ModelLoader;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;";
+
+	public static final String ItemModelGenerator_create = "net/minecraft/client/render/model/json/ItemModelGenerator.create(Ljava/util/function/Function;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;)Lnet/minecraft/client/render/model/json/JsonUnbakedModel;";
+
+	public static final String JsonUnbakedModel_bake = "net/minecraft/client/render/model/json/JsonUnbakedModel.bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;";
 }
