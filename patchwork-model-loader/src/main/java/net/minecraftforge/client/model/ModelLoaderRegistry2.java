@@ -113,12 +113,12 @@ public class ModelLoaderRegistry2 {
 	public static GsonBuilder registerVanillaAdapters(GsonBuilder builder) {
 		try {
 			return builder
-					.registerTypeAdapter(ModelElement.class, ModelElement.Deserializer.class.getConstructor().newInstance())
-					.registerTypeAdapter(ModelElementFace.class, ModelElementFace.Deserializer.class.getConstructor().newInstance())
-					.registerTypeAdapter(ModelElementTexture.class, ModelElementTexture.Deserializer.class.getConstructor().newInstance())
-					.registerTypeAdapter(Transformation.class, Transformation.Deserializer.class.getConstructor().newInstance())
-					.registerTypeAdapter(ModelTransformation.class, ModelTransformation.Deserializer.class.getConstructor().newInstance())
-					.registerTypeAdapter(ModelItemOverride.class, ModelItemOverride.Deserializer.class.getConstructor().newInstance());
+					.registerTypeAdapter(ModelElement.class, new ModelElement.Deserializer())
+					.registerTypeAdapter(ModelElementFace.class, new ModelElementFace.Deserializer())
+					.registerTypeAdapter(ModelElementTexture.class, new ModelElementTexture.Deserializer())
+					.registerTypeAdapter(Transformation.class, new Transformation.Deserializer())
+					.registerTypeAdapter(ModelTransformation.class, new ModelTransformation.Deserializer())
+					.registerTypeAdapter(ModelItemOverride.class, new ModelItemOverride.Deserializer());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

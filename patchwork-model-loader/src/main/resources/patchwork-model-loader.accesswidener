@@ -1,0 +1,8 @@
+accessWidener v1 named
+
+accessible method net/minecraft/client/render/model/json/ModelElement$Deserializer <init> ()V
+accessible method net/minecraft/client/render/model/json/ModelElementFace$Deserializer <init> ()V
+accessible method net/minecraft/client/render/model/json/ModelElementTexture$Deserializer <init> ()V
+accessible method net/minecraft/client/render/model/json/Transformation$Deserializer <init> ()V
+accessible method net/minecraft/client/render/model/json/ModelTransformation$Deserializer <init> ()V
+accessible method net/minecraft/client/render/model/json/ModelItemOverride$Deserializer <init> ()V

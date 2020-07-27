@@ -20,6 +20,7 @@
     "patchwork-model-loader.mixins.json"
   ],
   "description": "Implementation of the Forge Model Loader.",
+  "accessWidener": "patchwork-model-loader.accesswidener",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
