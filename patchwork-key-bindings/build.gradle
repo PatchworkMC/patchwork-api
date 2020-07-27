@@ -1,2 +1,2 @@
-archivesBaseName = "patchwork-gui"
+archivesBaseName = "patchwork-key-bindings"
 version = getSubprojectVersion(project, "0.1.0")
