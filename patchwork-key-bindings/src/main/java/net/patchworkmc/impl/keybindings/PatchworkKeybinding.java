@@ -55,7 +55,7 @@ public class PatchworkKeybinding extends KeyBinding {
 		super(id, keyCode.getCategory(), keyCode.getKeyCode(), category);
 		((IForgeKeybinding) this).setKeyConflictContext(keyConflictContext);
 		((IForgeKeybinding) this).setKeyModifierAndCode(keyModifier, keyCode);
-		((ForgeKeyBindingConstruct) this).constructForgeKeyBindingOptions(keyConflictContext, keyModifier.matches(keyCode) ? KeyModifier.NONE : keyModifier);
+		((ForgeKeyBindingConstruct) this).patchwork$constructForgeKeyBindingOptions(keyConflictContext, keyModifier.matches(keyCode) ? KeyModifier.NONE : keyModifier);
 		KeyBindingHelper.registerKeyBinding(this);
 	}
 }

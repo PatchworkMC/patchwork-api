@@ -23,5 +23,5 @@ import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 
 public interface ForgeKeyBindingConstruct {
-	void constructForgeKeyBindingOptions(IKeyConflictContext keyConflictContext, KeyModifier keyModifier);
+	void patchwork$constructForgeKeyBindingOptions(IKeyConflictContext keyConflictContext, KeyModifier keyModifier);
 }
