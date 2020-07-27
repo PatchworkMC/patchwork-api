@@ -40,7 +40,6 @@ public abstract class MixinOcelotEntity extends AnimalEntity {
 	protected MixinOcelotEntity() {
 		//noinspection ConstantConditions
 		super(null, null);
-		throw new IllegalStateException("Created instance of a Mixin, you're doing something wrong!");
 	}
 
 	@Inject(method = "interactMob", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/OcelotEntity;setTrusting(Z)V"), cancellable = true)

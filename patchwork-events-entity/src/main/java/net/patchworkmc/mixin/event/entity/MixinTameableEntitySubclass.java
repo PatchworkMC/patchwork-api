@@ -38,7 +38,6 @@ public abstract class MixinTameableEntitySubclass extends TameableEntity {
 	protected MixinTameableEntitySubclass() {
 		//noinspection ConstantConditions
 		super(null, null);
-		throw new IllegalStateException("Created instance of a Mixin, you're doing something wrong!");
 	}
 
 	@Inject(method = "interactMob", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/TameableEntity;setOwner(Lnet/minecraft/entity/player/PlayerEntity;)V"), cancellable = true)
