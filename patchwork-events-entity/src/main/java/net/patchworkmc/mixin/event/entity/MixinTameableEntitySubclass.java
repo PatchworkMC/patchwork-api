@@ -19,10 +19,11 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import java.util.Random;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.passive.TameableEntity;
@@ -39,13 +40,15 @@ public abstract class MixinTameableEntitySubclass extends TameableEntity {
 		//noinspection ConstantConditions
 		super(null, null);
 	}
+	
+	@Redirect(method = "interactMob", at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"))
+	private int redirectTameCheck(Random random, int bound, PlayerEntity player, Hand hand) {
+		int i = random.nextInt(bound);
 
-	@Inject(method = "interactMob", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/TameableEntity;setOwner(Lnet/minecraft/entity/player/PlayerEntity;)V"), cancellable = true)
-	private void onTamedMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<Boolean> cir) {
-		if (EntityEvents.onAnimalTame(this, player)) {
-			this.showEmoteParticle(false);
-			this.world.sendEntityStatus(this, (byte) 6);
-			cir.setReturnValue(true);
+		if (i != 0 || EntityEvents.onAnimalTame(this, player)) {
+			return -1; // Check failed
 		}
+
+		return 0; // Check succeeds
 	}
 }
