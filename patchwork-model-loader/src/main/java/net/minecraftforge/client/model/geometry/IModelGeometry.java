@@ -20,8 +20,6 @@
 package net.minecraftforge.client.model.geometry;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -41,13 +39,13 @@ import net.minecraft.util.Identifier;
  * baked to different vertex formats and with different state.
  */
 public interface IModelGeometry<T extends IModelGeometry<T>> {
-	default Collection<? extends IModelGeometryPart> getParts() {
-		return Collections.emptyList();
-	}
+	// default Collection<? extends IModelGeometryPart> getParts() {
+	//	return Collections.emptyList();
+	// }
 
-	default Optional<? extends IModelGeometryPart> getPart(String name) {
-		return Optional.empty();
-	}
+	// default Optional<? extends IModelGeometryPart> getPart(String name) {
+	//	return Optional.empty();
+	// }
 
 	BakedModel bake(IModelConfiguration owner, net.minecraft.client.render.model.ModelLoader bakery, Function<Identifier, Sprite> spriteGetter,
 			ModelBakeSettings sprite, VertexFormat format, ModelItemPropertyOverrideList overrides);
