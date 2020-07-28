@@ -77,12 +77,12 @@ public class TickEvent extends Event {
 		}
 	}
 
-	/* TODO public static class RenderTickEvent extends TickEvent {
+	public static class RenderTickEvent extends TickEvent {
 		public final float renderTickTime;
 
 		public RenderTickEvent(Phase phase, float renderTickTime) {
 			super(Type.RENDER, LogicalSide.CLIENT, phase);
 			this.renderTickTime = renderTickTime;
 		}
-	}*/
+	}
 }

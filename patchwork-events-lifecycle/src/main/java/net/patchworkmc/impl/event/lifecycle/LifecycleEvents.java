@@ -58,6 +58,11 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(phase));
 	}
 
+	public static void fireRenderTickEvent(TickEvent.Phase phase, float renderTickTime) {
+		// TODO - Call net.minecraftforge.client.model.animation.Animation#setClientPartialTickTime on start phase
+		MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(phase, renderTickTime));
+	}
+
 	public static void fireServerTickEvent(TickEvent.Phase phase) {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(phase));
 	}
