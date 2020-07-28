@@ -73,6 +73,7 @@ public class MixinMinecraftClient {
 	@Inject(method = "render", at = @At(
 			value = "INVOKE",
 			target = "net/minecraft/util/profiler/DisableableProfiler.pop()V",
+			shift = At.Shift.AFTER,
 			ordinal = 3))
 	private void hookRenderTickEnd(CallbackInfo ci) {
 		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, this.renderTickCounter.tickDelta);
