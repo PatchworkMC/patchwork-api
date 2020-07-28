@@ -1,2 +1,6 @@
 archivesBaseName = "patchwork-enum-hacks"
 version = getSubprojectVersion(project, "0.2.0")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+}

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "patchwork-level-generators",
-  "name": "Patchwork Level Generators",
+  "id": "patchwork-api-base",
+  "name": "Patchwork API Base",
   "version": "${version}",
   "license": "LGPL-2.1-only",
-  "icon": "assets/patchwork-level-generators/icon.png",
+  "icon": "assets/patchwork-api-base/icon.png",
   "contact": {
     "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
     "sources": "https://github.com/PatchworkMC/patchwork-api"
@@ -13,13 +13,10 @@
     "PatchworkMC"
   ],
   "depends": {
-    "patchwork-api-base": "*"
+    "fabricloader": ">=0.8.4",
+    "fabric": ">=0.15.0"
   },
-  "description": "Implementation of the Forge World Type API.",
-  "mixins": [
-    "patchwork-level-generators.mixins.json"
-  ],
-  "accessWidener": "patchwork-level-generators.accesswidener",
+  "description": "Common zero-overhead classes used across Patchwork modules",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

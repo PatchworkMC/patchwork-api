@@ -16,8 +16,7 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric": "*",
+    "patchwork-api-base": "*",
     "patchwork-fml": "*",
     "patchwork-registries": "*",
     "patchwork-events-lifecycle": "*"
