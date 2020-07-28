@@ -45,11 +45,11 @@ public class TickEvent extends Event {
 		START, END;
 	}
 
-	/* TODO public static class ServerTickEvent extends TickEvent {
+	public static class ServerTickEvent extends TickEvent {
 		public ServerTickEvent(Phase phase) {
 			super(Type.SERVER, LogicalSide.SERVER, phase);
 		}
-	}*/
+	}
 
 	public static class ClientTickEvent extends TickEvent {
 		public ClientTickEvent(Phase phase) {
