@@ -107,8 +107,8 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
 
-	public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
-		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+	public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float damage) {
+		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
 
 	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
