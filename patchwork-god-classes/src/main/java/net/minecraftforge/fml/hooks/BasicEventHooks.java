@@ -75,5 +75,4 @@ public class BasicEventHooks {
 	public static void onRenderTickEnd(float timer) {
 		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, timer);
 	}
-
 }
