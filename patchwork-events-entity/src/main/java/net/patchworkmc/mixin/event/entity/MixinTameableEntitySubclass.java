@@ -40,7 +40,7 @@ public abstract class MixinTameableEntitySubclass extends TameableEntity {
 		//noinspection ConstantConditions
 		super(null, null);
 	}
-	
+
 	@Redirect(method = "interactMob", at = @At(value = "INVOKE", target = "Ljava/util/Random;nextInt(I)I"))
 	private int redirectTameCheck(Random random, int bound, PlayerEntity player, Hand hand) {
 		int i = random.nextInt(bound);
