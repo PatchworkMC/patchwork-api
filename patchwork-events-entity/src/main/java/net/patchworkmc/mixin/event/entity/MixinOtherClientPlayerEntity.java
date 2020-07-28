@@ -36,7 +36,7 @@ public class MixinOtherClientPlayerEntity {
 	private void hookDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
-		if (EntityEvents.onLivingAttack(entity, source, amount)) {
+		if (EntityEvents.onPlayerAttack(entity, source, amount)) {
 			callback.setReturnValue(false);
 		}
 	}
