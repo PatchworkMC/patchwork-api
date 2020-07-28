@@ -50,6 +50,10 @@ public class PatchworkModelBakeContext {
 		vertexFormatParam.set(format);
 	}
 
+	public boolean isExtraParamSet() {
+		return textureGetterParam != textureGetter_NotSet;
+	}
+
 	/**
 	 * Called at the HEAD of the vanilla method and setup the context.
 	 *

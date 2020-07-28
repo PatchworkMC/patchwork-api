@@ -40,4 +40,5 @@ public class Signatures {
 	public static final String ItemModelGenerator_create = "net/minecraft/client/render/model/json/ItemModelGenerator.create(Ljava/util/function/Function;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;)Lnet/minecraft/client/render/model/json/JsonUnbakedModel;";
 
 	public static final String JsonUnbakedModel_bake = "net/minecraft/client/render/model/json/JsonUnbakedModel.bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;)Lnet/minecraft/client/render/model/BakedModel;";
+	public static final String JsonUnbakedModel_getElements = "net/minecraft/client/render/model/json/JsonUnbakedModel.getElements()Ljava/util/List;";
 }

@@ -23,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -38,13 +39,18 @@ import com.google.gson.JsonParseException;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.client.render.model.json.ModelElementFace;
 import net.minecraft.client.render.model.json.ModelElementTexture;
 import net.minecraft.client.render.model.json.ModelItemOverride;
+import net.minecraft.client.render.model.json.ModelItemPropertyOverrideList;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.render.model.json.Transformation;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
@@ -107,6 +113,30 @@ public class ModelLoaderRegistry2 {
 
 		Identifier loader = new Identifier(JsonHelper.getString(object, "loader"));
 		return getModel(loader, deserializationContext, object);
+	}
+
+	public static BakedModel bakeHelper(JsonUnbakedModel blockModel,
+			net.minecraft.client.render.model.ModelLoader modelBakery,
+			JsonUnbakedModel otherModel,
+			Function<Identifier, Sprite> spriteGetter,
+			ModelBakeSettings modelTransform,
+			VertexFormat format) {
+		BakedModel model;
+		BlockModelConfiguration customData = ((PatchworkJsonUnbakedModel) blockModel).getCustomData();
+		IModelGeometry<?> customModel = customData.getCustomGeometry();
+		// ModelBakeSettings customModelState = customData.getCustomModelState();
+
+		// if (customModelState != null)
+		//	modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isShaded());
+
+		if (customModel != null) {
+			ModelItemPropertyOverrideList overrides = ((PatchworkJsonUnbakedModel) blockModel).getOverrides(modelBakery, otherModel, spriteGetter, format);
+			model = customModel.bake(customData, modelBakery, spriteGetter, modelTransform, format, overrides);
+		} else {
+			model = ((PatchworkJsonUnbakedModel) blockModel).bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, format);
+		}
+
+		return model;
 	}
 
 	// Patchwork's own method

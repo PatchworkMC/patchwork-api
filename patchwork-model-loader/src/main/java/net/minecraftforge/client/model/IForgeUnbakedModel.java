@@ -32,9 +32,11 @@ import net.minecraft.util.Identifier;
 // This interface is moved to net.minecraftforge.client.extensions in 1.15
 public interface IForgeUnbakedModel {
 	/**
+	 * Removed in 1.15, VertexFormat will be removed from all bake related functions.
 	 * @param textureGetter		Where textures will be looked up when baking
 	 * @param modelBakeSettings	Transforms to apply while baking. Usually will be an instance of {@link IModelState}.
 	 */
+	@Deprecated
 	@Nullable
 	BakedModel bake(net.minecraft.client.render.model.ModelLoader vanillaModelLoader,
 			Function<Identifier, Sprite> textureGetter, ModelBakeSettings modelBakeSettings, VertexFormat format);
