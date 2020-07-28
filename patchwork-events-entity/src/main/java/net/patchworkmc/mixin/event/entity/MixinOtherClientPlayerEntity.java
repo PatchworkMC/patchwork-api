@@ -19,16 +19,14 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.patchworkmc.impl.event.entity.EntityEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import net.minecraft.client.network.OtherClientPlayerEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-
-import net.patchworkmc.impl.event.entity.EntityEvents;
 
 @Mixin(OtherClientPlayerEntity.class)
 public class MixinOtherClientPlayerEntity {
@@ -36,7 +34,7 @@ public class MixinOtherClientPlayerEntity {
 	private void hookDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
-		if (EntityEvents.onLivingAttack(entity, source, amount)) {
+		if (EntityEvents.onPlayerAttack(entity, source, amount)) {
 			callback.setReturnValue(false);
 		}
 	}
