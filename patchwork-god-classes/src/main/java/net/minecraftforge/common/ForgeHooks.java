@@ -76,7 +76,7 @@ public class ForgeHooks {
 	}
 
 	public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
-		return !EntityEvents.onLivingAttack(entity, src, amount);
+		return !EntityEvents.onPlayerAttack(entity, src, amount);
 	}
 
 	// optifine wants this? O.o
