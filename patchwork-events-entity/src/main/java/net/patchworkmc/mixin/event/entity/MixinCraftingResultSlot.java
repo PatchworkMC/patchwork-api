@@ -52,7 +52,7 @@ public abstract class MixinCraftingResultSlot {
 					target = "net/minecraft/item/ItemStack.onCraft(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;I)V"
 					)
 	)
-	private void onCrafted_stack_onCraft(ItemStack stack, CallbackInfo ci) {
+	private void onStackCrafted(ItemStack stack, CallbackInfo ci) {
 		PlayerEvents.firePlayerCraftingEvent(player, stack, craftingInv);
 	}
 }

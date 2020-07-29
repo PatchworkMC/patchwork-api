@@ -40,7 +40,7 @@ public abstract class MixinItemEntity {
 					target = "net/minecraft/item/ItemStack.isEmpty()Z"
 					)
 	)
-	private void onPlayerCollision_isEmpty(PlayerEntity player, CallbackInfo ci) {
+	private void onPlayerPickUpItemEntity(PlayerEntity player, CallbackInfo ci) {
 		ItemEntity me = (ItemEntity) (Object) this;
 		PlayerEvents.firePlayerItemPickupEvent(player, me, me.getStack().copy());
 	}

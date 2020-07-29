@@ -41,7 +41,7 @@ public abstract class MixinFurnaceOutputSlot {
 	@Inject(method = "onCrafted(Lnet/minecraft/item/ItemStack;)V",
 			at = @At("RETURN")
 	)
-	private void onCrafted_return(ItemStack stack, CallbackInfo ci) {
+	private void onCraftingFinished(ItemStack stack, CallbackInfo ci) {
 		PlayerEvents.firePlayerSmeltedEvent(player, stack);
 	}
 }
