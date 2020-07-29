@@ -19,33 +19,29 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.container.FurnaceOutputSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 
 import net.patchworkmc.impl.event.entity.PlayerEvents;
 
-@Mixin(PlayerManager.class)
-public class MixinPlayerManager {
-	@Inject(method = "onPlayerConnect", at = @At("RETURN"))
-	private void hookPlayerLogin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo callback) {
-		PlayerEvents.firePlayerLoggedIn(player);
-	}
+@Mixin(FurnaceOutputSlot.class)
+public abstract class MixinFurnaceOutputSlot {
+	@Shadow
+	@Final
+	private PlayerEntity player;
 
-	@Inject(method = "remove", at = @At("HEAD"))
-	private void hookPlayerLogout(ServerPlayerEntity player, CallbackInfo callback) {
-		PlayerEvents.firePlayerLoggedOut(player);
-	}
-
-	@Inject(method = "respawnPlayer", at = @At("RETURN"))
-	private void hookPlayerRespawn(ServerPlayerEntity player, DimensionType dimension, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> callback) {
-		PlayerEvents.firePlayerRespawnEvent(player, alive);
+	@Inject(method = "onCrafted(Lnet/minecraft/item/ItemStack;)V",
+			at = @At("RETURN")
+	)
+	private void onCraftingFinished(ItemStack stack, CallbackInfo ci) {
+		PlayerEvents.firePlayerSmeltedEvent(player, stack);
 	}
 }

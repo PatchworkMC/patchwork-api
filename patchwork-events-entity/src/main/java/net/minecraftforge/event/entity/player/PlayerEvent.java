@@ -19,10 +19,16 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
+
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs.
@@ -55,16 +61,6 @@ public class PlayerEvent extends LivingEvent {
 	 */
 	public PlayerEntity getPlayer() {
 		return playerEntity;
-	}
-
-	/**
-	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
-	 * when the player has finished logging in.
-	 */
-	public static class PlayerLoggedInEvent extends PlayerEvent {
-		public PlayerLoggedInEvent(PlayerEntity player) {
-			super(player);
-		}
 	}
 
 	/**
@@ -131,17 +127,125 @@ public class PlayerEvent extends LivingEvent {
 		}
 	}
 
+	public static class ItemPickupEvent extends PlayerEvent {
+		/**
+		 * Original EntityItem with current remaining stack size.
+		 */
+		private final ItemEntity originalEntity;
+		/**
+		 * Clone item stack, containing the item and amount picked up.
+		 */
+		private final ItemStack stack;
+
+		public ItemPickupEvent(PlayerEntity player, ItemEntity entPickedUp, ItemStack stack) {
+			super(player);
+			this.originalEntity = entPickedUp;
+			this.stack = stack;
+		}
+
+		public ItemStack getStack() {
+			return stack;
+		}
+
+		public ItemEntity getOriginalEntity() {
+			return originalEntity;
+		}
+	}
+
+	public static class ItemCraftedEvent extends PlayerEvent {
+		@Nonnull
+		private final ItemStack crafting;
+		private final Inventory craftMatrix;
+
+		public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, Inventory craftMatrix) {
+			super(player);
+			this.crafting = crafting;
+			this.craftMatrix = craftMatrix;
+		}
+
+		@Nonnull
+		public ItemStack getCrafting() {
+			return this.crafting;
+		}
+
+		public Inventory getInventory() {
+			return this.craftMatrix;
+		}
+	}
+
+	public static class ItemSmeltedEvent extends PlayerEvent {
+		@Nonnull
+		private final ItemStack smelting;
+
+		public ItemSmeltedEvent(PlayerEntity player, @Nonnull ItemStack crafting) {
+			super(player);
+			this.smelting = crafting;
+		}
+
+		@Nonnull
+		public ItemStack getSmelting() {
+			return this.smelting;
+		}
+	}
+
+	/**
+	 * Called on the server at the end of {@link net.minecraft.server.PlayerManager#onPlayerConnect(net.minecraft.network.ClientConnection, net.minecraft.server.network.ServerPlayerEntity)}
+	 * when the player has finished logging in.
+	 */
+	public static class PlayerLoggedInEvent extends PlayerEvent {
+		public PlayerLoggedInEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
+	public static class PlayerLoggedOutEvent extends PlayerEvent {
+		public PlayerLoggedOutEvent(PlayerEntity player) {
+			super(player);
+		}
+	}
+
+	public static class PlayerRespawnEvent extends PlayerEvent {
+		private final boolean alive;
+
+		public PlayerRespawnEvent(PlayerEntity player, boolean alive) {
+			super(player);
+			this.alive = alive;
+		}
+
+		/**
+		 * Did this respawn event come from the player conquering the end?
+		 * TODO: Forge should name this to isAlive.
+		 * @return if this respawn was because the player conquered the end
+		 */
+		public boolean isEndConquered() {
+			return this.alive;
+		}
+	}
+
+	public static class PlayerChangedDimensionEvent extends PlayerEvent {
+		private final DimensionType fromDim;
+		private final DimensionType toDim;
+
+		public PlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim) {
+			super(player);
+			this.fromDim = fromDim;
+			this.toDim = toDim;
+		}
+
+		public DimensionType getFrom() {
+			return this.fromDim;
+		}
+
+		public DimensionType getTo() {
+			return this.toDim;
+		}
+	}
+
 	/*TODO Events:
 	HarvestCheck
 	BreakSpeed
 	NameFormat
 	LoadFromFile
 	SaveToFile
-	Visibility
-	ItemPickupEvent
-	ItemCraftedEvent
-	ItemSmeltedEvent
-	PlayerLoggedOutEvent
-	PlayerRespawnEvent
-	PlayerChangedDimensionEvent*/
+	Visibility called by ForgeHooks.getPlayerVisibilityDistance, but latter is not called elsewhere*/
 }
