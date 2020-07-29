@@ -1,0 +1,6 @@
+archivesBaseName = "patchwork-tags"
+version = getSubprojectVersion(project, "0.1.0")
+
+minecraft {
+    accessWidener "src/main/resources/patchwork-tags.accesswidener"
+}

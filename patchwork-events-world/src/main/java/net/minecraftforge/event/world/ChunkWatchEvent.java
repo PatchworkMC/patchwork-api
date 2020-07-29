@@ -91,9 +91,9 @@ public class ChunkWatchEvent extends Event {
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class UnWatch extends ChunkWatchEvent {
+	public static class UnWatch extends ChunkWatchEvent {
 		public UnWatch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {
 			super(player, pos, world);
 		}
-	}*/
+	}
 }

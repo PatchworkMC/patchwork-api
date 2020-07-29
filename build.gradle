@@ -56,7 +56,7 @@ allprojects {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"
 		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
 		modCompile "net.fabricmc:fabric-loader:0.8.4+build.198"
-		modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
+		modCompile "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
 
 		implementation 'net.patchworkmc:patchwork-eventbus:2.0.1:all'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
@@ -239,7 +239,7 @@ dependencies {
 	minecraft "com.mojang:minecraft:$Globals.mcVersion"
 	mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
 	modCompile "net.fabricmc:fabric-loader:0.8.4+build.198"
-	modCompile "net.fabricmc.fabric-api:fabric-api:0.4.2+build.246-1.14"
+	modCompile "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
 
 	implementation 'com.electronwill.night-config:toml:3.6.2'
 	include 'com.electronwill.night-config:core:3.6.2'

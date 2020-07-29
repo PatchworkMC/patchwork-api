@@ -37,7 +37,6 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -96,11 +95,6 @@ public class EntityEvents implements ModInitializer {
 
 	public static void onEnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
 		MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringChunk(entity, newChunkX, newChunkZ, oldChunkX, oldChunkZ));
-	}
-
-	// PlayerEvents
-	public static void onPlayerLoggedIn(PlayerEntity playerEntity) {
-		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(playerEntity));
 	}
 
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float damage) {

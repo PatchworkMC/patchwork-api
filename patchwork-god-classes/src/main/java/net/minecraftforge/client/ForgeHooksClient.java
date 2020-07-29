@@ -25,7 +25,9 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
+import net.minecraft.client.Mouse;
 
+import net.patchworkmc.impl.event.input.InputEvents;
 import net.patchworkmc.impl.event.render.RenderEvents;
 
 /*
@@ -33,6 +35,22 @@ import net.patchworkmc.impl.event.render.RenderEvents;
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class ForgeHooksClient {
+	public static void fireMouseInput(int button, int action, int mods) {
+		InputEvents.fireMouseInput(button, action, mods);
+	}
+
+	public static void fireKeyInput(int key, int scanCode, int action, int modifiers) {
+		InputEvents.fireKeyInput(key, scanCode, action, modifiers);
+	}
+
+	public static boolean onMouseScroll(Mouse mouseHelper, double scrollDelta) {
+		return InputEvents.onMouseScroll(mouseHelper, scrollDelta);
+	}
+
+	public static boolean onRawMouseClicked(int button, int action, int mods) {
+		return InputEvents.onRawMouseClicked(button, action, mods);
+	}
+
 	public static void onBlockColorsInit(BlockColors blockColors) {
 		RenderEvents.onBlockColorsInit(blockColors);
 	}
