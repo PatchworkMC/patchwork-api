@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-blockentity",
+  "version": "${version}",
+  "icon": "assets/patchwork-enum-hacks/icon.png",
+  "name": "Patchwork Extensions Block",
+  "description": "Implementation of Forge's blockentity extensions (IForgeTileEntity)",
+  "authors": [
+    "PatchworkMC"
+  ],
+  "license": "LGPL-2.1-only",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.8.4"
+  },
+  "mixins": [
+    "patchwork-extensions-blockentity.mixins.json"
+  ],
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
