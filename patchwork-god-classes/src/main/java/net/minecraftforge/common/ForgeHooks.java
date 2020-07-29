@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
@@ -72,11 +73,11 @@ public class ForgeHooks {
 
 	// TODO: forge calls the equivilant to this in LivingEntity, but patchwork only calls the equivilant to onPlayerAttack
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
-		return entity instanceof PlayerEntity || onPlayerAttack(entity, src, amount);
+		return EntityEvents.onLivingAttack(entity, src, amount);
 	}
 
 	public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
-		return !EntityEvents.onPlayerAttack(entity, src, amount);
+		return EntityEvents.onPlayerAttack(entity, src, amount);
 	}
 
 	// optifine wants this? O.o
