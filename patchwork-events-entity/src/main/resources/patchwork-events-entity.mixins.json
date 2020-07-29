@@ -10,6 +10,7 @@
     "MixinExperienceOrbEntity",
     "MixinFishingBobberEntity",
     "MixinFurnaceOutputSlot",
+    "MixinHorseBondWithPlayerGoal",
     "MixinItemEntity",
     "MixinLivingEntity",
     "MixinMobEntity",
