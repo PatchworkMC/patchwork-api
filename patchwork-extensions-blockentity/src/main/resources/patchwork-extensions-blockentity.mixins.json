@@ -3,7 +3,8 @@
   "package": "net.patchworkmc.mixin.extensions.blockentity",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinBlockEntity"
+    "MixinBlockEntity",
+    "MixinWorld"
   ],
   "client": [
     "MixinClientPlayNetworkHandler"
