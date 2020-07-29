@@ -8,6 +8,8 @@
   ],
   "client": [
     "MixinClientPlayNetworkHandler",
+    "MixinBlockEntityRenderDispatcher",
+    "MixinBlockEntityRenderer",
     "MixinWorldRenderer"
   ],
   "injectors": {

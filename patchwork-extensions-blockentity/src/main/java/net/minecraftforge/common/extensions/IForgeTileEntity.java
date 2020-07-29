@@ -158,10 +158,13 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 	}
 
 	/**
-	 * TODO: FastRenderer no longer exists in 1.15 and above, TER = FastTESR, TESR is gone.
-	 * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
+	 * TODO: Deprecated, in Patchwork API 1.14.4, vanilla 1.15 and above,
+	 * this is never called. See {@link net.minecraftforge.client.model.animation.TileEntityRendererFast}.
+	 *
+	 * <p>If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
 	 * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
 	 */
+	@Deprecated
 	default boolean hasFastRenderer() {
 		return false;
 	}
