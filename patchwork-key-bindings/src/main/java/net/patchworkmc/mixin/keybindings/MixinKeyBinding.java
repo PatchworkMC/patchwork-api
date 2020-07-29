@@ -40,8 +40,8 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 	@Shadow
 	private InputUtil.KeyCode keyCode;
 
-	//These exist in forge to allow modifiers and conflicting keys to work, this is not implemented
-	//but these remain to avoid stubbing the methods or breaking mods that use these directly for some reason
+	// These exist in forge to allow modifiers and conflicting keys to work, this is not implemented
+	// but these remain to avoid stubbing the methods
 	@Unique
 	private KeyModifier keyModifierDefault = KeyModifier.NONE;
 	@Unique
