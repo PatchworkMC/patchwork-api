@@ -21,9 +21,13 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
+import net.minecraft.block.AbstractSignBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.block.EnderChestBlock;
+import net.minecraft.block.SkullBlock;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -147,10 +151,10 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 	 */
 	default boolean canRenderBreaking() {
 		Block block = getTileEntity().getCachedState().getBlock();
-		return (block instanceof net.minecraft.block.ChestBlock
-				|| block instanceof net.minecraft.block.EnderChestBlock
-				|| block instanceof net.minecraft.block.AbstractSignBlock
-				|| block instanceof net.minecraft.block.SkullBlock);
+		return (block instanceof ChestBlock
+				|| block instanceof EnderChestBlock
+				|| block instanceof AbstractSignBlock
+				|| block instanceof SkullBlock);
 	}
 
 	/**

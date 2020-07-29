@@ -7,7 +7,8 @@
     "MixinWorld"
   ],
   "client": [
-    "MixinClientPlayNetworkHandler"
+    "MixinClientPlayNetworkHandler",
+    "MixinWorldRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
