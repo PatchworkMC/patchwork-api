@@ -19,8 +19,8 @@
 
 package net.patchworkmc.mixin.loot;
 
+import java.io.IOException;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
@@ -28,13 +28,12 @@ import com.google.gson.JsonObject;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
@@ -43,7 +42,9 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import net.patchworkmc.impl.event.loot.LootEvents;
 import net.patchworkmc.impl.loot.LootHooks;
+import net.patchworkmc.impl.loot.WrappedImmutableMapBuilder;
 
 @Mixin(LootManager.class)
 public abstract class MixinLootManager extends MixinJsonDataLoader {
@@ -55,27 +56,39 @@ public abstract class MixinLootManager extends MixinJsonDataLoader {
 	@Final
 	private static Logger LOGGER;
 
-	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V", ordinal = 0))
-	private void cancel_forEach(Map<Identifier, JsonObject> map, BiConsumer<Identifier, JsonObject> consumer) {
-		// ignore this call, we're gonna reintroduce it but with capturing locals
-	}
-
-	@Inject(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void reintroduce_forEach(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info, ImmutableMap.Builder<Identifier, LootTable> builder) {
-		map.forEach((id, jsonObject) -> {
+	// NOTE: this could also be a Redirect of forEach that just wraps the existing lambda, instead of an additional forEach
+	@Inject(method = "apply", at = @At(value = "INVOKE", target = "java/util/Map.forEach (Ljava/util/function/BiConsumer;)V", ordinal = 0))
+	private void prepareJson(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {
+		map.forEach((id, lootTableObj) -> {
 			try {
+				boolean custom = isLootTableCustom(resourceManager, id);
 				LootManager lootManager = (LootManager) (Object) this;
-				Resource res = resourceManager.getResource(this.getPreparedPath(id));
-				LootTable lootTable = LootHooks.loadLootTable(GSON, id, jsonObject, res == null || !res.getResourcePackName().equals("Default"), lootManager);
-				builder.put(id, lootTable);
-			} catch (Exception ex) {
+				LootHooks.prepareLootTable(id, lootTableObj, custom, lootManager);
+			} catch (IOException ex) {
 				LOGGER.error("Couldn't parse loot table {}", id, ex);
 			}
 		});
 	}
 
-	@Overwrite
-	private static void method_20711(ImmutableMap.Builder<Identifier, LootTable> builder, Identifier id, JsonObject obj) {
-		// We are effectively overwriting this lambda with our own, so let's make that explicit by actually overwriting it.
+	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "com/google/common/collect/ImmutableMap.builder ()Lcom/google/common/collect/ImmutableMap$Builder;"))
+	private ImmutableMap.Builder<Identifier, LootTable> wrapBuilder(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler) {
+		LootManager lootManager = (LootManager) (Object) this;
+		return new WrappedImmutableMapBuilder<Identifier, LootTable>((id, table) -> {
+			// TODO: handle exception?
+			if (!isLootTableCustom(resourceManager, id)) {
+				table = LootEvents.loadLootTable(id, table, lootManager);
+			}
+
+			// if (table != null) {
+			// 	table.freeze();
+			// }
+			return table;
+		});
+	}
+
+	@Unique
+	private boolean isLootTableCustom(ResourceManager resourceManager, Identifier id) throws IOException {
+		Resource res = resourceManager.getResource(this.getPreparedPath(id));
+		return res == null || !res.getResourcePackName().equals("Default");
 	}
 }
