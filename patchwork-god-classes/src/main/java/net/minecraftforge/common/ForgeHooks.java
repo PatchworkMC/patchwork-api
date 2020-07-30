@@ -25,9 +25,8 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.passive.AnimalEntity;
+
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
@@ -37,6 +36,7 @@ import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.ActionResult;
