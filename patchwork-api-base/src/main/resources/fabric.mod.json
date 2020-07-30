@@ -13,8 +13,9 @@
     "PatchworkMC"
   ],
   "depends": {
+    // This is mirrored in the top-level project because of a Loader issue
     "fabricloader": ">=0.8.4",
-    "fabric": ">=0.15.0"
+    "fabric": ">=0.15.1"
   },
   "description": "Common zero-overhead classes used across Patchwork modules",
   "custom": {
