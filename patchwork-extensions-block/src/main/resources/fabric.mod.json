@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "patchwork-extensions-block",
   "version": "${version}",
-  "icon": "assets/patchwork-enum-hacks/icon.png",
+  "icon": "assets/patchwork-extensions-block/icon.png",
   "name": "Patchwork Extensions Block",
   "description": "Implementation of Forge's block extensions",
   "authors": [
@@ -11,7 +11,9 @@
   "license": "LGPL-2.1-only",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.8.4"
+    "patchwork-api-base": "*",
+    "patchwork-enum-hacks": "*",
+    "patchwork-tooltype": "*"
   },
   "mixins": [
     "patchwork-extensions-block.mixins.json",

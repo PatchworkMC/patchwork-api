@@ -13,7 +13,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4"
+    "patchwork-api-base": "*"
   },
   "description": "A collection of Forge's small patches and bugfixes that change vanilla behavior.",
   "mixins": [
