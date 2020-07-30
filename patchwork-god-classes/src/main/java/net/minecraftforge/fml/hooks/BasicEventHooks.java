@@ -91,6 +91,19 @@ public class BasicEventHooks {
 		LifecycleEvents.fireClientTickEvent(TickEvent.Phase.END);
 	}
 
-	// TODO: onPreServerTick
-	// TODO: onPostServerTick
+	public static void onPreServerTick() {
+		LifecycleEvents.fireServerTickEvent(TickEvent.Phase.START);
+	}
+
+	public static void onPostServerTick() {
+		LifecycleEvents.fireServerTickEvent(TickEvent.Phase.END);
+	}
+
+	public static void onRenderTickStart(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.START, timer);
+	}
+
+	public static void onRenderTickEnd(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, timer);
+	}
 }
