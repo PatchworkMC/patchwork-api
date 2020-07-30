@@ -107,8 +107,31 @@ public class Patchwork implements ModInitializer {
 					error = new PatchworkInitializationException("Failed to construct Patchwork mods");
 				}
 
-				if (t instanceof NoClassDefFoundError || t instanceof NoSuchMethodError || t instanceof NoSuchFieldError) {
-					throw new PatchworkInitializationException("Patchwork mod "+ initializer.getModId() + " tried to access an unimplemented class or class member.", t);
+				Throwable checked;
+
+				if (t instanceof BootstrapMethodError) {
+					checked = t.getCause();
+				} else {
+					checked = t;
+				}
+
+				if (checked instanceof NoClassDefFoundError || checked instanceof NoSuchMethodError || checked instanceof NoSuchFieldError) {
+					final String unDefinedClass = checked.getMessage().substring(checked.getMessage().lastIndexOf(' ') + 1).replace('/', '.');
+					String type;
+
+					if (checked instanceof NoClassDefFoundError) {
+						type = "class";
+					} else if (checked instanceof NoSuchMethodError) {
+						type = "method";
+					} else {
+						type = "field";
+					}
+
+					if (unDefinedClass.startsWith("net.minecraft.") || (unDefinedClass.startsWith("net.minecraftforge.") && !unDefinedClass.startsWith("net.minecraftforge.lex."))) {
+						throw new PatchworkInitializationException("Patchwork mod " + initializer.getModId() + " tried to access an unimplemented " + type + ".", t);
+					} else {
+						throw new PatchworkInitializationException("Patchwork mod " + initializer.getModId() + " tried to access a missing " + type + " from a missing and undeclared, or outdated dependency.", t);
+					}
 				}
 
 				error.addSuppressed(t);
