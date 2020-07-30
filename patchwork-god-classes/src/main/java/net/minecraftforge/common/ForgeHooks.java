@@ -106,6 +106,10 @@ public class ForgeHooks {
 		return EntityEvents.onInteractEntity(player, entity, hand);
 	}
 
+	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
+		return EntityEvents.onAnimalTame(animal, tamer);
+	}
+
 	// OTHER //
 
 	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
