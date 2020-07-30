@@ -71,7 +71,7 @@ public abstract class MixinClientPlayNetworkHandler {
 	@Redirect(method = "onChunkData", at = @At(value = "INVOKE", target = ClientWorld_getBlockEntity))
 	private BlockEntity onChunkData_world_getBlockEntity(ClientWorld clientWorld, BlockPos blockPos) {
 		CompoundTag blockEntityTag = onChunkData_BETag.get();
-		onChunkData_BETag.set(null);
+		onChunkData_BETag.remove();
 
 		ClientPlayNetworkHandler me = (ClientPlayNetworkHandler) (Object) this;
 		BlockEntity blockEntity = me.getWorld().getBlockEntity(blockPos);
@@ -105,7 +105,7 @@ public abstract class MixinClientPlayNetworkHandler {
 	@Inject(method = "onBlockEntityUpdate", at = @At(value = "INVOKE", ordinal = 0, shift = Shift.BEFORE,
 			target = "net/minecraft/block/entity/BlockEntity.fromTag(Lnet/minecraft/nbt/CompoundTag;)V"))
 	private void onBlockEntityUpdate_fromTag(CallbackInfo ci) {
-		onBlockEntityUpdate_BlockEntity.set(null);
+		onBlockEntityUpdate_BlockEntity.remove();
 	}
 
 	@Inject(method = "onBlockEntityUpdate", at = @At(value = "RETURN"))
@@ -113,7 +113,7 @@ public abstract class MixinClientPlayNetworkHandler {
 		BlockEntity blockEntity = onBlockEntityUpdate_BlockEntity.get();
 
 		if (blockEntity != null && !(blockEntity instanceof BlockEntityClientSerializable)) {
-			onBlockEntityUpdate_BlockEntity.set(null);
+			onBlockEntityUpdate_BlockEntity.remove();
 			ClientPlayNetworkHandler me = (ClientPlayNetworkHandler) (Object) this;
 			((IForgeTileEntity) blockEntity).onDataPacket(me.getConnection(), packet);
 		}

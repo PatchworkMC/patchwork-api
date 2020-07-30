@@ -125,7 +125,7 @@ public class MixinWorld {
 	@Redirect(method = "tickBlockEntities", at = @At(value = "INVOKE", ordinal = 0, target = WorldChunk_removeBlockEntity))
 	private void onBlockEntitiesRemoved(WorldChunk chunk, BlockPos pos) {
 		BlockEntity blockEntity = onBlockEntitiesRemoved_BlockEntity.get();
-		onBlockEntitiesRemoved_BlockEntity.set(null);
+		onBlockEntitiesRemoved_BlockEntity.remove();
 
 		//Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
 		if (chunk.getBlockEntity(pos, WorldChunk.CreationType.CHECK) == blockEntity) {

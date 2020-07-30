@@ -82,7 +82,7 @@ public class MixinWorldRenderer {
 	@ModifyConstant(method = "renderPartiallyBrokenBlocks", constant = @Constant(classValue = ChestBlock.class))
 	private boolean skipNormalPartialDamageRendering(Object objIn, Class<?> clsChestBlock) {
 		BlockPos pos = blockPosParam.get();
-		blockPosParam.set(null);
+		blockPosParam.remove();
 
 		if (clsChestBlock.isAssignableFrom(objIn.getClass())) {
 			return true; // objIn instanceof clsChestBlock
