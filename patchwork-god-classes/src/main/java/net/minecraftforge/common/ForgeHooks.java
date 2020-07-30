@@ -25,7 +25,9 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
@@ -51,24 +53,11 @@ import net.patchworkmc.impl.loot.LootHooks;
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class ForgeHooks {
-	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
-		Event.Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
-		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
-	}
+	//---------------\\
+	// ENTITY EVENTS ||
+	//---------------//
 
-	// TODO: onInteractEntityAt
-
-	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
-		return EntityEvents.onInteractEntity(player, entity, hand);
-	}
-
-	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
-		return EntityEvents.onLivingDeath(entity, src);
-	}
-
-	public static boolean onLivingUpdate(LivingEntity entity) {
-		return EntityEvents.onLivingUpdateEvent(entity);
-	}
+	// COMBAT & DAMAGE //
 
 	// TODO: forge calls the equivilant to this in LivingEntity, but patchwork only calls the equivilant to onPlayerAttack
 	public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
@@ -82,6 +71,10 @@ public class ForgeHooks {
 	// optifine wants this? O.o
 	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
 		EntityEvents.onLivingSetAttackTarget(entity, target);
+	}
+
+	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
+		return EntityEvents.attackEntity(player, target);
 	}
 
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount) {
@@ -101,9 +94,32 @@ public class ForgeHooks {
 		return EntityEvents.onLivingDrops(entity, source, drops, lootingLevel, recentlyHit);
 	}
 
-	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
-		return EntityEvents.attackEntity(player, target);
+	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+		return EntityEvents.onLivingDeath(entity, src);
 	}
+
+	// ENTITY INTERACTION //
+
+	// TODO: onInteractEntityAt
+
+	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
+		return EntityEvents.onInteractEntity(player, entity, hand);
+	}
+
+	// OTHER //
+
+	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+		Event.Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
+		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
+	}
+
+	public static boolean onLivingUpdate(LivingEntity entity) {
+		return EntityEvents.onLivingUpdateEvent(entity);
+	}
+
+	//-------------\\
+	// CHESTS/LOOT ||
+	//-------------//
 
 	@SuppressWarnings({ "rawtypes", "unused" })
 	private static ThreadLocal<?> lootContext = LootHooks.lootContext;
