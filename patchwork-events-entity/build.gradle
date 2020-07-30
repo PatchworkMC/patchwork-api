@@ -2,7 +2,8 @@ archivesBaseName = "patchwork-events-entity"
 version = getSubprojectVersion(project, "0.4.0")
 
 dependencies {
-	compile project(path: ':patchwork-fml', configuration: 'dev')
-	compile project(path: ':patchwork-extensions', configuration: 'dev')
-	compile project(path: ':patchwork-extensions-item', configuration: 'dev')
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
+	implementation project(path: ':patchwork-extensions', configuration: 'dev')
+	implementation project(path: ':patchwork-extensions-item', configuration: 'dev')
 }
