@@ -12,6 +12,7 @@ pluginManagement {
 
 rootProject.name = "patchwork-api"
 
+include 'patchwork-api-base'
 include 'patchwork-biomes'
 include 'patchwork-capabilities'
 include 'patchwork-data-generators'
@@ -30,6 +31,7 @@ include 'patchwork-extensions-shearing'
 include 'patchwork-fml'
 include 'patchwork-god-classes'
 include 'patchwork-gui'
+include 'patchwork-key-bindings'
 include 'patchwork-level-generators'
 include 'patchwork-loot'
 include 'patchwork-model-loader'
