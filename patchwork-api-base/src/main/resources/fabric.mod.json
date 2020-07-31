@@ -17,7 +17,7 @@
     "fabricloader": ">=0.8.4",
     "fabric": ">=0.15.1"
   },
-  "description": "Common zero-overhead classes used across Patchwork modules",
+  "description": "Common classes that don't require Mixins or involve mod loading",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
