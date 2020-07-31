@@ -1,5 +1,5 @@
 archivesBaseName = "patchwork-extensions-shearing"
-version = getSubprojectVersion(project, "0.2.0")
+version = getSubprojectVersion(project, "0.3.0")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
