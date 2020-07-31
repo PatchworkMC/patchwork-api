@@ -42,6 +42,7 @@ import net.minecraft.world.World;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 public class LifecycleEvents implements ModInitializer {
 	private static Runnable loadCompleteCallback;
@@ -55,6 +56,15 @@ public class LifecycleEvents implements ModInitializer {
 
 	public static void fireClientTickEvent(TickEvent.Phase phase) {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(phase));
+	}
+
+	public static void fireRenderTickEvent(TickEvent.Phase phase, float renderTickTime) {
+		// TODO - Call net.minecraftforge.client.model.animation.Animation#setClientPartialTickTime on start phase
+		MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(phase, renderTickTime));
+	}
+
+	public static void fireServerTickEvent(TickEvent.Phase phase) {
+		MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(phase));
 	}
 
 	public static void firePlayerTickEvent(TickEvent.Phase phase, PlayerEntity player) {
@@ -126,5 +136,8 @@ public class LifecycleEvents implements ModInitializer {
 				throw new UnsupportedOperationException("A mod tried to set the server's motd during handling FMLServerStartedEvent, this isn't implemented yet.");
 			}
 		});
+
+		ServerTickEvents.START_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.START));
+		ServerTickEvents.END_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.END));
 	}
 }
