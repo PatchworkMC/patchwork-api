@@ -35,7 +35,6 @@ import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.ActionResult;
@@ -103,10 +102,6 @@ public class ForgeHooks {
 
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		return EntityEvents.onInteractEntity(player, entity, hand);
-	}
-
-	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
-		return EntityEvents.onAnimalTame(animal, tamer);
 	}
 
 	// OTHER //
