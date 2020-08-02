@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -56,10 +57,14 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.thrown.ThrownEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
@@ -194,6 +199,22 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
+	}
+
+	public static boolean onProjectileImpact(Entity entity, HitResult ray) {
+		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(entity, ray));
+	}
+
+	public static boolean onProjectileImpact(ProjectileEntity arrow, HitResult ray) {
+		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Arrow(arrow, ray));
+	}
+
+	public static boolean onProjectileImpact(ExplosiveProjectileEntity fireball, HitResult ray) {
+		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Fireball(fireball, ray));
+	}
+
+	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
+		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
 	}
 
 	@Override
