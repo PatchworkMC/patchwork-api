@@ -3,6 +3,8 @@
   "package": "net.patchworkmc.mixin.event.world",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "blocksnapshot.MixinBlock",
+    "blocksnapshot.MixinWorld",
     "MixinChunkGenerator",
     "MixinMinecraftServer",
     "MixinServerPlayerInteractionManager",
