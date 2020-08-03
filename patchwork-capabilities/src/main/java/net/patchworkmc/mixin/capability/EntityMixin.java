@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -81,6 +82,22 @@ public class EntityMixin implements CapabilityProviderHolder {
 
 		if (!keep) {
 			invalidateCaps();
+		}
+	}
+
+
+	private boolean onStartRiding(Entity entity, boolean force) {
+		if (!EntityEvents.canMountEntity(this, entity, true)) return false;
+		if (force || this.canBeRidden(entity) && entity.canFitPassenger(this)) {
+			if (this.isPassenger()) {
+				this.stopRiding();
+			}
+
+			this.ridingEntity = entity;
+			this.ridingEntity.addPassenger(this);
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

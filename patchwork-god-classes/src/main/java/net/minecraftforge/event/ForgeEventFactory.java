@@ -25,6 +25,7 @@ import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -86,5 +87,9 @@ public class ForgeEventFactory {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return EntityEvents.onAnimalTame(animal, tamer);
+	}
+
+	public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting) {
+		return EntityEvents.canMountEntity(entityMounting, entityBeingMounted, isMounting);
 	}
 }
