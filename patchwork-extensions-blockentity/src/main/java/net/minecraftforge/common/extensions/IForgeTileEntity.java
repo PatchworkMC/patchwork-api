@@ -36,11 +36,14 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 	/**
 	 * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
 	 */
-	Box INFINITE_EXTENT_AABB = new net.minecraft.util.math.Box(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+	Box INFINITE_EXTENT_AABB = new Box(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
 	default BlockEntity getTileEntity() {
 		return (BlockEntity) this;
@@ -107,7 +110,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 	 *
 	 * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
 	 */
-	// @OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	default Box getRenderBoundingBox() {
 		Box bb = INFINITE_EXTENT_AABB;
 		BlockState state = getTileEntity().getCachedState();
@@ -132,7 +135,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 				// So, once again in the long line of US having to accommodate BUKKIT breaking things,
 				// here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
 				// cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
-				cbb = new net.minecraft.util.math.Box(pos.add(-1, 0, -1), pos.add(1, 1, 1));
+				cbb = new Box(pos.add(-1, 0, -1), pos.add(1, 1, 1));
 			}
 
 			if (cbb != null) {
