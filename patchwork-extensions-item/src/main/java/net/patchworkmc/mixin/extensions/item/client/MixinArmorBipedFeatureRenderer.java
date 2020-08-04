@@ -17,26 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.item;
+package net.patchworkmc.mixin.extensions.item.client;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.world.World;
+import net.minecraft.client.render.entity.feature.ArmorBipedFeatureRenderer;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 
 import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
 
-@Mixin(PlayerInventory.class)
-public abstract class MixinPlayerInventory {
-	@Inject(method = "updateItems", at = @At("RETURN"))
-	private void fireArmorTick(CallbackInfo ci) {
-		final PlayerInventory me = (PlayerInventory) (Object) this;
-		final PlayerEntity player = me.player;
-		final World world = player.world;
-		me.armor.forEach(itemStack -> PatchworkArmorItemHandler.patchwork$fireArmorTick(itemStack, world, player));
+@Mixin(ArmorBipedFeatureRenderer.class)
+public class MixinArmorBipedFeatureRenderer implements PatchworkArmorItemHandler {
+	@SuppressWarnings("rawtypes")
+	@Override
+	public BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel defaultModel) {
+		return PatchworkArmorItemHandler.patchwork$getArmorModel(entity, itemStack, slot, defaultModel);
 	}
 }

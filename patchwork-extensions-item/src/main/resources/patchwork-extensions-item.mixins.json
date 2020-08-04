@@ -13,6 +13,7 @@
     "MixinSpawnEggItem"
   ],
   "client": [
+    "client.MixinArmorBipedFeatureRenderer",
     "client.MixinArmorFeatureRenderer",
     "client.MixinItem",
     "client.MixinItemSettings"

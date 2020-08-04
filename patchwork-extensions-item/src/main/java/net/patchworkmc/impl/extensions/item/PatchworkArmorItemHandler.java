@@ -21,26 +21,37 @@ package net.patchworkmc.impl.extensions.item;
 
 import net.minecraftforge.common.extensions.IForgeItem;
 
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class PatchworkArmorItemHandler {
+public interface PatchworkArmorItemHandler {
+	@SuppressWarnings("rawtypes")
+	BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model);
+
 	/**
 	 * Called by mixins(MixinArmorFeatureRenderer) and ForgeHooksClient.
 	 */
-	public static String getArmorTexture(Entity entity, ItemStack armor, String defaultTexture, EquipmentSlot slot, String type) {
-		IForgeItem forgeItem = (IForgeItem) armor.getItem();
-		String result = forgeItem.getArmorTexture(armor, entity, slot, type);
+	static String patchwork$getArmorTexture(Entity entity, ItemStack itemStack, String defaultTexture, EquipmentSlot slot, String type) {
+		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
+		String result = forgeItem.getArmorTexture(itemStack, entity, slot, type);
 		return result != null ? result : defaultTexture;
+	}
+
+	static <A extends BipedEntityModel<?>> A patchwork$getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default) {
+		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
+		A model = forgeItem.getArmorModel(entityLiving, itemStack, slot, _default);
+		return model == null ? _default : model;
 	}
 
 	/**
 	 * Called by mixins(MixinPlayerInventory) and IForgeItemStack.
 	 */
-	public static void fireArmorTick(ItemStack itemStack, World world, PlayerEntity player) {
+	static void patchwork$fireArmorTick(ItemStack itemStack, World world, PlayerEntity player) {
 		IForgeItem item = (IForgeItem) itemStack.getItem();
 		item.onArmorTick(itemStack, world, player);
 	}

@@ -55,7 +55,7 @@ import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
  * I don't think so because both are private.
  */
 @Mixin(ArmorFeatureRenderer.class)
-public abstract class MixinArmorFeatureRenderer {
+public abstract class MixinArmorFeatureRenderer implements PatchworkArmorItemHandler {
 	@Shadow
 	@Final
 	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
@@ -100,9 +100,12 @@ public abstract class MixinArmorFeatureRenderer {
 	 * - if (armorItem instanceof DyeableArmorItem) {
 	 * - int m = ((DyeableArmorItem)armorItem).getColor(itemStack);
 	 * + if (armorItem instanceof DyeableItem) {
-	 * + armorItem = hookIfHead(armorItem);
+	 * + armorItem = hookBeforeTypeCast(armorItem);
 	 * + int m = ((DyeableItem) armorItem).hookGetColor(armorItem, itemStack);
+	 * + armorItem = restoreVar(xxxx);
+	 * float n = (float) (m >> 16 & 255) / 255.0F;
 	 */
+	@SuppressWarnings("rawtypes")
 	@ModifyConstant(method = "renderArmor", constant = @Constant(classValue = DyeableArmorItem.class, ordinal = 0))
 	private boolean isDyeableItem(Object obj, Class cls) {
 		return obj instanceof DyeableItem; // Allow this for anything, not only cloth
@@ -118,7 +121,7 @@ public abstract class MixinArmorFeatureRenderer {
 					from = @At(value = "INVOKE", ordinal = 0, target = FeatureRenderer_bindTexture),
 					to = @At(value = "INVOKE", ordinal = 0, target = DyeableArmorItem_getColor)
 			))
-	private ArmorItem hookIfHead(ArmorItem armorItem) {
+	private ArmorItem hookBeforeTypeCast(ArmorItem armorItem) {
 		return (DyeableArmorItem) Items.LEATHER_HELMET;	// Bypass the checkcast
 	}
 
@@ -127,12 +130,20 @@ public abstract class MixinArmorFeatureRenderer {
 		return ((DyeableItem) itemStack.getItem()).getColor(itemStack);
 	}
 
+	@ModifyVariable(method = "renderArmor", ordinal = 0, at = @At(value = "INVOKE", ordinal = 0, shift = Shift.AFTER, target = DyeableArmorItem_getColor))
+	private ArmorItem restoreVar(ArmorItem armorItem,
+			LivingEntity livingEntity, float f, float g, float h, float i, float j, float k, float l, EquipmentSlot equipmentSlot) {
+		ItemStack itemStack = livingEntity.getEquippedStack(equipmentSlot);
+		return (ArmorItem) itemStack.getItem();
+	}
+
 	/*=================================== FORGE START =========================================*/
 	/**
-	 * Hook to allow item-sensitive armor model. for LayerBipedArmor.
+	 * Hook to allow item-sensitive armor model. for LayerBipedArmor. In Forge, this is protected.
 	 */
 	@SuppressWarnings("rawtypes")
-	protected BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model) {
+	@Override
+	public BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model) {
 		return model;
 	}
 
@@ -160,7 +171,7 @@ public abstract class MixinArmorFeatureRenderer {
 		String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (isLegs(slot) ? 2 : 1),
 				type == null ? "" : String.format("_%s", type));
 
-		s1 = PatchworkArmorItemHandler.getArmorTexture(entity, stack, s1, slot, type);
+		s1 = PatchworkArmorItemHandler.patchwork$getArmorTexture(entity, stack, s1, slot, type);
 		Identifier resourcelocation = (Identifier) ARMOR_TEXTURE_CACHE.get(s1);
 
 		if (resourcelocation == null) {

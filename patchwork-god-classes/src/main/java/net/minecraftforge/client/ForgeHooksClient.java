@@ -23,9 +23,11 @@ import java.util.Set;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.Mouse;
@@ -40,7 +42,11 @@ import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
  */
 public class ForgeHooksClient {
 	public static String getArmorTexture(Entity entity, ItemStack armor, String defaultTexture, EquipmentSlot slot, String type) {
-		return PatchworkArmorItemHandler.getArmorTexture(entity, armor, defaultTexture, slot, type);
+		return PatchworkArmorItemHandler.patchwork$getArmorTexture(entity, armor, defaultTexture, slot, type);
+	}
+
+	public static <A extends BipedEntityModel<?>> A getArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot slot, A defaultModel) {
+		return PatchworkArmorItemHandler.patchwork$getArmorModel(livingEntity, itemStack, slot, defaultModel);
 	}
 
 	public static void fireMouseInput(int button, int action, int mods) {
