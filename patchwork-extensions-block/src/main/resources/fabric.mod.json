@@ -13,6 +13,7 @@
   "depends": {
     "patchwork-api-base": "*",
     "patchwork-enum-hacks": "*",
+    "patchwork-extensions-item": "*",
     "patchwork-tooltype": "*"
   },
   "mixins": [

@@ -86,6 +86,7 @@ public abstract class MixinServerPlayerInteractionManager {
 		return isCreative;
 	}
 
+	@Unique
 	private static final ThreadLocal<Object> tryBreakBlock_canHarvest = BlockContext.createContext(); // flag1
 	@Redirect(method = "tryBreakBlock", at = @At(value = "INVOKE", target = Signatures.ServerPlayerEntity_isUsingEffectiveTool, ordinal = 0))
 	private boolean patchwork$tryBreakBlock_isUsingEffectiveTool(ServerPlayerEntity player, BlockState blockState, BlockPos pos) {
