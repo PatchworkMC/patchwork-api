@@ -21,6 +21,7 @@
     "patchwork-events-input": "*",
     "patchwork-events-lifecycle": "*",
     "patchwork-events-rendering": "*",
+    "patchwork-extensions-item": "*",
     "patchwork-loot": "*"
   },
   "custom": {

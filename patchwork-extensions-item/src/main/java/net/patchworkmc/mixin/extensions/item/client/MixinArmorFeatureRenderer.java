@@ -1,0 +1,173 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package net.patchworkmc.mixin.extensions.item.client;
+
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
+
+import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.DyeableArmorItem;
+import net.minecraft.item.DyeableItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
+
+import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
+
+/**
+ * TODO: Check if any Fabric mods calls getArmorTexture and method_4174 directly,
+ * I don't think so because both are private.
+ */
+@Mixin(ArmorFeatureRenderer.class)
+public abstract class MixinArmorFeatureRenderer {
+	@Shadow
+	@Final
+	private static Map<String, Identifier> ARMOR_TEXTURE_CACHE;
+
+	@Shadow
+	private boolean isLegs(EquipmentSlot equipmentSlot) {
+		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Redirect(method = "renderArmor", at = @At(value = "INVOKE", ordinal = 0,
+			target = "net/minecraft/client/render/entity/feature/ArmorFeatureRenderer.getArmor(Lnet/minecraft/entity/EquipmentSlot;)Lnet/minecraft/client/render/entity/model/BipedEntityModel;"))
+	private BipedEntityModel getArmorModel(ArmorFeatureRenderer me, EquipmentSlot equipmentSlot,
+			LivingEntity livingEntity, float f, float g, float h, float i, float j, float k, float l, EquipmentSlot equipmentSlot2) {
+		BipedEntityModel defaultModel = me.getArmor(equipmentSlot);
+		ItemStack itemStack = livingEntity.getEquippedStack(equipmentSlot);
+		return this.getArmorModelHook(livingEntity, itemStack, equipmentSlot, defaultModel);
+	}
+
+	// In 1.15 and above, getArmorTexture(ArmorItem, boolean) is removed.
+	@SuppressWarnings("rawtypes")
+	@Redirect(method = "renderArmor", at = @At(value = "INVOKE", ordinal = 0,
+			target = "net/minecraft/client/render/entity/feature/ArmorFeatureRenderer.getArmorTexture(Lnet/minecraft/item/ArmorItem;Z)Lnet/minecraft/util/Identifier;"))
+	private Identifier getArmorTexture(ArmorFeatureRenderer me, ArmorItem armor, boolean bl,
+			LivingEntity livingEntity, float f, float g, float h, float i, float j, float k, float l, EquipmentSlot equipmentSlot) {
+		ItemStack itemStack = livingEntity.getEquippedStack(equipmentSlot);
+		return this.getArmorResource(livingEntity, itemStack, equipmentSlot, null);
+	}
+
+	// In 1.15 and above, method_4174 is renamed to getArmorTexture.
+	@SuppressWarnings("rawtypes")
+	@Redirect(method = "renderArmor", at = @At(value = "INVOKE", ordinal = 0,
+			target = "net/minecraft/client/render/entity/feature/ArmorFeatureRenderer.method_4174(Lnet/minecraft/item/ArmorItem;ZLjava/lang/String;)Lnet/minecraft/util/Identifier;"))
+	private Identifier getArmorTexture(ArmorFeatureRenderer me, ArmorItem armor, boolean bl, String overlay,
+			LivingEntity livingEntity, float f, float g, float h, float i, float j, float k, float l, EquipmentSlot equipmentSlot) {
+		ItemStack itemStack = livingEntity.getEquippedStack(equipmentSlot);
+		return this.getArmorResource(livingEntity, itemStack, equipmentSlot, overlay);
+	}
+
+	/*
+	 * this.bindTexture(xxxxxxxx);	// The first bindTexture() within renderArmor().
+	 * - if (armorItem instanceof DyeableArmorItem) {
+	 * - int m = ((DyeableArmorItem)armorItem).getColor(itemStack);
+	 * + if (armorItem instanceof DyeableItem) {
+	 * + armorItem = hookIfHead(armorItem);
+	 * + int m = ((DyeableItem) armorItem).hookGetColor(armorItem, itemStack);
+	 */
+	@ModifyConstant(method = "renderArmor", constant = @Constant(classValue = DyeableArmorItem.class, ordinal = 0))
+	private boolean isDyeableItem(Object obj, Class cls) {
+		return obj instanceof DyeableItem; // Allow this for anything, not only cloth
+	}
+
+	@Unique
+	private static final String FeatureRenderer_bindTexture = "net/minecraft/client/render/entity/feature/FeatureRenderer.bindTexture(Lnet/minecraft/util/Identifier;)V";
+	@Unique
+	private static final String DyeableArmorItem_getColor = "net/minecraft/item/DyeableArmorItem.getColor(Lnet/minecraft/item/ItemStack;)I";
+
+	@ModifyVariable(method = "renderArmor", ordinal = 0, at = @At(value = "JUMP", ordinal = 0, opcode = Opcodes.IFEQ, shift = Shift.AFTER),
+			slice = @Slice(
+					from = @At(value = "INVOKE", ordinal = 0, target = FeatureRenderer_bindTexture),
+					to = @At(value = "INVOKE", ordinal = 0, target = DyeableArmorItem_getColor)
+			))
+	private ArmorItem hookIfHead(ArmorItem armorItem) {
+		return (DyeableArmorItem) Items.LEATHER_HELMET;	// Bypass the checkcast
+	}
+
+	@Redirect(method = "renderArmor", at = @At(value = "INVOKE", ordinal = 0, target = DyeableArmorItem_getColor))
+	private int hookGetColor(DyeableArmorItem dummy, ItemStack itemStack) {
+		return ((DyeableItem) itemStack.getItem()).getColor(itemStack);
+	}
+
+	/*=================================== FORGE START =========================================*/
+	/**
+	 * Hook to allow item-sensitive armor model. for LayerBipedArmor.
+	 */
+	@SuppressWarnings("rawtypes")
+	protected BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model) {
+		return model;
+	}
+
+	/**
+	 * More generic ForgeHook version of the above function, it allows for Items to
+	 * have more control over what texture they provide.
+	 *
+	 * @param entity Entity wearing the armor
+	 * @param stack  ItemStack for the armor
+	 * @param slot   Slot ID that the item is in
+	 * @param type   Subtype, can be null or "overlay"
+	 * @return ResourceLocation pointing at the armor's texture
+	 */
+	public Identifier getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
+		ArmorItem item = (ArmorItem) stack.getItem();
+		String texture = item.getMaterial().getName();
+		String domain = "minecraft";
+		int idx = texture.indexOf(':');
+
+		if (idx != -1) {
+			domain = texture.substring(0, idx);
+			texture = texture.substring(idx + 1);
+		}
+
+		String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (isLegs(slot) ? 2 : 1),
+				type == null ? "" : String.format("_%s", type));
+
+		s1 = PatchworkArmorItemHandler.getArmorTexture(entity, stack, s1, slot, type);
+		Identifier resourcelocation = (Identifier) ARMOR_TEXTURE_CACHE.get(s1);
+
+		if (resourcelocation == null) {
+			resourcelocation = new Identifier(s1);
+			ARMOR_TEXTURE_CACHE.put(s1, resourcelocation);
+		}
+
+		return resourcelocation;
+	}
+}

@@ -24,17 +24,25 @@ import java.util.Set;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.client.Mouse;
 
 import net.patchworkmc.impl.event.input.InputEvents;
 import net.patchworkmc.impl.event.render.RenderEvents;
+import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class ForgeHooksClient {
+	public static String getArmorTexture(Entity entity, ItemStack armor, String defaultTexture, EquipmentSlot slot, String type) {
+		return PatchworkArmorItemHandler.getArmorTexture(entity, armor, defaultTexture, slot, type);
+	}
+
 	public static void fireMouseInput(int button, int action, int mods) {
 		InputEvents.fireMouseInput(button, action, mods);
 	}
