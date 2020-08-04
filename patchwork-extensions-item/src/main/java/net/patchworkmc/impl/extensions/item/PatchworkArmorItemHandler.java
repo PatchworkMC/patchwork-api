@@ -23,15 +23,25 @@ import net.minecraftforge.common.extensions.IForgeItem;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class PatchworkArmorItemHandler {
 	/**
-	 * Called by mixins and ForgeHooksClient.
+	 * Called by mixins(MixinArmorFeatureRenderer) and ForgeHooksClient.
 	 */
 	public static String getArmorTexture(Entity entity, ItemStack armor, String defaultTexture, EquipmentSlot slot, String type) {
 		IForgeItem forgeItem = (IForgeItem) armor.getItem();
 		String result = forgeItem.getArmorTexture(armor, entity, slot, type);
 		return result != null ? result : defaultTexture;
+	}
+
+	/**
+	 * Called by mixins(MixinPlayerInventory) and IForgeItemStack.
+	 */
+	public static void fireArmorTick(ItemStack itemStack, World world, PlayerEntity player) {
+		IForgeItem item = (IForgeItem) itemStack.getItem();
+		item.onArmorTick(itemStack, world, player);
 	}
 }

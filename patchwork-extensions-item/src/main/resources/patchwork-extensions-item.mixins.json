@@ -8,6 +8,7 @@
     "MixinEnchantedBookItem",
     "MixinItem",
     "MixinItemSettings",
+    "MixinPlayerInventory",
     "MixinPotionItems",
     "MixinSpawnEggItem"
   ],
