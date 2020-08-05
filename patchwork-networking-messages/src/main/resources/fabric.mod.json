@@ -14,7 +14,6 @@
   ],
   "depends": {
     "patchwork-api-base": "*",
-    "patchwork-fml": "*",
     "patchwork-networking": "*"
   },
   "entrypoints": {
