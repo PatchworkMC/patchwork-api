@@ -19,6 +19,8 @@
 
 package net.patchworkmc.impl.extensions.item;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.common.extensions.IForgeItem;
 
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -27,11 +29,14 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public interface PatchworkArmorItemHandler {
 	@SuppressWarnings("rawtypes")
 	BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model);
+
+	Identifier getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type);
 
 	/**
 	 * Called by mixins(MixinArmorFeatureRenderer) and ForgeHooksClient.

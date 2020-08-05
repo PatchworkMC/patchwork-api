@@ -157,6 +157,7 @@ public abstract class MixinArmorFeatureRenderer implements PatchworkArmorItemHan
 	 * @param type   Subtype, can be null or "overlay"
 	 * @return ResourceLocation pointing at the armor's texture
 	 */
+	@Override
 	public Identifier getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
 		ArmorItem item = (ArmorItem) stack.getItem();
 		String texture = item.getMaterial().getName();
@@ -172,13 +173,13 @@ public abstract class MixinArmorFeatureRenderer implements PatchworkArmorItemHan
 				type == null ? "" : String.format("_%s", type));
 
 		s1 = PatchworkArmorItemHandler.patchwork$getArmorTexture(entity, stack, s1, slot, type);
-		Identifier resourcelocation = (Identifier) ARMOR_TEXTURE_CACHE.get(s1);
+		Identifier armorTextureIdentifier = (Identifier) ARMOR_TEXTURE_CACHE.get(s1);
 
-		if (resourcelocation == null) {
-			resourcelocation = new Identifier(s1);
-			ARMOR_TEXTURE_CACHE.put(s1, resourcelocation);
+		if (armorTextureIdentifier == null) {
+			armorTextureIdentifier = new Identifier(s1);
+			ARMOR_TEXTURE_CACHE.put(s1, armorTextureIdentifier);
 		}
 
-		return resourcelocation;
+		return armorTextureIdentifier;
 	}
 }

@@ -30,7 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.patchworkmc.impl.extensions.item.PatchworkArmorItemHandler;
 
 @Mixin(ArmorBipedFeatureRenderer.class)
-public class MixinArmorBipedFeatureRenderer implements PatchworkArmorItemHandler {
+public abstract class MixinArmorBipedFeatureRenderer implements PatchworkArmorItemHandler {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel defaultModel) {
