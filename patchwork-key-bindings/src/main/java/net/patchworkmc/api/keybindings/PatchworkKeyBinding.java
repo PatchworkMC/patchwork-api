@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.keybindings;
+package net.patchworkmc.api.keybindings;
 
 import net.minecraftforge.client.extensions.IForgeKeybinding;
 import net.minecraftforge.client.settings.IKeyConflictContext;
@@ -28,30 +28,32 @@ import net.minecraft.client.util.InputUtil;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 
-public class PatchworkKeybinding extends KeyBinding {
-	public PatchworkKeybinding(String id, int keyCode, String category) {
+import net.patchworkmc.impl.keybindings.ForgeKeyBindingConstruct;
+
+public class PatchworkKeyBinding extends KeyBinding {
+	public PatchworkKeyBinding(String id, int keyCode, String category) {
 		super(id, keyCode, category);
 		KeyBindingHelper.registerKeyBinding(this);
 	}
 
-	public PatchworkKeybinding(String id, InputUtil.Type type, int code, String category) {
+	public PatchworkKeyBinding(String id, InputUtil.Type type, int code, String category) {
 		super(id, type, code, category);
 		KeyBindingHelper.registerKeyBinding(this);
 	}
 
-	public PatchworkKeybinding(String id, IKeyConflictContext keyConflictContext, final InputUtil.Type inputType, final int keyCode, String category) {
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, final InputUtil.Type inputType, final int keyCode, String category) {
 		this(id, keyConflictContext, inputType.createFromCode(keyCode), category);
 	}
 
-	public PatchworkKeybinding(String id, IKeyConflictContext keyConflictContext, InputUtil.KeyCode keyCode, String category) {
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, InputUtil.KeyCode keyCode, String category) {
 		this(id, keyConflictContext, KeyModifier.NONE, keyCode, category);
 	}
 
-	public PatchworkKeybinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, final InputUtil.Type inputType, final int keyCode, String category) {
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, final InputUtil.Type inputType, final int keyCode, String category) {
 		this(id, keyConflictContext, keyModifier, inputType.createFromCode(keyCode), category);
 	}
 
-	public PatchworkKeybinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputUtil.KeyCode keyCode, String category) {
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputUtil.KeyCode keyCode, String category) {
 		super(id, keyCode.getCategory(), keyCode.getKeyCode(), category);
 		((IForgeKeybinding) this).setKeyConflictContext(keyConflictContext);
 		((IForgeKeybinding) this).setKeyModifierAndCode(keyModifier, keyCode);
