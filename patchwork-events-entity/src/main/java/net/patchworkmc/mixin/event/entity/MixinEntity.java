@@ -39,10 +39,22 @@ public abstract class MixinEntity {
 	private float standingEyeHeight;
 
 	@Shadow
+	private Entity ridingEntity;
+
+	@Shadow
 	private EntityDimensions dimensions;
 
 	@Shadow
 	protected abstract float getEyeHeight(EntityPose pose, EntityDimensions dimensions);
+
+	@Shadow
+	protected abstract boolean canBeRidden(Entity entityMounting);
+
+	@Shadow
+	protected abstract boolean isPassenger();
+
+	@Shadow
+	protected abstract void stopRiding();
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void hookConstructor(EntityType<?> type, World world, CallbackInfo ci) {
@@ -51,5 +63,22 @@ public abstract class MixinEntity {
 		this.standingEyeHeight = EntityEvents.getEyeHeight(entity, EntityPose.STANDING, dimensions, getEyeHeight(EntityPose.STANDING, dimensions));
 
 		EntityEvents.onEntityConstruct(entity);
+	}
+
+	public boolean onStartRiding(Entity entityMounting, boolean force) {
+		Entity thisEntity = (Entity) (Object) this;
+
+		if (!EntityEvents.canMountEntity(thisEntity, entityMounting, true)) { return false; };
+		if (force || this.canBeRidden(entityMounting) && entityMounting.canAddPassenger(thisEntity)) {
+			if (this.isPassenger()) {
+				this.stopRiding();
+			}
+
+			ridingEntity = entityMounting;
+			this.ridingEntity.addPassenger(thisEntity);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

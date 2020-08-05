@@ -84,20 +84,4 @@ public class EntityMixin implements CapabilityProviderHolder {
 			invalidateCaps();
 		}
 	}
-
-
-	private boolean onStartRiding(Entity entity, boolean force) {
-		if (!EntityEvents.canMountEntity(this, entity, true)) return false;
-		if (force || this.canBeRidden(entity) && entity.canFitPassenger(this)) {
-			if (this.isPassenger()) {
-				this.stopRiding();
-			}
-
-			this.ridingEntity = entity;
-			this.ridingEntity.addPassenger(this);
-			return true;
-		} else {
-			return false;
-		}
-	}
 }
