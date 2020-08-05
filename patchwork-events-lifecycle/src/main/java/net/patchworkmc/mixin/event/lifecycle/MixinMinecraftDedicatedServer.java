@@ -22,7 +22,7 @@ package net.patchworkmc.mixin.event.lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -32,7 +32,7 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 @Mixin(MinecraftDedicatedServer.class)
 public class MixinMinecraftDedicatedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/UserCache;setUseRemote(Z)V", shift = At.Shift.AFTER))
-	private void onServerAboutToStart(CallbackInfo ci) {
+	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
 		LifecycleEvents.handleLoadComplete(); // This is a "multithreaded" event that would be called around this time.
 		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
 	}

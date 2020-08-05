@@ -29,9 +29,14 @@ import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.thrown.ThrownEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
@@ -86,5 +91,21 @@ public class ForgeEventFactory {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return EntityEvents.onAnimalTame(animal, tamer);
+	}
+
+	public static boolean onProjectileImpact(Entity entity, HitResult ray) {
+		return EntityEvents.onProjectileImpact(entity, ray);
+	}
+
+	public static boolean onProjectileImpact(ProjectileEntity arrow, HitResult ray) {
+		return EntityEvents.onProjectileImpact(arrow, ray);
+	}
+
+	public static boolean onProjectileImpact(ExplosiveProjectileEntity fireball, HitResult ray) {
+		return EntityEvents.onProjectileImpact(fireball, ray);
+	}
+
+	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
+		return EntityEvents.onProjectileImpact(throwable, ray);
 	}
 }
