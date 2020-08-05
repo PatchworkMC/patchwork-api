@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessages"
+    ],
+    "client": [
+      "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessagesClient"
     ]
   },
   "mixins": [
