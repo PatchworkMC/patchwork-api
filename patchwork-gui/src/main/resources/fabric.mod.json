@@ -13,8 +13,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "patchwork-api-base": "*",
-    "patchwork-fml": "*"
+    "patchwork-api-base": "*"
   },
   "mixins": [
     "patchwork-gui.mixins.json"
