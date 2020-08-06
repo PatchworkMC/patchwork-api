@@ -32,14 +32,12 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity {
 	@Shadow
 	private float standingEyeHeight;
-
-	@Shadow
-	private Entity ridingEntity;
 
 	@Shadow
 	private EntityDimensions dimensions;
@@ -48,13 +46,7 @@ public abstract class MixinEntity {
 	protected abstract float getEyeHeight(EntityPose pose, EntityDimensions dimensions);
 
 	@Shadow
-	protected abstract boolean canBeRidden(Entity entityMounting);
-
-	@Shadow
-	protected abstract boolean isPassenger();
-
-	@Shadow
-	protected abstract void stopRiding();
+	private Entity vehicle;
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void hookConstructor(EntityType<?> type, World world, CallbackInfo ci) {
@@ -65,20 +57,13 @@ public abstract class MixinEntity {
 		EntityEvents.onEntityConstruct(entity);
 	}
 
-	public boolean onStartRiding(Entity entityMounting, boolean force) {
+	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;canStartRiding(Lnet/minecraft/entity/Entity;)Z"))
+	public void onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> ci) {
 		Entity thisEntity = (Entity) (Object) this;
 
-		if (!EntityEvents.canMountEntity(thisEntity, entityMounting, true)) { return false; };
-		if (force || this.canBeRidden(entityMounting) && entityMounting.canAddPassenger(thisEntity)) {
-			if (this.isPassenger()) {
-				this.stopRiding();
-			}
-
-			ridingEntity = entityMounting;
-			this.ridingEntity.addPassenger(thisEntity);
-			return true;
-		} else {
-			return false;
+		if (!EntityEvents.canMountEntity(thisEntity, entity, true)) {
+			ci.setReturnValue(false);
+			ci.cancel();
 		}
 	}
 }
