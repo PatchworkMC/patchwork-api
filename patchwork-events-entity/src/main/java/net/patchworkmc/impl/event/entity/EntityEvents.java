@@ -69,6 +69,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -204,11 +205,10 @@ public class EntityEvents implements ModInitializer {
 	public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting) {
 		boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.world, isMounting));
 
-		if(isCanceled) {
+		if (isCanceled) {
 			entityMounting.updatePositionAndAngles(entityMounting.x, entityMounting.y, entityMounting.z, entityMounting.prevYaw, entityMounting.prevPitch);
 			return false;
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
@@ -228,7 +228,6 @@ public class EntityEvents implements ModInitializer {
 	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
 	}
-
 
 	@Override
 	public void onInitialize() {
