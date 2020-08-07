@@ -13,7 +13,8 @@
     "PatchworkMC"
   ],
   "depends": {
-    "patchwork-api-base": "*"
+    "patchwork-api-base": "*",
+    "patchwork-extensions-block": "*"
   },
   "mixins": [
     "patchwork-events-world.mixins.json"
