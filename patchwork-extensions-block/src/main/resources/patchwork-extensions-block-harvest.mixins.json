@@ -8,9 +8,6 @@
     "MixinServerPlayerInteractionManager",
     "MixinSpawnerBlock"
   ],
-  "client": [
-    "MixinClientPlayerInteractionManager"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

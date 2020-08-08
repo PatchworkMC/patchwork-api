@@ -37,6 +37,7 @@ import net.minecraft.world.World;
 
 import net.patchworkmc.impl.extensions.block.Signatures;
 
+// This is a 1.15+ patch, should not be used in 1.14.4
 @Mixin(ClientPlayerInteractionManager.class)
 public abstract class MixinClientPlayerInteractionManager {
 	@Shadow
