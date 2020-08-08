@@ -191,7 +191,7 @@ public class ItemHandlerHelper {
 
 	/**
 	 * This method uses the standard vanilla algorithm to calculate a comparator output for how "full" the inventory is.
-	 * This method is an adaptation of Container#calcRedstoneFromInventory(IInventory).
+	 * This method is an adaptation of Container#calculateComparatorOutput(Inventory).
 	 *
 	 * @param inv The inventory handler to test.
 	 * @return A redstone value in the range [0,15] representing how "full" this inventory is.
