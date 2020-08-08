@@ -60,6 +60,9 @@ public class Patchwork {
 		dispatch(mods, container -> event);
 	}
 
+	/**
+	 * Fire the specific event for all ModContainers on the {@link Mod.EventBusSubscriber.Bus.MOD} Event bus.
+	 */
 	private static void dispatch(Collection<FMLModContainer> mods, Function<ModContainer, Event> provider) {
 		for (FMLModContainer container : mods) {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
@@ -97,7 +100,7 @@ public class Patchwork {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			try {
-				Object a = FabricLoader.getInstance().getEnvironmentType();
+				// container.setMod()
 				initializer.onForgeInitialize();
 			} catch (Throwable t) {
 				if (error == null) {
@@ -160,9 +163,9 @@ public class Patchwork {
 		dispatch(mods, FMLCommonSetupEvent::new);
 
 		// Mod setup: SIDED SETUP
-		preSidedRunnable.accept(c -> ModList.get().forEachModContainer((mi, mc) -> mc.patchwork$acceptEvent(c.get())));
+		preSidedRunnable.accept(c -> dispatch(mods, c.get()));
 		dispatch(mods, lifeCycleEvent);
-		postSidedRunnable.accept(c -> ModList.get().forEachModContainer((mi, mc) -> mc.patchwork$acceptEvent(c.get())));
+		postSidedRunnable.accept(c -> dispatch(mods, c.get()));
 
 		// Mod setup complete
 	}
