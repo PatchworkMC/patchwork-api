@@ -10,11 +10,6 @@
   "license": "LGPL-2.1-only",
   "icon": "assets/patchwork-dispatcher/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.patchworkmc.impl.Patchwork"
-    ]
-  },
   "depends": {
     "patchwork-api-base": "*",
     "patchwork-fml": "*",

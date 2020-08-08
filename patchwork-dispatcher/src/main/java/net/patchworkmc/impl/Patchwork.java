@@ -47,14 +47,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import net.minecraft.server.dedicated.DedicatedServer;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
 import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
-public class Patchwork implements ModInitializer {
+public class Patchwork {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
 
 	private static void dispatch(Collection<FMLModContainer> mods, Event event) {
@@ -191,10 +190,5 @@ public class Patchwork implements ModInitializer {
 		Patchwork.gatherAndInitializeMods();
 		Patchwork.loadMods(container -> new FMLDedicatedServerSetupEvent(supplier, container), dummy -> { }, dummy -> { });
 		Patchwork.finishMods();
-	}
-
-	@Override
-	public void onInitialize() {
-		System.out.println("Patchwork.onInitialize");
 	}
 }
