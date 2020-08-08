@@ -6,6 +6,5 @@ dependencies {
 	implementation project(path: ':patchwork-fml', configuration: 'dev')
 	implementation project(path: ':patchwork-registries', configuration: 'dev')
 	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	implementation project(path: ':patchwork-events-rendering', configuration: 'dev')
 	implementation project(path: ':patchwork-model-loader', configuration: 'dev')
 }

@@ -17,21 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.modelloader;
+package net.patchworkmc.mixin;
 
-import java.util.Map;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.ModLoader;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedModelManager;
-import net.minecraft.util.Identifier;
+import net.patchworkmc.impl.Patchwork;
 
-public class ModelEventDispatcher {
-	public static void onModelBake(BakedModelManager modelManager, Map<Identifier, BakedModel> modelRegistry, ModelLoader modelLoader) {
-		ModLoader.get().postEvent(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
-		modelLoader.onPostBakeEvent(modelRegistry);
+@Mixin(MinecraftDedicatedServer.class)
+public abstract class MixinMinecraftDedicatedServer {
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target = "org/apache/logging/log4j/Logger.info(Ljava/lang/String;)V"))
+	private void initForgeModsOnServer(CallbackInfoReturnable<Boolean> ci) {
+		Patchwork.loadServerMods();
 	}
 }
