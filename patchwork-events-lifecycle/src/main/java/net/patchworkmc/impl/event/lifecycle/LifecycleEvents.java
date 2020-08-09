@@ -37,6 +37,8 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.ModInitializer;
@@ -69,12 +71,20 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(phase, player));
 	}
 
-	public static void handleServerStarting(final MinecraftServer server) {
+	/**
+	 * Mixes into {@link IntegratedServer} and {@link MinecraftDedicatedServer} in order to implement
+	 * {@link net.minecraftforge.fml.event.server.FMLServerStartingEvent}. This event fires right before the implementations
+	 * return <code>true</code> from <code>setupServer</code>. Returning <code>false</code> from the callback  cancels the
+	 * server's startup, however, it's important to note that this event isn't actually cancellable in Forge!
+	 */
+	public static boolean handleServerStarting(final MinecraftServer server) {
 		// TODO: Forge loads language data here. I haven't found any mods that use this behavior.
 
 		if (MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server))) {
 			throw new UnsupportedOperationException("FMLServerStartingEvent is not cancellable!");
 		}
+
+		return true;
 	}
 
 	public static void handleServerStarted(final MinecraftServer server) {
