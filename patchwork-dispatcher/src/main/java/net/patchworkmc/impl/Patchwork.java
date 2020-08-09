@@ -50,7 +50,6 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork {
@@ -153,6 +152,14 @@ public class Patchwork {
 		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods.values(), event));
 	}
 
+	/**
+	 * This is called on the ResourceLoader's thread when a resource loading happens, i.e. during client start-up or F3+T is pressed.
+	 * Forge fires the FMLCommonSetupEvent and LifeCycleEvents(FMLClientSetupEvent and FMLDedicatedServerSetupEvent) on its own thread in parallel. Sequence cannot be guaranteed.
+	 * IMPORTANT: In Patchwork, we fire all events on the main thread (Client Thread or Server Thread).
+	 * @param lifeCycleEvent
+	 * @param preSidedRunnable Fired before the LifeCycleEvent, on the main thread. Sequence cannot be guaranteed.
+	 * @param postSidedRunnable Fired after the LifeCycleEvent, on the main thread. Sequence cannot be guaranteed.
+	 */
 	public static void loadMods(Function<ModContainer, Event> lifeCycleEvent, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
 		List<FMLModContainer> mods = ModList.get().applyForEachModContainer(m -> (FMLModContainer) m).collect(Collectors.toList());
 
@@ -161,15 +168,16 @@ public class Patchwork {
 
 		// Mod setup: SETUP
 		dispatch(mods, FMLCommonSetupEvent::new);
-
 		// Mod setup: SIDED SETUP
 		preSidedRunnable.accept(c -> dispatch(mods, c.get()));
 		dispatch(mods, lifeCycleEvent);
 		postSidedRunnable.accept(c -> dispatch(mods, c.get()));
-
 		// Mod setup complete
 	}
 
+	/**
+	 * In Patchwork, we fire all of following events on the main thread (Client Thread or Server Thread).
+	 */
 	public static void finishMods() {
 		List<FMLModContainer> mods = ModList.get().applyForEachModContainer(m -> (FMLModContainer) m).collect(Collectors.toList());
 
@@ -178,20 +186,27 @@ public class Patchwork {
 		// Mod setup: PROCESS IMC
 		dispatch(mods, InterModProcessEvent::new);
 		// Mod setup: Final completion
-		LifecycleEvents.setLoadCompleteCallback(() -> dispatch(mods, FMLLoadCompleteEvent::new));
+		dispatch(mods, FMLLoadCompleteEvent::new);
 		// Freezing data, TODO: do we need freezing?
 		// GameData.freezeData();
 		// NetworkRegistry.lock();
-
-		MinecraftForge.EVENT_BUS.start();
 	}
 
-	public static void loadServerMods() {
+	public static void beginServerModLoading() {
 		Object gameInstance = FabricLoader.getInstance().getGameInstance();
 		Supplier<DedicatedServer> supplier = () -> (DedicatedServer) gameInstance;
 
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Start mod loading.");
 		Patchwork.gatherAndInitializeMods();
 		Patchwork.loadMods(container -> new FMLDedicatedServerSetupEvent(supplier, container), dummy -> { }, dummy -> { });
+	}
+
+	public static void endOfServerModLoading() {
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Finish mod loading.");
 		Patchwork.finishMods();
+
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Complete mod loading");
+		// Assume there's no error.
+		MinecraftForge.EVENT_BUS.start();
 	}
 }

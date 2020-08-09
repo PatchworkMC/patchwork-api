@@ -41,4 +41,14 @@ public abstract class MixinMinecraftClient {
 		MinecraftClient me = (MinecraftClient) (Object) this;
 		PatchworkClientModLoader.begin(me, me.getResourcePackManager(), resourceManager, me.getResourcePackDownloader());
 	}
+
+	//	this.setOverlay(new SplashScreen(this, this.resourceManager.beginInitialMonitoredReload(SystemUtil.getServerWorkerExecutor(), this, voidFuture), () -> {
+	//		if (SharedConstants.isDevelopment) this.checkGameData();
+	//	+	if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error sceen
+	//	+	// Show either ConnectScreen or TitleScreen
+	//	}
+	@Inject(method = "method_18504", at = @At("RETURN"))
+	private void onResourceReloadComplete(CallbackInfo ci) {
+		PatchworkClientModLoader.onResourceReloadComplete(!PatchworkClientModLoader.completeModLoading());
+	}
 }

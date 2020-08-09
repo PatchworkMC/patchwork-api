@@ -45,8 +45,6 @@ import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 public class LifecycleEvents implements ModInitializer {
-	private static Runnable loadCompleteCallback;
-
 	public static void fireWorldTickEvent(TickEvent.Phase phase, World world) {
 		LogicalSide side = world.isClient() ? LogicalSide.CLIENT : LogicalSide.SERVER;
 		TickEvent.WorldTickEvent event = new TickEvent.WorldTickEvent(side, phase, world);
@@ -95,14 +93,6 @@ public class LifecycleEvents implements ModInitializer {
 		final Path serverConfig = server.getLevelStorage().resolveFile(server.getLevelName(), "serverconfig").toPath();
 		FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
 		return serverConfig;
-	}
-
-	public static void setLoadCompleteCallback(Runnable callback) {
-		loadCompleteCallback = callback;
-	}
-
-	public static void handleLoadComplete() {
-		loadCompleteCallback.run();
 	}
 
 	public static void handleServerStopped(final MinecraftServer server) {

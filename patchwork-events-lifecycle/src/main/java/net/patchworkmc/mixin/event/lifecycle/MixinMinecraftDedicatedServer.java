@@ -33,7 +33,6 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 public class MixinMinecraftDedicatedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/UserCache;setUseRemote(Z)V", shift = At.Shift.AFTER))
 	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
-		LifecycleEvents.handleLoadComplete(); // This is a "multithreaded" event that would be called around this time.
 		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
 	}
 }

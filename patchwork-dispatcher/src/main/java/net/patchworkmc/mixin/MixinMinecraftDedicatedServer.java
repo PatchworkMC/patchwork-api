@@ -33,6 +33,12 @@ import net.patchworkmc.impl.Patchwork;
 public abstract class MixinMinecraftDedicatedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target = "org/apache/logging/log4j/Logger.info(Ljava/lang/String;)V"))
 	private void initForgeModsOnServer(CallbackInfoReturnable<Boolean> ci) {
-		Patchwork.loadServerMods();
+		Patchwork.beginServerModLoading();
+	}
+
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target =
+			"net/minecraft/server/MinecraftServer.setPlayerManager(Lnet/minecraft/server/PlayerManager;)V"))
+	private void endOfModLoading(CallbackInfoReturnable<Boolean> ci) {
+		Patchwork.endOfServerModLoading();
 	}
 }
