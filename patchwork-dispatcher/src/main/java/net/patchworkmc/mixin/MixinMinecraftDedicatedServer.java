@@ -31,13 +31,12 @@ import net.patchworkmc.impl.Patchwork;
 
 @Mixin(MinecraftDedicatedServer.class)
 public abstract class MixinMinecraftDedicatedServer {
-	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target = "org/apache/logging/log4j/Logger.info(Ljava/lang/String;)V"))
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.AFTER, ordinal = 0, target = "org/apache/logging/log4j/Logger.info(Ljava/lang/String;)V"))
 	private void initForgeModsOnServer(CallbackInfoReturnable<Boolean> ci) {
 		Patchwork.beginServerModLoading();
 	}
 
-	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target =
-			"net/minecraft/server/MinecraftServer.setPlayerManager(Lnet/minecraft/server/PlayerManager;)V"))
+	@Inject(method = "setupServer", at = @At(value = "NEW", shift = Shift.BEFORE, ordinal = 0, target = "net/minecraft/server/dedicated/DedicatedPlayerManager"))
 	private void endOfModLoading(CallbackInfoReturnable<Boolean> ci) {
 		Patchwork.endOfServerModLoading();
 	}
