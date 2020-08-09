@@ -25,9 +25,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.tag.ItemTags;
 
 @Mixin(ItemTags.class)
-public class ItemTagsAccessor {
+public interface ItemTagsAccessor {
 	@Accessor
-	public static int getLatestVersion() {
+	static int getLatestVersion() {
 		throw new UnsupportedOperationException();
 	}
 }
