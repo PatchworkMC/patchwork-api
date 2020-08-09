@@ -63,7 +63,6 @@ public abstract class MixinEntity {
 
 		if (!EntityEvents.canMountEntity(thisEntity, entity, true)) {
 			ci.setReturnValue(false);
-			ci.cancel();
 		}
 	}
 }

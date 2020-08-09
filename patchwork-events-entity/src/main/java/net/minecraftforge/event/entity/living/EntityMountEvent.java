@@ -26,17 +26,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 /**
-* This event gets fired whenever a entity mounts/dismounts another entity.<br>
-* <b>entityBeingMounted can be null</b>, be sure to check for that.
-* <br>
-* <br>
-* This event is cancellable. If this event is canceled, the entity does not mount/dismount the other entity.<br>
-* <br>
-* This event does not have a result.
-*<br>
-* This event is fired on the {@link MinecraftForge#EVENT_BUS}.
-*
-*/
+ * This event gets fired whenever a entity mounts/dismounts another entity.<br>
+ * <b>entityBeingMounted can be null</b>, be sure to check for that.
+ * <br>
+ * <br>
+ * This event is cancellable. If this event is canceled, the entity does not mount/dismount the other entity.<br>
+ * <br>
+ * This event does not have a result.
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ *
+ */
 
 public class EntityMountEvent extends EntityEvent {
 	private final Entity entityMounting;
@@ -76,10 +76,5 @@ public class EntityMountEvent extends EntityEvent {
 	@Override
 	public boolean isCancelable() {
 		return true;
-	}
-
-	@Override
-	public boolean hasResult() {
-		return false;
 	}
 }
