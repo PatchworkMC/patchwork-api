@@ -109,6 +109,16 @@ public class ForgeHooks {
 		return EntityEvents.attackEntity(player, target);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unused" })
+	private static ThreadLocal<?> lootContext = LootHooks.lootContext;
+
+	// Need to have the class here to make some mod hacks work
+	public static class LootTableContext extends LootHooks.LootTableContext {
+		private LootTableContext(Identifier name, boolean custom) {
+			super(name, custom);
+		}
+	}
+
 	@Nullable
 	public static LootTable loadLootTable(Gson gson, Identifier name, JsonObject data, boolean custom, LootManager lootTableManager) {
 		return LootHooks.loadLootTable(gson, name, data, custom, lootTableManager);

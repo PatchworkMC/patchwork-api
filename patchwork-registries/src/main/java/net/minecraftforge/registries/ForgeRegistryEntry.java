@@ -21,7 +21,7 @@ package net.minecraftforge.registries;
 
 import net.minecraft.util.Identifier;
 
-public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
+public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryEntry<V> {
 	private Identifier registryName;
 
 	@Override

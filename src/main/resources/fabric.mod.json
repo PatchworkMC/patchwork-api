@@ -13,7 +13,10 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4"
+    // This is copied over from patchwork-api-base until Loader/201 is resolved properly.
+    // Loader/204 exists as a bandage fix, but not a real solution.
+    "fabricloader": ">=0.8.4",
+    "fabric": ">=0.15.1"
   },
   "description": "Implementation of Minecraft Forge for Fabric.",
   "custom": {

@@ -23,17 +23,29 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.dimension.DimensionType;
 
-import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.event.entity.PlayerEvents;
 
 @Mixin(PlayerManager.class)
 public class MixinPlayerManager {
 	@Inject(method = "onPlayerConnect", at = @At("RETURN"))
 	private void hookPlayerLogin(ClientConnection connection, ServerPlayerEntity player, CallbackInfo callback) {
-		EntityEvents.onPlayerLoggedIn(player);
+		PlayerEvents.firePlayerLoggedIn(player);
+	}
+
+	@Inject(method = "remove", at = @At("HEAD"))
+	private void hookPlayerLogout(ServerPlayerEntity player, CallbackInfo callback) {
+		PlayerEvents.firePlayerLoggedOut(player);
+	}
+
+	@Inject(method = "respawnPlayer", at = @At("RETURN"))
+	private void hookPlayerRespawn(ServerPlayerEntity player, DimensionType dimension, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> callback) {
+		PlayerEvents.firePlayerRespawnEvent(player, alive);
 	}
 }
