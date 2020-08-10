@@ -57,4 +57,9 @@ public class SaplingGrowTreeEvent extends WorldEvent {
 	public Random getRand() {
 		return rand;
 	}
+
+	@Override
+	public boolean hasResult() {
+		return true;
+	}
 }
