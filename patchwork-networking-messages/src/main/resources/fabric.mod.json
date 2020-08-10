@@ -13,14 +13,15 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric-networking-v0": "*",
-    "patchwork-fml": "*",
+    "patchwork-api-base": "*",
     "patchwork-networking": "*"
   },
   "entrypoints": {
     "main": [
       "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessages"
+    ],
+    "client": [
+      "net.patchworkmc.impl.networking.PatchworkPlayNetworkingMessagesClient"
     ]
   },
   "mixins": [

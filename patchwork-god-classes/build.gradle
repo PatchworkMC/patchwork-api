@@ -1,11 +1,14 @@
 archivesBaseName = "patchwork-god-classes"
-version = getSubprojectVersion(project, "0.1.0")
+version = getSubprojectVersion(project, "0.2.0")
 
 dependencies {
-	compile project(path: ':patchwork-fml', configuration: 'dev')
-	compile project(path: ':patchwork-capabilities', configuration: 'dev')
-	compile project(path: ':patchwork-events-entity', configuration: 'dev')
-	compile project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	compile project(path: ':patchwork-events-rendering', configuration: 'dev')
-	compile project(path: ':patchwork-loot', configuration: 'dev')
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
+	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
+	implementation project(path: ':patchwork-events-entity', configuration: 'dev')
+	implementation project(path: ':patchwork-events-input', configuration: 'dev')
+	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
+	implementation project(path: ':patchwork-events-rendering', configuration: 'dev')
+	implementation project(path: ':patchwork-events-world', configuration: 'dev')
+	implementation project(path: ':patchwork-loot', configuration: 'dev')
 }

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-key-bindings",
+  "name": "Patchwork Keybindings",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-key-bindings/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "patchwork-api-base": "*"
+  },
+  "mixins": [
+    "patchwork-key-bindings.mixins.json"
+  ],
+  "description": "Implementation of the Forge Keybinding system.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

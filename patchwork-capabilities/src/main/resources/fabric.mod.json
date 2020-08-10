@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "patchwork-capabilities",
-  "name": "Patchwork Capabilities support",
+  "name": "Patchwork Capabilities",
   "version": "${version}",
   "license": "LGPL-2.1-only",
   "icon": "assets/patchwork-capabilities/icon.png",
@@ -13,8 +13,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "patchwork-fml": "*"
+    "patchwork-api-base": "*"
   },
   "mixins": [
     "patchwork-capabilities.mixins.json"

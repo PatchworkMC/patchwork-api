@@ -37,35 +37,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
 public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageFactory {
-	private static final Logger LOGGER = LogManager.getLogger("patchwork-networking");
-	private static final Identifier IDENTIFIER = new Identifier("fml", "play");
-	private static final NetworkChannelVersion VERSION = new NetworkChannelVersion("FML2", version -> true, version -> true);
-	private static final short SPAWN_ENTITY = 0;
-	private static final short OPEN_CONTAINER = 1;
+	public static final Logger LOGGER = LogManager.getLogger("patchwork-networking");
+	public static final Identifier IDENTIFIER = new Identifier("fml", "play");
+	public static final NetworkChannelVersion VERSION = new NetworkChannelVersion("FML2", version -> true, version -> true);
+	public static final short SPAWN_ENTITY = 0;
+	public static final short OPEN_CONTAINER = 1;
 
 	@Override
 	public void onInitialize() {
 		PatchworkNetworking.getVersionManager().createChannel(IDENTIFIER, VERSION);
 		PatchworkNetworking.setFactory(this);
-
-		// TODO: Move to client initializer
-		ClientSidePacketRegistry.INSTANCE.register(IDENTIFIER, (context, buf) -> {
-			int id = buf.readUnsignedByte();
-
-			if (id == SPAWN_ENTITY) {
-				FMLPlayMessages.SpawnEntity spawn = FMLPlayMessages.SpawnEntity.decode(buf);
-				FMLPlayMessages.SpawnEntity.handle(spawn, context);
-			} else if (id == OPEN_CONTAINER) {
-				FMLPlayMessages.OpenContainer open = FMLPlayMessages.OpenContainer.decode(buf);
-				FMLPlayMessages.OpenContainer.handle(open, context);
-			} else {
-				LOGGER.warn("Received an unknown fml:play message with an id of {} and a payload of {} bytes", id, buf.readableBytes());
-			}
-		});
 
 		ServerSidePacketRegistry.INSTANCE.register(IDENTIFIER, (context, buf) -> {
 			LOGGER.warn("Received an fml:play on the server, this should not happen! Kicking the offending client.");
