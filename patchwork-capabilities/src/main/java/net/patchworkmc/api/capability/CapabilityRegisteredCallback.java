@@ -29,6 +29,10 @@ public interface CapabilityRegisteredCallback<C> {
 	void onCapabilityRegistered(Capability<C> capability);
 
 	static <C> Event<CapabilityRegisteredCallback<C>> event(Class<C> type) {
-		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(type);
+		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(type.getName());
+	}
+
+	static <C> Event<CapabilityRegisteredCallback<C>> event(String className) {
+		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(className);
 	}
 }
