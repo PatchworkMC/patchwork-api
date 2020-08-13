@@ -23,19 +23,29 @@ import java.util.Stack;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.event.world.BlockEvent;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.OreBlock;
 import net.minecraft.block.RedstoneOreBlock;
 import net.minecraft.block.SpawnerBlock;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.EmptyBlockView;
+import net.minecraft.world.GameMode;
+import net.minecraft.world.World;
 
 public class BlockHarvestManager {
 	private static final ThreadLocal<Stack<Integer>> expDrops = ThreadLocal.withInitial(Stack::new);
@@ -97,5 +107,67 @@ public class BlockHarvestManager {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Called by Mixin and ForgeHooks.
+	 * @return experience dropped, -1 = block breaking is cancelled.
+	 */
+	public static int onBlockBreakEvent(World world, GameMode gameMode, ServerPlayerEntity player, BlockPos pos) {
+		// Logic from tryHarvestBlock for pre-canceling the event
+		boolean preCancelEvent = false;
+
+		ItemStack itemstack = player.getMainHandStack();
+
+		if (!itemstack.isEmpty() && !itemstack.getItem().canMine(world.getBlockState(pos), world, pos, player)) {
+			preCancelEvent = true;
+		}
+
+		// method_21701 => canMine
+		// Isn't the function really canNotMine?
+
+		if (player.method_21701(world, pos, gameMode)) {
+			preCancelEvent = true;
+		}
+
+		// Tell client the block is gone immediately then process events
+		if (world.getBlockEntity(pos) == null) {
+			player.networkHandler.sendPacket(new BlockUpdateS2CPacket(EmptyBlockView.INSTANCE, pos));
+		}
+
+		// Post the block break event
+		BlockState state = world.getBlockState(pos);
+		BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, player);
+		event.setCanceled(preCancelEvent);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		// Handle if the event is canceled
+		if (event.isCanceled()) {
+			// Let the client know the block still exists
+			player.networkHandler.sendPacket(new BlockUpdateS2CPacket(world, pos));
+
+			// Update any block entity data for this block
+			BlockEntity entity = world.getBlockEntity(pos);
+
+			if (entity != null) {
+				BlockEntityUpdateS2CPacket packet = entity.toUpdatePacket();
+
+				if (packet != null) {
+					player.networkHandler.sendPacket(packet);
+				}
+			}
+
+			return -1; // Cancelled
+		} else {
+			return event.getExpToDrop();
+		}
+	}
+
+	// TODO: Leaving this unfired is intentional. See: https://github.com/MinecraftForge/MinecraftForge/issues/5828
+	@Deprecated
+	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
+		BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getDropChance();
 	}
 }

@@ -22,9 +22,12 @@ package net.patchworkmc.mixin.extensions.block.harvest;
 import javax.annotation.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 
 import net.minecraft.block.Block;
@@ -36,6 +39,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
@@ -60,6 +64,29 @@ public abstract class MixinServerPlayerInteractionManager {
 		return removed;
 	}
 
+	/////////////////////////////////////
+	/// Fire BlockEvent.BreakEvent,
+	/// get the amount of exp to drop.
+	/////////////////////////////////////
+	@Shadow
+	public ServerWorld world;
+	@Shadow
+	public ServerPlayerEntity player;
+	@Shadow
+	private GameMode gameMode;
+
+	@Inject(method = "tryBreakBlock", at = @At("HEAD"), cancellable = true)
+	private void hookBreakBlock(BlockPos pos, CallbackInfoReturnable<Boolean> callback) {
+		int exp = BlockHarvestManager.onBlockBreakEvent(world, gameMode, player, pos);
+
+		if (exp < 0) {
+			callback.setReturnValue(false);
+		} else {
+			BlockHarvestManager.pushExpDropStack(exp);
+		}
+	}
+
+	/////////////////////////////////////
 	@Redirect(method = "tryBreakBlock", at = @At(value = "INVOKE", target = Signatures.Block_onBreak, ordinal = 0))
 	private void patchwork$tryBreakBlock_onBreak(Block block, World world, BlockPos pos, BlockState state, PlayerEntity player) {
 		// Suppress this call
@@ -115,5 +142,10 @@ public abstract class MixinServerPlayerInteractionManager {
 		if (removed && exp > 0 && !BlockHarvestManager.isVanillaBlock(block)) {
 			state.getBlock().dropExperience(world, pos, exp);
 		}
+	}
+
+	@Inject(method = "tryBreakBlock", at = @At("RETURN"))
+	private void tryBreakBlock_return(BlockPos pos, CallbackInfoReturnable<Boolean> callback) {
+		BlockHarvestManager.popExpDropStack(); // Pop the expDrop stack at ALL return paths.
 	}
 }

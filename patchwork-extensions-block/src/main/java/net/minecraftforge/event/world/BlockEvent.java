@@ -125,6 +125,7 @@ public class BlockEvent extends Event {
 	 *
 	 * <p>{@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.</p>
 	 */
+	@Deprecated
 	public static class HarvestDropsEvent extends BlockEvent {
 		private final int fortuneLevel;
 		private final DefaultedList<ItemStack> drops;
