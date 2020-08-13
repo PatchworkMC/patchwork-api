@@ -26,13 +26,23 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
+import net.minecraft.world.dimension.DimensionType;
+
+import net.patchworkmc.impl.networking.ClientNetworkingEvents;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class MixinClientPlayNetworkHandler {
+	@Shadow
+	private MinecraftClient client;
+
 	@Shadow
 	public abstract ClientConnection getConnection();
 
@@ -41,5 +51,17 @@ public abstract class MixinClientPlayNetworkHandler {
 		if (NetworkHooks.onCustomPayload((ICustomPacket<?>) packet, getConnection())) {
 			callback.cancel();
 		}
+	}
+
+	@Inject(method = "onGameJoin", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/GameJoinS2CPacket;getEntityId()I"))
+	public void patchwork$hookGameJoin(CallbackInfo ci) {
+		ClientNetworkingEvents.firePlayerLogin(this.client.interactionManager, this.client.player, this.client.getNetworkHandler().getConnection());
+	}
+
+	@Inject(method = "onPlayerRespawn",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;addPlayer(ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V"),
+			locals = LocalCapture.CAPTURE_FAILHARD)
+	public void patchwork$hookPlayerRespawn(PlayerRespawnS2CPacket packet, CallbackInfo ci, DimensionType dimensionType, ClientPlayerEntity clientPlayerEntity, int i, String string, ClientPlayerEntity clientPlayerEntity2) {
+		ClientNetworkingEvents.firePlayerRespawn(this.client.interactionManager, clientPlayerEntity, clientPlayerEntity2, clientPlayerEntity2.networkHandler.getConnection());
 	}
 }
