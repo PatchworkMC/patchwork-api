@@ -66,7 +66,7 @@ public abstract class MixinFishingBobberEntity {
 
 		if (damage != -1) {
 			cir.setReturnValue(damage);
-			rodDamage.set(-1);
+			rodDamage.remove();
 		}
 	}
 }

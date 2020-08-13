@@ -17,22 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.api.capability;
+package net.minecraftforge.items;
 
-import net.minecraftforge.common.capabilities.Capability;
+import javax.annotation.Nonnull;
 
-import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.item.ItemStack;
 
-import net.patchworkmc.impl.capability.CapabilityRegisteredCallbackInternal;
-
-public interface CapabilityRegisteredCallback<C> {
-	void onCapabilityRegistered(Capability<C> capability);
-
-	static <C> Event<CapabilityRegisteredCallback<C>> event(Class<C> type) {
-		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(type.getName());
-	}
-
-	static <C> Event<CapabilityRegisteredCallback<C>> event(String className) {
-		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(className);
-	}
+public interface IItemHandlerModifiable extends IItemHandler {
+	/**
+	 * Overrides the stack in the given slot. This method is used by the
+	 * standard Forge helper methods and classes. It is not intended for
+	 * general use by other mods, and the handler may throw an error if it
+	 * is called unexpectedly.
+	 *
+	 * @param slot  Slot to modify
+	 * @param stack ItemStack to set slot to (may be empty).
+	 * @throws RuntimeException if the handler is called in a way that the handler
+	 *                          was not expecting.
+	 */
+	void setStackInSlot(int slot, @Nonnull ItemStack stack);
 }

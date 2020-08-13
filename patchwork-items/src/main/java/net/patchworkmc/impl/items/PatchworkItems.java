@@ -17,22 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.api.capability;
+package net.patchworkmc.impl.items;
 
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
-import net.fabricmc.fabric.api.event.Event;
+import net.minecraft.util.math.Direction;
 
-import net.patchworkmc.impl.capability.CapabilityRegisteredCallbackInternal;
+import net.fabricmc.api.ModInitializer;
 
-public interface CapabilityRegisteredCallback<C> {
-	void onCapabilityRegistered(Capability<C> capability);
+public class PatchworkItems implements ModInitializer {
+	/**
+	 * Shared ThreadLocal for {@link net.patchworkmc.mixin.items.MixinDropperBlock} and {@link net.patchworkmc.mixin.items.MixinHopperBlockEntity}.
+	 */
+	public static final ThreadLocal<Direction> currentSide = new ThreadLocal<>();
 
-	static <C> Event<CapabilityRegisteredCallback<C>> event(Class<C> type) {
-		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(type.getName());
-	}
-
-	static <C> Event<CapabilityRegisteredCallback<C>> event(String className) {
-		return CapabilityRegisteredCallbackInternal.getOrCreateEvent(className);
+	@Override
+	public void onInitialize() {
+		CapabilityItemHandler.register();
 	}
 }
