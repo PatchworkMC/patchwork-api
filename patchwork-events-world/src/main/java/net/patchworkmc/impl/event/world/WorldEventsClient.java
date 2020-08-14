@@ -33,6 +33,7 @@ public class WorldEventsClient implements ClientModInitializer {
 		///////////////////////////////////////////////
 		ClientChunkEvents.CHUNK_LOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk)));
 		ClientChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
+		// Fabric fires the chunk unload event after it's been removed from the client's chunk graph. This probably won't cause any issues.
 		/* ClientChunkManager.unload(II)V
 		 * if (method_20181(chunk, x, z)) {
 		 *     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(chunk));
