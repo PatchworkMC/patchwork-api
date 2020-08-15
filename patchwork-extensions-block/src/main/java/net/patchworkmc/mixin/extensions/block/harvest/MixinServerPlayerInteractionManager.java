@@ -21,12 +21,15 @@ package net.patchworkmc.mixin.extensions.block.harvest;
 
 import javax.annotation.Nullable;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 
@@ -102,15 +105,10 @@ public abstract class MixinServerPlayerInteractionManager {
 		// Suppress this call
 	}
 
-	@Redirect(method = "tryBreakBlock", at = @At(value = "INVOKE", target = Signatures.ServerPlayerInteractionManager_isCreative, ordinal = 0))
-	private boolean patchwork$tryBreakBlock_isCreative(ServerPlayerInteractionManager me, BlockPos pos) {
-		boolean isCreative = me.isCreative();
-
-		if (isCreative) {
-			patchwork$removeBlock(pos, false);
-		}
-
-		return isCreative;
+	@Inject(method = "tryBreakBlock", at = @At(value = "JUMP", ordinal = 0, opcode = Opcodes.IFEQ, shift = Shift.AFTER),
+			slice = @Slice(from = @At(value = "INVOKE", target = Signatures.ServerPlayerInteractionManager_isCreative)))
+	private void patchwork$tryBreakBlock_isCreative(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+		patchwork$removeBlock(pos, false);
 	}
 
 	@Unique
