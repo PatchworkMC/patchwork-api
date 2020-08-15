@@ -99,7 +99,7 @@ public class Patchwork {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			try {
-				// container.setMod()
+				// TODO: Supposed to call "container.setMod()" here, but this requires a WIP Patchwork-Patcher feature.
 				initializer.onForgeInitialize();
 			} catch (Throwable t) {
 				if (error == null) {
