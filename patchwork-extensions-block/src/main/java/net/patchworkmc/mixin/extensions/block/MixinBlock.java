@@ -21,12 +21,14 @@ package net.patchworkmc.mixin.extensions.block;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeBlock;
 
 import net.minecraft.block.Block;
@@ -40,6 +42,8 @@ import net.minecraft.world.CollisionView;
 
 @Mixin(Block.class)
 public class MixinBlock implements IForgeBlock {
+	protected Random RANDOM = new Random();
+
 	@Shadow
 	@Final
 	private float slipperiness;
@@ -52,6 +56,11 @@ public class MixinBlock implements IForgeBlock {
 	@Override
 	public float getSlipperiness(BlockState state, CollisionView world, BlockPos pos, Entity entity) {
 		return slipperiness;
+	}
+
+	@Override
+	public ToolType getHarvestTool(BlockState state) {
+		throw new UnsupportedOperationException("Harvest levels not yet implemented"); // TODO implement getHarvestLevel
 	}
 
 	@Override
@@ -74,5 +83,10 @@ public class MixinBlock implements IForgeBlock {
 		}
 
 		return this.cachedTags;
+	}
+
+	@Override
+	public Random getRandom() {
+		return RANDOM;
 	}
 }

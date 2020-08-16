@@ -21,15 +21,20 @@ package net.minecraftforge.event.world;
 
 import java.util.List;
 
+import net.minecraftforge.common.extensions.IForgeBlockState;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DefaultedList;
 import net.minecraft.block.BlockState;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 
 public class BlockEvent extends Event {
 	private final IWorld world;
@@ -73,17 +78,14 @@ public class BlockEvent extends Event {
 			this.player = player;
 			this.exp = 0;
 
-			// TODO: BlockState#getExpDrop
-
-			/*
 			// Handle empty block or player unable to break block scenario
-			if (state == null || !ForgeHooks.canHarvestBlock(state, player, world, pos)) {
+			if (state == null || !BlockHarvestManager.canHarvestBlock(state, player, world, pos)) {
 				this.exp = 0;
 			} else {
-				int bonusLevel = EnchantmentHelper.getLevel(Enchantments.FORTUNE, player.getHeldItemMainhand());
-				int silklevel = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand());
-				this.exp = state.getExpDrop(world, pos, bonusLevel, silklevel);
-			}*/
+				int bonusLevel = EnchantmentHelper.getLevel(Enchantments.FORTUNE, player.getMainHandStack());
+				int silklevel = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, player.getMainHandStack());
+				this.exp = ((IForgeBlockState) state).getExpDrop(world, pos, bonusLevel, silklevel);
+			}
 		}
 
 		public PlayerEntity getPlayer() {
@@ -123,6 +125,7 @@ public class BlockEvent extends Event {
 	 *
 	 * <p>{@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.</p>
 	 */
+	@Deprecated
 	public static class HarvestDropsEvent extends BlockEvent {
 		private final int fortuneLevel;
 		private final DefaultedList<ItemStack> drops;

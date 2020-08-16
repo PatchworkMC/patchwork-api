@@ -48,7 +48,7 @@ import net.minecraft.util.math.BlockPos;
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.loot.LootEvents;
-import net.patchworkmc.impl.event.world.WorldEvents;
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
@@ -85,8 +85,10 @@ public class ForgeEventFactory {
 		return LootEvents.loadLootTable(name, table, lootTableManager);
 	}
 
+	// Forge might remove BlockEvent.HarvestDropsEvent, which is replaced by the new loot modifier.
+	@Deprecated
 	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
-		return WorldEvents.fireBlockHarvesting(drops, world, pos, state, fortune, dropChance, silkTouch, player);
+		return BlockHarvestManager.fireBlockHarvesting(drops, world, pos, state, fortune, dropChance, silkTouch, player);
 	}
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
