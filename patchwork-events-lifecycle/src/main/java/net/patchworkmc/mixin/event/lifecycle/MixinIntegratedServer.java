@@ -22,6 +22,7 @@ package net.patchworkmc.mixin.event.lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
@@ -34,5 +35,11 @@ public class MixinIntegratedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/integrated/IntegratedServer;loadWorld(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/level/LevelGeneratorType;Lcom/google/gson/JsonElement;)V"))
 	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
 		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
+	}
+
+	@Inject(method = "setupServer", at = @At(value = "RETURN", ordinal = 0), cancellable = true, slice =
+			@Slice(from = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.setMotd(Ljava/lang/String;)V")))
+	private void handleServerStarting(CallbackInfoReturnable<Boolean> cir) {
+		cir.setReturnValue(LifecycleEvents.handleServerStarting((MinecraftServer) (Object) this));
 	}
 }

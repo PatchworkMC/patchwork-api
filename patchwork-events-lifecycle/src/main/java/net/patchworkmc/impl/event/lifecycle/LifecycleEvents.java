@@ -37,6 +37,8 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.ModInitializer;
@@ -45,8 +47,6 @@ import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 public class LifecycleEvents implements ModInitializer {
-	private static Runnable loadCompleteCallback;
-
 	public static void fireWorldTickEvent(TickEvent.Phase phase, World world) {
 		LogicalSide side = world.isClient() ? LogicalSide.CLIENT : LogicalSide.SERVER;
 		TickEvent.WorldTickEvent event = new TickEvent.WorldTickEvent(side, phase, world);
@@ -71,12 +71,20 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(phase, player));
 	}
 
-	public static void handleServerStarting(final MinecraftServer server) {
+	/**
+	 * Mixes into {@link IntegratedServer} and {@link MinecraftDedicatedServer} in order to implement
+	 * {@link net.minecraftforge.fml.event.server.FMLServerStartingEvent}. This event fires right before the implementations
+	 * return <code>true</code> from <code>setupServer</code>. Returning <code>false</code> from the callback  cancels the
+	 * server's startup, however, it's important to note that this event isn't actually cancellable in Forge!
+	 */
+	public static boolean handleServerStarting(final MinecraftServer server) {
 		// TODO: Forge loads language data here. I haven't found any mods that use this behavior.
 
 		if (MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server))) {
 			throw new UnsupportedOperationException("FMLServerStartingEvent is not cancellable!");
 		}
+
+		return true;
 	}
 
 	public static void handleServerStarted(final MinecraftServer server) {
@@ -95,14 +103,6 @@ public class LifecycleEvents implements ModInitializer {
 		final Path serverConfig = server.getLevelStorage().resolveFile(server.getLevelName(), "serverconfig").toPath();
 		FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
 		return serverConfig;
-	}
-
-	public static void setLoadCompleteCallback(Runnable callback) {
-		loadCompleteCallback = callback;
-	}
-
-	public static void handleLoadComplete() {
-		loadCompleteCallback.run();
 	}
 
 	public static void handleServerStopped(final MinecraftServer server) {
