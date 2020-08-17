@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
@@ -110,8 +111,7 @@ public class ModFileScanData {
 		private final Type clazz;
 		private final String memberName;
 
-		//lazy evaluated
-		private Map<String, Object> annotationData;
+		private Map<String, Object> elements;
 
 		public AnnotationData(
 				final Type annotationType, final ElementType targetType,
@@ -121,6 +121,17 @@ public class ModFileScanData {
 			this.targetType = targetType;
 			this.clazz = clazz;
 			this.memberName = memberName;
+		}
+
+		public AnnotationData(
+				Type annotationType, ElementType targetType, Type clazz,
+				String memberName, Map<String, Object> elements
+		) {
+			this.annotationType = annotationType;
+			this.targetType = targetType;
+			this.clazz = clazz;
+			this.memberName = memberName;
+			this.elements = elements;
 		}
 
 		public Type getAnnotationType() {
@@ -140,15 +151,15 @@ public class ModFileScanData {
 		}
 
 		public Map<String, Object> getAnnotationData() {
-			if (annotationData == null) {
+			if (elements == null) {
 				initAnnotationData();
 			}
 
-			return annotationData;
+			return elements;
 		}
 
 		private void initAnnotationData() {
-			annotationData = new HashMap<>();
+			elements = new HashMap<>();
 
 			try {
 				// TODO: This *may* load classes in the wrong order, but it shouldn't be an issue
@@ -163,14 +174,13 @@ public class ModFileScanData {
 					return;
 				}
 
-				Method[] argMethods = annotationObject.getClass().getDeclaredMethods();
+				Method[] elementGetters = annotationObject.getClass().getDeclaredMethods();
 
-				for (Method argMethod : argMethods) {
-					if (isArgumentMethod(argMethod)) {
-						annotationData.put(
-								argMethod.getName(),
-								argMethod.invoke(annotationObject)
-						);
+				for (Method elementGetter : elementGetters) {
+					if (isElementGetter(elementGetter)) {
+						Object value = elementGetter.invoke(annotationObject);
+
+						elements.put(elementGetter.getName(), processElementObject(value));
 					}
 				}
 			} catch (Throwable e) {
@@ -178,7 +188,7 @@ public class ModFileScanData {
 			}
 		}
 
-		private static boolean isArgumentMethod(Method method) {
+		private static boolean isElementGetter(Method method) {
 			String name = method.getName();
 			if (name.equals("toString")) return false;
 			if (name.equals("hashCode")) return false;
@@ -199,15 +209,14 @@ public class ModFileScanData {
 			case METHOD:
 				String methodName = memberName.substring(0, memberName.indexOf('('));
 				Method[] methods = Arrays.stream(clazzObj.getDeclaredMethods())
-					.filter(method -> method.getName().equals(methodName))
-					.toArray(Method[]::new);
+						.filter(method -> method.getName().equals(methodName))
+						.toArray(Method[]::new);
 				if (methods.length == 0) {
 					throw new RuntimeException("Cannot find method " + methodName);
 				}
 
 				if (methods.length > 1) {
 					//TODO handle overloaded methods
-
 					throw new RuntimeException("Currently Cannot Handle Overloaded Methods");
 				}
 
@@ -234,5 +243,24 @@ public class ModFileScanData {
 		public int hashCode() {
 			return Objects.hash(annotationType, targetType, clazz, memberName);
 		}
+	}
+
+	private static Object processElementObject(Object object) {
+		if (object instanceof Object[]) {
+			return Arrays.stream((Object[]) object)
+					.map(ModFileScanData::processElementObject)
+					.collect(Collectors.toList());
+		}
+
+		if (object instanceof Enum) {
+			Enum enumObject = (Enum) object;
+			String className = enumObject.getDeclaringClass().getName();
+			return new ModAnnotation.EnumHolder(
+					className.replace('.', '/'),
+					enumObject.toString()
+			);
+		}
+
+		return object;
 	}
 }

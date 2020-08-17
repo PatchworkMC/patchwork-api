@@ -20,29 +20,23 @@
 package net.patchworkmc.mixin.networking;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.Shadow;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import net.patchworkmc.impl.networking.ContainerSyncAccess;
 
 @Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity implements ContainerSyncAccess {
-	@Accessor
-	private int getContainerSyncId() {
-		throw new AssertionError("Mixin not applied");
-	}
-
-	@Invoker
-	private void invokeIncrementContainerSyncId() {
-		throw new AssertionError("Mixin not applied");
-	}
+public abstract class MixinServerPlayerEntity implements ContainerSyncAccess {
+	@Shadow
+	private int containerSyncId;
+	@Shadow
+	protected abstract void incrementContainerSyncId();
 
 	@Override
 	public int patchwork$getNewContainerSyncId() {
-		invokeIncrementContainerSyncId();
+		incrementContainerSyncId();
 
-		return getContainerSyncId();
+		return containerSyncId;
 	}
 }

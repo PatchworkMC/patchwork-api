@@ -18,6 +18,7 @@
   },
   "mixins": [
     "patchwork-networking.accessor.mixins.json",
+    "patchwork-networking.client.mixins.json",
     "patchwork-networking.handler.mixins.json",
     "patchwork-networking.packet.mixins.json"
   ],

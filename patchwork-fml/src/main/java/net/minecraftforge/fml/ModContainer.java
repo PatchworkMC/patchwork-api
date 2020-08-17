@@ -85,4 +85,8 @@ public abstract class ModContainer {
 
 	protected void acceptEvent(Event e) {
 	}
+
+	public final void patchwork$acceptEvent(Event e) {
+		this.acceptEvent(e);
+	}
 }

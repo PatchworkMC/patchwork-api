@@ -17,29 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.lifecycle;
+package net.patchworkmc.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.integrated.IntegratedServer;
 
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
+import net.patchworkmc.impl.Patchwork;
 
-/**
- * Mixes into {@link IntegratedServer} and {@link MinecraftDedicatedServer} in order to implement
- * {@link net.minecraftforge.fml.event.server.FMLServerStartingEvent}. This event fires right before the implementations
- * return <code>true</code> from <code>setupServer</code>. Returning <code>false</code> from the callback  cancels the
- * server's startup, however, it's important to note that this event isn't actually cancellable in Forge!
- */
-@Mixin({IntegratedServer.class, MinecraftDedicatedServer.class})
-public class MixinMinecraftServerSubclass {
-	@Inject(method = "setupServer", at = @At("RETURN"))
-	private void hookSetupEnd(CallbackInfoReturnable<Boolean> callback) {
-		LifecycleEvents.handleServerStarting((MinecraftServer) (Object) this);
+@Mixin(MinecraftDedicatedServer.class)
+public abstract class MixinMinecraftDedicatedServer {
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", shift = Shift.AFTER, ordinal = 0, target = "org/apache/logging/log4j/Logger.info(Ljava/lang/String;)V"))
+	private void initForgeModsOnServer(CallbackInfoReturnable<Boolean> ci) {
+		Patchwork.beginServerModLoading();
+	}
+
+	@Inject(method = "setupServer", at = @At(value = "NEW", shift = Shift.BEFORE, ordinal = 0, target = "net/minecraft/server/dedicated/DedicatedPlayerManager"))
+	private void endOfModLoading(CallbackInfoReturnable<Boolean> ci) {
+		Patchwork.endOfServerModLoading();
 	}
 }
