@@ -17,32 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.world;
+package net.patchworkmc.mixin.networking.client;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.FarmlandBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerInteractionManager;
 
-import net.patchworkmc.impl.event.world.WorldEvents;
+import net.patchworkmc.impl.networking.ClientNetworkingEvents;
 
-@Mixin(FarmlandBlock.class)
-public abstract class MixinFarmlandBlock extends Block {
-	private MixinFarmlandBlock(Settings settings) {
-		super(settings);
-	}
+@Mixin(MinecraftClient.class)
+public class MixinMinecraftClient {
+	@Shadow
+	public ClientPlayerInteractionManager interactionManager;
 
-	@Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V"), cancellable = true)
-	private void onSetToDirt(World world, BlockPos pos, Entity entity, float distance, CallbackInfo ci) {
-		if (!WorldEvents.onFarmlandTrample(world, pos, world.getBlockState(pos), distance, entity)) {
-			super.onLandedUpon(world, pos, entity, distance);
-			ci.cancel();
-		}
+	@Shadow
+	public ClientPlayerEntity player;
+
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;reset()V", shift = At.Shift.AFTER))
+	public void patchwork$hookDisconnect(CallbackInfo ci) {
+		ClientNetworkingEvents.firePlayerLogout(this.interactionManager, this.player);
 	}
 }

@@ -38,16 +38,19 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.world.WorldEvents;
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 
 /*
@@ -109,6 +112,10 @@ public class ForgeHooks {
 		return EntityEvents.attackEntity(player, target);
 	}
 
+	public static int onBlockBreakEvent(World world, GameMode gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {
+		return BlockHarvestManager.onBlockBreakEvent(world, gameType, entityPlayer, pos);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unused" })
 	private static ThreadLocal<?> lootContext = LootHooks.lootContext;
 
@@ -129,6 +136,6 @@ public class ForgeHooks {
 	}
 
 	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
-		return WorldEvents.onFarmlandTrample(world, pos, state, fallDistance, entity);
+		return BlockHarvestManager.onFarmlandTrample(world, pos, state, fallDistance, entity);
 	}
 }

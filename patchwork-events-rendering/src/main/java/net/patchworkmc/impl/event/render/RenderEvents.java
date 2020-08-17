@@ -20,13 +20,12 @@
 package net.patchworkmc.impl.event.render;
 
 import java.util.Set;
-import java.util.function.Consumer;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoader;
 
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
@@ -39,26 +38,20 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
 public class RenderEvents {
-	private static Consumer<Event> eventDispatcher;
-
-	public static void registerEventDispatcher(Consumer<Event> dispatcher) {
-		eventDispatcher = dispatcher;
-	}
-
 	public static void onBlockColorsInit(BlockColors blockColors) {
-		eventDispatcher.accept(new ColorHandlerEvent.Block(blockColors));
+		ModLoader.get().postEvent(new ColorHandlerEvent.Block(blockColors));
 	}
 
 	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
-		eventDispatcher.accept(new ColorHandlerEvent.Item(itemColors, blockColors));
+		ModLoader.get().postEvent(new ColorHandlerEvent.Item(itemColors, blockColors));
 	}
 
 	public static void onTextureStitchPre(SpriteAtlasTexture spriteAtlasTexture, Set<Identifier> set) {
-		eventDispatcher.accept(new TextureStitchEvent.Pre(spriteAtlasTexture, set));
+		ModLoader.get().postEvent(new TextureStitchEvent.Pre(spriteAtlasTexture, set));
 	}
 
 	public static void onTextureStitchPost(SpriteAtlasTexture spriteAtlasTexture) {
-		eventDispatcher.accept(new TextureStitchEvent.Post(spriteAtlasTexture));
+		ModLoader.get().postEvent(new TextureStitchEvent.Post(spriteAtlasTexture));
 	}
 
 	/**

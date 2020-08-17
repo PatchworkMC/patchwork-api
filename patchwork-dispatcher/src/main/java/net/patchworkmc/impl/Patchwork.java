@@ -19,23 +19,23 @@
 
 package net.patchworkmc.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -45,40 +45,37 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.dedicated.DedicatedServer;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.patchworkmc.api.ForgeInitializer;
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
-import net.patchworkmc.impl.event.render.RenderEvents;
-import net.patchworkmc.impl.modelloader.ModelEventDispatcher;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
-public class Patchwork implements ModInitializer {
+public class Patchwork {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
 
-	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Event event) {
+	private static void dispatch(Collection<FMLModContainer> mods, Event event) {
 		dispatch(mods, container -> event);
 	}
 
-	private static void dispatch(Map<ForgeInitializer, FMLModContainer> mods, Function<ModContainer, Event> provider) {
-		for (FMLModContainer container : mods.values()) {
+	/**
+	 * Fire the specific event for all ModContainers on the {@link Mod.EventBusSubscriber.Bus.MOD} Event bus.
+	 */
+	private static void dispatch(Collection<FMLModContainer> mods, Function<ModContainer, Event> provider) {
+		for (FMLModContainer container : mods) {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			Event event = provider.apply(container);
 			LOGGER.debug("Firing event for modid {} : {}", container.getModId(), event.toString());
-			container.getEventBus().post(event);
+			container.patchwork$acceptEvent(event);
 			LOGGER.debug("Fired event for modid {} : {}", container.getModId(), event.toString());
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 		}
 	}
 
-	@Override
-	public void onInitialize() {
+	public static void gatherAndInitializeMods() {
 		ForgeRegistries.init();
 
 		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
@@ -102,6 +99,7 @@ public class Patchwork implements ModInitializer {
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			try {
+				// TODO: Supposed to call "container.setMod()" here, but this requires a WIP Patchwork-Patcher feature.
 				initializer.onForgeInitialize();
 			} catch (Throwable t) {
 				if (error == null) {
@@ -150,27 +148,65 @@ public class Patchwork implements ModInitializer {
 		ModList.get().setLoadedMods(mods.values());
 		// Send initialization events
 
-		dispatch(mods, new RegistryEvent.NewRegistry());
-		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+		dispatch(mods.values(), new RegistryEvent.NewRegistry());
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods.values(), event));
+	}
+
+	/**
+	 * This is called on the ResourceLoader's thread when a resource loading happens, i.e. during client start-up or F3+T is pressed.
+	 * Forge fires the FMLCommonSetupEvent and LifeCycleEvents(FMLClientSetupEvent and FMLDedicatedServerSetupEvent) on its own thread in parallel. Sequence cannot be guaranteed.
+	 * IMPORTANT: In Patchwork, we fire all events on the main thread (Client Thread or Server Thread).
+	 * @param lifeCycleEvent
+	 * @param preSidedRunnable Fired before the LifeCycleEvent, on the main thread. Sequence cannot be guaranteed.
+	 * @param postSidedRunnable Fired after the LifeCycleEvent, on the main thread. Sequence cannot be guaranteed.
+	 */
+	public static void loadMods(Function<ModContainer, Event> lifeCycleEvent, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
+		List<FMLModContainer> mods = ModList.get().applyForEachModContainer(m -> (FMLModContainer) m).collect(Collectors.toList());
+
+		// Loading mod config
+		// TODO: Load client and common configs here
+
+		// Mod setup: SETUP
 		dispatch(mods, FMLCommonSetupEvent::new);
+		// Mod setup: SIDED SETUP
+		preSidedRunnable.accept(c -> dispatch(mods, c.get()));
+		dispatch(mods, lifeCycleEvent);
+		postSidedRunnable.accept(c -> dispatch(mods, c.get()));
+		// Mod setup complete
+	}
 
-		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-			ModelEventDispatcher.fireModelRegistryEvent();
-			dispatch(mods, container -> new FMLClientSetupEvent(MinecraftClient::getInstance, container));
-			RenderEvents.registerEventDispatcher(event -> dispatch(mods, event));
-		});
+	/**
+	 * In Patchwork, we fire all of following events on the main thread (Client Thread or Server Thread).
+	 */
+	public static void finishMods() {
+		List<FMLModContainer> mods = ModList.get().applyForEachModContainer(m -> (FMLModContainer) m).collect(Collectors.toList());
 
-		DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, () -> () -> {
-			Object gameInstance = FabricLoader.getInstance().getGameInstance();
-			Supplier<DedicatedServer> supplier = () -> (DedicatedServer) gameInstance;
-
-			dispatch(mods, container -> new FMLDedicatedServerSetupEvent(supplier, container));
-		});
-
+		// Mod setup: ENQUEUE IMC
 		dispatch(mods, InterModEnqueueEvent::new);
+		// Mod setup: PROCESS IMC
 		dispatch(mods, InterModProcessEvent::new);
-		LifecycleEvents.setLoadCompleteCallback(() -> dispatch(mods, FMLLoadCompleteEvent::new));
+		// Mod setup: Final completion
+		dispatch(mods, FMLLoadCompleteEvent::new);
+		// Freezing data, TODO: do we need freezing?
+		// GameData.freezeData();
+		// NetworkRegistry.lock();
+	}
 
+	public static void beginServerModLoading() {
+		Object gameInstance = FabricLoader.getInstance().getGameInstance();
+		Supplier<DedicatedServer> supplier = () -> (DedicatedServer) gameInstance;
+
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Start mod loading.");
+		Patchwork.gatherAndInitializeMods();
+		Patchwork.loadMods(container -> new FMLDedicatedServerSetupEvent(supplier, container), dummy -> { }, dummy -> { });
+	}
+
+	public static void endOfServerModLoading() {
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Finish mod loading.");
+		Patchwork.finishMods();
+
+		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Complete mod loading");
+		// Assume there's no error.
 		MinecraftForge.EVENT_BUS.start();
 	}
 }

@@ -10,5 +10,7 @@ dependencies {
 	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
 	implementation project(path: ':patchwork-events-rendering', configuration: 'dev')
 	implementation project(path: ':patchwork-events-world', configuration: 'dev')
+	implementation project(path: ':patchwork-extensions-block', configuration: 'dev')
 	implementation project(path: ':patchwork-loot', configuration: 'dev')
+	implementation project(path: ':patchwork-networking', configuration: 'dev')
 }

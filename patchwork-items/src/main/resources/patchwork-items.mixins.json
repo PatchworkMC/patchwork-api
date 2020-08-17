@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.items",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinDropperBlock",
+    "MixinHopperBlockEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

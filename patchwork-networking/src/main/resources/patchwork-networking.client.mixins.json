@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.networking.client",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinMinecraftClient"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
