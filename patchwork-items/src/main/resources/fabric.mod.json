@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-items",
+  "version": "${version}",
+  "name": "Patchwork Items",
+  "description": "A reimplementation of the Minecraft Forge item handling APIs.",
+  "authors": [
+    "coderbot"
+  ],
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-items/icon.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.8.4",
+    "fabric": "*"
+  },
+  "mixins": [
+    "patchwork-items.mixins.json"
+  ],
+  "entrypoints": {
+    "main": ["net.patchworkmc.impl.items.PatchworkItems"]
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

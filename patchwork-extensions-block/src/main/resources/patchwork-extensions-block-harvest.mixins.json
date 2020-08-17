@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.block.harvest",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinOreBlock",
+    "MixinRedstoneOreBlock",
+    "MixinServerPlayerInteractionManager",
+    "MixinSpawnerBlock"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
