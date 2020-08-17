@@ -1,0 +1,6 @@
+archivesBaseName = "patchwork-fake-players"
+version = getSubprojectVersion(project, "0.3.0")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+}

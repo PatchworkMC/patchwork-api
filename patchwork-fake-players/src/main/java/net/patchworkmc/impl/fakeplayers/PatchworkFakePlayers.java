@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.extension;
+package net.patchworkmc.impl.fakeplayers;
 
 import net.minecraftforge.common.util.FakePlayerFactory;
 
@@ -26,7 +26,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 
-public class PatchworkExtensions implements ModInitializer {
+public class PatchworkFakePlayers implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ServerStopCallback.EVENT.register(server -> {

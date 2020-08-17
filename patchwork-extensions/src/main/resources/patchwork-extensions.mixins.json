@@ -8,7 +8,6 @@
     "MixinEntity",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
-    "MixinPlayerAdvancementTracker",
     "MixinMinecraftClient",
     "MixinServerPlayerEntity",
     "MixinStatusEffect"
