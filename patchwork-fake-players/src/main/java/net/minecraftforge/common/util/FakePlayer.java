@@ -75,4 +75,7 @@ public class FakePlayer extends ServerPlayerEntity {
 	@Override
 	public void setClientSettings(ClientSettingsC2SPacket packet) {
 	}
+
+	// Forge also has this here:
+	// @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
 }
