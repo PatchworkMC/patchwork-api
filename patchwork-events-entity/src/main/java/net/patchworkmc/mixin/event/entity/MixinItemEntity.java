@@ -21,12 +21,15 @@ package net.patchworkmc.mixin.event.entity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 
 import net.patchworkmc.impl.event.entity.PlayerEvents;
 
@@ -43,5 +46,23 @@ public abstract class MixinItemEntity {
 	private void onPlayerPickUpItemEntity(PlayerEntity player, CallbackInfo ci) {
 		ItemEntity me = (ItemEntity) (Object) this;
 		PlayerEvents.firePlayerItemPickupEvent(player, me, me.getStack().copy());
+	}
+
+	int eventResult;
+
+	@Inject(method = "onPlayerCollision",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getCount()I"),
+			cancellable = true
+	)
+	void patchwork_fireItemPickupEvent(PlayerEntity player, CallbackInfo ci) {
+		eventResult = PlayerEvents.onItemPickup(player, (ItemEntity) (Object) this);
+		if (eventResult != 1) ci.cancel();
+	}
+
+	@Redirect(method = "onPlayerCollision",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerInventory;insertStack(Lnet/minecraft/item/ItemStack;)Z")
+	)
+	boolean patchwork_skipIfEventNotAllowed(PlayerInventory playerInventory, ItemStack stack) {
+		return eventResult == 1 || playerInventory.insertStack(stack);
 	}
 }
