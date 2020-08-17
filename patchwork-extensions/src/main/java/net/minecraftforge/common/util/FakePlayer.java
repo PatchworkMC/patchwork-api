@@ -31,7 +31,7 @@ import net.minecraft.stat.Stat;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
-//Preliminary, simple Fake Player class
+// Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayerEntity {
 	public FakePlayer(ServerWorld world, GameProfile profile) {
 		super(world.getServer(), world, profile, new ServerPlayerInteractionManager(world));

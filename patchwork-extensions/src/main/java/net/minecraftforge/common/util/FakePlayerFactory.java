@@ -65,7 +65,7 @@ public class FakePlayerFactory {
 	public static void unloadWorld(ServerWorld world) {
 		fakePlayers.entrySet().removeIf(entry -> entry.getValue().world == world);
 
-		// This shouldn't be strictly necessary, but lets be aggressive.
+		// This shouldn't be strictly necessary, but let's be aggressive.
 		FakePlayer mc = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
 
 		if (mc != null && mc.world == world) {
