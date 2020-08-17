@@ -29,9 +29,9 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.server.world.ServerWorld;
 
 public class FakePlayerFactory {
-	private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
-	// Map of all active fake player usernames to their entities
-	private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
+	private static final GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
+	// Map of all active fake player profiles to their entities
+	private static final Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
 	private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
 	public static FakePlayer getMinecraft(ServerWorld world) {
@@ -39,7 +39,7 @@ public class FakePlayerFactory {
 
 		if (ret == null) {
 			ret = FakePlayerFactory.get(world, MINECRAFT);
-			MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
+			MINECRAFT_PLAYER = new WeakReference<>(ret);
 		}
 
 		return ret;
@@ -59,16 +59,17 @@ public class FakePlayerFactory {
 		return fakePlayers.get(username);
 	}
 
+	/**
+	 * Used internally to clean up fake players when worlds are unloaded on server stop.
+	 */
 	public static void unloadWorld(ServerWorld world) {
 		fakePlayers.entrySet().removeIf(entry -> entry.getValue().world == world);
 
 		// This shouldn't be strictly necessary, but lets be aggressive.
-		if (MINECRAFT_PLAYER != null && MINECRAFT_PLAYER.get() != null && MINECRAFT_PLAYER.get().world == world) {
-			FakePlayer mc = MINECRAFT_PLAYER.get();
+		FakePlayer mc = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
 
-			if (mc != null && mc.world == world) {
-				MINECRAFT_PLAYER = null;
-			}
+		if (mc != null && mc.world == world) {
+			MINECRAFT_PLAYER = null;
 		}
 	}
 }
