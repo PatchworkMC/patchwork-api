@@ -26,12 +26,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import net.minecraftforge.registries.RegistryManager;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-
-import net.patchworkmc.impl.registries.RegistryClassMapping;
 
 public class ObjectHolderRegistry {
 	public static final ObjectHolderRegistry INSTANCE = new ObjectHolderRegistry();
@@ -44,7 +44,7 @@ public class ObjectHolderRegistry {
 
 	@SuppressWarnings("unchecked")
 	public <T> void register(Class<T> clazz, String namespace, String name, Consumer<T> consumer) {
-		Identifier registryId = RegistryClassMapping.getIdentifier(clazz);
+		Identifier registryId = RegistryManager.ACTIVE.getName(clazz);
 
 		if (registryId == null) {
 			throw new IllegalArgumentException("Could not add ObjectHolderRegistry mapping for class with unknown registry: " + clazz);

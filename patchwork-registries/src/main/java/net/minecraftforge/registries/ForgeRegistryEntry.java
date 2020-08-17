@@ -21,27 +21,30 @@ package net.minecraftforge.registries;
 
 import net.minecraft.util.Identifier;
 
-public abstract class ForgeRegistryEntry<V> implements IForgeRegistryEntry<V> {
-	private Identifier name;
+public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryEntry<V> {
+	private Identifier registryName;
 
 	@Override
-	public final IForgeRegistryEntry setRegistryName(Identifier name) {
-		this.name = name;
-
-		return this;
+	public final V setRegistryName(Identifier name) {
+		return setRegistryName(name.toString());
 	}
 
-	public final IForgeRegistryEntry setRegistryName(String name) {
-		return setRegistryName(new Identifier(name));
+	public final V setRegistryName(String name) {
+		if (getRegistryName() != null) {
+			throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
+		}
+
+		this.registryName = GameData.checkPrefix(name, true);
+		return (V) this;
 	}
 
-	public final IForgeRegistryEntry setRegistryName(String modID, String name) {
-		return setRegistryName(new Identifier(modID, name));
+	public final V setRegistryName(String modID, String name) {
+		return setRegistryName(modID + ":" + name);
 	}
 
 	@Override
 	public final Identifier getRegistryName() {
-		return this.name;
+		return this.registryName;
 	}
 
 	@Override

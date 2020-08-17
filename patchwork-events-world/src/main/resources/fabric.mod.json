@@ -13,8 +13,15 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "patchwork-fml": "*"
+    "patchwork-api-base": "*"
+  },
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.event.world.WorldEvents"
+    ],
+    "client": [
+      "net.patchworkmc.impl.event.world.WorldEventsClient"
+    ]
   },
   "mixins": [
     "patchwork-events-world.mixins.json"

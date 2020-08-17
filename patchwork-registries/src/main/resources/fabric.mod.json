@@ -13,13 +13,14 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
+    "patchwork-api-base": "*",
     "patchwork-fml": "*"
   },
   "description": "Implementation of the Forge Registry API.",
   "mixins": [
     "patchwork-registries.mixins.json"
   ],
+  "accessWidener": "patchwork-registries.accesswidener",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

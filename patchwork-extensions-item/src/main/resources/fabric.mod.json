@@ -15,8 +15,8 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric": "*"
+    "patchwork-api-base": "*",
+    "patchwork-tooltype": "*"
   },
   "mixins": [
     "patchwork-extensions-item.mixins.json"

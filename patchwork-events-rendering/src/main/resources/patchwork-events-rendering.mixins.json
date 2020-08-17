@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.event.render",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinItemColors",
+    "MixinBlockColors",
+    "MixinGameRenderer",
+    "MixinSpriteAtlasTexture"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

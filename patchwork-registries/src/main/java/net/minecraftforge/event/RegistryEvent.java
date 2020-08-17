@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -28,6 +29,16 @@ import net.minecraft.util.Identifier;
 public class RegistryEvent<T> extends GenericEvent<T> {
 	RegistryEvent(Class<T> clazz) {
 		super(clazz);
+	}
+
+	/**
+	 * Register new registries when you receive this event.
+	 */
+	public static class NewRegistry extends Event {
+		@Override
+		public String toString() {
+			return "RegistryEvent.NewRegistry";
+		}
 	}
 
 	public static class Register<V extends IForgeRegistryEntry<V>> extends RegistryEvent<V> {
@@ -50,6 +61,11 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 
 		public Identifier getName() {
 			return name;
+		}
+
+		@Override
+		public String toString() {
+			return "RegistryEvent.Register<" + registry.getRegistryName() + ">";
 		}
 	}
 }

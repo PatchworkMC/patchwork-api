@@ -1,2 +1,7 @@
 archivesBaseName = "patchwork-extensions-item"
-version = getSubprojectVersion(project, "0.1.0")
+version = getSubprojectVersion(project, "0.3.0")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-tooltype', configuration: 'dev')
+}

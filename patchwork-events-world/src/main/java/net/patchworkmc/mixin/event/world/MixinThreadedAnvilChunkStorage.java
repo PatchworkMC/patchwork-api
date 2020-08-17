@@ -19,19 +19,26 @@
 
 package net.patchworkmc.mixin.event.world;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkWatchEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Packet;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.chunk.Chunk;
+
+import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class MixinThreadedAnvilChunkStorage {
@@ -40,10 +47,20 @@ public class MixinThreadedAnvilChunkStorage {
 
 	@Inject(method = "sendWatchPackets", at = @At("HEAD"))
 	private void fireWatchEvents(ServerPlayerEntity player, ChunkPos pos, Packet<?>[] packets, boolean withinMaxWatchDistance, boolean withinViewDistance, CallbackInfo callback) {
-		if (withinViewDistance && !withinMaxWatchDistance) {
-			ChunkWatchEvent.Watch event = new ChunkWatchEvent.Watch(player, pos, world);
-
-			MinecraftForge.EVENT_BUS.post(event);
+		if (this.world == player.world && withinMaxWatchDistance != withinViewDistance) {
+			WorldEvents.fireChunkWatch(withinViewDistance, player, pos, this.world);
 		}
+	}
+
+	// Lambda in "private CompletableFuture<Either<Chunk, Unloaded>> method_20619(ChunkPos chunkPos)"
+	//   chunk.setLastSaveTime(this.world.getTime());
+	// + MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
+	//   return Either.left(chunk);
+	@SuppressWarnings("rawtypes")
+	@Inject(method = "method_17256", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, ordinal = 0, target =
+			"net/minecraft/world/chunk/Chunk.setLastSaveTime(J)V"))
+	public void onServerChunkLoad(ChunkPos chunkPos, CallbackInfoReturnable cir, CompoundTag compoundTag, boolean bl, Chunk chunk) {
+		// Fire ChunkEvent.Load on server side
+		MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
 	}
 }

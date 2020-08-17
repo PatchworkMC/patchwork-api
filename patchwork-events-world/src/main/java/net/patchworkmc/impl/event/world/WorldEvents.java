@@ -22,16 +22,30 @@ package net.patchworkmc.impl.event.world;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import net.minecraft.entity.EntityCategory;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
 
-public class WorldEvents {
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+
+public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
@@ -56,5 +70,39 @@ public class WorldEvents {
 
 	public static void onWorldSave(IWorld world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
+	}
+
+	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
+		if (watch) {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+		} else {
+			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+		}
+	}
+
+	/**
+	 * Called by ChunkEvent.
+	 * @return the IWorld instance holding the given chunk, null if not applicable.
+	 */
+	@Nullable
+	public static IWorld getWorldForChunk(Chunk chunk) {
+		// replaces IForgeChunk.getWorldForge()
+		return chunk instanceof WorldChunk ? ((WorldChunk) chunk).getWorld() : null;
+	}
+
+	@Override
+	public void onInitialize() {
+		ServerWorldEvents.LOAD.register((server, world) -> {
+			// Fabric fires this much earlier than Forge does for the overworld
+			// So, we're going to manually fire it for the overworld.
+			if (world.getDimension().getType() != DimensionType.OVERWORLD) {
+				onWorldLoad(world);
+			}
+		});
+
+		// Fire ChunkEvent.Load on server side, the other location is in MixinThreadedAnvilChunkStorage
+		ServerChunkEvents.CHUNK_LOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk)));
+		// Fire ChunkEvent.Unload on server side
+		ServerChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
 	}
 }

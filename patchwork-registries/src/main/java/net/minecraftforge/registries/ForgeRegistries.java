@@ -20,47 +20,7 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.Bootstrap;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.container.ContainerType;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.brain.Activity;
-import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.Schedule;
-import net.minecraft.entity.ai.brain.sensor.SensorType;
-import net.minecraft.entity.decoration.painting.PaintingMotive;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.potion.Potion;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.stat.StatType;
-import net.minecraft.structure.StructurePieceType;
-import net.minecraft.structure.pool.StructurePoolElementType;
-import net.minecraft.structure.processor.StructureProcessorType;
-import net.minecraft.structure.rule.RuleTestType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.village.VillagerProfession;
-import net.minecraft.village.VillagerType;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeSourceType;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.carver.Carver;
-import net.minecraft.world.gen.chunk.ChunkGeneratorType;
-import net.minecraft.world.gen.decorator.Decorator;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
-import net.minecraft.world.poi.PointOfInterestType;
-
-import net.patchworkmc.impl.registries.RegistryClassMapping;
-import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 /**
  * A class that exposes static references to all vanilla registries.
@@ -101,7 +61,7 @@ public class ForgeRegistries {
 	public static final IForgeRegistry SURFACE_BUILDERS;
 	public static final IForgeRegistry PROFESSIONS;
 
-	// TODO: Forge Registries, when these are implemented
+	// TODO: Forge Registries, unimplemented
 	// public static final IForgeRegistry MOD_DIMENSIONS = wrap(ModDimension.class);
 	// public static final IForgeRegistry DATA_SERIALIZERS = wrap(DataSerializerEntry.class);
 
@@ -109,57 +69,48 @@ public class ForgeRegistries {
 		// Make sure all the registries have been setup first.
 		Bootstrap.initialize();
 
-		BLOCKS = wrap("block", Block.class);
-		ITEMS = wrap("item", Item.class);
-		ACTIVITIES = wrap("activity", Activity.class);
-		BIOMES = wrap("biome", Biome.class);
-		BIOME_PROVIDER_TYPES = wrap("biome_source_type", BiomeSourceType.class);
-		TILE_ENTITIES = wrap("block_entity_type", BlockEntityType.class);
-		WORLD_CARVERS = wrap("carver", Carver.class);
-		CHUNK_GENERATOR_TYPES = wrap("chunk_generator_type", ChunkGeneratorType.class);
-		CHUNK_STATUS = wrap("chunk_status", ChunkStatus.class);
-		wrap("custom_stat", Identifier.class);
-		DECORATORS = wrap("decorator", Decorator.class);
-		wrap("dimension_type", DimensionType.class);
-		ENCHANTMENTS = wrap("enchantment", Enchantment.class);
-		ENTITIES = wrap("entity_type", EntityType.class);
-		FEATURES = wrap("feature", Feature.class);
-		FLUIDS = wrap("fluid", Fluid.class);
-		MEMORY_MODULE_TYPES = wrap("memory_module_type", MemoryModuleType.class);
-		CONTAINERS = wrap("menu", ContainerType.class);
-		POTIONS = wrap("mob_effect", StatusEffect.class);
-		PAINTING_TYPES = wrap("motive", PaintingMotive.class);
-		PARTICLE_TYPES = wrap("particle_type", ParticleType.class);
-		POI_TYPES = wrap("point_of_interest_type", PointOfInterestType.class);
-		POTION_TYPES = wrap("potion", Potion.class);
-		RECIPE_SERIALIZERS = wrap("recipe_serializer", RecipeSerializer.class);
-		wrap("recipe_type", RecipeType.class);
-		wrap("rule_test", RuleTestType.class);
-		SCHEDULES = wrap("schedule", Schedule.class);
-		SENSOR_TYPES = wrap("sensor_type", SensorType.class);
-		SOUND_EVENTS = wrap("sound_event", SoundEvent.class);
-		STAT_TYPES = wrap("stat_type", StatType.class);
-		wrap("structure_feature", StructureFeature.class);
-		wrap("structure_piece", StructurePieceType.class);
-		wrap("structure_pool_element", StructurePoolElementType.class);
-		wrap("structure_processor", StructureProcessorType.class);
-		SURFACE_BUILDERS = wrap("surface_builder", SurfaceBuilder.class);
-		PROFESSIONS = wrap("villager_profession", VillagerProfession.class);
-		wrap("villager_type", VillagerType.class);
+		BLOCKS = GameData.wrapVanilla(GameData.BLOCKS);
+		ITEMS = GameData.wrapVanilla(GameData.ITEMS);
+		ACTIVITIES = GameData.wrapVanilla(GameData.ACTIVITIES);
+		BIOMES = GameData.wrapVanilla(GameData.BIOMES);
+		BIOME_PROVIDER_TYPES = GameData.wrapVanilla(GameData.BIOME_PROVIDER_TYPES);
+		TILE_ENTITIES = GameData.wrapVanilla(GameData.TILEENTITIES);
+		WORLD_CARVERS = GameData.wrapVanilla(GameData.WORLD_CARVERS);
+		CHUNK_GENERATOR_TYPES = GameData.wrapVanilla(GameData.CHUNK_GENERATOR_TYPES);
+		CHUNK_STATUS = GameData.wrapVanilla(GameData.CHUNK_STATUS);
+		wrap("custom_stat");
+		DECORATORS = GameData.wrapVanilla(GameData.DECORATORS);
+		wrap("dimension_type");
+		ENCHANTMENTS = GameData.wrapVanilla(GameData.ENCHANTMENTS);
+		ENTITIES = GameData.wrapVanilla(GameData.ENTITIES);
+		FEATURES = GameData.wrapVanilla(GameData.FEATURES);
+		FLUIDS = GameData.wrapVanilla(GameData.FLUIDS);
+		MEMORY_MODULE_TYPES = GameData.wrapVanilla(GameData.MEMORY_MODULE_TYPES);
+		CONTAINERS = GameData.wrapVanilla(GameData.CONTAINERS);
+		POTIONS = GameData.wrapVanilla(GameData.POTIONS);
+		PAINTING_TYPES = GameData.wrapVanilla(GameData.PAINTING_TYPES);
+		PARTICLE_TYPES = GameData.wrapVanilla(GameData.PARTICLE_TYPES);
+		POI_TYPES = GameData.wrapVanilla(GameData.POI_TYPES);
+		POTION_TYPES = GameData.wrapVanilla(GameData.POTIONTYPES);
+		RECIPE_SERIALIZERS = GameData.wrapVanilla(GameData.RECIPE_SERIALIZERS);
+		wrap("recipe_type");
+		wrap("rule_test");
+		SCHEDULES = GameData.wrapVanilla(GameData.SCHEDULES);
+		SENSOR_TYPES = GameData.wrapVanilla(GameData.SENSOR_TYPES);
+		SOUND_EVENTS = GameData.wrapVanilla(GameData.SOUNDEVENTS);
+		STAT_TYPES = GameData.wrapVanilla(GameData.STAT_TYPES);
+		wrap("structure_feature");
+		wrap("structure_piece");
+		wrap("structure_pool_element");
+		wrap("structure_processor");
+		SURFACE_BUILDERS = GameData.wrapVanilla(GameData.SURFACE_BUILDERS);
+		PROFESSIONS = GameData.wrapVanilla(GameData.PROFESSIONS);
+		wrap("villager_type");
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> IForgeRegistry wrap(String name, Class superClazz) {
-		Identifier identifier = new Identifier("minecraft", name);
-		Registry registry = Registry.REGISTRIES.get(identifier);
-
-		ForgeRegistry wrapped = new ForgeRegistry(identifier, registry, superClazz);
-
-		RegistryClassMapping.register(wrapped);
-		RegistryManager.ACTIVE.addRegistry(identifier, wrapped);
-		RegistryEventDispatcher.register(wrapped);
-
-		return wrapped;
+	private static void wrap(String vanillaName) {
+		GameData.wrapVanilla(new Identifier(vanillaName));
 	}
 
 	public static void init() {

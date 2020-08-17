@@ -23,12 +23,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
+
+import net.patchworkmc.impl.capability.CapabilityEvents;
 
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B> implements ICapabilityProvider {
@@ -45,14 +45,7 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider {
 	}
 
 	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		AttachCapabilitiesEvent<B> event = new AttachCapabilitiesEvent<>(baseClass, (B) this);
-		MinecraftForge.EVENT_BUS.post(event);
-
-		if (!event.getCapabilities().isEmpty() || parent != null) {
-			capabilities = new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent);
-		} else {
-			capabilities = null;
-		}
+		capabilities = CapabilityEvents.gatherCapabilities(baseClass, this, parent);
 	}
 
 	public final @Nullable CapabilityDispatcher getCapabilities() {

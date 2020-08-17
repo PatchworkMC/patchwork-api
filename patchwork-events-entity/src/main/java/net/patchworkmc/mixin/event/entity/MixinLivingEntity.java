@@ -19,14 +19,21 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 
@@ -36,6 +43,9 @@ import net.patchworkmc.impl.event.entity.EntityEvents;
 public class MixinLivingEntity {
 	@Unique
 	private float[] fallData;
+
+	@Shadow
+	protected int playerHitTimer;
 
 	// TODO: Forge bug: PlayerEntity calls its super, so this event gets fired twice on the client.
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
@@ -99,6 +109,56 @@ public class MixinLivingEntity {
 		if (fallData == null) {
 			info.cancel();
 		}
+	}
+
+	/**
+	 * Carry over the looting level between the two mixins for the drop method.
+	 *
+	 * <p>
+	 * The drop method has roughly this effect:
+	 *
+	 * <pre>{@code
+	 * protected void drop(DamageSource source) {
+	 *     int lootingLevel = ...
+	 *     // hookDropForCapturePre mixin
+	 *     this.dropEquipment(source, lootingLevel, bl);
+	 *     // FRAME CHOP 3
+	 *     this.dropInventory();
+	 *
+	 *     // Added by forge, MUST be called after dropInventory:
+	 *     sendEvent(lootingLevel);
+	 * }
+	 * }</pre>
+	 *
+	 * And thus we can't access the looting level from the end since it's local has
+	 * been discarded. Thus we store it in a ThreadLocal, to keep track of it between
+	 * the two methods.
+	 * </p>
+	 */
+	@Unique
+	private final ThreadLocal<Integer> dropLootingLevel = new ThreadLocal<>();
+
+	@Inject(method = "drop", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/LivingEntity;playerHitTimer : I"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void hookDropForCapturePre(DamageSource src, CallbackInfo info, int lootingLevel) {
+		IForgeEntity forgeEntity = (IForgeEntity) this;
+		forgeEntity.captureDrops(new ArrayList<>());
+
+		dropLootingLevel.set(lootingLevel);
+	}
+
+	@Inject(method = "drop", at = @At("TAIL"))
+	private void hookDropForDropsEvent(DamageSource src, CallbackInfo info) {
+		LivingEntity entity = (LivingEntity) (Object) this;
+		IForgeEntity forgeEntity = (IForgeEntity) this;
+		Collection<ItemEntity> drops = forgeEntity.captureDrops(null);
+
+		if (!EntityEvents.onLivingDrops(entity, src, drops, dropLootingLevel.get(), playerHitTimer > 0)) {
+			for (ItemEntity item : drops) {
+				forgeEntity.getEntity().world.spawnEntity(item);
+			}
+		}
+
+		dropLootingLevel.remove();
 	}
 
 	// No shift, because we are specifically not modifying the value for this function call.

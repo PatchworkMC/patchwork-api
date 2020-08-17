@@ -6,6 +6,7 @@
     "MixinAbstractInventoryScreen",
     "MixinGameRenderer",
     "MixinKeyboard",
+    "MixinMinecraftClient",
     "MixinMouse",
     "MixinScreen"
   ],

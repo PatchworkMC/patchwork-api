@@ -26,30 +26,21 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
 
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Identifier;
 
 @SuppressWarnings("rawtypes")
 public class RegistryEventDispatcher {
 	private static final boolean CHECK_SUPERS = false;
-	private static List<IForgeRegistry> registered = new ArrayList<>();
-
-	/**
-	 * Used by {@link net.minecraftforge.registries.ForgeRegistries}.
-	 *
-	 * @param registry the registry to add to the dispatch list
-	 */
-	public static void register(IForgeRegistry registry) {
-		registered.add(registry);
-	}
 
 	/**
 	 * @return the ordering of registries that Forge expects
 	 */
 	private static List<Identifier> getExpectedOrdering() {
-		List<Identifier> registries = new ArrayList<>(Registry.REGISTRIES.getIds());
+		List<Identifier> registries = new ArrayList<>(RegistryManager.ACTIVE.getRegistryNames());
 
 		registries.remove(Registry.REGISTRIES.getId(Registry.BLOCK));
 		registries.remove(Registry.REGISTRIES.getId(Registry.ITEM));
@@ -65,18 +56,14 @@ public class RegistryEventDispatcher {
 	@SuppressWarnings("unchecked")
 	public static void dispatchRegistryEvents(Consumer<RegistryEvent.Register> handler) {
 		List<Identifier> expectedOrder = getExpectedOrdering();
+		int registeredSize = RegistryManager.ACTIVE.getRegistryNames().size();
 
-		if (registered.size() < expectedOrder.size()) {
-			throw new IllegalStateException("RegistryEventDispatcher is missing " + (expectedOrder.size() - registered.size()) + " registries!");
+		if (registeredSize < expectedOrder.size()) {
+			throw new IllegalStateException("RegistryEventDispatcher is missing " + (expectedOrder.size() - registeredSize) + " registries!");
 		}
 
-		for (IForgeRegistry registry : registered) {
-			Identifier identifier = registry.getRegistryName();
-			Identifier expected = expectedOrder.remove(0);
-
-			if (!identifier.equals(expected)) {
-				throw new IllegalStateException("Bad ordering of registries in RegistryEventDispatcher: expected " + expected + " but got " + identifier);
-			}
+		for (Identifier identifier : expectedOrder) {
+			ForgeRegistry registry = RegistryManager.ACTIVE.getRegistry(identifier);
 
 			if (CHECK_SUPERS) {
 				Class superType = registry.getRegistrySuperType();
@@ -88,7 +75,11 @@ public class RegistryEventDispatcher {
 				}
 			}
 
+			registry.unfreeze();
 			handler.accept(new RegistryEvent.Register(registry));
+			// If we freeze the registry here, Fabric mods loaded after us will not be able to register things.
+			// TODO: Find a better location to freeze the registry.
+			// registry.freeze();
 		}
 	}
 }

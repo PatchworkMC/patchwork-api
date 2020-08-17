@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
+import net.minecraftforge.common.ToolType;
+
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
@@ -36,13 +38,13 @@ import net.fabricmc.api.Environment;
 public interface PatchworkItemSettingsExtensions {
 	Item.Settings setNoRepair();
 
-	Item.Settings addToolType(Object /* TODO: ToolType */ type, int level);
+	Item.Settings addToolType(ToolType type, int level);
 
 	Item.Settings setTEISR(Supplier<Callable<BuiltinModelItemRenderer>> teisr);
 
 	boolean canRepair();
 
-	Map<Object /* TODO: ToolType */, Integer> getToolClasses();
+	Map<ToolType, Integer> getToolClasses();
 
 	@Environment(EnvType.CLIENT)
 	BuiltinModelItemRenderer getTeisr();

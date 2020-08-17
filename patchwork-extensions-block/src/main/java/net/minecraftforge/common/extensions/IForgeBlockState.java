@@ -24,6 +24,9 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.ToolType;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -147,7 +150,7 @@ public interface IForgeBlockState {
 		return patchwork$getForgeBlock().createTileEntity(getBlockState(), world);
 	}
 
-	/* TODO IForgeBlockState#canHarvestBlock indirectly requires ToolType
+	/* TODO IForgeBlockState#canHarvestBlock indirectly requires ToolType */
 	/**
 	 * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 	 *
@@ -155,10 +158,10 @@ public interface IForgeBlockState {
 	 * @param pos    The block's current position
 	 * @param player The player damaging the block
 	 * @return True to spawn the drops
-	 *
+	 */
 	default boolean canHarvestBlock(BlockView world, BlockPos pos, PlayerEntity player) {
 		return patchwork$getForgeBlock().canHarvestBlock(getBlockState(), world, pos, player);
-	}*/
+	}
 
 	/**
 	 * Called when a player removes a block.  This is responsible for
@@ -428,7 +431,6 @@ public interface IForgeBlockState {
 		return patchwork$getForgeBlock().addDestroyEffects(getBlockState(), world, pos, manager);
 	}
 
-	/* TODO IForgeBlockState#canSustainPlant requires IPlantable
 	/**
 	 * Determines if this block can support the passed in plant, allowing it to be planted and grow.
 	 * Some examples:
@@ -444,10 +446,10 @@ public interface IForgeBlockState {
 	 * @param facing    The direction relative to the given position the plant wants to be, typically its UP
 	 * @param plantable The plant that wants to check
 	 * @return True to allow the plant to be planted/stay.
-	 *
+	 */
 	default boolean canSustainPlant(BlockView world, BlockPos pos, Direction facing, IPlantable plantable) {
 		return patchwork$getForgeBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
-	}*/
+	}
 
 	/**
 	 * Called when a plant grows on this block.
@@ -581,14 +583,14 @@ public interface IForgeBlockState {
 		return patchwork$getForgeBlock().getWeakChanges(getBlockState(), world, pos);
 	}
 
-	/* TODO IForgeBlockState#getHarvestTool needs ToolType
+	/* TODO IForgeBlockState#getHarvestTool needs ToolType */
 	/**
 	 * Queries the class of tool required to harvest this block, if null is returned
 	 * we assume that anything can harvest this block.
-	 *
+	 */
 	default ToolType getHarvestTool() {
 		return patchwork$getForgeBlock().getHarvestTool(getBlockState());
-	}*/
+	}
 
 	default int getHarvestLevel() {
 		return patchwork$getForgeBlock().getHarvestLevel(getBlockState());
@@ -604,6 +606,7 @@ public interface IForgeBlockState {
 	}*/
 
 	/**
+	 * TODO: do not bother implementing hooks, deprecated since 1.13
 	 * Can return IExtendedBlockState.
 	 */
 	default BlockState getExtendedState(BlockView world, BlockPos pos) {
@@ -611,6 +614,7 @@ public interface IForgeBlockState {
 	}
 
 	/**
+	 * TODO: do not bother implementing hooks, deprecated since 1.15
 	 * Queries if this block should render in a given layer.
 	 * A custom {@link net.minecraft.client.render.model.BakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
 	 */

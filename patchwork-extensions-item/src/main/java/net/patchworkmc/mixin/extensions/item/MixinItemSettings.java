@@ -22,6 +22,7 @@ package net.patchworkmc.mixin.extensions.item;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraftforge.common.ToolType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -33,7 +34,7 @@ import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
 	@Unique private boolean canRepair = true;
-	@Unique private final Map<Object /* TODO: ToolType */, Integer> toolClasses = new HashMap<>();
+	@Unique private final Map<ToolType, Integer> toolClasses = new HashMap<>();
 
 	@Override
 	public Settings setNoRepair() {
@@ -42,7 +43,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public Settings addToolType(Object /* TODO: ToolType */ type, int level) {
+	public Settings addToolType(ToolType type, int level) {
 		toolClasses.put(type, level);
 		return (Settings) (Object) this;
 	}
@@ -53,7 +54,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public Map<Object /* TODO: ToolType */, Integer> getToolClasses() {
+	public Map<ToolType, Integer> getToolClasses() {
 		return toolClasses;
 	}
 }

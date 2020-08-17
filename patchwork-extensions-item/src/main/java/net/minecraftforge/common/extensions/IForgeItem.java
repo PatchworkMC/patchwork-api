@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import net.minecraftforge.common.ToolType;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
@@ -563,7 +564,7 @@ public interface IForgeItem {
 	}
 
 	// TODO: Call locations: Patches: MiningToolItem, Forge classes: IForgeItemStack, ForgeHooks*
-	Set<Object /* TODO: ToolType */> getToolTypes(ItemStack stack);
+	Set<ToolType> getToolTypes(ItemStack stack);
 
 	// TODO: Call locations: Forge classes: IForgeItemStack, ForgeHooks
 	/**
@@ -576,7 +577,7 @@ public interface IForgeItem {
 	 * @param blockState The block to harvest
 	 * @return Harvest level, or -1 if not the specified tool type.
 	 */
-	int getHarvestLevel(ItemStack stack, Object /* TODO: ToolType */ tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
+	int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
 
 	// TODO: Call locations: Patches: EnchantmentHelper, Forge classes: IForgeItemStack
 	/**

@@ -45,7 +45,7 @@ public class TickEvent extends Event {
 		START, END;
 	}
 
-	/* TODO public static class ServerTickEvent extends TickEvent {
+	public static class ServerTickEvent extends TickEvent {
 		public ServerTickEvent(Phase phase) {
 			super(Type.SERVER, LogicalSide.SERVER, phase);
 		}
@@ -55,7 +55,7 @@ public class TickEvent extends Event {
 		public ClientTickEvent(Phase phase) {
 			super(Type.CLIENT, LogicalSide.CLIENT, phase);
 		}
-	}*/
+	}
 
 	public static class WorldTickEvent extends TickEvent {
 		public final World world;
@@ -77,12 +77,12 @@ public class TickEvent extends Event {
 		}
 	}
 
-	/* TODO public static class RenderTickEvent extends TickEvent {
+	public static class RenderTickEvent extends TickEvent {
 		public final float renderTickTime;
 
 		public RenderTickEvent(Phase phase, float renderTickTime) {
 			super(Type.RENDER, LogicalSide.CLIENT, phase);
 			this.renderTickTime = renderTickTime;
 		}
-	}*/
+	}
 }

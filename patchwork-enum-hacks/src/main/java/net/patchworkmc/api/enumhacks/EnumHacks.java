@@ -135,7 +135,7 @@ public final class EnumHacks {
 		}
 	}
 
-	private static <T extends Enum<T>> T constructAndAdd(Class<T> clazz, IntFunction<? extends T> constructor) {
+	public static <T extends Enum<T>> T constructAndAdd(Class<T> clazz, IntFunction<? extends T> constructor) {
 		T[] values = clazz.getEnumConstants();
 		T instance = constructor.apply(values.length);
 		addToValues(values, instance);

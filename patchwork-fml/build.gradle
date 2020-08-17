@@ -1,6 +1,8 @@
 archivesBaseName = "patchwork-fml"
-version = getSubprojectVersion(project, "0.1.0")
+version = getSubprojectVersion(project, "0.3.0")
 
 dependencies {
 	implementation 'com.electronwill.night-config:toml:3.6.2'
+
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 }

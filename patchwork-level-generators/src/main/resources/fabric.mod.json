@@ -13,12 +13,13 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4"
+    "patchwork-api-base": "*"
   },
   "description": "Implementation of the Forge World Type API.",
   "mixins": [
     "patchwork-level-generators.mixins.json"
   ],
+  "accessWidener": "patchwork-level-generators.accesswidener",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

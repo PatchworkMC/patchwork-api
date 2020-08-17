@@ -19,10 +19,16 @@
 
 package net.minecraftforge.common;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.util.WeightedPicker;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 
 import net.fabricmc.fabric.api.biomes.v1.FabricBiomes;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
@@ -64,14 +70,135 @@ public class BiomeManager {
 	public static class BiomeEntry extends WeightedPicker.Entry {
 		public final Biome biome;
 
+		public int field_76292_a; // FIXME: workaround for https://github.com/PatchworkMC/patchwork-patcher/issues/57, will likely break things
+
 		public BiomeEntry(Biome biome, int weight) {
 			super(weight);
 
+			this.field_76292_a = weight;
 			this.biome = biome;
 		}
 
 		private int getWeight() {
 			return this.weight;
+		}
+	}
+
+	// Biomes O' Plenty pokes Forge internals. Fun
+	private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
+
+	private static TrackedList<BiomeEntry>[] setupBiomes() {
+		@SuppressWarnings("unchecked")
+		TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
+		List<BiomeEntry> list = new ArrayList<BiomeEntry>();
+
+		list.add(new BiomeEntry(Biomes.FOREST, 10));
+		list.add(new BiomeEntry(Biomes.DARK_FOREST, 10));
+		list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
+		list.add(new BiomeEntry(Biomes.PLAINS, 10));
+		list.add(new BiomeEntry(Biomes.BIRCH_FOREST, 10));
+		list.add(new BiomeEntry(Biomes.SWAMP, 10));
+
+		currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
+		list.clear();
+
+		list.add(new BiomeEntry(Biomes.FOREST, 10));
+		list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
+		list.add(new BiomeEntry(Biomes.TAIGA, 10));
+		list.add(new BiomeEntry(Biomes.PLAINS, 10));
+
+		currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
+		list.clear();
+
+		list.add(new BiomeEntry(Biomes.SNOWY_TUNDRA, 30));
+		list.add(new BiomeEntry(Biomes.SNOWY_TAIGA, 10));
+
+		currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
+		list.clear();
+
+		currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
+
+		return currentBiomes;
+	}
+
+	public static ImmutableList<BiomeEntry> getBiomes(BiomeType type) {
+		int idx = type.ordinal();
+		// We want to return null instead of throw an exception if the index is out of bounds.
+		List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
+
+		return list != null ? ImmutableList.copyOf(list) : null;
+	}
+
+	private static class TrackedList<E> extends ArrayList<E> {
+		private static final long serialVersionUID = 1L;
+		private boolean isModded = false;
+
+		TrackedList(Collection<? extends E> c) {
+			super(c);
+		}
+
+		@Override
+		public E set(int index, E element) {
+			isModded = true;
+			return super.set(index, element);
+		}
+
+		@Override
+		public boolean add(E e) {
+			isModded = true;
+			return super.add(e);
+		}
+
+		@Override
+		public void add(int index, E element) {
+			isModded = true;
+			super.add(index, element);
+		}
+
+		@Override
+		public E remove(int index) {
+			isModded = true;
+			return super.remove(index);
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			isModded = true;
+			return super.remove(o);
+		}
+
+		@Override
+		public void clear() {
+			isModded = true;
+			super.clear();
+		}
+
+		@Override
+		public boolean addAll(Collection<? extends E> c) {
+			isModded = true;
+			return super.addAll(c);
+		}
+
+		@Override
+		public boolean addAll(int index, Collection<? extends E> c) {
+			isModded = true;
+			return super.addAll(index, c);
+		}
+
+		@Override
+		public boolean removeAll(Collection<?> c) {
+			isModded = true;
+			return super.removeAll(c);
+		}
+
+		@Override
+		public boolean retainAll(Collection<?> c) {
+			isModded = true;
+			return super.retainAll(c);
+		}
+
+		public boolean isModded() {
+			return isModded;
 		}
 	}
 }

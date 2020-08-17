@@ -26,6 +26,9 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.ToolType;
+
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
@@ -33,8 +36,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FarmlandBlock;
 import net.minecraft.block.FenceGateBlock;
+import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.Material;
+import net.minecraft.block.PlantBlock;
 import net.minecraft.block.Stainable;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.enums.BedPart;
@@ -78,9 +83,12 @@ import net.minecraft.world.explosion.Explosion;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
+import net.patchworkmc.impl.extensions.block.PatchworkBlock;
 import net.patchworkmc.mixin.extensions.block.FireBlockAccessor;
+import net.patchworkmc.mixin.extensions.block.PlantBlockAccessor;
 
-public interface IForgeBlock {
+public interface IForgeBlock extends PatchworkBlock {
 	default Block getBlock() {
 		return (Block) this;
 	}
@@ -199,7 +207,7 @@ public interface IForgeBlock {
 		return null;
 	}
 
-	/* TODO IForgeBlock#canHarvestBlock indirectly requires ToolType (via ForgeHooks#canHarvestBlock)
+	/* TODO IForgeBlock#canHarvestBlock indirectly requires ToolType (via ForgeHooks#canHarvestBlock) */
 	/**
 	 * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 	 *
@@ -207,10 +215,10 @@ public interface IForgeBlock {
 	 * @param pos    The block's current position
 	 * @param player The player damaging the block
 	 * @return True to spawn the drops
-	 *
+	 */
 	default boolean canHarvestBlock(BlockState state, BlockView world, BlockPos pos, PlayerEntity player) {
-		return ForgeHooks.canHarvestBlock(state, player, world, pos);
-	}*/
+		return BlockHarvestManager.canHarvestBlock(state, player, world, pos);
+	}
 
 	// TODO Call locations: Patches: ServerPlayerInteractionManager*
 	/**
@@ -235,7 +243,7 @@ public interface IForgeBlock {
 	 */
 	default boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 		getBlock().onBreak(world, pos, state, player);
-		return world.removeBlock(pos, false);
+		return world.setBlockState(pos, fluid.getBlockState(), world.isClient ? 11 : 3);
 	}
 
 	// TODO Call locations: Patches: LivingEntity*, PlayerEntity*, Forge classes: ForgeEventFactory (called from LivingEntity patch)
@@ -525,7 +533,7 @@ public interface IForgeBlock {
 		return false;
 	}
 
-	/* TODO IForgeBlock#canSustainPlant requires IPlantable
+	// TODO Call locations: Patches: AbstractTreeFeature*
 	/**
 	 * Determines if this block can support the passed in plant, allowing it to be planted and grow.
 	 * Some examples:
@@ -542,8 +550,46 @@ public interface IForgeBlock {
 	 * @param facing    The direction relative to the given position the plant wants to be, typically its UP
 	 * @param plantable The plant that wants to check
 	 * @return True to allow the plant to be planted/stay.
-	 *
-	boolean canSustainPlant(BlockState state, BlockView world, BlockPos pos, Direction facing, IPlantable plantable);*/
+	 */
+	default boolean canSustainPlant(BlockState state, BlockView world, BlockPos pos, Direction facing, IPlantable plantable) {
+		BlockState plant = plantable.getPlant(world, pos.offset(facing));
+
+		if (plant.getBlock() == Blocks.CACTUS) {
+			return this.getBlock() == Blocks.CACTUS || this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.RED_SAND;
+		}
+
+		if (plant.getBlock() == Blocks.SUGAR_CANE && this.getBlock() == Blocks.SUGAR_CANE) {
+			return true;
+		}
+
+		if (plantable instanceof PlantBlock && ((PlantBlockAccessor) plantable).invokeCanPlantOnTop(state, world, pos)) {
+			return true;
+		}
+
+		switch (plantable.getPlantType(world, pos)) {
+		case Desert:
+			return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof GlazedTerracottaBlock;
+		case Nether:
+			return this.getBlock() == Blocks.SOUL_SAND;
+		case Crop:
+			return this.getBlock() == Blocks.FARMLAND;
+		case Cave:
+			return Block.isSideSolidFullSquare(state, world, pos, Direction.UP);
+		case Plains:
+			return this.getBlock() == Blocks.GRASS_BLOCK || Block.isNaturalDirt(this.getBlock()) || this.getBlock() == Blocks.FARMLAND;
+		case Water:
+			return state.getMaterial() == Material.WATER;
+		case Beach:
+			boolean isBeach = this.getBlock() == Blocks.GRASS_BLOCK || Block.isNaturalDirt(this.getBlock()) || this.getBlock() == Blocks.SAND;
+			boolean hasWater = (world.getBlockState(pos.east()).getMaterial() == Material.WATER
+					|| world.getBlockState(pos.west()).getMaterial() == Material.WATER
+					|| world.getBlockState(pos.north()).getMaterial() == Material.WATER
+					|| world.getBlockState(pos.south()).getMaterial() == Material.WATER);
+			return isBeach && hasWater;
+		}
+
+		return false;
+	}
 
 	// TODO Call locations: Patches: AbstractTreeFeature*
 	/**
@@ -565,7 +611,6 @@ public interface IForgeBlock {
 		}
 	}
 
-	// TODO Call locations: Patches: CropBlock*
 	/**
 	 * Checks if this soil is fertile, typically this means that growth rates
 	 * of plants on this soil will be slightly sped up.
@@ -603,6 +648,7 @@ public interface IForgeBlock {
 	// TODO Call locations: Forge classes: BreakEvent*
 	/**
 	 * Gathers how much experience this block drops when broken.
+	 * TODO: there's no equivalent callback in Fabric API, so for now Fabric mods should always return 0 here.
 	 *
 	 * @param state     The current state
 	 * @param world     The world
@@ -736,12 +782,12 @@ public interface IForgeBlock {
 		return false;
 	}
 
-	/* TODO IForgeBlock#getHarvestTool needs ToolType
+	/* TODO IForgeBlock#getHarvestTool needs ToolType */
 	/**
 	 * Queries the class of tool required to harvest this block, if null is returned
 	 * we assume that anything can harvest this block.
-	 *
-	ToolType getHarvestTool(BlockState state);*/
+	 */
+	ToolType getHarvestTool(BlockState state);
 
 	// TODO Call locations: Patches: PickaxeItem*, Forge classes: ForgeHooks*
 	/**
@@ -751,18 +797,18 @@ public interface IForgeBlock {
 	 */
 	int getHarvestLevel(BlockState state);
 
-	/* TODO IForgeBlock#isToolEffective needs ToolType
+	/* TODO IForgeBlock#isToolEffective needs ToolType */
 	/**
 	 * Checks if the specified tool type is efficient on this block,
 	 * meaning that it digs at full speed.
-	 *
+	 */
 	default boolean isToolEffective(BlockState state, ToolType tool) {
 		if (tool == ToolType.PICKAXE && (this.getBlock() == Blocks.REDSTONE_ORE || this.getBlock() == Blocks.REDSTONE_LAMP || this.getBlock() == Blocks.OBSIDIAN)) {
 			return false;
 		}
 
 		return tool == getHarvestTool(state);
-	}*/
+	}
 
 	// TODO Call locations: Forge classes: ForgeHooksClient
 	/**

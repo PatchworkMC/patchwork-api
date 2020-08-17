@@ -10,18 +10,16 @@
   "license": "LGPL-2.1-only",
   "icon": "assets/patchwork-dispatcher/icon.png",
   "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.patchworkmc.impl.Patchwork"
-    ]
-  },
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric": "*",
+    "patchwork-api-base": "*",
     "patchwork-fml": "*",
     "patchwork-registries": "*",
-    "patchwork-events-lifecycle": "*"
+    "patchwork-events-lifecycle": "*",
+    "patchwork-model-loader": "*"
   },
+  "mixins": [
+    "patchwork-dispatcher.mixins.json"
+  ],
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

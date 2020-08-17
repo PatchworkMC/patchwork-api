@@ -3,12 +3,16 @@
   "package": "net.patchworkmc.mixin.event.lifecycle",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMinecraftServerSubclass",
     "MixinPlayerEntity",
     "MixinServerWorld"
   ],
   "client": [
-    "MixinClientWorld"
+    "MixinClientWorld",
+    "MixinIntegratedServer",
+    "MixinMinecraftClient"
+  ],
+  "server": [
+    "MixinMinecraftDedicatedServer"
   ],
   "injectors": {
     "defaultRequire": 1
