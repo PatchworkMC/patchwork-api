@@ -46,17 +46,12 @@ public class FakePlayerFactory {
 	}
 
 	/**
-	 * Get a fake player with a given username,
+	 * Get a fake player with a given profile.
 	 * Mods should either hold weak references to the return value, or listen for a
 	 * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
 	 */
-	public static FakePlayer get(ServerWorld world, GameProfile username) {
-		if (!fakePlayers.containsKey(username)) {
-			FakePlayer fakePlayer = new FakePlayer(world, username);
-			fakePlayers.put(username, fakePlayer);
-		}
-
-		return fakePlayers.get(username);
+	public static FakePlayer get(ServerWorld world, GameProfile profile) {
+		return fakePlayers.computeIfAbsent(profile, it -> new FakePlayer(world, it));
 	}
 
 	/**
