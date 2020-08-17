@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -68,6 +69,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -215,6 +217,19 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
+	}
+
+	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
+		EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimensionType);
+		return !MinecraftForge.EVENT_BUS.post(event);
+		/* Forge has this thing:
+
+		if (event.isCanceled()) {
+			// Revert variable back to true as it would have been set to false
+			if (entity instanceof StorageMinecartEntity) {
+				((StorageMinecartEntity) entity).dropContentsWhenDead(true);
+			}
+		} */
 	}
 
 	@Override

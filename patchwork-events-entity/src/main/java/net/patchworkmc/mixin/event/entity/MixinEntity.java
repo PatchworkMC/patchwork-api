@@ -24,12 +24,14 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
@@ -51,5 +53,15 @@ public abstract class MixinEntity {
 		this.standingEyeHeight = EntityEvents.getEyeHeight(entity, EntityPose.STANDING, dimensions, getEyeHeight(EntityPose.STANDING, dimensions));
 
 		EntityEvents.onEntityConstruct(entity);
+	}
+
+	@Inject(method = "changeDimension",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	void patchwork_fireTravelToDimensionEventChangeDimension(DimensionType newDimension, CallbackInfoReturnable<Entity> cir) {
+		if (!EntityEvents.onTravelToDimension((Entity) (Object) this, newDimension)) {
+			cir.setReturnValue(null);
+		}
 	}
 }
