@@ -25,13 +25,10 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.vehicle.StorageMinecartEntity;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -114,8 +111,7 @@ public class ForgeHooks {
 		return EntityEvents.attackEntity(player, target);
 	}
 
-	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType)
-	{
+	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
 		return EntityEvents.onTravelToDimension(entity, dimensionType);
 	}
 
