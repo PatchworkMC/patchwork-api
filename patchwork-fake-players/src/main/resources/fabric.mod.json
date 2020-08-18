@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-fake-players",
+  "version": "${version}",
+  "name": "Patchwork Fake Players",
+  "description": "Implements the Minecraft Forge fake players API",
+  "authors": [
+    "PatchworkMC"
+  ],
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-fake-players/icon.png",
+  "environment": "*",
+  "depends": {
+    "patchwork-api-base": "*",
+    "fabric": "*"
+  },
+  "mixins": [
+    "patchwork-fake-players.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.fakeplayers.PatchworkFakePlayers"
+    ]
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
