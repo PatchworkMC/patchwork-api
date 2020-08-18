@@ -3,7 +3,7 @@
   "package": "net.patchworkmc.mixin.fakeplayers",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinPlayerAdvancementTracker",
+    "MixinPlayerAdvancementTracker"
   ],
   "injectors": {
     "defaultRequire": 1
