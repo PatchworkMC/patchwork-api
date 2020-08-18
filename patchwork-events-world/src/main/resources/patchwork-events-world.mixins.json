@@ -5,10 +5,9 @@
   "mixins": [
     "MixinChunkGenerator",
     "MixinMinecraftServer",
-    "MixinServerPlayerInteractionManager",
     "MixinServerWorld",
     "MixinSpawnHelper",
-    "MixinThreadedAnvilChunkStorage",
+    "MixinThreadedAnvilChunkStorage"
   ],
   "client": [
     "MixinClientWorld",

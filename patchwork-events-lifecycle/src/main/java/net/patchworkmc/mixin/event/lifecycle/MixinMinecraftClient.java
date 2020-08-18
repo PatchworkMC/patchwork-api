@@ -51,11 +51,6 @@ public class MixinMinecraftClient {
 		LifecycleEvents.fireClientTickEvent(TickEvent.Phase.END);
 	}
 
-	@Inject(method = "init", at = @At("RETURN"))
-	private void hookClientInit(CallbackInfo ci) {
-		LifecycleEvents.handleLoadComplete();
-	}
-
 	@Shadow
 	@Final
 	private RenderTickCounter renderTickCounter;

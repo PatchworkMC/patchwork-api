@@ -37,13 +37,18 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 
 /*
@@ -103,6 +108,10 @@ public class ForgeHooks {
 
 	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
 		return EntityEvents.attackEntity(player, target);
+	}
+
+	public static int onBlockBreakEvent(World world, GameMode gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {
+		return BlockHarvestManager.onBlockBreakEvent(world, gameType, entityPlayer, pos);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unused" })
