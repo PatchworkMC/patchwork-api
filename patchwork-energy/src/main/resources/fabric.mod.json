@@ -12,6 +12,7 @@
   "environment": "*",
   "depends": {
     "patchwork-api-base": "*",
+    "patchwork-capabilities": "*",
     "fabric": "*"
   },
   "mixins": [],
