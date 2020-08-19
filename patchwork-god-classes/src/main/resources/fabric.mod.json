@@ -24,6 +24,7 @@
     "patchwork-events-rendering": "*",
     "patchwork-events-world": "*",
     "patchwork-extensions-block": "*",
+    "patchwork-extensions-item": "*",
     "patchwork-loot": "*"
   },
   "custom": {
