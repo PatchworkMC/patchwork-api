@@ -45,5 +45,4 @@ include 'patchwork-resource'
 include 'patchwork-tags'
 include 'patchwork-tooltype'
 include 'patchwork-vanilla-patches'
-include 'patchwork-energy'
 
