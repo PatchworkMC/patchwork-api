@@ -31,7 +31,8 @@
     "MixinClientPlayerEntity",
     "MixinClientWorld",
     "MixinItemStack",
-    "MixinOtherClientPlayerEntity"
+    "MixinOtherClientPlayerEntity",
+    "MixinPlayerEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
