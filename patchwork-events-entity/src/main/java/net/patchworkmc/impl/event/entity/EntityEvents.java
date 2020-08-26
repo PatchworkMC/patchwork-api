@@ -61,6 +61,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -74,6 +75,8 @@ import net.minecraft.world.dimension.DimensionType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+
+import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
 
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
@@ -221,15 +224,17 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
 		EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimensionType);
-		return !MinecraftForge.EVENT_BUS.post(event);
-		/* Forge has this thing:
+		boolean result = !MinecraftForge.EVENT_BUS.post(event);
 
-		if (event.isCanceled()) {
+		if (!result) {
 			// Revert variable back to true as it would have been set to false
+
 			if (entity instanceof StorageMinecartEntity) {
-				((StorageMinecartEntity) entity).dropContentsWhenDead(true);
+				((StorageMinecartEntityAccessor) entity).dropContentsWhenDead(true);
 			}
-		} */
+		}
+
+		return result;
 	}
 
 	@Override
