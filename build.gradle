@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'fabric-loom' version '0.4-SNAPSHOT' apply false
+	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id 'com.jfrog.bintray' version '1.8.4'
@@ -263,6 +263,10 @@ dependencies {
 		modCompileOnly name
 		modRuntime name
 	}
+}
+
+loom {
+	shareCaches = true
 }
 
 version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()

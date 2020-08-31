@@ -8,6 +8,6 @@ dependencies {
 	implementation project(path: ':patchwork-tooltype', configuration: 'dev')
 }
 
-minecraft {
+loom {
 	accessWidener "src/main/resources/patchwork-extensions-block.accesswidener"
 }

@@ -6,6 +6,6 @@ dependencies {
 	implementation project(path: ':patchwork-fml', configuration: 'dev')
 }
 
-minecraft {
+loom {
 	accessWidener "src/main/resources/patchwork-registries.accesswidener"
 }
