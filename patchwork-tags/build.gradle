@@ -5,6 +5,6 @@ dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 }
 
-minecraft {
+loom {
     accessWidener "src/main/resources/patchwork-tags.accesswidener"
 }
