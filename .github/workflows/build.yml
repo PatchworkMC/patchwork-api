@@ -21,10 +21,12 @@ jobs:
         with:
           path: |
             ~/.gradle/caches
+            /build
             */build
-          key: ${{ runner.os }}-${{ matrix.java-version }}-gradle-${{ hashFiles('**/*.gradle') }}
+            */.gradle
+          key: ${{ runner.os }}-${{ matrix.java-version }}-build-cache-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.java-version}}-gradle-
+            ${{ runner.os }}-${{ matrix.java-version}}-build-cache
       - uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: wrapper
@@ -48,10 +50,12 @@ jobs:
         with:
           path: |
             ~/.gradle/caches
+            /build
             */build
-          key: ${{ runner.os }}-14-gradle-${{ hashFiles('**/*.gradle') }}
+            */.gradle
+          key: ${{ runner.os }}-14-build-cache-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
-            ${{ runner.os }}-14-gradle-
+            ${{ runner.os }}-14-build-cache-
       - uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: wrapper
