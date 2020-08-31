@@ -25,7 +25,8 @@
     "MixinShulkerBulletEntity",
     "MixinSpawnHelper",
     "MixinThrownEntity",
-    "MixinWorldChunk"
+    "MixinWorldChunk",
+    "StorageMinecartEntityAccessor"
   ],
   "client": [
     "MixinClientPlayerEntity",
