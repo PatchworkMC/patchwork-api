@@ -42,6 +42,6 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: wrapper
-          arguments: license checkstyleMain
+          arguments: licenseCheck checkstyleMain
           dependencies-cache-enabled: true
           configuration-cache-enabled: false
