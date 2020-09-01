@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.EntityMountEvent;
@@ -61,6 +62,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -69,10 +71,13 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+
+import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
 
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
@@ -227,6 +232,21 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
+	}
+
+	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
+		EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimensionType);
+		boolean result = !MinecraftForge.EVENT_BUS.post(event);
+
+		if (!result) {
+			// Revert variable back to true as it would have been set to false
+
+			if (entity instanceof StorageMinecartEntity) {
+				((StorageMinecartEntityAccessor) entity).dropContentsWhenDead(true);
+			}
+		}
+
+		return result;
 	}
 
 	@Override

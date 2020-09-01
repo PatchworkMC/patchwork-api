@@ -1,12 +1,13 @@
 archivesBaseName = "patchwork-extensions-block"
-version = getSubprojectVersion(project, "0.3.0")
+version = getSubprojectVersion(project, "0.4.0")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 	implementation project(path: ':patchwork-enum-hacks', configuration: 'dev')
+	implementation project(path: ':patchwork-extensions-item', configuration: 'dev')
 	implementation project(path: ':patchwork-tooltype', configuration: 'dev')
 }
 
-minecraft {
+loom {
 	accessWidener "src/main/resources/patchwork-extensions-block.accesswidener"
 }

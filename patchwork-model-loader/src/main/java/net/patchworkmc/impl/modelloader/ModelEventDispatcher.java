@@ -22,7 +22,6 @@ package net.patchworkmc.impl.modelloader;
 import java.util.Map;
 
 import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.ModLoader;
 
@@ -31,15 +30,6 @@ import net.minecraft.client.render.model.BakedModelManager;
 import net.minecraft.util.Identifier;
 
 public class ModelEventDispatcher {
-	/**
-	 * In Forge, ModelRegistryEvent is fired in parallel with FMLClientSetupEvent.
-	 * Here we fire ModelRegistryEvent before FMLClientSetupEvent.
-	 * The official forge does not set the ModLoadingContext here, so this should be fine.
-	 */
-	public static void fireModelRegistryEvent() {
-		ModLoader.get().postEvent(new ModelRegistryEvent());
-	}
-
 	public static void onModelBake(BakedModelManager modelManager, Map<Identifier, BakedModel> modelRegistry, ModelLoader modelLoader) {
 		ModLoader.get().postEvent(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
 		modelLoader.onPostBakeEvent(modelRegistry);

@@ -19,7 +19,7 @@
 
 package net.patchworkmc.impl.capability;
 
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,10 +33,10 @@ import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
 public class CapabilityRegisteredCallbackInternal {
 	private static final Logger LOGGER = LogManager.getLogger(CapabilityRegisteredCallback.class);
 
-	private static final Map<Class<?>, Event<?>> CALLBACKS = new IdentityHashMap<>();
+	private static final Map<String, Event<?>> CALLBACKS = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	public static <C> Event<CapabilityRegisteredCallback<C>> getOrCreateEvent(Class<C> type) {
+	public static <C> Event<CapabilityRegisteredCallback<C>> getOrCreateEvent(String type) {
 		return (Event<CapabilityRegisteredCallback<C>>) CALLBACKS.computeIfAbsent(type, $ -> EventFactory.createArrayBacked(CapabilityRegisteredCallback.class, capability -> { }, callbacks -> capability -> {
 			boolean error = false;
 			Throwable throwable = new Throwable();
@@ -51,7 +51,7 @@ public class CapabilityRegisteredCallbackInternal {
 			}
 
 			if (error) {
-				LOGGER.error("An uncaught exception was thrown while processing a CapabilityRegisteredCallback<{}>", type.getName(), throwable);
+				LOGGER.error("An uncaught exception was thrown while processing a CapabilityRegisteredCallback<{}>", type, throwable);
 			}
 		}));
 	}

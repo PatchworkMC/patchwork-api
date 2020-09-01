@@ -1,6 +1,7 @@
 archivesBaseName = "patchwork-client-colors"
-version = getSubprojectVersion(project, "0.3.0")
+version = getSubprojectVersion(project, "0.3.1")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
 }

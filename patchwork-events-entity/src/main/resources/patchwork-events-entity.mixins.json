@@ -25,13 +25,15 @@
     "MixinShulkerBulletEntity",
     "MixinSpawnHelper",
     "MixinThrownEntity",
-    "MixinWorldChunk"
+    "MixinWorldChunk",
+    "StorageMinecartEntityAccessor"
   ],
   "client": [
     "MixinClientPlayerEntity",
     "MixinClientWorld",
     "MixinItemStack",
-    "MixinOtherClientPlayerEntity"
+    "MixinOtherClientPlayerEntity",
+    "MixinPlayerEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
