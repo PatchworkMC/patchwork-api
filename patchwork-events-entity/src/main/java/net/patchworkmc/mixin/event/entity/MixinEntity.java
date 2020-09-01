@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -57,7 +58,7 @@ public abstract class MixinEntity {
 		EntityEvents.onEntityConstruct(entity);
 	}
 
-	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;canStartRiding(Lnet/minecraft/entity/Entity;)Z"))
+	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At(value = "JUMP", opcode = Opcodes.IFNE, ordinal = 0))
 	public void onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> ci) {
 		Entity thisEntity = (Entity) (Object) this;
 
