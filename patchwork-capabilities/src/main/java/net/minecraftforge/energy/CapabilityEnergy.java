@@ -21,12 +21,12 @@ package net.minecraftforge.energy;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
+
 import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
 public class CapabilityEnergy {
