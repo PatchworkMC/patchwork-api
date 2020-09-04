@@ -27,12 +27,14 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
+import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
 public class CapabilityEnergy {
-	@CapabilityInject(IEnergyStorage.class)
 	public static Capability<IEnergyStorage> ENERGY = null;
 
 	public static void register() {
+		CapabilityRegisteredCallback.event(IEnergyStorage.class).register(cap -> ENERGY = cap);
+
 		CapabilityManager.INSTANCE.register(IEnergyStorage.class, new IStorage<IEnergyStorage>() {
 					@Override
 					public Tag writeNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, Direction side) {
