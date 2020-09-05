@@ -3,6 +3,9 @@
   "package": "net.patchworkmc.mixin.extensions.bakedmodel",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "MixinBakedModel",
+    "MixinBlockModelRenderer",
+    "MixinBlockRenderManager",
     "MixinPatchworkBlockEntity"
   ],
   "injectors": {
