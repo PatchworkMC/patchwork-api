@@ -32,6 +32,9 @@ import net.minecraft.world.BlockRenderView;
 public interface ForgeBlockRenderManager {
 	void patchwork$tesselateBlock_ModelData(IModelData modelData);
 
+	/**
+	 * Forge's IModelData sensitive version. Supposed to be called by {{@link net.minecraft.client.render.chunk.ChunkRenderer#rebuildChunk}.
+	 */
 	default boolean renderBlock(BlockState blockState, BlockPos blockPos, BlockRenderView blockRenderView, BufferBuilder bufferBuilder, Random random, IModelData modelData) {
 		BlockRenderManager me = (BlockRenderManager) this;
 		patchwork$tesselateBlock_ModelData(modelData);

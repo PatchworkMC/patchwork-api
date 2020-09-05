@@ -25,7 +25,7 @@ import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockModelRenderer;
  * tesselateBlock() and renderBlock().
  */
 @Mixin(BlockRenderManager.class)
-public class MixinBlockRenderManager implements ForgeBlockRenderManager {
+public abstract class MixinBlockRenderManager implements ForgeBlockRenderManager {
 	@Unique
 	private static final ModelDataParameter tesselateBlock_IModelData = new ModelDataParameter();
 
