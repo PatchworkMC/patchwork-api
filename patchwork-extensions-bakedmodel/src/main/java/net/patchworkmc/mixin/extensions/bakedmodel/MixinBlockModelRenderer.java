@@ -43,10 +43,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockRenderView;
 
 import net.patchworkmc.impl.extensions.bakedmodel.ModelDataParameter;
-import net.patchworkmc.impl.extensions.bakedmodel.PatchworkBlockModelRenderer;
+import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockModelRenderer;
 
 @Mixin(value = BlockModelRenderer.class, priority = 999)
-public abstract class MixinBlockModelRenderer implements PatchworkBlockModelRenderer {
+public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer {
 	/////////////////////
 	/// tesselate
 	/////////////////////
@@ -54,7 +54,7 @@ public abstract class MixinBlockModelRenderer implements PatchworkBlockModelRend
 	private static final ModelDataParameter tesselate_modelData = new ModelDataParameter();
 
 	@Override
-	public void setModelData_tesselate(IModelData modelData) {
+	public void patchwork$tesselate_ModelData(IModelData modelData) {
 		tesselate_modelData.setFuncParam(modelData);
 	}
 
@@ -63,7 +63,7 @@ public abstract class MixinBlockModelRenderer implements PatchworkBlockModelRend
 	private void hookHead_tesselate(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l,
 			CallbackInfoReturnable<Boolean> ci) {
 		IModelData modelData = tesselate_modelData.setupLocalVar(md -> ((IForgeBakedModel) model).getModelData(view, pos, state, md));
-		setModelData_tesselateSmoothFlat(modelData);
+		patchworl$tesselateSmoothFlat_ModelData(modelData);
 	}
 
 	@Inject(method = "tesselate", at = @At("RETURN"))
@@ -78,7 +78,7 @@ public abstract class MixinBlockModelRenderer implements PatchworkBlockModelRend
 	private static final ModelDataParameter tesselateSmoothFlat_modelData = new ModelDataParameter();
 
 	@Override
-	public void setModelData_tesselateSmoothFlat(IModelData modelData) {
+	public void patchworl$tesselateSmoothFlat_ModelData(IModelData modelData) {
 		tesselateSmoothFlat_modelData.setFuncParam(modelData);
 	}
 

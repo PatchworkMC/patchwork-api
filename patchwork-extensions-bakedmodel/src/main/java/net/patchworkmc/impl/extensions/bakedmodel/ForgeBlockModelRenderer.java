@@ -30,28 +30,28 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
-public interface PatchworkBlockModelRenderer {
-	void setModelData_tesselate(IModelData modelData);
-	void setModelData_tesselateSmoothFlat(IModelData modelData);
+public interface ForgeBlockModelRenderer {
+	void patchwork$tesselate_ModelData(IModelData modelData);
+	void patchworl$tesselateSmoothFlat_ModelData(IModelData modelData);
 
 	/**
 	 * Forge's modelData sensitive version.
 	 */
 	default boolean tesselate(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
-		setModelData_tesselate(modelData);
+		patchwork$tesselate_ModelData(modelData);
 		return me.tesselate(view, model, state, pos, buffer, testSides, random, l);
 	}
 
 	default boolean renderModelSmooth(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
-		setModelData_tesselateSmoothFlat(modelData);
+		patchworl$tesselateSmoothFlat_ModelData(modelData);
 		return me.tesselateSmooth(view, model, state, pos, buffer, testSides, random, l);
 	}
 
 	default boolean renderModelFlat(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
-		setModelData_tesselateSmoothFlat(modelData);
+		patchworl$tesselateSmoothFlat_ModelData(modelData);
 		return me.tesselateFlat(view, model, state, pos, buffer, testSides, random, l);
 	}
 }

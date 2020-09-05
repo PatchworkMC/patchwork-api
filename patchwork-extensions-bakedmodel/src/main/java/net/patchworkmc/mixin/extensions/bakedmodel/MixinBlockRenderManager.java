@@ -17,13 +17,22 @@ import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
+import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockRenderManager;
 import net.patchworkmc.impl.extensions.bakedmodel.ModelDataParameter;
-import net.patchworkmc.impl.extensions.bakedmodel.PatchworkBlockModelRenderer;
+import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockModelRenderer;
 
+/**
+ * tesselateBlock() and renderBlock().
+ */
 @Mixin(BlockRenderManager.class)
-public class MixinBlockRenderManager {
+public class MixinBlockRenderManager implements ForgeBlockRenderManager {
 	@Unique
 	private static final ModelDataParameter tesselateBlock_IModelData = new ModelDataParameter();
+
+	@Override
+	public void patchwork$tesselateBlock_ModelData(IModelData modelData) {
+		tesselateBlock_IModelData.setFuncParam(modelData);
+	}
 
 	@Inject(method = "tesselateBlock", at = @At("HEAD"))
 	private void hookHead_tesselateBlock(BlockState blockState, BlockPos blockPos, BlockRenderView blockRenderView, BufferBuilder bufferBuilder, Random random,
@@ -45,7 +54,7 @@ public class MixinBlockRenderManager {
 		IModelData modelData = tesselateBlock_IModelData.getLocalVar();
 		BlockRenderManager me = (BlockRenderManager) (Object) this;
 		BlockModelRenderer render = me.getModelRenderer();
-		((PatchworkBlockModelRenderer) render).setModelData_tesselate(modelData);
+		((ForgeBlockModelRenderer) render).patchwork$tesselate_ModelData(modelData);
 	}
 
 	@Inject(method = "tesselateBlock", at = @At("RETURN"))
