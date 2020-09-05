@@ -16,6 +16,9 @@ class Globals {
 	static def mcVersion = "1.14.4"
 	static def yarnVersion = "+build.16"
 }
+version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
+
+logger.lifecycle("Building Patchwork: " + version)
 
 def getSubprojectVersion(project, version) {
 	if (grgit == null) {
@@ -295,9 +298,5 @@ dependencies {
 loom {
 	shareCaches = true
 }
-
-version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
-
-logger.lifecycle("Building Patchwork: " + version)
 
 apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
