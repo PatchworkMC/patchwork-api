@@ -62,13 +62,14 @@ public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer
 	@Inject(method = "tesselate", at = @At(value = "JUMP", opcode = Opcodes.IFEQ, ordinal = 0, shift = Shift.BEFORE))
 	private void hookHead_tesselate(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l,
 			CallbackInfoReturnable<Boolean> ci) {
-		IModelData modelData = tesselate_modelData.setupLocalVar(md -> ((IForgeBakedModel) model).getModelData(view, pos, state, md));
+		IModelData modelData = tesselate_modelData.getFuncParamAndReset();
+		modelData = ((IForgeBakedModel) model).getModelData(view, pos, state, modelData);
 		patchworl$tesselateSmoothFlat_ModelData(modelData);
 	}
 
 	@Inject(method = "tesselate", at = @At("RETURN"))
 	private void hookReturn_tesselate(CallbackInfoReturnable<Boolean> ci) {
-		tesselate_modelData.releaseLocalVar();
+		tesselate_modelData.getFuncParamAndReset();
 	}
 
 	////////////////////////////////////////
@@ -84,7 +85,7 @@ public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer
 
 	@Inject(method = {"tesselateSmooth", "tesselateFlat"}, at = @At("HEAD"))
 	private void hookHead_tesselateSmoothFlat(CallbackInfoReturnable<Boolean> ci) {
-		tesselateSmoothFlat_modelData.setupLocalVar();
+		tesselateSmoothFlat_modelData.setupLocalVarFromParam();
 	}
 
 	@Redirect(method = {"tesselateSmooth", "tesselateFlat"}, at = @At(value = "INVOKE", target =

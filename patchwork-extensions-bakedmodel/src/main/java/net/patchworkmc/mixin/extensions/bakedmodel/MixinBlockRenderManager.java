@@ -37,7 +37,7 @@ public abstract class MixinBlockRenderManager implements ForgeBlockRenderManager
 	@Inject(method = "tesselateBlock", at = @At("HEAD"))
 	private void hookHead_tesselateBlock(BlockState blockState, BlockPos blockPos, BlockRenderView blockRenderView, BufferBuilder bufferBuilder, Random random,
 			CallbackInfoReturnable<Boolean> cir) {
-		tesselateBlock_IModelData.setupLocalVar();
+		tesselateBlock_IModelData.setupLocalVarFromParam();
 	}
 
 	@Inject(method = "tesselateBlock", at = @At(value = "INVOKE", ordinal = 0, shift = Shift.BEFORE,

@@ -20,7 +20,6 @@
 package net.patchworkmc.impl.extensions.bakedmodel;
 
 import java.util.Stack;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
@@ -59,6 +58,10 @@ public class ModelDataParameter {
 		}
 	}
 
+	/**
+	 * @return the additional IModelData parameter from the caller.
+	 * If not exist, return {@link #DEFAULT}.
+	 */
 	public IModelData getFuncParamAndReset() {
 		IModelData modelData = modelDataParam.get();
 		return modelData == null ? DEFAULT : modelData;
@@ -66,21 +69,25 @@ public class ModelDataParameter {
 
 	private final ThreadLocal<Stack<IModelData>> modelDataStack = ThreadLocal.withInitial(Stack::new);
 
-	public IModelData setupLocalVar(Function<IModelData, IModelData> mapper) {
-		IModelData modelData = getFuncParamAndReset();
-		modelData = mapper.apply(modelData);
-		modelDataStack.get().push(modelData);
-		return modelData;
+	public IModelData setupLocalVarFromParam() {
+		return setupLocalVar(getFuncParamAndReset());
 	}
 
-	public IModelData setupLocalVar() {
-		return setupLocalVar(md -> md);
+	/**
+	 * Set the IModelData local variable to a specific value.
+	 */
+	public IModelData setupLocalVar(IModelData modelData) {
+		modelDataStack.get().push(modelData);
+		return modelData;
 	}
 
 	public IModelData getLocalVar() {
 		return modelDataStack.get().lastElement();
 	}
 
+	/**
+	 * Must be called after {@link #setupLocalVarFromParam()}.
+	 */
 	public IModelData releaseLocalVar() {
 		return modelDataStack.get().pop();
 	}
