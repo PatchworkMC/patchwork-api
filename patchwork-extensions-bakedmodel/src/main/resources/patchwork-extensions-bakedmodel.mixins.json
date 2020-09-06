@@ -7,11 +7,13 @@
   ],
   "client": [
     "MixinBakedModel",
+    "MixinBasicBakedModelBuilder",
     "MixinBlockModelRenderer",
     "MixinBlockModels",
     "MixinBlockRenderManager",
     "MixinChunkRenderer",
-    "MixinChunkRenderTask"
+    "MixinChunkRenderTask",
+    "MixinHeldItemRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
