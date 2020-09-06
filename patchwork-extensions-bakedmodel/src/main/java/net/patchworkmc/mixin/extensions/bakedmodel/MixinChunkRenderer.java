@@ -49,9 +49,13 @@ import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.impl.client.indigo.Indigo;
 
 import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockRenderManager;
+import net.patchworkmc.impl.extensions.bakedmodel.ForgeChunkRenderTask;
 
-@Mixin(value = ChunkRenderer.class, priority = 233)
-public class MixinChunkRenderer {
+/**
+ * Mimic calling Forge's IModelData sensitive version of tesselateBlock().
+ */
+@Mixin(ChunkRenderer.class)
+public abstract class MixinChunkRenderer {
 	/**
 	 * This method can be better if we can talk to the Fabric API developer.
 	 * If the implementation of {@link net.fabricmc.fabric.mixin.client.indigo.renderer.MixinChunkRenderer#hookChunkBuildTesselate}
@@ -69,7 +73,7 @@ public class MixinChunkRenderer {
 			}
 		}
 
-		IModelData modelData = null; // TODO: Need to impl: task.getModelData(blockpos3)
+		IModelData modelData = ((ForgeChunkRenderTask) task).getModelData(blockPos3);
 		((ForgeBlockRenderManager) blockRenderManager).patchwork$tesselateBlock_ModelData(modelData);
 	}
 }

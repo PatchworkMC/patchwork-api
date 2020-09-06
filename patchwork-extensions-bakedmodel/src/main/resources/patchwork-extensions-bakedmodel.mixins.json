@@ -8,8 +8,10 @@
   "client": [
     "MixinBakedModel",
     "MixinBlockModelRenderer",
+    "MixinBlockModels",
     "MixinBlockRenderManager",
-    "MixinChunkRenderer"
+    "MixinChunkRenderer",
+    "MixinChunkRenderTask"
   ],
   "injectors": {
     "defaultRequire": 1

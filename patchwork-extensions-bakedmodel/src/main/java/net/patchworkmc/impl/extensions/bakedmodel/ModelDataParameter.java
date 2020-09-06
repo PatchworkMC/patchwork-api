@@ -51,10 +51,10 @@ public class ModelDataParameter {
 	 * have the default value: {@link #DEFAULT}.
 	 */
 	public void setFuncParam(@Nonnull IModelData modelData) {
-		if (modelDataParam.get() != null) {
-			throw new IllegalStateException("ModelDataContext is not clean!");
-		} else {
+		if (modelDataParam.get() == null) {
 			modelDataParam.set(modelData);
+		} else {
+			throw new IllegalStateException("ModelDataContext is not clean!");
 		}
 	}
 
@@ -64,6 +64,7 @@ public class ModelDataParameter {
 	 */
 	public IModelData getFuncParamAndReset() {
 		IModelData modelData = modelDataParam.get();
+		modelDataParam.remove();
 		return modelData == null ? DEFAULT : modelData;
 	}
 

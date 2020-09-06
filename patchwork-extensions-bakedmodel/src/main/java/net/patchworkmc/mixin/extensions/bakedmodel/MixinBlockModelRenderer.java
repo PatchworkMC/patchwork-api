@@ -45,6 +45,10 @@ import net.minecraft.world.BlockRenderView;
 import net.patchworkmc.impl.extensions.bakedmodel.ModelDataParameter;
 import net.patchworkmc.impl.extensions.bakedmodel.ForgeBlockModelRenderer;
 
+/**
+ * Implements {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState,Direction,Random,IModelData)} and
+ * {@link net.minecraftforge.client.extensions.IForgeBakedModel#shouldApplyDiffuseLighting()}.
+ */
 @Mixin(value = BlockModelRenderer.class, priority = 999)
 public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer {
 	/////////////////////

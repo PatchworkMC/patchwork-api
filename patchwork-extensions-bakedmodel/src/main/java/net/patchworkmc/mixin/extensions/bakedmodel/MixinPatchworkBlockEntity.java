@@ -25,13 +25,14 @@ import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.world.World;
 
+import net.patchworkmc.impl.extensions.bakedmodel.ForgeModelDataProvider;
 import net.patchworkmc.impl.extensions.blockentity.PatchworkBlockEntity;
 
 /**
  * Need this mixin to maintain modularity and resolve circular dependency.
  */
 @Mixin(PatchworkBlockEntity.class)
-public interface MixinPatchworkBlockEntity extends PatchworkBlockEntity {
+public interface MixinPatchworkBlockEntity extends PatchworkBlockEntity, ForgeModelDataProvider {
 	/**
 	 * Requests a refresh for the model data of your TE
 	 * Call this every time your {@link #getModelData()} changes.
