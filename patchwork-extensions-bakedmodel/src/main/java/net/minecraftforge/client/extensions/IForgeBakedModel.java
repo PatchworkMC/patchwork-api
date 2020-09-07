@@ -35,6 +35,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockRenderView;
 
+/**
+ * Forge makes every BakeModel including vanilla BakedModels extend this interface.
+ * The handlePerspective and doesHandlePerspectives callback will be supported in a separated package.
+ */
 public interface IForgeBakedModel {
 	default BakedModel getBakedModel() {
 		return (BakedModel) this;
@@ -48,14 +52,6 @@ public interface IForgeBakedModel {
 	default boolean isAmbientOcclusion(BlockState state) {
 		return getBakedModel().useAmbientOcclusion();
 	}
-
-	/*
-	 * Returns the pair of the model for the given perspective, and the matrix that
-	 * should be applied to the GL state before rendering it (matrix may be null).
-	 */
-	// default org.apache.commons.lang3.tuple.Pair<? extends BakedModel, javax.vecmath.Matrix4f> handlePerspective(ModelTransformation.Type cameraTransformType) {
-	//	return net.minecraftforge.client.ForgeHooksClient.handlePerspective(getBakedModel(), cameraTransformType);
-	// }
 
 	@Nonnull
 	default IModelData getModelData(@Nonnull BlockRenderView world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
