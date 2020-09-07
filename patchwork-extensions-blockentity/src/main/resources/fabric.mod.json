@@ -11,7 +11,8 @@
   "license": "LGPL-2.1-only",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.8.4"
+    "patchwork-api-base": "*",
+    "patchwork-capabilities": "*"
   },
   "mixins": [
     "patchwork-extensions-blockentity.mixins.json"

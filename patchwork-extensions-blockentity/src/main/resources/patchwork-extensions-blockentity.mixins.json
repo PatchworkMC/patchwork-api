@@ -8,7 +8,6 @@
   ],
   "client": [
     "MixinClientPlayNetworkHandler",
-    "MixinBlockEntityRenderDispatcher",
     "MixinBlockEntityRenderer",
     "MixinWorldRenderer"
   ],
