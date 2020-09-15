@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-access-modifications",
+  "name": "Patchwork Access Modifications",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-access-modifications/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "patchwork-api-base": "*"
+  },
+  "description": "Forge's Access Modifications.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  },
+  "accessWidener": "patchwork-access-modifications.accesswidener"
+}

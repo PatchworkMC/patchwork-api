@@ -1,0 +1,10 @@
+archivesBaseName = "patchwork-access-modifications"
+version = getSubprojectVersion(project, "0.0.0")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+}
+
+loom {
+	accessWidener "src/main/resources/patchwork-access-modifications.accesswidener"
+}
