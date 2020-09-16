@@ -12,6 +12,7 @@ pluginManagement {
 
 rootProject.name = "patchwork-api"
 
+include 'patchwork-access-modifications'
 include 'patchwork-api-base'
 include 'patchwork-biomes'
 include 'patchwork-capabilities'
@@ -45,4 +46,3 @@ include 'patchwork-resource'
 include 'patchwork-tags'
 include 'patchwork-tooltype'
 include 'patchwork-vanilla-patches'
-include 'patchwork-access-modifications'
