@@ -24,5 +24,6 @@
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
-  }
+  },
+  "accessWidener": "patchwork-fml.accesswidener"
 }
