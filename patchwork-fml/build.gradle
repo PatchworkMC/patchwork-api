@@ -2,7 +2,7 @@ archivesBaseName = "patchwork-fml"
 version = getSubprojectVersion(project, "0.4.0")
 
 loom {
-    accessWidener "src/main/resources/patchwork-fml/accesswidener"
+    accessWidener "src/main/resources/patchwork-fml.accesswidener"
 }
 
 dependencies {
