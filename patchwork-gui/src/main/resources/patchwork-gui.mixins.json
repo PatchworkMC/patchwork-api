@@ -3,6 +3,7 @@
   "package": "net.patchworkmc.mixin.gui",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "MixinAbstractButtonWidget",
     "MixinAbstractInventoryScreen",
     "MixinGameRenderer",
     "MixinKeyboard",
