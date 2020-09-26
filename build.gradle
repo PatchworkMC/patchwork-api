@@ -66,7 +66,7 @@ allprojects {
 	dependencies {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"
 		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-		modImplementation "net.fabricmc:fabric-loader:0.8.4+build.198"
+		modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
 		modImplementation "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
 
 		implementation 'net.patchworkmc:patchwork-eventbus:2.0.1:all'
@@ -268,31 +268,13 @@ dependencies {
 
 	minecraft "com.mojang:minecraft:$Globals.mcVersion"
 	mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-	modImplementation "net.fabricmc:fabric-loader:0.8.4+build.198"
+	modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
 
 	implementation 'com.electronwill.night-config:toml:3.6.2'
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'net.patchworkmc:patchwork-eventbus:2.0.0:all'
-
-	fileTree(dir: 'jars', include: '*.jar').each {
-		String baseName = it.name.replace(".jar", "")
-		String version = "0.1.0"
-		int split = baseName.lastIndexOf('-')
-
-		if (split != -1) {
-			version = baseName.substring(split + 1)
-			baseName = baseName.substring(0, split)
-		}
-
-		String name = "testmod:${baseName}:${version}"
-
-		System.out.println("Found test mod: " + it.name.replace(".jar", "") + " -> " + name)
-
-		modCompileOnly name
-		modRuntime name
-	}
 }
 
 loom {
