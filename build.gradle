@@ -120,7 +120,7 @@ allprojects {
 
 	checkstyle {
 		configFile = rootProject.file("checkstyle.xml")
-		toolVersion = '8.31'
+		toolVersion = '8.36.2'
 	}
 }
 
@@ -281,4 +281,12 @@ loom {
 	shareCaches = true
 }
 
-apply from: 'https://github.com/FabricMC/fabric-docs/raw/master/gradle/ideconfig.gradle'
+
+task copyIdeaFiles(type: Copy) {
+	if (file(".idea/").exists()) {
+		from "idea-docs/"
+		into ".idea/"
+	}
+}
+
+copyIdeaFiles
