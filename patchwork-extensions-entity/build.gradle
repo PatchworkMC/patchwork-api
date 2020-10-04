@@ -1,4 +1,4 @@
-archivesBaseName = "patchwork-entity"
+archivesBaseName = "patchwork-extensions-entity"
 version = getSubprojectVersion(project, "0.1.0")
 
 dependencies {
