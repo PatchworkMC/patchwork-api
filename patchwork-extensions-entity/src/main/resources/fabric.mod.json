@@ -16,7 +16,7 @@
   "depends": {
     "patchwork-api-base": "*"
   },
-  "description": "Access Widener for MobEntity.",
+  "description": "Various extensions and APIs related to entities.",
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
