@@ -19,31 +19,30 @@
 
 package net.patchworkmc.impl.event.world;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.event.world.WorldEvent;
-
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
@@ -109,13 +108,5 @@ public class WorldEvents implements ModInitializer {
 	// TODO: Is this actually a "world" event?
 	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
 		MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
-	}
-
-	public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world) {
-		if (watch) {
-			MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
-		} else {
-			throw new UnsupportedOperationException("Cannot Unwatch a chunk yet");
-		}
 	}
 }

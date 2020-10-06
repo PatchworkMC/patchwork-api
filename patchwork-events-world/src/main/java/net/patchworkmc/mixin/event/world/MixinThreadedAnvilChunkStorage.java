@@ -40,8 +40,6 @@ import net.minecraft.world.chunk.Chunk;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
-import net.patchworkmc.impl.event.world.WorldEvents;
-
 @Mixin(ThreadedAnvilChunkStorage.class)
 public class MixinThreadedAnvilChunkStorage {
 	@Shadow

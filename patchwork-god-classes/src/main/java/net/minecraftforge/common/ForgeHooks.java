@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.world.*;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -43,10 +44,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.MobSpawnerLogic;
-import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
@@ -54,14 +51,9 @@ import net.patchworkmc.impl.loot.LootHooks;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.entity.EntityCategory;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
