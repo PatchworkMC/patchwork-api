@@ -21,9 +21,14 @@ package net.minecraftforge.fml.hooks;
 
 import net.minecraftforge.event.TickEvent;
 
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
+import net.patchworkmc.impl.event.entity.PlayerEvents;
 import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 
 /*
@@ -31,6 +36,37 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class BasicEventHooks {
+	public static void firePlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim) {
+		PlayerEvents.firePlayerChangedDimensionEvent(player, fromDim, toDim);
+	}
+
+	public static void firePlayerLoggedIn(PlayerEntity player) {
+		PlayerEvents.firePlayerLoggedIn(player);
+	}
+
+	public static void firePlayerLoggedOut(PlayerEntity player) {
+		PlayerEvents.firePlayerLoggedOut(player);
+	}
+
+	public static void firePlayerRespawnEvent(PlayerEntity player, boolean endConquered) {
+		PlayerEvents.firePlayerRespawnEvent(player, endConquered);
+	}
+
+	public static void firePlayerItemPickupEvent(PlayerEntity player, ItemEntity item, ItemStack clone) {
+		PlayerEvents.firePlayerItemPickupEvent(player, item, clone);
+	}
+
+	public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, Inventory craftMatrix) {
+		PlayerEvents.firePlayerCraftingEvent(player, crafted, craftMatrix);
+	}
+
+	public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted) {
+		PlayerEvents.firePlayerSmeltedEvent(player, smelted);
+	}
+
+	// TODO: onRenderTickStart
+	// TODO: onRenderTickEnd
+
 	public static void onPlayerPreTick(PlayerEntity player) {
 		LifecycleEvents.firePlayerTickEvent(TickEvent.Phase.START, player);
 	}
@@ -53,5 +89,21 @@ public class BasicEventHooks {
 
 	public static void onPostClientTick() {
 		LifecycleEvents.fireClientTickEvent(TickEvent.Phase.END);
+	}
+
+	public static void onPreServerTick() {
+		LifecycleEvents.fireServerTickEvent(TickEvent.Phase.START);
+	}
+
+	public static void onPostServerTick() {
+		LifecycleEvents.fireServerTickEvent(TickEvent.Phase.END);
+	}
+
+	public static void onRenderTickStart(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.START, timer);
+	}
+
+	public static void onRenderTickEnd(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, timer);
 	}
 }

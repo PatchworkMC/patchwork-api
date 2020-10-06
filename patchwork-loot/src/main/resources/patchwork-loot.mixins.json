@@ -5,7 +5,13 @@
   "mixins": [
     "MixinAdvancementRewards",
     "MixinFishingBobberEntity",
-    "MixinLootContextTypes"
+    "MixinJsonDataLoader",
+    "MixinLootContextTypes",
+    "MixinLootManager",
+    "MixinLootPool",
+    "MixinLootPoolBuilder",
+    "MixinLootPoolSerializer",
+    "MixinLootTable"
   ],
   "injectors": {
     "defaultRequire": 1

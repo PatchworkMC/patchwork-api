@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-api-base",
+  "name": "Patchwork API Base",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-api-base/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    // This is mirrored in the top-level project because of a Loader issue
+    "fabricloader": ">=0.10.0",
+    "fabric": ">=0.15.1"
+  },
+  "description": "Common classes that don't require Mixins or involve mod loading",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}

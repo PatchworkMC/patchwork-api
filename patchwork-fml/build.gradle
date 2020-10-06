@@ -1,6 +1,12 @@
 archivesBaseName = "patchwork-fml"
-version = getSubprojectVersion(project, "0.2.0")
+version = getSubprojectVersion(project, "0.4.0")
+
+loom {
+    accessWidener "src/main/resources/patchwork-fml.accesswidener"
+}
 
 dependencies {
 	implementation 'com.electronwill.night-config:toml:3.6.2'
+
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 }

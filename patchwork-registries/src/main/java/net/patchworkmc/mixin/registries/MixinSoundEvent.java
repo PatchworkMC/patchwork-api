@@ -31,12 +31,12 @@ import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
 @Mixin(SoundEvent.class)
-public class MixinSoundEvent implements ExtendedForgeRegistryEntry<SoundEvent> {
+public class MixinSoundEvent implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
 
 	@Override
-	public IForgeRegistryEntry<SoundEvent> setRegistryName(Identifier name) {
+	public IForgeRegistryEntry setRegistryName(Identifier name) {
 		this.registryName = name;
 
 		return this;

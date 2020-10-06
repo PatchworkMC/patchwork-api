@@ -13,12 +13,12 @@
     "PatchworkMC"
   ],
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric-networking-v0": "*",
+    "patchwork-api-base": "*",
     "patchwork-fml": "*"
   },
   "mixins": [
     "patchwork-networking.accessor.mixins.json",
+    "patchwork-networking.client.mixins.json",
     "patchwork-networking.handler.mixins.json",
     "patchwork-networking.packet.mixins.json"
   ],

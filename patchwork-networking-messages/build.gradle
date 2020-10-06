@@ -1,7 +1,7 @@
 archivesBaseName = "patchwork-networking-messages"
-version = getSubprojectVersion(project, "0.2.0")
+version = getSubprojectVersion(project, "0.3.1")
 
 dependencies {
-	compile project(path: ':patchwork-fml', configuration: 'dev')
-	compile project(path: ':patchwork-networking', configuration: 'dev')
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-networking', configuration: 'dev')
 }

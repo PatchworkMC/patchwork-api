@@ -6,7 +6,7 @@
   "name": "Patchwork Entity Events",
   "description": "Provides an implementation of Minecraft Forge's Entity Events",
   "authors": [
-    "coderbot"
+    "PatchworkMC"
   ],
   "license": "LGPL-2.1-only",
   "environment": "*",
@@ -16,9 +16,8 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.8.4",
-    "fabric": "*",
-    "patchwork-fml": "*",
+    "patchwork-api-base": "*",
+    "patchwork-extensions": "*",
     "patchwork-extensions-item": "*"
   },
   "mixins": [

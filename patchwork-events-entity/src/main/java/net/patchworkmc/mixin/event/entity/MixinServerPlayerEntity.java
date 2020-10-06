@@ -19,21 +19,37 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.level.LevelProperties;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.event.entity.PlayerEvents;
 
 @Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity {
+public abstract class MixinServerPlayerEntity extends PlayerEntity {
+	public MixinServerPlayerEntity(World world, GameProfile profile) {
+		super(world, profile);
+	}
+
 	@Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)
 	private void hookDeath(DamageSource source, CallbackInfo callback) {
 		LivingEntity entity = (LivingEntity) (Object) this;
@@ -48,5 +64,76 @@ public class MixinServerPlayerEntity {
 		@SuppressWarnings("ConstantConditions")
 		ServerPlayerEntity speThis = (ServerPlayerEntity) (Object) this;
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.Clone(speThis, oldPlayer, !alive));
+	}
+
+	@Inject(method = "teleport",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/server/network/ServerPlayerEntity;getServerWorld()Lnet/minecraft/server/world/ServerWorld;"
+			),
+			cancellable = true
+	)
+	void patchwork_fireTravelToDimensionEventTeleport(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo ci) {
+		if (!EntityEvents.onTravelToDimension(this, targetWorld.dimension.getType())) {
+			ci.cancel();
+		}
+	}
+
+	////////////////////////////////////
+	// PlayerChangedDimensionEvent
+	////////////////////////////////////
+	@Inject(method = "teleport",
+			at = @At(
+					value = "INVOKE",
+					shift = Shift.AFTER,
+					ordinal = 0,
+					target = "net/minecraft/server/PlayerManager.method_14594(Lnet/minecraft/server/network/ServerPlayerEntity;)V"
+					),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	) // PlayerManager.method_14594 -> sendInventory
+	private void teleport_sendInventory(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo info, ServerWorld serverWorld, LevelProperties levelProperties) {
+		ServerPlayerEntity me = (ServerPlayerEntity) (Object) this;
+		PlayerEvents.firePlayerChangedDimensionEvent(me, serverWorld.dimension.getType(), me.dimension);
+	}
+
+	@Unique
+	private static final ThreadLocal<DimensionType> changeDimension_from = new ThreadLocal<>();
+
+	@Inject(method = "changeDimension",
+			at = @At("HEAD"),
+			cancellable = true
+	)
+	void patchwork_fireTravelToDimensionEventChangeDimensionPlayer(DimensionType newDimension, CallbackInfoReturnable<Entity> cir) {
+		if (!EntityEvents.onTravelToDimension(this, newDimension)) {
+			cir.setReturnValue(null);
+		}
+	}
+
+	@Inject(method = "changeDimension",
+			at = @At(
+					value = "INVOKE",
+					shift = Shift.AFTER,
+					ordinal = 0,
+					target = "net/minecraft/server/MinecraftServer.getWorld(Lnet/minecraft/world/dimension/DimensionType;)Lnet/minecraft/server/world/ServerWorld;"
+					)
+	)
+	private void changeDimension_getWorld(DimensionType newDimension, CallbackInfoReturnable<Entity> info) {
+		ServerPlayerEntity me = (ServerPlayerEntity) (Object) this;
+		changeDimension_from.set(me.dimension);
+	}
+
+	@Inject(method = "changeDimension",
+			at = @At(
+					value = "FIELD",
+					shift = Shift.AFTER,
+					ordinal = 0,
+					target = "net/minecraft/server/network/ServerPlayerEntity.field_13979:I"
+					)
+	) // ServerPlayerEntity.field_13979 -> lastFoodLevel
+	private void changeDimension_lastFoodLevel(DimensionType newDimension, CallbackInfoReturnable<Entity> info) {
+		ServerPlayerEntity me = (ServerPlayerEntity) (Object) this;
+		DimensionType from = changeDimension_from.get();
+		changeDimension_from.set(null);
+		PlayerEvents.firePlayerChangedDimensionEvent(me, from, newDimension);
 	}
 }

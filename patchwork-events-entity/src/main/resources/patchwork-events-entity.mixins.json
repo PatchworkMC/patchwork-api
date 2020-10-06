@@ -3,24 +3,37 @@
   "package": "net.patchworkmc.mixin.event.entity",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinCraftingResultSlot",
     "MixinEntity",
     "MixinEntityTrackerEntry",
     "MixinEntityType",
     "MixinExperienceOrbEntity",
+    "MixinExplosiveProjectileEntity",
+    "MixinFishingBobberEntity",
+    "MixinFurnaceOutputSlot",
+    "MixinHorseBondWithPlayerGoal",
+    "MixinItemEntity",
     "MixinLivingEntity",
+    "MixinLlamaSpitEntity",
     "MixinMobEntity",
     "MixinMobSpawnerLogic",
     "MixinPlayerEntity",
     "MixinPlayerManager",
+    "MixinProjectileEntity",
     "MixinServerPlayerEntity",
     "MixinServerWorld",
+    "MixinShulkerBulletEntity",
     "MixinSpawnHelper",
-    "MixinWorldChunk"
+    "MixinThrownEntity",
+    "MixinWorldChunk",
+    "StorageMinecartEntityAccessor"
   ],
   "client": [
-    "MixinClientWorld",
     "MixinClientPlayerEntity",
-    "MixinOtherClientPlayerEntity"
+    "MixinClientWorld",
+    "MixinItemStack",
+    "MixinOtherClientPlayerEntity",
+    "MixinPlayerEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

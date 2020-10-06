@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.keybindings",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "MixinKeyBinding"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -19,7 +19,11 @@
 
 package net.patchworkmc.mixin.extensions.block.blockentity;
 
+import javax.annotation.Nullable;
+
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -36,6 +40,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
@@ -44,6 +49,17 @@ import net.patchworkmc.impl.extensions.block.Signatures;
 
 @Mixin(WorldChunk.class)
 public abstract class MixinWorldChunk {
+	@Shadow
+	@Nullable
+	public abstract BlockEntity getBlockEntity(BlockPos pos, WorldChunk.CreationType creationType);
+
+	@Shadow
+	@Final
+	private World world;
+
+	@Shadow
+	private volatile boolean shouldSave;
+
 	/**
 	 * @param blockState
 	 * @return the blockEntity created by IForgeBlock.createTileEntity(BlockState, World)
@@ -154,5 +170,22 @@ public abstract class MixinWorldChunk {
 	@Redirect(method = "setBlockEntity", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
 	private Block patchwork_setBlockEntity_getBlock(BlockState blockState) {
 		return BlockContext.hasBlockEntityBlockMarker(blockState);
+	}
+
+	// Workaround in setBlockState for Forge Blocks with BEs that don't extend BlockEntityProvider
+	@Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/WorldChunk;getBlockEntity(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/chunk/WorldChunk$CreationType;)Lnet/minecraft/block/entity/BlockEntity;", ordinal = 1, shift = At.Shift.AFTER), cancellable = true)
+	private void postGetBlockEntity(BlockPos pos, BlockState state, boolean bl, CallbackInfoReturnable<BlockState> cir) {
+		if (!(state.getBlock() instanceof BlockEntityProvider)) {
+			BlockEntity blockEntity = getBlockEntity(pos, WorldChunk.CreationType.CHECK);
+
+			if (blockEntity == null) {
+				IForgeBlockState forgeBlockState = (IForgeBlockState) state;
+				BlockEntity tileEntity = forgeBlockState.createTileEntity(world);
+				world.setBlockEntity(pos, tileEntity);
+
+				this.shouldSave = true;
+				cir.setReturnValue(state);
+			}
+		}
 	}
 }

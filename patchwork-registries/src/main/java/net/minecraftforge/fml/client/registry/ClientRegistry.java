@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
@@ -44,7 +43,7 @@ public class ClientRegistry {
 	 */
 	public static synchronized <T extends BlockEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, BlockEntityRenderer<? super T> specialRenderer) {
 		BlockEntityRendererRegistry.INSTANCE.register(tileEntityClass, specialRenderer);
-		specialRenderer.setRenderManager(BlockEntityRenderDispatcher.INSTANCE);
+		// Done by Fabric API: specialRenderer.setRenderManager(BlockEntityRenderDispatcher.INSTANCE);
 	}
 
 	/**

@@ -20,6 +20,7 @@
 package net.patchworkmc.impl.event.lifecycle;
 
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -30,20 +31,22 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 public class LifecycleEvents implements ModInitializer {
-	private static Runnable loadCompleteCallback;
-
 	public static void fireWorldTickEvent(TickEvent.Phase phase, World world) {
 		LogicalSide side = world.isClient() ? LogicalSide.CLIENT : LogicalSide.SERVER;
 		TickEvent.WorldTickEvent event = new TickEvent.WorldTickEvent(side, phase, world);
@@ -55,16 +58,33 @@ public class LifecycleEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.ClientTickEvent(phase));
 	}
 
+	public static void fireRenderTickEvent(TickEvent.Phase phase, float renderTickTime) {
+		// TODO - Call net.minecraftforge.client.model.animation.Animation#setClientPartialTickTime on start phase
+		MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(phase, renderTickTime));
+	}
+
+	public static void fireServerTickEvent(TickEvent.Phase phase) {
+		MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(phase));
+	}
+
 	public static void firePlayerTickEvent(TickEvent.Phase phase, PlayerEntity player) {
 		MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(phase, player));
 	}
 
-	public static void handleServerStarting(final MinecraftServer server) {
+	/**
+	 * Mixes into {@link IntegratedServer} and {@link MinecraftDedicatedServer} in order to implement
+	 * {@link net.minecraftforge.fml.event.server.FMLServerStartingEvent}. This event fires right before the implementations
+	 * return <code>true</code> from <code>setupServer</code>. Returning <code>false</code> from the callback  cancels the
+	 * server's startup, however, it's important to note that this event isn't actually cancellable in Forge!
+	 */
+	public static boolean handleServerStarting(final MinecraftServer server) {
 		// TODO: Forge loads language data here. I haven't found any mods that use this behavior.
 
 		if (MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server))) {
 			throw new UnsupportedOperationException("FMLServerStartingEvent is not cancellable!");
 		}
+
+		return true;
 	}
 
 	public static void handleServerStarted(final MinecraftServer server) {
@@ -85,12 +105,16 @@ public class LifecycleEvents implements ModInitializer {
 		return serverConfig;
 	}
 
-	public static void setLoadCompleteCallback(Runnable callback) {
-		loadCompleteCallback = callback;
-	}
+	public static void handleServerStopped(final MinecraftServer server) {
+		MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent(server));
+		ServerLifecycleHooks.currentServer = null;
+		LogicalSidedProvider.setServer(null);
+		CountDownLatch latch = ServerLifecycleHooks.exitLatch;
 
-	public static void handleLoadComplete() {
-		loadCompleteCallback.run();
+		if (latch != null) {
+			latch.countDown();
+			ServerLifecycleHooks.exitLatch = null;
+		}
 	}
 
 	@Override
@@ -112,5 +136,8 @@ public class LifecycleEvents implements ModInitializer {
 				throw new UnsupportedOperationException("A mod tried to set the server's motd during handling FMLServerStartedEvent, this isn't implemented yet.");
 			}
 		});
+
+		ServerTickEvents.START_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.START));
+		ServerTickEvents.END_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.END));
 	}
 }

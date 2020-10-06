@@ -1,9 +1,10 @@
 archivesBaseName = "patchwork-dispatcher"
-version = getSubprojectVersion(project, "0.3.0")
+version = getSubprojectVersion(project, "0.4.1")
 
 dependencies {
-	compile project(path: ':patchwork-fml', configuration: 'dev')
-	compile project(path: ':patchwork-registries', configuration: 'dev')
-	compile project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	compile project(path: ':patchwork-events-rendering', configuration: 'dev')
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
+	implementation project(path: ':patchwork-registries', configuration: 'dev')
+	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
+	implementation project(path: ':patchwork-model-loader', configuration: 'dev')
 }

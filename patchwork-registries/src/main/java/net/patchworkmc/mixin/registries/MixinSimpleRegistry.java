@@ -19,8 +19,8 @@
 
 package net.patchworkmc.mixin.registries;
 
-import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.registries.ForgeRegistry;
+import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.util.registry.SimpleRegistry;
 

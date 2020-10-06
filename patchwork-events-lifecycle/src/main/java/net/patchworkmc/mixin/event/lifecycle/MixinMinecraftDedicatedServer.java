@@ -22,7 +22,8 @@ package net.patchworkmc.mixin.event.lifecycle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -32,8 +33,13 @@ import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 @Mixin(MinecraftDedicatedServer.class)
 public class MixinMinecraftDedicatedServer {
 	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/UserCache;setUseRemote(Z)V", shift = At.Shift.AFTER))
-	private void onServerAboutToStart(CallbackInfo ci) {
-		LifecycleEvents.handleLoadComplete(); // This is a "multithreaded" event that would be called around this time.
+	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
 		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
+	}
+
+	@Inject(method = "setupServer", at = @At(value = "RETURN", ordinal = 0), cancellable = true, slice =
+			@Slice(from = @At(value = "INVOKE", target = "net/minecraft/item/Item.appendStacks(Lnet/minecraft/item/ItemGroup;Lnet/minecraft/util/DefaultedList;)V")))
+	private void handleServerStarting(CallbackInfoReturnable<Boolean> cir) {
+		cir.setReturnValue(LifecycleEvents.handleServerStarting((MinecraftServer) (Object) this));
 	}
 }

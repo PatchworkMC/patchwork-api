@@ -1,0 +1,7 @@
+archivesBaseName = "patchwork-model-loader"
+version = getSubprojectVersion(project, "0.2.1")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
+}
