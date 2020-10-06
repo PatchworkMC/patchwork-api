@@ -1,0 +1,9 @@
+# Current Lead
+*		@theglitch76
+
+# Maintainers of specific modules.
+# Add the current lead to the end of each, because specific overrules general.
+# Any org member is encouraged to add themselves to this file when creating a new module,
+# but it's not required.
+/patchwork-enum-hacks/ 	@NuclearFarts @theglitch76
+/patchwork-fake-players/ @williambl @theglitch76

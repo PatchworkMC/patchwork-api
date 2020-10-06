@@ -29,6 +29,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -49,7 +50,6 @@ import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
-import net.patchworkmc.impl.event.world.WorldEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 
@@ -110,6 +110,10 @@ public class ForgeHooks {
 
 	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
 		return EntityEvents.attackEntity(player, target);
+	}
+
+	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
+		return EntityEvents.onTravelToDimension(entity, dimensionType);
 	}
 
 	public static int onBlockBreakEvent(World world, GameMode gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {

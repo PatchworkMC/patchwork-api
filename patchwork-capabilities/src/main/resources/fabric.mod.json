@@ -18,6 +18,11 @@
   "mixins": [
     "patchwork-capabilities.mixins.json"
   ],
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.capability.PatchworkCapabilities"
+    ]
+  },
   "description": "Implementation of the Forge Capabilities API",
   "custom": {
     "modmenu:api": true,

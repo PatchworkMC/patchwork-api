@@ -17,6 +17,7 @@
   },
   "depends": {
     "patchwork-api-base": "*",
+    "patchwork-extensions": "*",
     "patchwork-extensions-item": "*"
   },
   "mixins": [
