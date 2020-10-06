@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.fakeplayers",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinPlayerAdvancementTracker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

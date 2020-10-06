@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.blockentity",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinBlockEntity",
+    "MixinWorld"
+  ],
+  "client": [
+    "MixinClientPlayNetworkHandler",
+    "MixinBlockEntityRenderer",
+    "MixinWorldRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

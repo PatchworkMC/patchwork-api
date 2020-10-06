@@ -32,6 +32,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.thrown.ThrownEntity;
@@ -50,6 +51,7 @@ import net.minecraft.util.math.BlockPos;
 
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
+import net.patchworkmc.impl.event.entity.PlayerEvents;
 import net.patchworkmc.impl.event.loot.LootEvents;
 import net.patchworkmc.impl.event.world.WorldEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
@@ -117,5 +119,9 @@ public class ForgeEventFactory {
 
 	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
 		return EntityEvents.onProjectileImpact(throwable, ray);
+	}
+
+	public static int onItemPickup(ItemEntity item, PlayerEntity player) {
+		return PlayerEvents.onItemPickup(player, item);
 	}
 }

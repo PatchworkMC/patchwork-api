@@ -24,6 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
+
 /**
  * When placed on a field, the field will be set to an
  * instance of {@link Capability} once that capability is registered.
@@ -48,9 +50,12 @@ import java.lang.annotation.Target;
  *
  * <b>Warning</b>: Capability injections are run in the thread that the capability is registered.
  * Due to parallel mod loading, this can potentially be off of the main thread.
+ *
+ * @deprecated Don't use this in patchwork - use {@link CapabilityRegisteredCallback}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
+@Deprecated
 public @interface CapabilityInject {
 	/**
 	 * The capability interface to listen for registration.

@@ -1,0 +1,7 @@
+archivesBaseName = "patchwork-extensions-blockentity"
+version = getSubprojectVersion(project, "0.1.1")
+
+dependencies {
+	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
+}

@@ -7,6 +7,6 @@ dependencies {
 	implementation project(path: ':patchwork-events-world', configuration: 'dev')
 }
 
-minecraft {
+loom {
 	accessWidener "src/main/resources/patchwork-level-generators.accesswidener"
 }

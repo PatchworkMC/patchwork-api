@@ -20,7 +20,9 @@
 package net.patchworkmc.impl.event.entity;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -55,5 +57,15 @@ public class PlayerEvents {
 
 	public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
+	}
+
+	/**
+	 *
+	 * @return -1 if the event was cancelled, 0 if the event was denied, 1 if the event was accepted
+	 */
+	public static int onItemPickup(PlayerEntity player, ItemEntity entityItem) {
+		Event event = new EntityItemPickupEvent(player, entityItem);
+		if (MinecraftForge.EVENT_BUS.post(event)) return -1;
+		return event.getResult() == Event.Result.ALLOW ? 1 : 0;
 	}
 }

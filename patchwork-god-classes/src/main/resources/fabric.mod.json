@@ -24,7 +24,9 @@
     "patchwork-events-rendering": "*",
     "patchwork-events-world": "*",
     "patchwork-extensions-block": "*",
-    "patchwork-loot": "*"
+    "patchwork-extensions-item": "*",
+    "patchwork-loot": "*",
+    "patchwork-networking": "*"
   },
   "custom": {
     "modmenu:api": true,
