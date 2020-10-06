@@ -19,9 +19,17 @@
 
 package net.patchworkmc.impl.event.world;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.event.world.WorldEvent;
+
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -34,15 +42,10 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.LevelInfo;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.event.world.WorldEvent;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
 public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {

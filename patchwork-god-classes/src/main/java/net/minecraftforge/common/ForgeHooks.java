@@ -20,15 +20,18 @@
 package net.minecraftforge.common;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.world.*;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.world.GameMode;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -44,13 +47,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-
-import net.patchworkmc.impl.event.entity.EntityEvents;
-import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
-import net.patchworkmc.impl.loot.LootHooks;
-
-import java.util.List;
-
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.ChunkPos;
@@ -59,6 +55,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.level.LevelInfo;
 
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
+import net.patchworkmc.impl.loot.LootHooks;
+import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 /*
@@ -146,6 +145,7 @@ public class ForgeHooks {
 	public static String readPoolName(JsonObject json) {
 		return LootHooks.readPoolName(json);
 	}
+
 	public static boolean onCreateWorldSpawn(World world, LevelInfo settings) {
 		return WorldEvents.onCreateWorldSpawn(world, settings);
 	}
