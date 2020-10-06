@@ -50,7 +50,6 @@ import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
-import net.patchworkmc.impl.event.world.WorldEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 

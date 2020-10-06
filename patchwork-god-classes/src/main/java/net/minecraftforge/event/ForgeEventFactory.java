@@ -47,7 +47,6 @@ import net.minecraft.world.World;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 
 import net.patchworkmc.impl.capability.CapabilityEvents;
 import net.patchworkmc.impl.event.entity.EntityEvents;
