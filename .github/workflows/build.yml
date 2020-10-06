@@ -2,6 +2,8 @@ name: Java CI
 
 on:
   push:
+    branches:
+      - master
   pull_request:
 
 jobs:
