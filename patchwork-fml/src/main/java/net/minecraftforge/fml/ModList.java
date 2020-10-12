@@ -31,18 +31,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.google.common.collect.ImmutableList;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
-import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.fabricmc.loader.api.metadata.CustomValue.CvObject;
 
 public class ModList {
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -115,11 +115,10 @@ public class ModList {
 	}
 
 	private ModFileInfo createModFileInfo(ModContainer modContainer) {
-		ModMetadata metadata = modContainer.getMetadata();
-
-		// First try to find a patchwork:annotations entry for this file. If it exists, then this is the "primary" mod
+		CvObject patcherMeta = modContainer.getMetadata().getCustomValue("patchwork:patcher_meta").getAsObject();
+		// First try to find a patchwork:annotations entry in the patcher metadata. If it exists, then this is the "primary" mod
 		// for a given JAR file.
-		CustomValue annotations = metadata.getCustomValue("patchwork:annotations");
+		CustomValue annotations = patcherMeta.get("annotations");
 
 		if (annotations != null) {
 			String annotationJsonLocation = annotations.getAsString();
@@ -129,7 +128,7 @@ public class ModList {
 
 		// If there is no annotation data indicative of a primary mod file, try to then find the parent (primary) mod ID.
 		// This indicates that this is a dummy JiJ mod created by Patchwork Patcher.
-		CustomValue parent = metadata.getCustomValue("patchwork:parent");
+		CustomValue parent = patcherMeta.get("parent");
 
 		if (parent != null) {
 			return getModFileById(parent.getAsString());
@@ -146,7 +145,7 @@ public class ModList {
 
 			if (loader.equals("forge")) {
 				LOGGER.warn("A mod was patched with an old version of Patchwork Patcher, please re-patch it! "
-						+ "No annotation data is available for " + metadata.getId() + " (loaded from " + modContainer.getRootPath() + ")");
+						+ "No annotation data is available for " + modContainer.getMetadata().getId() + " (loaded from " + modContainer.getRootPath() + ")");
 			}
 		}
 

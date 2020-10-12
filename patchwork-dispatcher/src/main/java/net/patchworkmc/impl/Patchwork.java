@@ -19,17 +19,15 @@
 
 package net.patchworkmc.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -44,12 +42,19 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.util.Pair;
 
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.fabricmc.loader.api.metadata.CustomValue;
 
-import net.patchworkmc.api.ForgeInitializer;
+import net.patchworkmc.api.ModInstance;
 import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork {
@@ -78,29 +83,52 @@ public class Patchwork {
 	public static void gatherAndInitializeMods() {
 		ForgeRegistries.init();
 
-		Map<ForgeInitializer, FMLModContainer> mods = new HashMap<>();
-
+		List<FMLModContainer> mods = new ArrayList<>();
+		List<Pair<String, Supplier<ModInstance>>> modInitializers = new ArrayList<>();
 		// Construct forge mods
 
-		List<ForgeInitializer> entrypoints;
+		// TODO: https://github.com/FabricMC/fabric-loader/pull/313
 
-		try {
-			entrypoints = FabricLoader.getInstance().getEntrypoints("patchwork", ForgeInitializer.class);
-		} catch (Throwable t) {
-			throw new PatchworkInitializationException("Failed to get Patchwork entrypoints!", t);
+		for (net.fabricmc.loader.api.ModContainer mod : FabricLoader.getInstance().getAllMods()) {
+			String modId = mod.getMetadata().getId();
+
+			CustomValue meta = mod.getMetadata().getCustomValue("patchwork:patcher_meta");
+
+			if (meta != null && meta.getAsObject().get("parent") != null) {
+				// synthetic mods are unreliable; don't invoke their entrypoints here
+				continue;
+			}
+
+			modInitializers.add(new Pair<>(modId, () -> createModInstance(modId)));
+
+			if (meta != null) {
+				CustomValue children = meta.getAsObject().get("children");
+
+				if (children != null) {
+					for (CustomValue customValue : children.getAsArray()) {
+						String childId = customValue.getAsString();
+						modInitializers.add(new Pair<>(childId, () -> createModInstance(modId)));
+					}
+				}
+			}
 		}
 
 		PatchworkInitializationException error = null;
 
-		for (ForgeInitializer initializer : entrypoints) {
-			LOGGER.info("Constructing Patchwork mod: " + initializer.getModId());
+		for (Pair<String, Supplier<ModInstance>> pair : modInitializers) {
+			String modId = pair.getLeft();
+			FMLModContainer container = new FMLModContainer(modId);
+			boolean loaded = false;
 
-			FMLModContainer container = new FMLModContainer(initializer.getModId());
 			ModLoadingContext.get().setActiveContainer(container, new FMLJavaModLoadingContext(container));
 
 			try {
-				// TODO: Supposed to call "container.setMod()" here, but this requires a WIP Patchwork-Patcher feature.
-				initializer.onForgeInitialize();
+				ModInstance instance = pair.getRight().get();
+
+				if (instance != null) {
+					container.setMod(instance);
+					loaded = true;
+				}
 			} catch (Throwable t) {
 				if (error == null) {
 					error = new PatchworkInitializationException("Failed to construct Patchwork mods");
@@ -127,9 +155,9 @@ public class Patchwork {
 					}
 
 					if (unDefinedClass.startsWith("net.minecraft.") || (unDefinedClass.startsWith("net.minecraftforge.") && !unDefinedClass.startsWith("net.minecraftforge.lex."))) {
-						throw new PatchworkInitializationException("Patchwork mod " + initializer.getModId() + " tried to access an unimplemented " + type + ".", t);
+						throw new PatchworkInitializationException("Patchwork mod " + modId + " tried to access an unimplemented " + type + ".", t);
 					} else {
-						throw new PatchworkInitializationException("Patchwork mod " + initializer.getModId() + " tried to access a missing " + type + " from a missing and undeclared, or outdated dependency.", t);
+						throw new PatchworkInitializationException("Patchwork mod " + modId + " tried to access a missing " + type + " from a missing and undeclared, or outdated dependency.", t);
 					}
 				}
 
@@ -138,18 +166,24 @@ public class Patchwork {
 
 			ModLoadingContext.get().setActiveContainer(null, "minecraft");
 
-			mods.put(initializer, container);
+			if (loaded) {
+				mods.add(container);
+			}
 		}
 
 		if (error != null) {
 			throw error;
 		}
 
-		ModList.get().setLoadedMods(mods.values());
+		ModList.get().setLoadedMods(mods);
+		// note: forge fires this per-class when it is registered.
+		dispatchEntrypoint(mods, "patchwork:common_automatic_subscribers");
 		// Send initialization events
+		dispatch(mods, new RegistryEvent.NewRegistry());
+		dispatchEntrypoint("patchwork:object_holders");
+		dispatchEntrypoint("patchwork:capability_inject");
 
-		dispatch(mods.values(), new RegistryEvent.NewRegistry());
-		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods.values(), event));
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 	}
 
 	/**
@@ -208,5 +242,39 @@ public class Patchwork {
 		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Complete mod loading");
 		// Assume there's no error.
 		MinecraftForge.EVENT_BUS.start();
+	}
+
+	private static ModInstance createModInstance(String modid) {
+		List<ModInstance> initializer = FabricLoader.getInstance().getEntrypoints("patchwork:mod_instance:" + modid, ModInstance.class);
+		if (initializer.size() > 1) {
+			throw new AssertionError("Cannot have more than 1 mod_instance for a given modid! aborting!");
+		} else if (initializer.size() == 1) {
+			return initializer.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	private static void dispatchEntrypoint(String name) {
+		FabricLoader.getInstance().getEntrypoints(name, ModInitializer.class).forEach(ModInitializer::onInitialize);
+	}
+
+	private static void dispatchEntrypoint(Collection<FMLModContainer> mods, String name) {
+		HashMap<String, List<ModInitializer>> map = new HashMap<>();
+		FabricLoader.getInstance().getEntrypointContainers(name, ModInitializer.class)
+				.forEach(container -> map.computeIfAbsent(container.getProvider().getMetadata().getId(),
+					id -> new ArrayList<>()).add(container.getEntrypoint()));
+
+		for (FMLModContainer mod : mods) {
+			List<ModInitializer> inits = map.get(mod.getModId());
+
+			if (inits != null) {
+				ModLoadingContext.get().setActiveContainer(mod, new FMLJavaModLoadingContext(mod));
+				inits.forEach(
+						ModInitializer::onInitialize);
+			}
+		}
+
+		ModLoadingContext.get().setActiveContainer(null, "minecraft");
 	}
 }
