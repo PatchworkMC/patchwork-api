@@ -86,9 +86,9 @@ public class ModConfig {
 	}
 
 	void fireEvent(final ModConfigEvent configEvent) {
-		// TODO this.container.dispatchConfigEvent(configEvent);
+		this.container.dispatchConfigEvent(configEvent);
 
-		throw new UnsupportedOperationException();
+		//throw new UnsupportedOperationException();
 	}
 
 	public void save() {
