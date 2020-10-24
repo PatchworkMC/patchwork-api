@@ -61,7 +61,7 @@ public class PlayerEvents {
 
 	/**
 	 *
-	 * @return -1 if the event was cancelled, 0 if the event was denied, 1 if the event was accepted
+	 * @return -1 if the event was canceled, 0 if the event was denied or had no result set, and 1 if the event was allowed
 	 */
 	public static int onItemPickup(PlayerEntity player, ItemEntity entityItem) {
 		Event event = new EntityItemPickupEvent(player, entityItem);
