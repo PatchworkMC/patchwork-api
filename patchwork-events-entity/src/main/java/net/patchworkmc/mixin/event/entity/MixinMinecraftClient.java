@@ -1,4 +1,4 @@
-/* 
+/*
  * Minecraft Forge, Patchwork Project
  * Copyright (c) 2016-2020, 2019-2020
  *
