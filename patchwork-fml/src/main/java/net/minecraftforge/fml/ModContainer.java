@@ -23,6 +23,7 @@ import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,7 @@ public abstract class ModContainer {
 	protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
 	protected final EnumMap<ModConfig.Type, ModConfig> configs;
 	private net.fabricmc.loader.api.ModContainer fabricModContainer;
+	protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
 
 	public ModContainer(String modId) {
 		this.modId = modId;
@@ -71,6 +73,10 @@ public abstract class ModContainer {
 
 	public void addConfig(final ModConfig modConfig) {
 		configs.put(modConfig.getType(), modConfig);
+	}
+
+	public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
+		configHandler.ifPresent(configHandler -> configHandler.accept(event));
 	}
 
 	public final void setParent(net.fabricmc.loader.api.ModContainer fabricModContainer) {

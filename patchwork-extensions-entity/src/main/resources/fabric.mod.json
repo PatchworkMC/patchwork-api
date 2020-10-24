@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-entity",
+  "name": "Patchwork Extensions Entity",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-extensions-entity/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "accessWidener": "patchwork-MobEntity.accesswidener",
+  "depends": {
+    "patchwork-api-base": "*"
+  },
+  "description": "Various extensions and APIs related to entities.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
