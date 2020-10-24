@@ -23,10 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import net.minecraftforge.fml.LogicalSide;
 
 import net.minecraft.entity.Entity;
@@ -38,6 +34,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
@@ -96,17 +95,17 @@ public class PlayerInteractEvent extends PlayerEvent {
 	}
 
 	/**
-	 * @return Convenience method to get the world of this interaction.
-	 */
-	public World getWorld() {
-		return getPlayer().getEntityWorld();
-	}
-
-	/**
 	 * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
 	 */
 	public LogicalSide getSide() {
 		return getWorld().isClient ? LogicalSide.CLIENT : LogicalSide.SERVER;
+	}
+
+	/**
+	 * @return Convenience method to get the world of this interaction.
+	 */
+	public World getWorld() {
+		return getPlayer().getEntityWorld();
 	}
 
 	/**
@@ -299,10 +298,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * This event is fired when a player left clicks while targeting a block.
 	 *
 	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
-
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
-
 	 * There are various results to this event, see the getters below.
 	 *
 	 * <p>Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
