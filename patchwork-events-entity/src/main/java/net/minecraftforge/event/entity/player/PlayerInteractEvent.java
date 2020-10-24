@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraftforge.fml.LogicalSide;
 
 import net.minecraft.entity.Entity;
@@ -359,6 +361,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
+	@Environment(EnvType.CLIENT)
 	public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
 			super(player, Hand.MAIN_HAND, new BlockPos(player), null);
