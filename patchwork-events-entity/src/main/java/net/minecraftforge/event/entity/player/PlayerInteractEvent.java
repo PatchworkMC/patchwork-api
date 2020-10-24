@@ -23,8 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
 import net.minecraftforge.fml.LogicalSide;
 
 import net.minecraft.entity.Entity;
