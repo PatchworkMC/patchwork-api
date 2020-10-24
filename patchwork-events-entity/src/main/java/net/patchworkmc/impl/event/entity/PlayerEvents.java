@@ -22,6 +22,7 @@ package net.patchworkmc.impl.event.entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.ItemEntity;
@@ -57,6 +58,10 @@ public class PlayerEvents {
 
 	public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
+	}
+
+	public static void fireLeftClickEmptyEvent(PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
 	}
 
 	/**
