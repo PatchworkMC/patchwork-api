@@ -35,9 +35,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
  * All subclasses are fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
