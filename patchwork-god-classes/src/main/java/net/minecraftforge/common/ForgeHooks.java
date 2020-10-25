@@ -50,7 +50,6 @@ import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
-import net.patchworkmc.impl.event.entity.PlayerEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 
@@ -65,10 +64,6 @@ public class ForgeHooks {
 	}
 
 	// TODO: onInteractEntityAt
-
-	public static void onEmptyLeftClick(PlayerEntity player) {
-		PlayerEvents.fireLeftClickEmptyEvent(player);
-	}
 
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		return EntityEvents.onInteractEntity(player, entity, hand);

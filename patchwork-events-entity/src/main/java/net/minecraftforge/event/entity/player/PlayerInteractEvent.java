@@ -92,17 +92,17 @@ public class PlayerInteractEvent extends PlayerEvent {
 	}
 
 	/**
-	 * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
-	 */
-	public LogicalSide getSide() {
-		return getWorld().isClient ? LogicalSide.CLIENT : LogicalSide.SERVER;
-	}
-
-	/**
 	 * @return Convenience method to get the world of this interaction.
 	 */
 	public World getWorld() {
 		return getPlayer().getEntityWorld();
+	}
+
+	/**
+	 * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
+	 */
+	public LogicalSide getSide() {
+		return getWorld().isClient ? LogicalSide.CLIENT : LogicalSide.SERVER;
 	}
 
 	/**
@@ -295,8 +295,10 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * This event is fired when a player left clicks while targeting a block.
 	 *
 	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
+
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
+
 	 * There are various results to this event, see the getters below.
 	 *
 	 * <p>Note that if the event is canceled and the player holds down left mouse, the event will continue to fire.
@@ -357,9 +359,9 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	public static class LeftClickEmpty extends PlayerInteractEvent {
+	/* TODO public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
 			super(player, Hand.MAIN_HAND, new BlockPos(player), null);
 		}
-	}
+	}*/
 }

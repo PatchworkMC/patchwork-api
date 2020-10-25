@@ -23,10 +23,8 @@ import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 /**
- * Legacy version of PlayerXpEvent.PickupXp.<br/>
+ * Legacy version of PlayerXpEvent.PickupXp. Mods should move to PickupXp, and
  * this class is removed in 1.15.
- *
- * @deprecated Mods should move to {@link net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp}
  */
 @Deprecated
 public class PlayerPickupXpEvent extends PlayerXpEvent.PickupXp {
