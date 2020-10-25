@@ -1,5 +1,5 @@
 archivesBaseName = "patchwork-key-bindings"
-version = getSubprojectVersion(project, "0.2.0")
+version = getSubprojectVersion(project, "0.2.1")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')

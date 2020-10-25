@@ -1,5 +1,5 @@
 archivesBaseName = "patchwork-registries"
-version = getSubprojectVersion(project, "0.4.0")
+version = getSubprojectVersion(project, "0.4.1")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
