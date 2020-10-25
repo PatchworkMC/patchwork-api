@@ -244,6 +244,7 @@ public class Patchwork {
 
 	private static ModInstance createModInstance(String modid) {
 		List<ModInstance> initializer = FabricLoader.getInstance().getEntrypoints("patchwork:modInstance:" + modid, ModInstance.class);
+
 		if (initializer.size() > 1) {
 			throw new AssertionError("Cannot have more than 1 mod_instance for a given modid! aborting!");
 		} else if (initializer.size() == 1) {
