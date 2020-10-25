@@ -13,7 +13,6 @@
     "PatchworkMC"
   ],
   "depends": {
-    // This is mirrored in the top-level project because of a Loader issue
     "fabricloader": ">=0.10.0",
     "fabric": ">=0.15.1"
   },

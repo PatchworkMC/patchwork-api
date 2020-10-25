@@ -13,8 +13,6 @@
     "PatchworkMC"
   ],
   "depends": {
-    // This is copied over from patchwork-api-base until Loader/201 is resolved properly.
-    // Loader/204 exists as a bandage fix, but not a real solution.
     "fabricloader": ">=0.10.0",
     "fabric": ">=0.15.1"
   },
