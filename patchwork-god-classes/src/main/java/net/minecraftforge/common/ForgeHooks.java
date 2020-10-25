@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -141,5 +142,9 @@ public class ForgeHooks {
 
 	public static String readPoolName(JsonObject json) {
 		return LootHooks.readPoolName(json);
+	}
+
+	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
+		return BlockHarvestManager.onFarmlandTrample(world, pos, state, fallDistance, entity);
 	}
 }

@@ -5,6 +5,7 @@
   "mixins": [
     "MixinChunkGenerator",
     "MixinMinecraftServer",
+    "MixinSaplingBlock",
     "MixinServerWorld",
     "MixinSpawnHelper",
     "MixinThreadedAnvilChunkStorage"

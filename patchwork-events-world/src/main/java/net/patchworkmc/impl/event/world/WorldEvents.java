@@ -21,13 +21,16 @@ package net.patchworkmc.impl.event.world;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -104,5 +107,11 @@ public class WorldEvents implements ModInitializer {
 		ServerChunkEvents.CHUNK_LOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk)));
 		// Fire ChunkEvent.Unload on server side
 		ServerChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
+	}
+
+	public static boolean onSaplingGrowTree(IWorld world, Random rand, BlockPos pos) {
+		SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
+		MinecraftForge.EVENT_BUS.post(event);
+		return event.getResult() != Event.Result.DENY;
 	}
 }

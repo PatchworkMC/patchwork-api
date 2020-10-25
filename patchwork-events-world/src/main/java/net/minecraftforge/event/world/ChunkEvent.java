@@ -31,7 +31,7 @@ import net.patchworkmc.impl.event.world.WorldEvents;
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as
  * its parameter, the method will receive every child event of this class.<br>
  * <br>
- * {@link #Chunk} contains the Chunk this event is affecting.<br>
+ * {@link #chunk} contains the Chunk this event is affecting.<br>
  * <br>
  * All children of this event are fired on the
  * {@link MinecraftForge#EVENT_BUS}.<br>

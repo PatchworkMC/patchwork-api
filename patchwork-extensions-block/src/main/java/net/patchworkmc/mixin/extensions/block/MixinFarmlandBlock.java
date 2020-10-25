@@ -24,16 +24,26 @@ import net.minecraftforge.common.extensions.IForgeBlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FarmlandBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
+
+import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 
 @Mixin(FarmlandBlock.class)
-public class MixinFarmlandBlock {
+public class MixinFarmlandBlock extends Block {
+	public MixinFarmlandBlock() {
+		super(null);
+	}
+
 	@Inject(method = "hasCrop", cancellable = true, at = @At("HEAD"))
 	private static void onHasCrop(BlockView world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
 		final BlockState ourState = world.getBlockState(pos);
@@ -42,6 +52,14 @@ public class MixinFarmlandBlock {
 		if (cropState.getBlock() instanceof IPlantable && ((IForgeBlockState) ourState).canSustainPlant(world, pos, Direction.UP, (IPlantable) cropState.getBlock())) {
 			cir.setReturnValue(true);
 			cir.cancel();
+		}
+	}
+
+	@Inject(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/FarmlandBlock;setToDirt(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V"), cancellable = true)
+	private void onSetToDirt(World world, BlockPos pos, Entity entity, float distance, CallbackInfo ci) {
+		if (!BlockHarvestManager.onFarmlandTrample(world, pos, world.getBlockState(pos), distance, entity)) {
+			super.onLandedUpon(world, pos, entity, distance);
+			ci.cancel();
 		}
 	}
 }
