@@ -49,9 +49,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.Pair;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.metadata.CustomValue;
 
 import net.patchworkmc.api.ModInstance;
@@ -177,11 +175,11 @@ public class Patchwork {
 
 		ModList.get().setLoadedMods(mods);
 		// note: forge fires this per-class when it is registered.
-		dispatchEntrypoint(mods, "patchwork:common_automatic_subscribers");
+		dispatchEntrypoint(mods, "patchwork:commonAutomaticSubscribers");
 		// Send initialization events
 		dispatch(mods, new RegistryEvent.NewRegistry());
-		dispatchEntrypoint("patchwork:object_holders");
-		dispatchEntrypoint("patchwork:capability_inject");
+		dispatchEntrypoint("patchwork:objectHolders");
+		dispatchEntrypoint("patchwork:capabilityInject");
 
 		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 	}
@@ -245,7 +243,7 @@ public class Patchwork {
 	}
 
 	private static ModInstance createModInstance(String modid) {
-		List<ModInstance> initializer = FabricLoader.getInstance().getEntrypoints("patchwork:mod_instance:" + modid, ModInstance.class);
+		List<ModInstance> initializer = FabricLoader.getInstance().getEntrypoints("patchwork:modInstance:" + modid, ModInstance.class);
 		if (initializer.size() > 1) {
 			throw new AssertionError("Cannot have more than 1 mod_instance for a given modid! aborting!");
 		} else if (initializer.size() == 1) {
@@ -263,15 +261,15 @@ public class Patchwork {
 		HashMap<String, List<ModInitializer>> map = new HashMap<>();
 		FabricLoader.getInstance().getEntrypointContainers(name, ModInitializer.class)
 				.forEach(container -> map.computeIfAbsent(container.getProvider().getMetadata().getId(),
-					id -> new ArrayList<>()).add(container.getEntrypoint()));
+					id -> new ArrayList<>())
+						.add(container.getEntrypoint()));
 
 		for (FMLModContainer mod : mods) {
 			List<ModInitializer> inits = map.get(mod.getModId());
 
 			if (inits != null) {
 				ModLoadingContext.get().setActiveContainer(mod, new FMLJavaModLoadingContext(mod));
-				inits.forEach(
-						ModInitializer::onInitialize);
+				inits.forEach(ModInitializer::onInitialize);
 			}
 		}
 

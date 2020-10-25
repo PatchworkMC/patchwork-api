@@ -20,7 +20,7 @@ jobs:
       - uses: eskatos/gradle-command-action@v1
         with:
           gradle-version: wrapper
-          arguments: build -x check
+          arguments: remapAllJars
           dependencies-cache-enabled: true
           configuration-cache-enabled: false
       # Artifact publishing
