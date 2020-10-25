@@ -32,6 +32,7 @@
     "MixinClientPlayerEntity",
     "MixinClientWorld",
     "MixinItemStack",
+    "MixinMinecraftClient",
     "MixinOtherClientPlayerEntity",
     "MixinPlayerEntityRenderer"
   ],
