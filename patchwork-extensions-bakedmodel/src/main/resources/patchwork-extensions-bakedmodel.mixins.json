@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.bakedmodel",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinPatchworkBlockEntity"
+  ],
+  "client": [
+    "MixinBakedModel",
+    "MixinBasicBakedModelBuilder",
+    "MixinBlockModelRenderer",
+    "MixinBlockModels",
+    "MixinBlockRenderManager",
+    "MixinChunkRenderer",
+    "MixinChunkRenderTask",
+    "MixinHeldItemRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -39,7 +39,9 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
+import net.patchworkmc.impl.extensions.blockentity.PatchworkBlockEntity;
+
+public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag>, PatchworkBlockEntity {
 	/**
 	 * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
 	 */
@@ -171,30 +173,4 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundTag> {
 	default boolean hasFastRenderer() {
 		return false;
 	}
-
-	/**
-	 * Requests a refresh for the model data of your TE
-	 * Call this every time your {@link #getModelData()} changes.
-	 */
-	default void requestModelDataUpdate() {
-		BlockEntity te = getTileEntity();
-		World world = te.getWorld();
-
-		if (world != null && world.isClient) {
-		//	ModelDataManager.requestModelDataRefresh(te);
-		}
-	}
-
-	/**
-	 * Allows you to return additional model data.
-	 * This data can be used to provide additional functionality in your {@link net.minecraft.client.renderer.model.IBakedModel}
-	 * You need to schedule a refresh of you model data via {@link #requestModelDataUpdate()} if the result of this function changes.
-	 * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
-	 *
-	 * @return Your model data
-	 */
-	//@Nonnull
-	//default IModelData getModelData() {
-	//	return EmptyModelData.INSTANCE;
-	//}
 }

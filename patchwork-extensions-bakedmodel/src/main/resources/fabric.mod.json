@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-extensions-bakedmodel",
+  "name": "Patchwork Model Data",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-extensions-bakedmodel/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "patchwork-api-base": "*",
+    "patchwork-extensions-blockentity": "*"
+  },
+  "entrypoints": {
+    "client": [
+      "net.minecraftforge.client.model.ModelDataManager"
+    ]
+  },
+  "mixins": [
+    "patchwork-extensions-bakedmodel.mixins.json"
+  ],
+  "description": "Implementation of Forge's IModelData.",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
