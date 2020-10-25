@@ -30,9 +30,20 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
+/**
+ * Forge has IModelData-sensitive version of functions. patchwork$xxx_ModelData(IModelData) sets the additional IModelData parameter.
+ * Call patchwork$xxx_ModelData(IModelData) before invoking the vanilla function to mimic the behavior of the forge's function.
+ */
 public interface ForgeBlockModelRenderer {
+	/**
+	 * Should be only be called just before invoking the vanilla BlockModelRenderer::tesselate function.
+	 */
 	void patchwork$tesselate_ModelData(IModelData modelData);
-	void patchworl$tesselateSmoothFlat_ModelData(IModelData modelData);
+	/**
+	 * Should be only be called just before invoking the vanilla BlockModelRenderer::tesselateSmooth or
+	 * the BlockModelRenderer::tesselateFlat function.
+	 */
+	void patchwork$tesselateSmoothFlat_ModelData(IModelData modelData);
 
 	/**
 	 * Forge's modelData sensitive version.
@@ -45,13 +56,13 @@ public interface ForgeBlockModelRenderer {
 
 	default boolean renderModelSmooth(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
-		patchworl$tesselateSmoothFlat_ModelData(modelData);
+		patchwork$tesselateSmoothFlat_ModelData(modelData);
 		return me.tesselateSmooth(view, model, state, pos, buffer, testSides, random, l);
 	}
 
 	default boolean renderModelFlat(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
-		patchworl$tesselateSmoothFlat_ModelData(modelData);
+		patchwork$tesselateSmoothFlat_ModelData(modelData);
 		return me.tesselateFlat(view, model, state, pos, buffer, testSides, random, l);
 	}
 }

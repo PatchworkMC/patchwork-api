@@ -68,7 +68,7 @@ public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer
 			CallbackInfoReturnable<Boolean> ci) {
 		IModelData modelData = tesselate_modelData.getFuncParamAndReset();
 		modelData = ((IForgeBakedModel) model).getModelData(view, pos, state, modelData);
-		patchworl$tesselateSmoothFlat_ModelData(modelData);
+		patchwork$tesselateSmoothFlat_ModelData(modelData);
 	}
 
 	@Inject(method = "tesselate", at = @At("RETURN"))
@@ -83,7 +83,7 @@ public abstract class MixinBlockModelRenderer implements ForgeBlockModelRenderer
 	private static final ModelDataParameter tesselateSmoothFlat_modelData = new ModelDataParameter();
 
 	@Override
-	public void patchworl$tesselateSmoothFlat_ModelData(IModelData modelData) {
+	public void patchwork$tesselateSmoothFlat_ModelData(IModelData modelData) {
 		tesselateSmoothFlat_modelData.setFuncParam(modelData);
 	}
 

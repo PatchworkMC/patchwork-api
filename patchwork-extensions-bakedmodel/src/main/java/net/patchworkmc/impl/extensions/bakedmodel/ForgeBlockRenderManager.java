@@ -29,7 +29,14 @@ import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockRenderView;
 
+/**
+ * Forge has IModelData-sensitive version of functions. patchwork$xxx_ModelData(IModelData) sets the additional IModelData parameter.
+ * Call patchwork$xxx_ModelData(IModelData) before invoking the vanilla function to mimic the behavior of the forge's function.
+ */
 public interface ForgeBlockRenderManager {
+	/**
+	 * Should be only be called just before invoking the vanilla BlockRenderManager::tesselateBlock function.
+	 */
 	void patchwork$tesselateBlock_ModelData(IModelData modelData);
 
 	/**
