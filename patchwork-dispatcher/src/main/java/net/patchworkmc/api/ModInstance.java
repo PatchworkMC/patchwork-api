@@ -19,8 +19,5 @@
 
 package net.patchworkmc.api;
 
-public interface ForgeInitializer {
-	String getModId();
-
-	void onForgeInitialize();
+public interface ModInstance {
 }
