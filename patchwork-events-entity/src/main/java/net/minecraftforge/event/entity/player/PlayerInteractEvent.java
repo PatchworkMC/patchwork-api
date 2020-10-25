@@ -360,7 +360,6 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	@Environment(EnvType.CLIENT)
 	public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
 			super(player, Hand.MAIN_HAND, new BlockPos(player), null);
