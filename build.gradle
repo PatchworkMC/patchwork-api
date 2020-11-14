@@ -3,12 +3,10 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	//id 'fabric-loom' /* version '0.5-SNAPSHOT' */ apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id 'com.jfrog.bintray' version '1.8.4'
 	id 'patchwork-api.module-conventions'
-	id "com.dorongold.task-tree" version "1.5"
 }
 
 def ENV = System.getenv()
@@ -122,12 +120,12 @@ repositories {
 }
 
 dependencies {
-//	afterEvaluate {
+	afterEvaluate {
 		subprojects.each {
 			compile project(path: ":${it.name}", configuration: "dev")
 			include project("${it.name}:")
 		}
-//	}
+	}
 
 	minecraft "com.mojang:minecraft:$project.mcVersion"
 	mappings "net.fabricmc:yarn:${project.mcVersion}${project.yarnVersion}:v2"
@@ -138,10 +136,6 @@ dependencies {
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'net.patchworkmc:patchwork-eventbus:2.0.0:all'
-}
-
-loom {
-	shareCaches = true
 }
 
 
