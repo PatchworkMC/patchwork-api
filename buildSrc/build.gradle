@@ -1,0 +1,16 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
+}
+
+dependencies {
+	implementation 'net.fabricmc:fabric-loom:0.5-SNAPSHOT'
+}
