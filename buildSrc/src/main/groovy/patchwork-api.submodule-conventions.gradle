@@ -58,3 +58,10 @@ javadoc.enabled = false
 rootProject.licenseFormatAll.dependsOn(licenseFormat)
 
 rootProject.remapJar.dependsOn(remapJar)
+
+rootProject.dependencies {
+	afterEvaluate {
+		compile project(path: ":${project.name}", configuration: "dev")
+		include project(":${project.name}:")
+	}
+}

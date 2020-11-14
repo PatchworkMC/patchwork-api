@@ -47,8 +47,6 @@ javadoc {
 	classpath = sourceSets.main.compileClasspath
 }
 
-//subprojects.each { bintrayUpload.dependsOn("${it.path}:bintrayUpload") }
-
 bintray {
 	user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
 	key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.getenv('bintray_key')
@@ -109,7 +107,6 @@ publishing {
 }
 
 task licenseFormatAll
-//subprojects.each {remapJar.dependsOn("${it.path}:remapJar")}
 
 repositories {
 	flatDir {
@@ -120,13 +117,6 @@ repositories {
 }
 
 dependencies {
-	afterEvaluate {
-		subprojects.each {
-			compile project(path: ":${it.name}", configuration: "dev")
-			include project("${it.name}:")
-		}
-	}
-
 	minecraft "com.mojang:minecraft:$project.mcVersion"
 	mappings "net.fabricmc:yarn:${project.mcVersion}${project.yarnVersion}:v2"
 	modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
