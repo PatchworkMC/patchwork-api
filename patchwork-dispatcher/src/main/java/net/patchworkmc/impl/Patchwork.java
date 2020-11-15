@@ -90,7 +90,7 @@ public class Patchwork {
 		for (net.fabricmc.loader.api.ModContainer mod : FabricLoader.getInstance().getAllMods()) {
 			String modId = mod.getMetadata().getId();
 
-			CustomValue meta = mod.getMetadata().getCustomValue("patchwork:patcher_meta");
+			CustomValue meta = mod.getMetadata().getCustomValue("patchwork:patcherMeta");
 
 			if (meta != null && meta.getAsObject().get("parent") != null) {
 				// synthetic mods are unreliable; don't invoke their entrypoints here

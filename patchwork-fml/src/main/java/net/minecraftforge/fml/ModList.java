@@ -115,7 +115,7 @@ public class ModList {
 	}
 
 	private ModFileInfo createModFileInfo(ModContainer modContainer) {
-		CvObject patcherMeta = modContainer.getMetadata().getCustomValue("patchwork:patcher_meta").getAsObject();
+		CvObject patcherMeta = modContainer.getMetadata().getCustomValue("patchwork:patcherMeta").getAsObject();
 		// First try to find a patchwork:annotations entry in the patcher metadata. If it exists, then this is the "primary" mod
 		// for a given JAR file.
 		CustomValue annotations = patcherMeta.get("annotations");
