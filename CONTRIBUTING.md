@@ -13,7 +13,7 @@ Patchwork is a somewhat complex project, and there's a few things you should hav
 
 ## Contribution notes
 
-We use [MinecraftForge @ d28cd0352b6b0fe86e062f29e681c3b14572c6d5](https://github.com/MinecraftForge/MinecraftForge/tree/d28cd0352b6b0fe86e062f29e681c3b14572c6d5) as our reference commit. All features should be based on this version of Forge for consistency. For you convenience, ramidzkh has [remapped](https://github.com/PatchworkMC/YarnForge/tree/04d384add800bc395f4934507721f72eb733389f) Forge from MCP to Yarn: contributors should use this remapped version of Forge instead.
+We use [MinecraftForge 28.1.109 @ d28cd0352b6b0fe86e062f29e681c3b14572c6d5](https://github.com/MinecraftForge/MinecraftForge/tree/d28cd0352b6b0fe86e062f29e681c3b14572c6d5) as our reference commit. All features should be based on this version of Forge for consistency. For you convenience, ramidzkh has [remapped](https://github.com/PatchworkMC/YarnForge/tree/04d384add800bc395f4934507721f72eb733389f) Forge from MCP to Yarn: contributors should use this remapped version of Forge instead.
 
 This will be changed once we update to 1.15.
 
