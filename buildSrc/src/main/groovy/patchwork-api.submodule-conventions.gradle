@@ -1,67 +1,8 @@
 plugins {
-	id 'patchwork-api.module-conventions'
+	id 'patchwork-api.checkstyle'
+	id 'patchwork-api.submodule-noprocess'
 }
 
-task remapMavenJar(type: Copy, dependsOn: remapJar) {
-	afterEvaluate {
-		from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
-		into("${project.buildDir}/libs/")
-		rename {String fn -> "$archivesBaseName-${version}-maven.jar"}
-	}
-}
-
-publishing {
-	publications {
-		create("${archivesBaseName}_mavenJava", MavenPublication) {
-			afterEvaluate {
-				artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-					builtBy remapMavenJar
-				}
-				artifact(sourcesJar) {
-					builtBy remapSourcesJar
-				}
-			}
-		}
-	}
-}
-
-bintray {
-	user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
-	key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.getenv('bintray_key')
-	publish = true
-	override = true
-	publications = ["${archivesBaseName}_mavenJava"]
-	pkg {
-		repo = project.bintrayRepo
-		name = archivesBaseName
-		user = bintray.user
-		userOrg = project.repoOwner
-		licenses = [project.codeLicense]
-		desc = project.description
-		websiteUrl = "https://github.com/${project.repoOwner}/${project.repoName}"
-		issueTrackerUrl = "https://github.com/${project.repoOwner}/${project.repoName}/issues"
-		vcsUrl = "https://github.com/${project.repoOwner}/${project.repoName}.git"
-		publicDownloadNumbers = true
-
-		githubRepo = "${project.repoOwner}/${project.repoName}"
-		version {
-			name = project.version
-			released = new Date()
-		}
-	}
-}
-
-rootProject.bintrayUpload.dependsOn(bintrayUpload)
-
-javadoc.enabled = false
-
-rootProject.licenseFormatAll.dependsOn(licenseFormat)
-
-rootProject.remapJar.dependsOn(remapJar)
-
-rootProject.dependencies {
-	afterEvaluate {
-		compile project(path: ":${project.name}", configuration: "dev")
-		include project(":${project.name}:")
-	}
+dependencies {
+	annotationProcessor project(':patchwork-god-classes-processor')
 }

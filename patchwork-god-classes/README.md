@@ -10,3 +10,4 @@ Therefore, this module exists to dispatch calls to these classes to the disperat
 
 ## TODO
  * Implement the methods on these classes that are actually already implemented in Patchwork.
+ * ForgeHooks.onInteractEntityAt

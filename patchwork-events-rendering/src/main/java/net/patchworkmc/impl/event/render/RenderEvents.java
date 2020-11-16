@@ -37,19 +37,25 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
+import net.patchworkmc.annotations.GodClass;
+
 public class RenderEvents {
+	@GodClass("net.minecraftforge.client.ForgeHooksClient")
 	public static void onBlockColorsInit(BlockColors blockColors) {
 		ModLoader.get().postEvent(new ColorHandlerEvent.Block(blockColors));
 	}
 
+	@GodClass("net.minecraftforge.client.ForgeHooksClient")
 	public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors) {
 		ModLoader.get().postEvent(new ColorHandlerEvent.Item(itemColors, blockColors));
 	}
 
+	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "onTextureStitchedPre")
 	public static void onTextureStitchPre(SpriteAtlasTexture spriteAtlasTexture, Set<Identifier> set) {
 		ModLoader.get().postEvent(new TextureStitchEvent.Pre(spriteAtlasTexture, set));
 	}
 
+	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "onTextureStitchedPost")
 	public static void onTextureStitchPost(SpriteAtlasTexture spriteAtlasTexture) {
 		ModLoader.get().postEvent(new TextureStitchEvent.Post(spriteAtlasTexture));
 	}

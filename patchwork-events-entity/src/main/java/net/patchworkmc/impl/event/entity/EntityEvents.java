@@ -22,6 +22,8 @@ package net.patchworkmc.impl.event.entity;
 import java.util.List;
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -76,11 +78,13 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 
+import net.patchworkmc.annotations.GodClass;
 import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
 
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		PlayerInteractEvent.EntityInteract event = new PlayerInteractEvent.EntityInteract(player, hand, entity);
 
@@ -89,10 +93,12 @@ public class EntityEvents implements ModInitializer {
 		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
 		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
 	}
 
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks", name = "onLivingUpdate")
 	public static boolean onLivingUpdateEvent(LivingEntity entity) {
 		return MinecraftForge.EVENT_BUS.post(new LivingEvent.LivingUpdateEvent(entity));
 	}
@@ -113,29 +119,47 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, damage));
 	}
 
+	// TODO: forge calls the equivilant to this in LivingEntity, but patchwork only calls the equivilant to onPlayerAttack
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks", name = "onLivingAttack")
+	public static boolean forgehooks$onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
+		return entity instanceof PlayerEntity || forgehooks$onPlayerAttack(entity, src, amount);
+	}
+
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks", name = "onPlayerAttack")
+	public static boolean forgehooks$onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
+		return !onLivingAttack(entity, src, amount);
+	}
+
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
 		MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float damage) {
 		LivingHurtEvent event = new LivingHurtEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
+	@Nullable
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
 		LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
 		return MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{ event.getDistance(), event.getDamageMultiplier() };
 	}
 
+	@GodClass(value = "net.minecraftforge.event.ForgeEventFactory", name = "onPlayerFall")
 	public static void onFlyablePlayerFall(PlayerEntity player, float distance, float damageMultiplier) {
 		MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, damageMultiplier));
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static float onLivingDamage(LivingEntity entity, DamageSource src, float damage) {
 		LivingDamageEvent event = new LivingDamageEvent(entity, src, damage);
 		return MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount();
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
 		return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
 	}
@@ -146,6 +170,7 @@ public class EntityEvents implements ModInitializer {
 		return event.getNewHeight();
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
 		if (entity == null) {
 			return Result.DEFAULT;
@@ -156,6 +181,13 @@ public class EntityEvents implements ModInitializer {
 		return event.getResult();
 	}
 
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks", name = "canEntitySpawn")
+	public static int forgehooks$canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+		Event.Result res = canEntitySpawn(entity, world, x, y, z, null, spawnReason);
+		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
+	}
+
+	@GodClass(value = "net.minecraftforge.event.ForgeEventFactory", name = "canEntitySpawnSpawner")
 	public static boolean canEntitySpawnFromSpawner(MobEntity entity, World world, double x, double y, double z, MobSpawnerLogic spawner) {
 		Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnType.SPAWNER);
 
@@ -178,10 +210,12 @@ public class EntityEvents implements ModInitializer {
 		}
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean doSpecialSpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
 		return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnType));
 	}
 
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks", name = "onPlayerAttackTarget")
 	public static boolean attackEntity(PlayerEntity player, Entity target) {
 		if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) {
 			return false;
@@ -202,26 +236,32 @@ public class EntityEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(new ItemTooltipEvent(itemStack, entityPlayer, list, flags));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean onProjectileImpact(Entity entity, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(entity, ray));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean onProjectileImpact(ProjectileEntity arrow, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Arrow(arrow, ray));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean onProjectileImpact(ExplosiveProjectileEntity fireball, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Fireball(fireball, ray));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory")
 	public static boolean onProjectileImpact(ThrownEntity throwable, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks")
 	public static boolean onTravelToDimension(Entity entity, DimensionType dimensionType) {
 		EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimensionType);
 		boolean result = !MinecraftForge.EVENT_BUS.post(event);

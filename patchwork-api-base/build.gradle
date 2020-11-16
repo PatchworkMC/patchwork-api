@@ -1,5 +1,6 @@
 plugins {
-	id 'patchwork-api.module-conventions'
+	id 'patchwork-api.submodule-noprocess'
+	id 'patchwork-api.checkstyle'
 }
 
 archivesBaseName = "patchwork-api-base"

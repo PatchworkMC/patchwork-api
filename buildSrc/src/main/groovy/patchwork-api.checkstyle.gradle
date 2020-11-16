@@ -1,0 +1,8 @@
+plugins {
+	id 'checkstyle'
+}
+
+checkstyle {
+	configFile = rootProject.file("checkstyle.xml")
+	toolVersion = '8.36.2'
+}

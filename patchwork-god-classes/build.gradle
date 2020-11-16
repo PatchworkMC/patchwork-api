@@ -1,21 +1,67 @@
-plugins {
-	id 'patchwork-api.submodule-conventions'
+buildscript {
+	repositories {
+		maven {
+			url  "https://dl.bintray.com/pdvrieze/maven"
+		}
+	}
+
+	dependencies {
+		classpath 'net.devrieze:gradle-codegen:0.5.11'
+	}
 }
+
+plugins {
+	id 'patchwork-api.submodule-noprocess'
+}
+
+apply plugin: 'net.devrieze.gradlecodegen'
 
 archivesBaseName = "patchwork-god-classes"
 version = getSubprojectVersion(project, "0.4.0")
 
+configurations {
+	generateImpl
+	implementation.extendsFrom(generateImpl)
+	generatorsCompile.extendsFrom(generateImpl)
+}
+
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
-	implementation project(path: ':patchwork-fml', configuration: 'dev')
-	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
-	implementation project(path: ':patchwork-events-entity', configuration: 'dev')
-	implementation project(path: ':patchwork-events-input', configuration: 'dev')
-	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	implementation project(path: ':patchwork-events-rendering', configuration: 'dev')
-	implementation project(path: ':patchwork-events-world', configuration: 'dev')
-	implementation project(path: ':patchwork-extensions-block', configuration: 'dev')
-	implementation project(path: ':patchwork-extensions-item', configuration: 'dev')
-	implementation project(path: ':patchwork-loot', configuration: 'dev')
-	implementation project(path: ':patchwork-networking', configuration: 'dev')
+	// TODO: add to patchwork-api.submodule-conventions plugin?
+	generateImpl project(path: ':patchwork-fml', configuration: 'dev')
+	generateImpl project(path: ':patchwork-capabilities', configuration: 'dev')
+	generateImpl project(path: ':patchwork-events-entity', configuration: 'dev')
+	generateImpl project(path: ':patchwork-events-input', configuration: 'dev')
+	generateImpl project(path: ':patchwork-events-lifecycle', configuration: 'dev')
+	generateImpl project(path: ':patchwork-events-rendering', configuration: 'dev')
+	generateImpl project(path: ':patchwork-events-world', configuration: 'dev')
+	generateImpl project(path: ':patchwork-extensions-block', configuration: 'dev')
+	generateImpl project(path: ':patchwork-extensions-item', configuration: 'dev')
+	generateImpl project(path: ':patchwork-loot', configuration: 'dev')
+	generateImpl project(path: ':patchwork-networking', configuration: 'dev')
+
+	generatorsCompile project(':patchwork-god-classes-processor')
+	generatorsCompile 'org.glassfish.jaxb:codemodel:3.0.0-M5'
+	generatorsCompile 'com.google.code.gson:gson:2.8.6'
+}
+
+def annotation_stream = configurations.generateImpl.getFiles().stream().map {
+	println(it)
+	def god_class = resources.text.fromArchiveEntry(it, "generated/god_classes.json");
+	if (!god_class.inputFiles.isEmpty()) {
+		return god_class.asReader();
+	}
+	return null;
+}.filter {
+	return it != null;
+};
+
+generate {
+	// plugin default is something like 'gen/main' then 'java/'
+	outputDir = 'build/generated/sources/god_classes/java'
+	dirGenerator {
+		outputDir = 'main/'
+		generator = 'net.patchworkmc.processor.god_classes.GodClassCodegen'
+		input = new AbstractMap.SimpleImmutableEntry(annotation_stream, rootProject.file("HEADER").text)
+	}
 }

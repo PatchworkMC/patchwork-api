@@ -46,6 +46,8 @@ import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
+import net.patchworkmc.annotations.GodClass;
+
 public class LifecycleEvents implements ModInitializer {
 	public static void fireWorldTickEvent(TickEvent.Phase phase, World world) {
 		LogicalSide side = world.isClient() ? LogicalSide.CLIENT : LogicalSide.SERVER;
@@ -139,5 +141,57 @@ public class LifecycleEvents implements ModInitializer {
 
 		ServerTickEvents.START_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.START));
 		ServerTickEvents.END_SERVER_TICK.register(server -> fireServerTickEvent(TickEvent.Phase.END));
+	}
+
+	// wrappers called by generated god class
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPlayerPreTick(PlayerEntity player) {
+		firePlayerTickEvent(TickEvent.Phase.START, player);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPlayerPostTick(PlayerEntity player) {
+		firePlayerTickEvent(TickEvent.Phase.END, player);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPreWorldTick(World world) {
+		fireWorldTickEvent(TickEvent.Phase.START, world);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPostWorldTick(World world) {
+		fireWorldTickEvent(TickEvent.Phase.END, world);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPreClientTick() {
+		fireClientTickEvent(TickEvent.Phase.START);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPostClientTick() {
+		fireClientTickEvent(TickEvent.Phase.END);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPreServerTick() {
+		fireServerTickEvent(TickEvent.Phase.START);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onPostServerTick() {
+		fireServerTickEvent(TickEvent.Phase.END);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onRenderTickStart(float timer) {
+		fireRenderTickEvent(TickEvent.Phase.START, timer);
+	}
+
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	public static void onRenderTickEnd(float timer) {
+		fireRenderTickEvent(TickEvent.Phase.END, timer);
 	}
 }

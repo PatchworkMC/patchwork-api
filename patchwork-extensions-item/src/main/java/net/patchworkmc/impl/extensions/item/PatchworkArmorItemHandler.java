@@ -32,6 +32,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
+import net.patchworkmc.annotations.GodClass;
+
 public interface PatchworkArmorItemHandler {
 	@SuppressWarnings("rawtypes")
 	BipedEntityModel getArmorModelHook(LivingEntity entity, ItemStack itemStack, EquipmentSlot slot, BipedEntityModel model);
@@ -41,12 +43,14 @@ public interface PatchworkArmorItemHandler {
 	/**
 	 * Called by mixins(MixinArmorFeatureRenderer) and ForgeHooksClient.
 	 */
+	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "getArmorTexture")
 	static String patchwork$getArmorTexture(Entity entity, ItemStack itemStack, String defaultTexture, EquipmentSlot slot, String type) {
 		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
 		String result = forgeItem.getArmorTexture(itemStack, entity, slot, type);
 		return result != null ? result : defaultTexture;
 	}
 
+	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "getArmorModel")
 	static <A extends BipedEntityModel<?>> A patchwork$getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default) {
 		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
 		A model = forgeItem.getArmorModel(entityLiving, itemStack, slot, _default);
