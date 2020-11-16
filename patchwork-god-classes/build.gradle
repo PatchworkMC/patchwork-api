@@ -1,21 +1,68 @@
+import org.gradle.internal.jvm.Jvm
+
+import java.util.stream.Collectors
+
 plugins {
-	id 'patchwork-api.submodule-conventions'
+	id 'patchwork-api.submodule-noprocess'
+	id 'patchwork-api.checkstyle'
 }
 
 archivesBaseName = "patchwork-god-classes"
 version = getSubprojectVersion(project, "0.4.0")
 
+configurations {
+	processImpl
+	implementation.extendsFrom(processImpl)
+}
+
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
-	implementation project(path: ':patchwork-fml', configuration: 'dev')
-	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
-	implementation project(path: ':patchwork-events-entity', configuration: 'dev')
-	implementation project(path: ':patchwork-events-input', configuration: 'dev')
-	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	implementation project(path: ':patchwork-events-rendering', configuration: 'dev')
-	implementation project(path: ':patchwork-events-world', configuration: 'dev')
-	implementation project(path: ':patchwork-extensions-block', configuration: 'dev')
-	implementation project(path: ':patchwork-extensions-item', configuration: 'dev')
-	implementation project(path: ':patchwork-loot', configuration: 'dev')
-	implementation project(path: ':patchwork-networking', configuration: 'dev')
+	// TODO: make submodules do this in submodule-conventions?
+	processImpl project(path: ':patchwork-fml', configuration: 'dev')
+	processImpl project(path: ':patchwork-capabilities', configuration: 'dev')
+	processImpl project(path: ':patchwork-events-entity', configuration: 'dev')
+	processImpl project(path: ':patchwork-events-input', configuration: 'dev')
+	processImpl project(path: ':patchwork-events-lifecycle', configuration: 'dev')
+	processImpl project(path: ':patchwork-events-rendering', configuration: 'dev')
+	processImpl project(path: ':patchwork-events-world', configuration: 'dev')
+	processImpl project(path: ':patchwork-extensions-block', configuration: 'dev')
+	processImpl project(path: ':patchwork-extensions-item', configuration: 'dev')
+	processImpl project(path: ':patchwork-loot', configuration: 'dev')
+	processImpl project(path: ':patchwork-networking', configuration: 'dev')
+
+	annotationProcessor project(':patchwork-god-classes-processor')
 }
+
+
+compileJava.options.compilerArgumentProviders.add(new CommandLineArgumentProvider() {
+	@Override
+	Iterable<String> asArguments() {
+		configurations.getByName('processImpl').files.stream().flatMap {
+			def classes = []
+			zipTree(it).matching {
+				include "net/patchworkmc/**/*.class"
+				exclude "net/patchworkmc/mixin/**"
+				// TODO: revisit if we ever want to delegate to another forge class
+				// currently this fails because NightCoreConfig isn't on the classpath
+				// i.e. we'll eventually need to depend on the dependencies of our dependencies.
+				//include "net/minecraftforge/**/*.class"
+			}.visit { FileVisitDetails file ->
+				if (file.directory) {
+					return;
+				}
+				String clazz = file.getRelativePath().toString();
+				classes.add(clazz.substring(0, clazz.length() - ".class".length()).replace('/', '.'))
+			}
+
+			return classes.stream()
+		}.collect(Collectors.toSet())
+	}
+})
+
+// force use of CommandLineJavaCompiler
+// NOTE: Jvm.current and Jvm.getJavaHome are internal apis, but have been around unchanged for 10 years,
+// so this will probably work on any version of gradle we're likely to use.
+compileJava.options.fork(javaHome: Jvm.current().getJavaHome())
+// just put a file in source so it tries to compile *something*
+// TODO: remove this if/when we have a non-generated class file in patchwork-god-classes
+compileJava.source("src/main/resources/fabric.mod.json")

@@ -48,6 +48,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
+import net.patchworkmc.annotations.GodClass;
+
 public class WorldEvents implements ModInitializer {
 	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
@@ -109,6 +111,7 @@ public class WorldEvents implements ModInitializer {
 		ServerChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
 	}
 
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:saplingGrowTree")
 	public static boolean onSaplingGrowTree(IWorld world, Random rand, BlockPos pos) {
 		SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
 		MinecraftForge.EVENT_BUS.post(event);

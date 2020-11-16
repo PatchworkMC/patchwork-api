@@ -30,31 +30,40 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.dimension.DimensionType;
 
+import net.patchworkmc.annotations.GodClass;
+
 public class PlayerEvents {
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerChangedDimensionEvent")
 	public static void firePlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerLoggedIn")
 	public static void firePlayerLoggedIn(PlayerEntity player) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(player));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerLoggedOut")
 	public static void firePlayerLoggedOut(PlayerEntity player) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedOutEvent(player));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerRespawnEvent")
 	public static void firePlayerRespawnEvent(PlayerEntity player, boolean alive) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, alive));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerItemPickupEvent")
 	public static void firePlayerItemPickupEvent(PlayerEntity player, ItemEntity item, ItemStack clone) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerCraftingEvent")
 	public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, Inventory craftMatrix) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
 	}
 
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:firePlayerSmeltedEvent")
 	public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
 	}
@@ -63,6 +72,7 @@ public class PlayerEvents {
 	 *
 	 * @return -1 if the event was canceled, 0 if the event was denied or had no result set, and 1 if the event was allowed
 	 */
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:onItemPickup")
 	public static int onItemPickup(PlayerEntity player, ItemEntity entityItem) {
 		Event event = new EntityItemPickupEvent(player, entityItem);
 		if (MinecraftForge.EVENT_BUS.post(event)) return -1;

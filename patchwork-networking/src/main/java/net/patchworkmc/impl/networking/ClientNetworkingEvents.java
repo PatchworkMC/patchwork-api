@@ -26,15 +26,20 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.network.ClientConnection;
 
+import net.patchworkmc.annotations.GodClass;
+
 public class ClientNetworkingEvents {
+	@GodClass("net.minecraftforge.fml.client.ClientHooks:firePlayerLogin")
 	public static void firePlayerLogin(final ClientPlayerInteractionManager interactionManager, final ClientPlayerEntity player, final ClientConnection clientConnection) {
 		MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedInEvent(interactionManager, player, clientConnection));
 	}
 
+	@GodClass("net.minecraftforge.fml.client.ClientHooks:firePlayerLogout")
 	public static void firePlayerLogout(final ClientPlayerInteractionManager interactionManager, final ClientPlayerEntity player) {
 		MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(interactionManager, player, player != null ? player.networkHandler != null ? player.networkHandler.getConnection() : null : null));
 	}
 
+	@GodClass("net.minecraftforge.fml.client.ClientHooks:firePlayerRespawn")
 	public static void firePlayerRespawn(final ClientPlayerInteractionManager interactionManager, final ClientPlayerEntity oldPlayer, final ClientPlayerEntity newPlayer, final ClientConnection clientConnection) {
 		MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.RespawnEvent(interactionManager, oldPlayer, newPlayer, clientConnection));
 	}

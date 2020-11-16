@@ -25,23 +25,28 @@ import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.Mouse;
 
+import net.patchworkmc.annotations.GodClass;
 import net.patchworkmc.api.input.ForgeMouse;
 
 public class InputEvents {
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:fireMouseInput")
 	public static void fireMouseInput(int button, int action, int mods) {
 		MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent(button, action, mods));
 	}
 
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:fireKeyInput")
 	public static void fireKeyInput(int key, int scanCode, int action, int modifiers) {
 		MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent(key, scanCode, action, modifiers));
 	}
 
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:onMouseScroll")
 	public static boolean onMouseScroll(Mouse mouseHelper, double scrollDelta) {
 		final Event event = new InputEvent.MouseScrollEvent(scrollDelta, mouseHelper.wasLeftButtonClicked(), ((ForgeMouse) mouseHelper).isMiddleDown(), mouseHelper.wasRightButtonClicked(), mouseHelper.getX(), mouseHelper.getY());
 
 		return MinecraftForge.EVENT_BUS.post(event);
 	}
 
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:onRawMouseClicked")
 	public static boolean onRawMouseClicked(int button, int action, int mods) {
 		return MinecraftForge.EVENT_BUS.post(new InputEvent.RawMouseEvent(button, action, mods));
 	}

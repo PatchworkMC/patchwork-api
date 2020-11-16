@@ -23,6 +23,7 @@ import java.util.Deque;
 import java.util.HashSet;
 
 import javax.annotation.Nullable;
+import javax.lang.model.element.Modifier;
 
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -36,13 +37,17 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 
+import net.patchworkmc.annotations.GodClass;
 import net.patchworkmc.impl.event.loot.LootEvents;
 
 // NOTE: this class is more or less a direct copy of parts of Forge's ForgeHooks.
 public class LootHooks {
 	// Made public for Patchwork's own use
+	// TODO (codegen): make private in ForgeHooks
+	@GodClass(value = "net.minecraftforge.common.ForgeHooks:lootContext", modifiers = Modifier.PRIVATE)
 	public static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
 
+	@GodClass("net.minecraftforge.common.ForgeHooks:loadLootTable")
 	public static LootTable loadLootTable(Gson gson, Identifier name, JsonElement data, boolean custom, LootManager lootTableManager) {
 		Deque<LootTableContext> que = lootContext.get();
 
@@ -83,6 +88,7 @@ public class LootHooks {
 		return ctx;
 	}
 
+	@GodClass("net.minecraftforge.common.ForgeHooks:readPoolName")
 	public static String readPoolName(JsonObject json) {
 		LootTableContext ctx = LootHooks.getLootTableContext();
 		ctx.resetPoolCtx();
@@ -105,6 +111,7 @@ public class LootHooks {
 	}
 
 	// Made public for Patchwork's own use
+	@GodClass("net.minecraftforge.common.ForgeHooks:LootTableContext")
 	public static class LootTableContext {
 		public final Identifier name;
 		public final boolean custom;
@@ -113,6 +120,7 @@ public class LootHooks {
 		public int entryCount = 0;
 		private HashSet<String> entryNames = Sets.newHashSet();
 
+		@GodClass.Constructor(Modifier.PRIVATE)
 		protected LootTableContext(Identifier name, boolean custom) {
 			this.name = name;
 			this.custom = custom;

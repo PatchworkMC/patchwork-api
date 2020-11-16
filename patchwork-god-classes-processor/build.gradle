@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'net.patchworkmc.patchwork-api'
+version '0.10.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation 'com.squareup:javapoet:1.13.0'
+}

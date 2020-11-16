@@ -2,7 +2,6 @@ plugins {
 //	id 'java'
 //	id 'eclipse'
 //	id 'idea'
-	id 'checkstyle'
 	id 'maven-publish'
 	id 'fabric-loom'
 	id 'net.minecrell.licenser' //version '0.4.1'
@@ -75,9 +74,4 @@ afterEvaluate {
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
 	from project.sourceSets.main.allSource
-}
-
-checkstyle {
-	configFile = rootProject.file("checkstyle.xml")
-	toolVersion = '8.36.2'
 }
