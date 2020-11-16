@@ -5,6 +5,9 @@ plugins {
 group 'net.patchworkmc.patchwork-api'
 version '0.10.0'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 repositories {
     mavenCentral()
 }
