@@ -78,9 +78,11 @@ import net.patchworkmc.impl.event.world.WorldEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.annotations.Stubbed;
 
-/*
- * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
- * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
+/**
+ * A stubbed out copy of Forge's ForgeEventFactory, intended for use by Forge mods only.
+ * For methods that you are implementing, don't keep implementation details here.
+ * Elements should be thin wrappers around methods in other modules.
+ * Do not depend on this class in other modules.
  */
 public class ForgeEventFactory {
 	/*

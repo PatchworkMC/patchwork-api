@@ -39,6 +39,12 @@ import net.minecraft.world.level.storage.LevelSummary;
 import net.patchworkmc.impl.networking.ClientNetworkingEvents;
 import net.patchworkmc.annotations.Stubbed;
 
+/**
+ * A stubbed out copy of Forge's ClientHooks, intended for use by Forge mods only.
+ * For methods that you are implementing, don't keep implementation details here.
+ * Elements should be thin wrappers around methods in other modules.
+ * Do not depend on this class in other modules.
+ */
 public class ClientHooks {
 	//private static final Logger LOGGER = LogManager.getLogger();
 	//private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");

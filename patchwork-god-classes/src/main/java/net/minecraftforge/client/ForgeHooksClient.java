@@ -79,7 +79,8 @@ import net.patchworkmc.annotations.Stubbed;
 /**
  * A stubbed out copy of Forge's ForgeHooksClient, intended for use by Forge mods only.
  * For methods that you are implementing, don't keep implementation details here.
- * Elements should be thin wrappers around methods in other modueles.
+ * Elements should be thin wrappers around methods in other modules.
+ * Do not depend on this class in other modules.
  */
 public class ForgeHooksClient {
 	// static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();

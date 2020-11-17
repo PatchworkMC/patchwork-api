@@ -72,9 +72,11 @@ import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
 import net.patchworkmc.annotations.Stubbed;
 
-/*
- * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
- * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
+/**
+ * A stubbed out copy of Forge's ForgeHooks, intended for use by Forge mods only.
+ * For methods that you are implementing, don't keep implementation details here.
+ * Elements should be thin wrappers around methods in other modules.
+ * Do not depend on this class in other modules.
  */
 public class ForgeHooks {
 	//static final Pattern URL_PATTERN = Pattern.compile(
