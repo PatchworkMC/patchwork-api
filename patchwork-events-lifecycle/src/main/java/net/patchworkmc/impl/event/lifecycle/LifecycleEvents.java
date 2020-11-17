@@ -145,52 +145,52 @@ public class LifecycleEvents implements ModInitializer {
 
 	// wrappers called by generated god class
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPlayerPreTick")
 	public static void onPlayerPreTick(PlayerEntity player) {
 		firePlayerTickEvent(TickEvent.Phase.START, player);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPlayerPostTick")
 	public static void onPlayerPostTick(PlayerEntity player) {
 		firePlayerTickEvent(TickEvent.Phase.END, player);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPreWorldTick")
 	public static void onPreWorldTick(World world) {
 		fireWorldTickEvent(TickEvent.Phase.START, world);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPostWorldTick")
 	public static void onPostWorldTick(World world) {
 		fireWorldTickEvent(TickEvent.Phase.END, world);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPreClientTick")
 	public static void onPreClientTick() {
 		fireClientTickEvent(TickEvent.Phase.START);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPostClientTick")
 	public static void onPostClientTick() {
 		fireClientTickEvent(TickEvent.Phase.END);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPreServerTick")
 	public static void onPreServerTick() {
 		fireServerTickEvent(TickEvent.Phase.START);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onPostServerTick")
 	public static void onPostServerTick() {
 		fireServerTickEvent(TickEvent.Phase.END);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onRenderTickStart")
 	public static void onRenderTickStart(float timer) {
 		fireRenderTickEvent(TickEvent.Phase.START, timer);
 	}
 
-	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks")
+	@GodClass("net.minecraftforge.fml.hooks.BasicEventHooks:onRenderTickEnd")
 	public static void onRenderTickEnd(float timer) {
 		fireRenderTickEvent(TickEvent.Phase.END, timer);
 	}

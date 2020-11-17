@@ -33,19 +33,12 @@ import javax.lang.model.element.Modifier;
 @Retention(RetentionPolicy.CLASS)
 public @interface GodClass {
 	/**
-	 * Short name of the god class that should contain the annotated element.
+	 * Fully qualified name of the targeted god class + ':' + the name of the element.
+	 * e.g. "net.minecraftforge.common.ForgeHooks:onLivingUpdate"
 	 *
-	 * @return short name of the god class that contains the annotated element.
+	 * @return FQN of target class + element name.
 	 */
 	String value();
-
-	// TODO: auto-strip "patchwork$" prefix without needing the use of this element?
-	/**
-	 * Name that the element should take in the GodClass, if different.
-	 *
-	 * @return element name, or empty string to default to name of annotated element.
-	 */
-	String name() default "";
 
 	/**
 	 * Modifiers for the target generated element.

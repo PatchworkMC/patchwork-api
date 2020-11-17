@@ -43,10 +43,10 @@ import net.patchworkmc.impl.event.loot.LootEvents;
 public class LootHooks {
 	// Made public for Patchwork's own use
 	// TODO (codegen): make private in ForgeHooks
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:lootContext")
 	public static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
 
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:loadLootTable")
 	public static LootTable loadLootTable(Gson gson, Identifier name, JsonElement data, boolean custom, LootManager lootTableManager) {
 		Deque<LootTableContext> que = lootContext.get();
 
@@ -87,7 +87,7 @@ public class LootHooks {
 		return ctx;
 	}
 
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:readPoolName")
 	public static String readPoolName(JsonObject json) {
 		LootTableContext ctx = LootHooks.getLootTableContext();
 		ctx.resetPoolCtx();
@@ -111,7 +111,7 @@ public class LootHooks {
 
 	// TODO (codegen): constructor was private in ForgeHooks before introducing codegen
 	// Made public for Patchwork's own use
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:LootTableContext")
 	public static class LootTableContext {
 		public final Identifier name;
 		public final boolean custom;

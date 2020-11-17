@@ -62,8 +62,29 @@ public class GodClassProcessor extends AbstractProcessor {
 				continue;
 			}
 
+			// TODO: getAnnotationsByType? aka, supporting multiple annotations on the same element
 			GodClass target = element.getAnnotation(GodClass.class);
 			SourceElement sourceElement = new SourceElement();
+
+			String[] split = target.value().split(":");
+			if (split.length < 2) {
+				processingEnv.getMessager().printMessage(
+					Diagnostic.Kind.ERROR,
+					"GodClass annotation missing element name",
+					element
+				);
+				continue;
+			} else if (split.length > 2) {
+				processingEnv.getMessager().printMessage(
+					Diagnostic.Kind.ERROR,
+					"GodClass annotation has too many seperators indicating element name",
+					element
+				);
+				continue;
+			}
+
+			String target_class = split[0];
+			sourceElement.target_name = split[1];
 
 			ElementKind kind = element.getKind();
 			if (kind.isClass()) {
@@ -88,12 +109,6 @@ public class GodClassProcessor extends AbstractProcessor {
 					);
 					continue;
 				}
-			}
-
-			if (!target.name().isEmpty()) {
-				sourceElement.target_name = target.name();
-			} else {
-				sourceElement.target_name = element.getSimpleName().toString();
 			}
 
 			sourceElement.modifiers = target.modifiers();
@@ -125,7 +140,7 @@ public class GodClassProcessor extends AbstractProcessor {
 			}
 
 			annotated_items
-				.computeIfAbsent(target.value(), k -> new ArrayList<>())
+				.computeIfAbsent(target_class, k -> new ArrayList<>())
 				.add(sourceElement);
 
 			processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "found @GodClass at " + element);

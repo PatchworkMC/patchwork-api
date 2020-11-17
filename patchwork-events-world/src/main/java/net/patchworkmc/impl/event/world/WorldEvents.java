@@ -111,7 +111,7 @@ public class WorldEvents implements ModInitializer {
 		ServerChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
 	}
 
-	@GodClass(value = "net.minecraftforge.event.ForgeEventFactory", name = "saplingGrowTree")
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:saplingGrowTree")
 	public static boolean onSaplingGrowTree(IWorld world, Random rand, BlockPos pos) {
 		SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
 		MinecraftForge.EVENT_BUS.post(event);

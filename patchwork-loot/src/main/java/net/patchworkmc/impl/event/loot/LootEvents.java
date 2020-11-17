@@ -29,7 +29,7 @@ import net.minecraft.util.Identifier;
 import net.patchworkmc.annotations.GodClass;
 
 public class LootEvents {
-	@GodClass("net.minecraftforge.event.ForgeEventFactory")
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:loadLootTable")
 	public static LootTable loadLootTable(Identifier name, LootTable table, LootManager manager) {
 		LootTableLoadEvent event = new LootTableLoadEvent(name, table, manager);
 

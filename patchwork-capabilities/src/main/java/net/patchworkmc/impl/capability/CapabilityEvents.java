@@ -31,7 +31,7 @@ import net.patchworkmc.annotations.GodClass;
 public class CapabilityEvents {
 	// This is less restrictive than Forge's implementation, since patchwork can't make vanilla extend stuff at random.
 	@SuppressWarnings("unchecked")
-	@GodClass("net.minecraftforge.event.ForgeEventFactory")
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:gatherCapabilities")
 	@Nullable
 	public static <T> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
 		AttachCapabilitiesEvent<T> event = new AttachCapabilitiesEvent<T>((Class<T>) type, provider);
@@ -44,7 +44,7 @@ public class CapabilityEvents {
 		}
 	}
 
-	@GodClass("net.minecraftforge.event.ForgeEventFactory")
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:gatherCapabilities")
 	@Nullable
 	public static <T> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider) {
 		return gatherCapabilities(type, provider, null);

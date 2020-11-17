@@ -43,14 +43,14 @@ public interface PatchworkArmorItemHandler {
 	/**
 	 * Called by mixins(MixinArmorFeatureRenderer) and ForgeHooksClient.
 	 */
-	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "getArmorTexture")
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:getArmorTexture")
 	static String patchwork$getArmorTexture(Entity entity, ItemStack itemStack, String defaultTexture, EquipmentSlot slot, String type) {
 		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
 		String result = forgeItem.getArmorTexture(itemStack, entity, slot, type);
 		return result != null ? result : defaultTexture;
 	}
 
-	@GodClass(value = "net.minecraftforge.client.ForgeHooksClient", name = "getArmorModel")
+	@GodClass("net.minecraftforge.client.ForgeHooksClient:getArmorModel")
 	static <A extends BipedEntityModel<?>> A patchwork$getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default) {
 		IForgeItem forgeItem = (IForgeItem) itemStack.getItem();
 		A model = forgeItem.getArmorModel(entityLiving, itemStack, slot, _default);

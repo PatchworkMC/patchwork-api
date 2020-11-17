@@ -116,7 +116,7 @@ public class BlockHarvestManager {
 	 * Called by Mixin and ForgeHooks.
 	 * @return experience dropped, -1 = block breaking is cancelled.
 	 */
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:onBlockBreakEvent")
 	public static int onBlockBreakEvent(World world, GameMode gameMode, ServerPlayerEntity player, BlockPos pos) {
 		// Logic from tryHarvestBlock for pre-canceling the event
 		boolean preCancelEvent = false;
@@ -169,14 +169,14 @@ public class BlockHarvestManager {
 
 	// TODO: Leaving this unfired is intentional. See: https://github.com/MinecraftForge/MinecraftForge/issues/5828
 	@Deprecated
-	@GodClass("net.minecraftforge.event.ForgeEventFactory")
+	@GodClass("net.minecraftforge.event.ForgeEventFactory:fireBlockHarvesting")
 	public static float fireBlockHarvesting(DefaultedList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player) {
 		BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
 		MinecraftForge.EVENT_BUS.post(event);
 		return event.getDropChance();
 	}
 
-	@GodClass("net.minecraftforge.common.ForgeHooks")
+	@GodClass("net.minecraftforge.common.ForgeHooks:onFarmlandTrample")
 	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
 		// TODO: In forge, the possibility of trampling is handled by IForgeEntity.canTrample
 		// Maybe there's a good way to reconcile that to not break any Fabric mods trying to
