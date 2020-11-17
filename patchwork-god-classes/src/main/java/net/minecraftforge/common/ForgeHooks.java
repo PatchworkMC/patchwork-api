@@ -20,15 +20,33 @@
 package net.minecraftforge.common;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Function;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
+import org.apache.commons.lang3.NotImplementedException;
 
+import net.minecraft.advancement.Advancement;
 import net.minecraft.block.BlockState;
+import net.minecraft.container.AnvilContainer;
+import net.minecraft.entity.data.TrackedDataHandler;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.tag.Tag;
+import net.minecraft.text.Text;
+import net.minecraft.util.Int2ObjectBiMap;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
@@ -52,25 +70,74 @@ import net.minecraft.world.World;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
+import net.patchworkmc.annotations.Stubbed;
 
 /*
  * Note: this class is intended for mod use only, to dispatch to the implementations kept in their own modules.
  * Do not keep implementation details here, methods should be thin wrappers around methods in other modules.
  */
 public class ForgeHooks {
-	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
-		Event.Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
-		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
+	//static final Pattern URL_PATTERN = Pattern.compile(
+	//	//         schema                          ipv4            OR        namespace                 port     path         ends
+	//	//   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
+	//	"((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
+	//	Pattern.CASE_INSENSITIVE);
+	//private static final Logger LOGGER = LogManager.getLogger();
+	//private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
+	//private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
+	//private static final Map<TrackedDataHandler<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+	//private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
+	//private static boolean toolInit = false;
+	//private static ThreadLocal<PlayerEntity> craftingPlayer = new ThreadLocal<PlayerEntity>();
+	@SuppressWarnings({ "unused" })
+	private static ThreadLocal<?> lootContext = LootHooks.lootContext;
+	//private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
+
+	@Stubbed
+	public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to) {
+		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	// TODO: onInteractEntityAt
-
-	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
-		return EntityEvents.onInteractEntity(player, entity, hand);
+	@Stubbed
+	public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull BlockView world, @Nonnull BlockPos pos) {
+		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
-		return EntityEvents.onLivingDeath(entity, src);
+	/*
+	@Stubbed
+	public static boolean canToolHarvestBlock(ViewableWorld world, BlockPos pos, @Nonnull ItemStack stack) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	/*
+	@Stubbed
+	public static boolean isToolEffective(ViewableWorld world, BlockPos pos, @Nonnull ItemStack stack) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	@Stubbed
+	static void initTools() {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	/**
+	 * Called when a player uses 'pick block', calls new Entity and Block hooks.
+	 */
+	@Stubbed
+	public static boolean onPickBlock(HitResult target, PlayerEntity player, World world) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	//Optifine Helper Functions u.u, these are here specifically for Optifine
+	//Note: When using Optifine, these methods are invoked using reflection, which
+	//incurs a major performance penalty.
+	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
+		EntityEvents.onLivingSetAttackTarget(entity, target);
 	}
 
 	public static boolean onLivingUpdate(LivingEntity entity) {
@@ -86,13 +153,26 @@ public class ForgeHooks {
 		return !EntityEvents.onLivingAttack(entity, src, amount);
 	}
 
-	// optifine wants this? O.o
-	public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
-		EntityEvents.onLivingSetAttackTarget(entity, target);
-	}
+	/*
+	@Stubbed
+	public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, Entity attacker, float strength, double ratioX, double ratioZ) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
 
 	public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount) {
 		return EntityEvents.onLivingHurt(entity, src, amount);
+	}
+
+	public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
+		return EntityEvents.onLivingDamage(entity, src, amount);
+	}
+
+	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+		return EntityEvents.onLivingDeath(entity, src);
+	}
+
+	public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
+		return EntityEvents.onLivingDrops(entity, source, drops, lootingLevel, recentlyHit);
 	}
 
 	@Nullable
@@ -100,12 +180,84 @@ public class ForgeHooks {
 		return EntityEvents.onLivingFall(entity, distance, damageMultiplier);
 	}
 
-	public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
-		return EntityEvents.onLivingDamage(entity, src, amount);
+	@Stubbed
+	public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause) {
+		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
-		return EntityEvents.onLivingDrops(entity, source, drops, lootingLevel, recentlyHit);
+	@Stubbed
+	public static int getLootingLevel(LivingEntity target, DamageSource cause, int level) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static void onLivingJump(LivingEntity entity) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	@Nullable
+	public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	@Nullable
+	public static Text onServerChatEvent(ServerPlayNetworkHandler net, String raw, Text comp) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	public static Text newChatWithLinks(String string) {
+		return newChatWithLinks(string, true);
+	}
+
+	@Stubbed
+	public static Text newChatWithLinks(String string, boolean allowMissingHeader) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	public static int onBlockBreakEvent(World world, GameMode gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {
+		return BlockHarvestManager.onBlockBreakEvent(world, gameType, entityPlayer, pos);
+	}
+
+	@Stubbed
+	public static ActionResult onPlaceItemIntoWorld(@Nonnull ItemUsageContext context) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	public static boolean onAnvilChange(AnvilContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, Inventory outputSlot, String name, int baseCost) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static float onAnvilRepair(PlayerEntity player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static PlayerEntity getCraftingPlayer() {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static void setCraftingPlayer(PlayerEntity player) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	@Nonnull
+	public static ItemStack getContainerItem(@Nonnull ItemStack stack) {
+		throw new NotImplementedException("ForgeHooks stub");
 	}
 
 	public static boolean onPlayerAttackTarget(PlayerEntity player, Entity target) {
@@ -116,12 +268,171 @@ public class ForgeHooks {
 		return EntityEvents.onTravelToDimension(entity, dimensionType);
 	}
 
-	public static int onBlockBreakEvent(World world, GameMode gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {
-		return BlockHarvestManager.onBlockBreakEvent(world, gameType, entityPlayer, pos);
+	// TODO: I left this here for now because it's a thin wrapper around the onInteractEntityAt below
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, HitResult ray, Hand hand) {
+		Vec3d vec3d = new Vec3d(ray.getPos().x - entity.x, ray.getPos().y - entity.y, ray.getPos().z - entity.z);
+		return onInteractEntityAt(player, entity, vec3d, hand);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unused" })
-	private static ThreadLocal<?> lootContext = LootHooks.lootContext;
+	@Stubbed
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, Vec3d vec3d, Hand hand) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
+		return EntityEvents.onInteractEntity(player, entity, hand);
+	}
+
+	@Stubbed
+	public static ActionResult onItemRightClick(PlayerEntity player, Hand hand) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	/*
+	@Stubbed
+	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	/*
+	@Stubbed
+	public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	@Stubbed
+	public static void onEmptyClick(PlayerEntity player, Hand hand) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static void onEmptyLeftClick(PlayerEntity player) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	//private static LootTableContext getLootTableContext() {
+	//	LootTableContext ctx = lootContext.get().peek();
+	//
+	//	if (ctx == null) {
+	//		throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
+	//	}
+	//
+	//	return ctx;
+	//}
+
+	@Nullable
+	public static LootTable loadLootTable(Gson gson, Identifier name, JsonObject data, boolean custom, LootManager lootTableManager) {
+		return LootHooks.loadLootTable(gson, name, data, custom, lootTableManager);
+	}
+
+	/*
+	@Stubbed
+	public static FluidAttributes createVanillaFluidAttributes(Fluid fluid) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	public static String readPoolName(JsonObject json) {
+		return LootHooks.readPoolName(json);
+	}
+
+	@Stubbed
+	public static String readLootEntryName(JsonObject json, String type) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static boolean onCropsGrowPre(World worldIn, BlockPos pos, BlockState state, boolean def) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static void onCropsGrowPost(World worldIn, BlockPos pos, BlockState state) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	/*
+	@Stubbed
+	@Nullable
+	public static CriticalHitEvent getCriticalHit(PlayerEntity player, Entity target, boolean vanillaCritical, float damageModifier) {
+		throw new NotImplementedException("ForgeHooks stub");
+	} */
+
+	@Stubbed
+	public static void onAdvancement(ServerPlayerEntity player, Advancement advancement) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	/**
+	 * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
+	 */
+	@Stubbed
+	@Nullable
+	public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
+		return BlockHarvestManager.onFarmlandTrample(world, pos, state, fallDistance, entity);
+	}
+
+	//Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
+	//public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter) {
+	//	blockToolSetter = setter;
+	//}
+
+	@Stubbed
+	@SuppressWarnings("unchecked")
+	private static <T, E> T getPrivateValue(Class<? super E> classToAccess, @Nullable E instance, int fieldIndex) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static int onNoteChange(World world, BlockPos pos, BlockState state, int old, int _new) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	// yes this is a direct copy of a forge method for once
+	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+		Event.Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
+		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
+	}
+
+	@Stubbed
+	public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Function<Identifier, Optional<T>> valueGetter, JsonObject json) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	@Nullable
+	public static TrackedDataHandler<?> getSerializer(int id, Int2ObjectBiMap<TrackedDataHandler<?>> vanilla) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static int getSerializerId(TrackedDataHandler<?> serializer, Int2ObjectBiMap<TrackedDataHandler<?>> vanilla) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	//private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
+	// Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
+
+	@Stubbed
+	public static boolean canEntityDestroy(World world, BlockPos pos, LivingEntity entity) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	/**
+	 * Gets the burn time of this itemstack.
+	 */
+	@Stubbed
+	public static int getBurnTime(ItemStack stack) {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
+
+	@Stubbed
+	public static synchronized void updateBurns() {
+		throw new NotImplementedException("ForgeHooks stub");
+	}
 
 	// Need to have the class here to make some mod hacks work
 	public static class LootTableContext extends LootHooks.LootTableContext {
@@ -130,16 +441,46 @@ public class ForgeHooks {
 		}
 	}
 
-	@Nullable
-	public static LootTable loadLootTable(Gson gson, Identifier name, JsonObject data, boolean custom, LootManager lootTableManager) {
-		return LootHooks.loadLootTable(gson, name, data, custom, lootTableManager);
-	}
+	//private static class DummyBlockReader implements BlockView {
+	//
+	//	@Override
+	//	public BlockEntity getBlockEntity(BlockPos pos) {
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public BlockState getBlockState(BlockPos pos) {
+	//		return Blocks.AIR.getDefaultState();
+	//	}
+	//
+	//	@Override
+	//	public FluidState getFluidState(BlockPos pos) {
+	//		return Fluids.EMPTY.getDefaultState();
+	//	}
+	//
+	//}
 
-	public static String readPoolName(JsonObject json) {
-		return LootHooks.readPoolName(json);
-	}
-
-	public static boolean onFarmlandTrample(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
-		return BlockHarvestManager.onFarmlandTrample(world, pos, state, fallDistance, entity);
-	}
+	//private static class OptionalTagEntry<T> extends Tag.TagEntry<T> {
+	//	private Tag<T> resolvedTag = null;
+	//
+	//	OptionalTagEntry(Identifier referent) {
+	//		super(referent);
+	//	}
+	//
+	//	@Override
+	//	public boolean applyTagGetter(@Nonnull Function<Identifier, Tag<T>> resolver) {
+	//		if (this.resolvedTag == null) {
+	//			this.resolvedTag = resolver.apply(this.getId());
+	//		}
+	//		return true; // never fail if resolver returns null
+	//	}
+	//
+	//	@Override
+	//	public void build(@Nonnull Collection<T> items) {
+	//		if (this.resolvedTag != null) {
+	//			items.addAll(this.resolvedTag.values());
+	//		}
+	//	}
+	//}
 }
+
