@@ -64,8 +64,13 @@ public class BasicEventHooks {
 		PlayerEvents.firePlayerSmeltedEvent(player, smelted);
 	}
 
-	// TODO: onRenderTickStart
-	// TODO: onRenderTickEnd
+	public static void onRenderTickStart(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.START, timer);
+	}
+
+	public static void onRenderTickEnd(float timer) {
+		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, timer);
+	}
 
 	public static void onPlayerPreTick(PlayerEntity player) {
 		LifecycleEvents.firePlayerTickEvent(TickEvent.Phase.START, player);
@@ -97,13 +102,5 @@ public class BasicEventHooks {
 
 	public static void onPostServerTick() {
 		LifecycleEvents.fireServerTickEvent(TickEvent.Phase.END);
-	}
-
-	public static void onRenderTickStart(float timer) {
-		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.START, timer);
-	}
-
-	public static void onRenderTickEnd(float timer) {
-		LifecycleEvents.fireRenderTickEvent(TickEvent.Phase.END, timer);
 	}
 }
