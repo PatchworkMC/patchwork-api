@@ -17,6 +17,7 @@ configurations {
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation 'javax.annotation:javax.annotation-api:1.3.2'
 	// TODO: make submodules do this in submodule-conventions?
 	processImpl project(path: ':patchwork-fml', configuration: 'dev')
 	processImpl project(path: ':patchwork-capabilities', configuration: 'dev')
