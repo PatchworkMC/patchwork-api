@@ -33,8 +33,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.cadixdev.lorenz.model.ClassMapping;
 
-import net.patchworkmc.impl.fml.PatchworkMappingService;
+import net.patchworkmc.impl.mappings.PatchworkMappings;
 
 /**
  * Some reflection helper code.
@@ -42,7 +43,7 @@ import net.patchworkmc.impl.fml.PatchworkMappingService;
  * As such, if issues are encountered, please report them and we can see what we can do to expand
  * the compatibility.
  *
- * <p>In other cases, accesssor mixins may be used.</p>
+ * <p>In other cases, accessor mixins may be used.</p>
  *
  * <p>All field and method names should be passed in as intermediary names, and this will automatically resolve if Yarn mappings are detected.</p>
  */
@@ -53,15 +54,23 @@ public class ObfuscationReflectionHelper {
 	/**
 	 * Remaps a name from intermediary to whatever is currently being used at runtime.
 	 *
-	 * @param domain    The {@link INameMappingService.Domain} to look up.
-	 * @param name      The name to try and remap.
+	 * @param domain The {@link INameMappingService.Domain} to look up.
+	 * @param name   The name to try and remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
-	 * @deprecated Fabric mods should use {@link PatchworkMappingService#remapName(INameMappingService.Domain, String)} instead.
 	 */
 	@Nonnull
-	@Deprecated
 	public static String remapName(INameMappingService.Domain domain, String name) {
-		return PatchworkMappingService.remapName(domain, name);
+		if (domain == INameMappingService.Domain.CLASS) {
+			return PatchworkMappings.getMappings().getClassMapping(name)
+							.map(ClassMapping::getDeobfuscatedName)
+							.orElse(name);
+		} else if (domain == INameMappingService.Domain.METHOD) {
+			return PatchworkMappings.getMethodMappings().getOrDefault(name, name);
+		} else if (domain == INameMappingService.Domain.FIELD) {
+			return PatchworkMappings.getFieldMappings().getOrDefault(name, name);
+		}
+
+		return name;
 	}
 
 	/**
@@ -112,15 +121,13 @@ public class ObfuscationReflectionHelper {
 		try {
 			//noinspection unchecked
 			return (T) findField(classToAccess, fieldName).get(instance);
-
-		// We use remapName instead of remapNameFast because the member wasn't found, which means it's probably not in that class.
 		} catch (UnableToFindFieldException e) {
 			LOGGER.error(REFLECTION, "Unable to locate field {} ({}) on type {}", fieldName,
-					PatchworkMappingService.remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+							remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw e;
 		} catch (IllegalAccessException e) {
 			LOGGER.error(REFLECTION, "Unable to access field {} ({}) on type {}", fieldName,
-					PatchworkMappingService.remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
+							remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
 			throw new UnableToAccessFieldException(e);
 		}
 	}
@@ -167,7 +174,7 @@ public class ObfuscationReflectionHelper {
 	 * @throws UnableToAccessFieldException If there was a problem setting the value of the field.
 	 */
 	public static <T, E> void setPrivateValue(@Nonnull final Class<? super T> classToAccess, @Nonnull final T instance,
-				@Nullable final E value, @Nonnull final String fieldName) {
+											  @Nullable final E value, @Nonnull final String fieldName) {
 		try {
 			findField(classToAccess, fieldName).set(instance, value);
 		} catch (UnableToFindFieldException e) {
@@ -203,7 +210,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of method to find cannot be null.");
 
 		try {
-			String name = PatchworkMappingService.remapNameFast(INameMappingService.Domain.METHOD, clazz, methodName);
+			String name = remapName(INameMappingService.Domain.METHOD, methodName);
 			Method method = clazz.getDeclaredMethod(name, parameterTypes);
 			method.setAccessible(true);
 			return method;
@@ -273,7 +280,7 @@ public class ObfuscationReflectionHelper {
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
 
 		try {
-			String name = PatchworkMappingService.remapNameFast(INameMappingService.Domain.FIELD, clazz, fieldName);
+			String name = remapName(INameMappingService.Domain.FIELD, fieldName);
 			Field field = clazz.getDeclaredField(name);
 			field.setAccessible(true);
 			return field;

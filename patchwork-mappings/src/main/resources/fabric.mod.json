@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-mappings",
+  "name": "Patchwork Mappings",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-mappings/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.mappings.PatchworkMappings"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.10.0",
+    "fabric": ">=0.15.1"
+  },
+  "description": "Generates and provides SRG <-> Intermediary mappings at runtime",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  }
+}
