@@ -30,11 +30,17 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 	@Shadow
 	protected int height;
 
+	protected int packedFGColor = 0;
+
 	public int getHeight() {
 		return this.height;
 	}
 
 	public void setHeight(int value) {
 		this.height = value;
+	}
+
+	public void setFGColor(int color) {
+		this.packedFGColor = color;
 	}
 }
