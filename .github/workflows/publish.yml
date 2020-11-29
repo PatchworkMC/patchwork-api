@@ -22,6 +22,7 @@ jobs:
         with:
           artifacts: |
             build/libs/patchwork-api-*.jar
+            !build/libs/patchwork-api-*-*.jar
 
           token: ${{ secrets.GITHUB_TOKEN }}
   bintray:
