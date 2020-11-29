@@ -22,12 +22,16 @@ package net.patchworkmc.impl.event.entity;
 import java.util.List;
 import java.util.Collection;
 
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -204,6 +208,36 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
+	}
+
+	public static int onItemExpire(ItemEntity entity, ItemStack item) {
+		if (item.isEmpty()) return -1;
+
+		ItemExpireEvent event = new ItemExpireEvent(entity, ((IForgeItem) item.getItem()).getEntityLifespan(item, entity.world));
+
+		return MinecraftForge.EVENT_BUS.post(event) ? event.getExtraLife() : -1;
+	}
+
+	public static ItemEntity onPlayerTossEvent(PlayerEntity player, ItemStack item, boolean includeName) {
+		((IForgeEntity) player).captureDrops(Lists.newArrayList());
+		ItemEntity ret = player.dropItem(item, false, includeName);
+		((IForgeEntity) player).captureDrops(null);
+
+		if (ret == null) {
+			return null;
+		}
+
+		ItemTossEvent event = new ItemTossEvent(ret, player);
+
+		if (MinecraftForge.EVENT_BUS.post(event)) {
+			return null;
+		}
+
+		if (!player.world.isClient) {
+			player.getEntityWorld().spawnEntity(event.getEntityItem());
+		}
+
+		return event.getEntityItem();
 	}
 
 	public static boolean onProjectileImpact(Entity entity, HitResult ray) {
