@@ -38,8 +38,6 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 	@Shadow
 	public abstract boolean isHovered();
 
-	@Shadow
-	protected float alpha;
 	protected int packedFGColor = 0;
 
 	public int getHeight() {
