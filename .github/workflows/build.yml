@@ -25,7 +25,7 @@ jobs:
           configuration-cache-enabled: false
       # Artifact publishing
       - uses: actions/upload-artifact@v2
-        # In theory we could publish the j11 or even j14 jar, but let's not take any chances
+      # In theory we could publish the j11 or even j14 jar, but let's not take any chances
       if: ${{ matrix.java-version == 1.8 }}
       with:
         name: Jar Download
