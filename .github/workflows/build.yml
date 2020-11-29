@@ -29,7 +29,9 @@ jobs:
         if: ${{ matrix.java-version == 1.8 }}
         with:
           name: Jar Download
-          path: ./build/libs/patchwork-api-?.?.?.jar
+          path: |
+            './build/libs/patchwork-api-*.jar'
+            '!./build/libs/patchwork-api-*-*.jar'
 
 
   check:
