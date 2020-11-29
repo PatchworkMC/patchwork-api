@@ -30,8 +30,8 @@ jobs:
         with:
           name: Jar Download
           path: |
-            './build/libs/patchwork-api-*.jar'
-            '!./build/libs/patchwork-api-*-*.jar'
+            'build/libs/patchwork-api-*.jar'
+            '!build/libs/patchwork-api-*-*.jar'
 
 
   check:
