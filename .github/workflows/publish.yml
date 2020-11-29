@@ -20,7 +20,10 @@ jobs:
           arguments: build
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: ./build/libs/patchwork-api-?.?.?.jar
+          artifacts: |
+            build/libs/patchwork-api-*.jar
+            !build/libs/patchwork-api-*-*.jar
+
           token: ${{ secrets.GITHUB_TOKEN }}
   bintray:
     runs-on: ubuntu-latest
