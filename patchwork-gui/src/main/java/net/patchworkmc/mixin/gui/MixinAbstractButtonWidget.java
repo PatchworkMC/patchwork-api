@@ -21,6 +21,8 @@ package net.patchworkmc.mixin.gui;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
@@ -30,6 +32,14 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 	@Shadow
 	protected int height;
 
+	@Shadow
+	public boolean active;
+
+	@Shadow
+	public abstract boolean isHovered();
+
+	@Shadow
+	protected float alpha;
 	protected int packedFGColor = 0;
 
 	public int getHeight() {
@@ -38,6 +48,24 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 
 	public void setHeight(int value) {
 		this.height = value;
+	}
+
+	@ModifyVariable(method = "renderButton", at = @At(value = "INVOKE_ASSIGN"), index = 7)
+	public int hookRenderButton(int original) {
+		return getFGColor();
+	}
+
+	public int getFGColor() {
+		if (packedFGColor != 0) return packedFGColor;
+		int ret = 14737632;
+
+		if (!this.active) {
+			ret = 10526880;
+		} else if (this.isHovered()) {
+			ret = 16777120;
+		}
+
+		return ret;
 	}
 
 	public void setFGColor(int color) {
