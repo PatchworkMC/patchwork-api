@@ -22,6 +22,7 @@ jobs:
 #      - run: mkdir run && echo "eula=true" >> run/eula.txt
 #      - run: ./gradlew runAutoTestServer --stacktrace
       - uses: actions/upload-artifact@v2
+        if: ${{ matrix.java == 8-jdk }}
         with:
           name: Artifact
           path: |
