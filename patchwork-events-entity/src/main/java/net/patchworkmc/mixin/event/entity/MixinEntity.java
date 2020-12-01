@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.event.entity;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -46,6 +47,9 @@ public abstract class MixinEntity {
 	@Shadow
 	protected abstract float getEyeHeight(EntityPose pose, EntityDimensions dimensions);
 
+	@Shadow
+	private Entity vehicle;
+
 	@Inject(method = "<init>", at = @At("RETURN"))
 	public void hookConstructor(EntityType<?> type, World world, CallbackInfo ci) {
 		Entity entity = (Entity) (Object) this;
@@ -53,6 +57,20 @@ public abstract class MixinEntity {
 		this.standingEyeHeight = EntityEvents.getEyeHeight(entity, EntityPose.STANDING, dimensions, getEyeHeight(EntityPose.STANDING, dimensions));
 
 		EntityEvents.onEntityConstruct(entity);
+	}
+
+	@Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z",
+			at = @At(value = "JUMP",
+					opcode = Opcodes.IFNE,
+					ordinal = 0
+			)
+	)
+	public void onStartRiding(Entity entity, boolean force, CallbackInfoReturnable<Boolean> ci) {
+		Entity thisEntity = (Entity) (Object) this;
+
+		if (!EntityEvents.canMountEntity(thisEntity, entity, true)) {
+			ci.setReturnValue(false);
+		}
 	}
 
 	@Inject(method = "changeDimension",

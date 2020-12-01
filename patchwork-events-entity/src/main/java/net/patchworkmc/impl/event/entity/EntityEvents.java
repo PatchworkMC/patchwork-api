@@ -29,6 +29,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.EntityMountEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -204,6 +205,17 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
+	}
+
+	public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting) {
+		boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.world, isMounting));
+
+		if (isCanceled) {
+			entityMounting.updatePositionAndAngles(entityMounting.x, entityMounting.y, entityMounting.z, entityMounting.prevYaw, entityMounting.prevPitch);
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public static boolean onProjectileImpact(Entity entity, HitResult ray) {
