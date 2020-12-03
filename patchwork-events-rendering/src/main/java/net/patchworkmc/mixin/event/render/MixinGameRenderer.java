@@ -58,6 +58,6 @@ public abstract class MixinGameRenderer {
 	@Inject(method = "renderCenter", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getProfiler()Lnet/minecraft/util/profiler/Profiler;", ordinal = 15), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void hookRenderWorldLastEvent(float tickDelta, long endTime, CallbackInfo ci, WorldRenderer context) {
 		this.client.getProfiler().swap("forge_render_last");
-		RenderEvents.onRenderLast(context, tickDelta);
+		RenderEvents.onRenderWorldLast(context, tickDelta);
 	}
 }

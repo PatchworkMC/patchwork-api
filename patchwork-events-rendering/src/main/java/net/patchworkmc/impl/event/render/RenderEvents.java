@@ -72,7 +72,7 @@ public class RenderEvents {
 		}
 	}
 
-	public static void onRenderLast(WorldRenderer context, float tickDelta) {
+	public static void onRenderWorldLast(WorldRenderer context, float tickDelta) {
 		MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, tickDelta));
 	}
 }
