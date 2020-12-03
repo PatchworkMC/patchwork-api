@@ -19,9 +19,14 @@
 
 package net.patchworkmc.mixin.event.render;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
@@ -33,6 +38,10 @@ import net.patchworkmc.impl.event.render.RenderEvents;
 
 @Mixin(GameRenderer.class)
 public abstract class MixinGameRenderer {
+	@Shadow
+	@Final
+	private MinecraftClient client;
+
 	@Redirect(
 			method = "renderCenter", at = @At(value = "INVOKE", ordinal = 0,
 			target = "net/minecraft/client/render/WorldRenderer.drawHighlightedBlockOutline(Lnet/minecraft/client/render/Camera;Lnet/minecraft/util/hit/HitResult;I)V"
@@ -44,5 +53,11 @@ public abstract class MixinGameRenderer {
 		if (!RenderEvents.onDrawHighlightEvent(worldRenderer, camera, hit, 0, partialTicks)) {
 			worldRenderer.drawHighlightedBlockOutline(camera, client.crosshairTarget, 0);
 		}
+	}
+
+	@Inject(method = "renderCenter", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getProfiler()Lnet/minecraft/util/profiler/Profiler;", ordinal = 15), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void hookRenderWorldLastEvent(float tickDelta, long endTime, CallbackInfo ci, WorldRenderer context) {
+		this.client.getProfiler().swap("forge_render_last");
+		RenderEvents.onRenderLast(context, tickDelta);
 	}
 }

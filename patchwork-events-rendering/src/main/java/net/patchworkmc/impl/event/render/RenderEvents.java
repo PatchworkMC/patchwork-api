@@ -23,6 +23,7 @@ import java.util.Set;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoader;
@@ -69,5 +70,9 @@ public class RenderEvents {
 		default:
 			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
 		}
+	}
+
+	public static void onRenderLast(WorldRenderer context, float tickDelta) {
+		MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, tickDelta));
 	}
 }
