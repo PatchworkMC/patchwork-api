@@ -105,7 +105,7 @@ public class Patchwork {
 				if (children != null) {
 					for (CustomValue customValue : children.getAsArray()) {
 						String childId = customValue.getAsString();
-						modInitializers.add(new Pair<>(childId, () -> createModInstance(modId)));
+						modInitializers.add(new Pair<>(childId, () -> createModInstance(childId)));
 					}
 				}
 			}
