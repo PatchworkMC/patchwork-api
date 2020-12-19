@@ -28,7 +28,9 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.util.math.Direction;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -288,11 +290,9 @@ public class ForgeHooks {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	/*
-	@Stubbed
 	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
-		throw new NotImplementedException("ForgeHooks stub");
-	} */
+		return EntityEvents.onLeftClickBlock(player, pos, face);
+	}
 
 	/*
 	@Stubbed

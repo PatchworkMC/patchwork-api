@@ -22,6 +22,9 @@ package net.patchworkmc.impl.event.entity;
 import java.util.List;
 import java.util.Collection;
 
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -107,6 +110,14 @@ public class EntityEvents implements ModInitializer {
 
 	public static void onEmptyRightClick(PlayerEntity player, Hand hand) {
 		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+	}
+
+	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
+		PlayerInteractEvent.LeftClickBlock event = new PlayerInteractEvent.LeftClickBlock(player, pos, face);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
 	}
 
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
@@ -327,5 +338,15 @@ public class EntityEvents implements ModInitializer {
 
 			return result;
 		}));
+
+		AttackBlockCallback.EVENT.register((playerEntity, world, hand, blockPos, direction) -> {
+			PlayerInteractEvent.LeftClickBlock event = EntityEvents.onLeftClickBlock(playerEntity, blockPos, direction);
+
+			if (event.isCanceled() || (!playerEntity.isCreative() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
+				return ActionResult.SUCCESS;
+			} else {
+				return ActionResult.PASS;
+			}
+		});
 	}
 }

@@ -313,7 +313,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * <p>Also note that creative mode directly breaks the block without running any other logic.
 	 * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.</p>
 	 */
-	/* TODO public static class LeftClickBlock extends PlayerInteractEvent {
+	public static class LeftClickBlock extends PlayerInteractEvent {
 		private Result useBlock = Result.DEFAULT;
 		private Result useItem = Result.DEFAULT;
 
@@ -323,7 +323,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
-		TODO
+		*/
 		public Result getUseBlock() {
 			return useBlock;
 		}
@@ -334,7 +334,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
-		TODO
+		*/
 		public Result getUseItem() {
 			return useItem;
 		}
@@ -353,11 +353,11 @@ public class PlayerInteractEvent extends PlayerEvent {
 			super.setCanceled(canceled);
 
 			if (canceled) {
-				useBlock = DENY;
-				useItem = DENY;
+				useBlock = Result.DENY;
+				useItem = Result.DENY;
 			}
 		}
-	}*/
+	}
 
 	/**
 	 * This event is fired on the client side when the player left clicks empty space with any ItemStack.
