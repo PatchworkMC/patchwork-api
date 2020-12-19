@@ -105,6 +105,10 @@ public class EntityEvents implements ModInitializer {
 		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 
+	public static void onEmptyRightClick(PlayerEntity player, Hand hand) {
+		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+	}
+
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
 		return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
 	}

@@ -302,7 +302,7 @@ public class ForgeHooks {
 
 	@Stubbed
 	public static void onEmptyClick(PlayerEntity player, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		EntityEvents.onEmptyRightClick(player, hand);
 	}
 
 	@Stubbed

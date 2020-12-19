@@ -291,11 +291,11 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	/* TODO public static class RightClickEmpty extends PlayerInteractEvent {
+	public static class RightClickEmpty extends PlayerInteractEvent {
 		public RightClickEmpty(PlayerEntity player, Hand hand) {
 			super(player, hand, new BlockPos(player), null);
 		}
-	}*/
+	}
 
 	/**
 	 * This event is fired when a player left clicks while targeting a block.
