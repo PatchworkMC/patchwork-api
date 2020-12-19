@@ -273,9 +273,8 @@ public class ForgeEventFactory {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	} */
 
-	@Stubbed
 	public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item) {
-		throw new NotImplementedException("ForgeEventFactory stub");
+		return EntityEvents.onItemExpire(entity, item);
 	}
 
 	public static int onItemPickup(ItemEntity item, PlayerEntity player) {

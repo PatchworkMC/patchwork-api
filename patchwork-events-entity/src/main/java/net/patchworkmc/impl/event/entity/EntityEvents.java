@@ -28,6 +28,8 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -204,6 +206,18 @@ public class EntityEvents implements ModInitializer {
 
 	public static boolean onAnimalTame(AnimalEntity animal, PlayerEntity tamer) {
 		return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
+	}
+
+	public static int onItemExpire(ItemEntity entity, ItemStack item) {
+		if (item.isEmpty()) return -1;
+
+		ItemExpireEvent event = new ItemExpireEvent(entity, ((IForgeItem) item.getItem()).getEntityLifespan(item, entity.world));
+
+		return MinecraftForge.EVENT_BUS.post(event) ? event.getExtraLife() : -1;
+	}
+
+	public static boolean onPlayerTossEvent(PlayerEntity player, ItemEntity itemEntity) {
+		return MinecraftForge.EVENT_BUS.post(new ItemTossEvent(itemEntity, player));
 	}
 
 	public static boolean onProjectileImpact(Entity entity, HitResult ray) {

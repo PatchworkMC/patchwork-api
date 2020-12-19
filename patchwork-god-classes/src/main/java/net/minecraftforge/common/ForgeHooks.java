@@ -207,10 +207,10 @@ public class ForgeHooks {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	@Stubbed
 	@Nullable
 	public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName) {
-		throw new NotImplementedException("ForgeHooks stub");
+		// EntityEvents.onPlayerTossEvent is called through an Inject mixin into PlayerEntity.dropItem
+		return player.dropItem(item, false, includeName);
 	}
 
 	@Stubbed
