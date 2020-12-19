@@ -22,10 +22,8 @@ package net.patchworkmc.impl.event.entity;
 import java.util.List;
 import java.util.Collection;
 
-import com.google.common.collect.Lists;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
-import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -218,26 +216,8 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(event) ? event.getExtraLife() : -1;
 	}
 
-	public static ItemEntity onPlayerTossEvent(PlayerEntity player, ItemStack item, boolean includeName) {
-		((IForgeEntity) player).captureDrops(Lists.newArrayList());
-		ItemEntity ret = player.dropItem(item, false, includeName);
-		((IForgeEntity) player).captureDrops(null);
-
-		if (ret == null) {
-			return null;
-		}
-
-		ItemTossEvent event = new ItemTossEvent(ret, player);
-
-		if (MinecraftForge.EVENT_BUS.post(event)) {
-			return null;
-		}
-
-		if (!player.world.isClient) {
-			player.getEntityWorld().spawnEntity(event.getEntityItem());
-		}
-
-		return event.getEntityItem();
+	public static boolean onPlayerTossEvent(PlayerEntity player, ItemEntity itemEntity) {
+		return MinecraftForge.EVENT_BUS.post(new ItemTossEvent(itemEntity, player));
 	}
 
 	public static boolean onProjectileImpact(Entity entity, HitResult ray) {

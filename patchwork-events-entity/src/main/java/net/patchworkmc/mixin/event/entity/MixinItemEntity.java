@@ -24,7 +24,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -33,6 +35,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
+import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.event.entity.PlayerEvents;
 
 @Mixin(ItemEntity.class)
@@ -43,16 +46,23 @@ public abstract class MixinItemEntity {
 	@Shadow
 	private int pickupDelay;
 
-	@Unique
-	private int eventResult;
+	// TODO: Mods can change lifespan value via ItemStack#getEntityLifespan, and this must be set in
+	// TODO: "<init>(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V"
+	// TODO: See: https://github.com/PatchworkMC/YarnForge/blob/af120a35c3e6951b7ef4318801b6b8dce6fc5420/patches/minecraft/net/minecraft/entity/ItemEntity.java.patch#L18
 
 	@Unique
-	private int preEventStackCount;
+	public int lifespan = 6000;
+
+	@Unique
+	private int itemPickupEventResult;
+
+	@Unique
+	private int preItemPickupEventStackCount;
 
 	@Unique
 	private ItemStack copy;
 
-	// Forge just returns early from the event if the item has pickup delay, presumably
+	// Forge just returns early from the item pickup event if the item has pickup delay, presumably
 	// to keep it's events from being called. To maintain compatibility with potential
 	// Fabric mods that might want to still have this method called from items that can't
 	// be picked up yet, we'll just skip calling the events.
@@ -70,10 +80,10 @@ public abstract class MixinItemEntity {
 	)
 	private void patchwork_fireItemPickupEvent(PlayerEntity player, CallbackInfo ci) {
 		if (!hasPickupDelay) {
-			preEventStackCount = getStack().getCount();
-			eventResult = PlayerEvents.onItemPickup(player, (ItemEntity) (Object) this);
+			preItemPickupEventStackCount = getStack().getCount();
+			itemPickupEventResult = PlayerEvents.onItemPickup(player, (ItemEntity) (Object) this);
 
-			if (eventResult < 0) {
+			if (itemPickupEventResult < 0) {
 				ci.cancel();
 			}
 
@@ -88,7 +98,7 @@ public abstract class MixinItemEntity {
 		if (hasPickupDelay) {
 			return playerInventory.insertStack(stack); // Haven't processed the event because Forge wouldn't.
 		} else {
-			return eventResult == 1 || preEventStackCount <= 0 || playerInventory.insertStack(stack);
+			return itemPickupEventResult == 1 || preItemPickupEventStackCount <= 0 || playerInventory.insertStack(stack);
 		}
 	}
 
@@ -104,6 +114,28 @@ public abstract class MixinItemEntity {
 		if (!hasPickupDelay) {
 			copy.setCount(copy.getCount() - getStack().getCount());
 			PlayerEvents.firePlayerItemPickupEvent(player, (ItemEntity) (Object) this, copy);
+		}
+	}
+
+	@ModifyConstant(method = "tick", constant = @Constant(intValue = 6000))
+	private int patchwork_dynamicLifespan(int originalValue) {
+		return this.lifespan;
+	}
+
+	@Redirect(method = "tick",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;remove()V", ordinal = 1))
+	private void patchwork_fireItemExpireEvent(ItemEntity entity) {
+		int additionalLifespan = EntityEvents.onItemExpire(entity, this.getStack());
+
+		if (additionalLifespan < 0) {
+			entity.remove();
+		} else {
+			this.lifespan += additionalLifespan;
+		}
+
+		// The forge implementation is able to call entity.remove() twice. Not sure if it's a bug or not.
+		if (this.getStack().isEmpty()) {
+			entity.remove();
 		}
 	}
 }

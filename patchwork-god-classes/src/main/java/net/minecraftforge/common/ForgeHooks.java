@@ -209,7 +209,8 @@ public class ForgeHooks {
 
 	@Nullable
 	public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName) {
-		return EntityEvents.onPlayerTossEvent(player, item, includeName);
+		// EntityEvents.onPlayerTossEvent is called through an Inject mixin into PlayerEntity.dropItem
+		return player.dropItem(item, false, includeName);
 	}
 
 	@Stubbed

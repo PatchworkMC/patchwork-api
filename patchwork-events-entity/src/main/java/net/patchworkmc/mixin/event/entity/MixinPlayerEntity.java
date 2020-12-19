@@ -28,12 +28,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 
@@ -153,5 +156,17 @@ public class MixinPlayerEntity {
 
 		// There are no effects from passing in zero levels, so do that if we've been canceled
 		return event.isCanceled() ? 0 : event.getLevels();
+	}
+
+	@Inject(method = "dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;",
+			at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private void onDropItem(ItemStack itemStack, boolean bl, boolean bl2, CallbackInfoReturnable<ItemEntity> ci, double y, ItemEntity itemEntity) {
+		// Note: This is implemented slightly differently from forge, since forge only calls this event on
+		// dropSelectedItem(boolean) and dropItem(ItemStack, boolean), but this way makes it much nicer to implement
+		// and should produce the same behavior for modders
+
+		if (EntityEvents.onPlayerTossEvent((PlayerEntity) (Object) this, itemEntity)) {
+			ci.setReturnValue(null);
+		}
 	}
 }
