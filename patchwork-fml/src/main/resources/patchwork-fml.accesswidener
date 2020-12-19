@@ -1,4 +1,5 @@
 accessWidener   v1  named
-accessible  field   net/minecraft/client/MinecraftClient    textureManager  Lnet/minecraft/client/texture/TextureManager;
-accessible  method  net/minecraft/client/gui/screen/Screens register        (Lnet/minecraft/container/ContainerType;Lnet/minecraft/client/gui/screen/Screens$Provider;)V
-accessible  method  net/minecraft/container/ContainerType   <init>          (Lnet/minecraft/container/ContainerType$Factory;)V
+accessible  field   net/minecraft/client/MinecraftClient    textureManager   Lnet/minecraft/client/texture/TextureManager;
+accessible  method  net/minecraft/client/gui/screen/Screens register         (Lnet/minecraft/container/ContainerType;Lnet/minecraft/client/gui/screen/Screens$Provider;)V
+accessible  method  net/minecraft/container/ContainerType   <init>           (Lnet/minecraft/container/ContainerType$Factory;)V
+accessible  method  net/minecraft/entity/Entity             getSavedEntityId ()Ljava/lang/String;
