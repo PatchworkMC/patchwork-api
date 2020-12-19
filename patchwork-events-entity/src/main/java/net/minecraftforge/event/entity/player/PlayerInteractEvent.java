@@ -33,6 +33,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 /**
@@ -133,7 +134,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link EntityInteract}.</p>
 	 */
-	/* TODO public static class EntityInteractSpecific extends PlayerInteractEvent {
+	public static class EntityInteractSpecific extends PlayerInteractEvent {
 		private final Vec3d localPos;
 		private final Entity target;
 
@@ -149,7 +150,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		 * [-width / 2, width / 2] while Y values will be in the range [0, height]
 		 *
 		 * @return The local position
-		TODO
+		 */
 		public Vec3d getLocalPos() {
 			return localPos;
 		}
@@ -157,7 +158,12 @@ public class PlayerInteractEvent extends PlayerEvent {
 		public Entity getTarget() {
 			return target;
 		}
-	}*/
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
+	}
 
 	/**
 	 * This event is fired on both sides when the player right clicks an entity.

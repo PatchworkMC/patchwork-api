@@ -270,15 +270,13 @@ public class ForgeHooks {
 		return EntityEvents.onTravelToDimension(entity, dimensionType);
 	}
 
-	// TODO: I left this here for now because it's a thin wrapper around the onInteractEntityAt below
 	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, HitResult ray, Hand hand) {
-		Vec3d vec3d = new Vec3d(ray.getPos().x - entity.x, ray.getPos().y - entity.y, ray.getPos().z - entity.z);
-		return onInteractEntityAt(player, entity, vec3d, hand);
+		return EntityEvents.onInteractEntityAt(player, entity, ray, hand);
 	}
 
 	@Stubbed
 	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, Vec3d vec3d, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		return EntityEvents.onInteractEntityAt(player, entity, vec3d, hand);
 	}
 
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {

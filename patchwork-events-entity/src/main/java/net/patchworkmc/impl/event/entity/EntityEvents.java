@@ -67,6 +67,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
@@ -74,12 +75,27 @@ import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 
 import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
 
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
+
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, HitResult ray, Hand hand) {
+		Vec3d vec3d = new Vec3d(ray.getPos().x - entity.x, ray.getPos().y - entity.y, ray.getPos().z - entity.z);
+
+		return onInteractEntityAt(player, entity, vec3d, hand);
+	}
+
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity target, Vec3d localPos, Hand hand) {
+		PlayerInteractEvent event = new PlayerInteractEvent.EntityInteractSpecific(player, hand, target, localPos);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event.isCanceled() ? event.getCancellationResult() : null;
+	}
 
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		PlayerInteractEvent.EntityInteract event = new PlayerInteractEvent.EntityInteract(player, hand, entity);
@@ -294,6 +310,18 @@ public class EntityEvents implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		// TODO: Note: UseEntityCallback is closer to EntityInteractSpecific. We're on our own for EntityInteract.
+		UseEntityCallback.EVENT.register(((playerEntity, world, hand, entity, entityHitResult) -> {
+			if (playerEntity.isSpectator()) {
+				return ActionResult.PASS;
+			}
+
+			ActionResult result = EntityEvents.onInteractEntityAt(playerEntity, entity, entityHitResult, hand);
+
+			if (result == null) {
+				return ActionResult.PASS;
+			}
+
+			return result;
+		}));
 	}
 }
