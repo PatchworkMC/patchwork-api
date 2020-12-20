@@ -108,11 +108,27 @@ public class EntityEvents implements ModInitializer {
 		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 
+	public static PlayerInteractEvent.RightClickItem onItemRightClick(PlayerEntity player, Hand hand) {
+		PlayerInteractEvent.RightClickItem event = new PlayerInteractEvent.RightClickItem(player, hand);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
+	}
+
+	public static PlayerInteractEvent.RightClickBlock onBlockRightClick(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
+		PlayerInteractEvent.RightClickBlock event = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
+	}
+
 	public static void onEmptyRightClick(PlayerEntity player, Hand hand) {
 		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
 	}
 
-	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
+	public static PlayerInteractEvent.LeftClickBlock onBlockLeftClick(PlayerEntity player, BlockPos pos, Direction face) {
 		PlayerInteractEvent.LeftClickBlock event = new PlayerInteractEvent.LeftClickBlock(player, pos, face);
 
 		MinecraftForge.EVENT_BUS.post(event);
@@ -283,9 +299,7 @@ public class EntityEvents implements ModInitializer {
 				return ActionResult.PASS;
 			}
 
-			PlayerInteractEvent.RightClickItem event = new PlayerInteractEvent.RightClickItem(player, hand);
-
-			MinecraftForge.EVENT_BUS.post(event);
+			PlayerInteractEvent.RightClickItem event = EntityEvents.onItemRightClick(player, hand);
 
 			if (event.isCanceled() && event.getCancellationResult() == ActionResult.PASS) {
 				// TODO: Fabric API doesn't have a way to express "cancelled, but return PASS"
@@ -303,9 +317,7 @@ public class EntityEvents implements ModInitializer {
 				return ActionResult.PASS;
 			}
 
-			PlayerInteractEvent.RightClickBlock event = new PlayerInteractEvent.RightClickBlock(player, hand, hitResult.getBlockPos(), hitResult.getSide());
-
-			MinecraftForge.EVENT_BUS.post(event);
+			PlayerInteractEvent.RightClickBlock event = EntityEvents.onBlockRightClick(player, hand, hitResult.getBlockPos(), hitResult.getSide());
 
 			if (event.isCanceled()) {
 				if (event.getCancellationResult() == ActionResult.PASS) {
@@ -344,7 +356,7 @@ public class EntityEvents implements ModInitializer {
 		}));
 
 		AttackBlockCallback.EVENT.register((playerEntity, world, hand, blockPos, direction) -> {
-			PlayerInteractEvent.LeftClickBlock event = EntityEvents.onLeftClickBlock(playerEntity, blockPos, direction);
+			PlayerInteractEvent.LeftClickBlock event = EntityEvents.onBlockLeftClick(playerEntity, blockPos, direction);
 
 			if (event.isCanceled() || (!playerEntity.isCreative() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 				return ActionResult.SUCCESS;

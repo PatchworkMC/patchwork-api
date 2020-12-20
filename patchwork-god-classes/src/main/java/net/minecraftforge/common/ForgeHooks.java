@@ -276,7 +276,6 @@ public class ForgeHooks {
 		return EntityEvents.onInteractEntityAt(player, entity, ray, hand);
 	}
 
-	@Stubbed
 	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, Vec3d vec3d, Hand hand) {
 		return EntityEvents.onInteractEntityAt(player, entity, vec3d, hand);
 	}
@@ -285,20 +284,19 @@ public class ForgeHooks {
 		return EntityEvents.onInteractEntity(player, entity, hand);
 	}
 
-	@Stubbed
 	public static ActionResult onItemRightClick(PlayerEntity player, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		PlayerInteractEvent.RightClickItem event = EntityEvents.onItemRightClick(player, hand);
+
+		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 
 	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
-		return EntityEvents.onLeftClickBlock(player, pos, face);
+		return EntityEvents.onBlockLeftClick(player, pos, face);
 	}
 
-	/*
-	@Stubbed
 	public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
-		throw new NotImplementedException("ForgeHooks stub");
-	} */
+		return EntityEvents.onBlockRightClick(player, hand, pos, face);
+	}
 
 	public static void onEmptyClick(PlayerEntity player, Hand hand) {
 		EntityEvents.onEmptyRightClick(player, hand);
