@@ -365,9 +365,9 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	/* TODO public static class LeftClickEmpty extends PlayerInteractEvent {
+	public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
 			super(player, Hand.MAIN_HAND, new BlockPos(player), null);
 		}
-	}*/
+	}
 }

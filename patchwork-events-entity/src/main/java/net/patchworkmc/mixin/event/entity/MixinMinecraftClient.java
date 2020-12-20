@@ -50,4 +50,10 @@ public class MixinMinecraftClient {
 			EntityEvents.onEmptyRightClick(this.player, hand);
 		}
 	}
+
+	@Inject(method = "doAttack",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;resetLastAttackedTicks()V", shift = At.Shift.AFTER))
+	public void onAttackMiss(CallbackInfo ci) {
+		EntityEvents.onEmptyLeftClick(this.player);
+	}
 }

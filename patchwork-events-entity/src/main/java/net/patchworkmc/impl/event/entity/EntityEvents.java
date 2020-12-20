@@ -22,9 +22,6 @@ package net.patchworkmc.impl.event.entity;
 import java.util.List;
 import java.util.Collection;
 
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -70,6 +67,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
@@ -77,6 +76,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -118,6 +118,10 @@ public class EntityEvents implements ModInitializer {
 		MinecraftForge.EVENT_BUS.post(event);
 
 		return event;
+	}
+
+	public static void onEmptyLeftClick(PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
 	}
 
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {

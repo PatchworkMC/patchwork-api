@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.util.math.Direction;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -64,6 +63,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
@@ -300,14 +300,12 @@ public class ForgeHooks {
 		throw new NotImplementedException("ForgeHooks stub");
 	} */
 
-	@Stubbed
 	public static void onEmptyClick(PlayerEntity player, Hand hand) {
 		EntityEvents.onEmptyRightClick(player, hand);
 	}
 
-	@Stubbed
 	public static void onEmptyLeftClick(PlayerEntity player) {
-		throw new NotImplementedException("ForgeHooks stub");
+		EntityEvents.onEmptyLeftClick(player);
 	}
 
 	//private static LootTableContext getLootTableContext() {
