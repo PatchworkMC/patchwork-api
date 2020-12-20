@@ -200,7 +200,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
 	 *
 	 * <p>This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
-	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.</p>
+	 * will be called after {@link net.minecraftforge.common.extensions.IForgeItem#onItemUseFirst} is called.</p>
 	 *
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
@@ -228,7 +228,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * DENY: Block will never be used.
-		 * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraft.item.Item#doesSneakBypassUse}).
+		 * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraftforge.common.extensions.IForgeItem#doesSneakBypassUse}).
 		 * ALLOW: Block will always be used, regardless of sneaking and doesSneakBypassUse.
 		 */
 		public void setUseBlock(Result triggerBlock) {
@@ -236,7 +236,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		/**
-		 * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#use} should be called
+		 * @return If {@link net.minecraftforge.common.extensions.IForgeItem#onItemUseFirst} and {@link net.minecraft.item.Item#use} should be called
 		 */
 		public Result getUseItem() {
 			return useItem;
@@ -300,7 +300,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	/**
 	 * This event is fired when a player left clicks while targeting a block.
 	 *
-	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
+	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(net.minecraft.block.BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
 
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
@@ -322,7 +322,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		/**
-		 * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
+		 * @return If {@link net.minecraft.block.Block#onBlockBreakStart(net.minecraft.block.BlockState, World, BlockPos, PlayerEntity)} should be called. Changing this has no effect in creative mode
 		*/
 		public Result getUseBlock() {
 			return useBlock;
