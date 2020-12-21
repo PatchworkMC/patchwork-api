@@ -54,4 +54,14 @@ public class CraftingHelper {
 
 		return serializer.read(json);
 	}
+
+
+	public static <T extends ICondition> JsonObject serialize(T condition)
+	{
+		@SuppressWarnings("unchecked")
+		IConditionSerializer<T> serializer = (IConditionSerializer<T>)conditions.get(condition.getID());
+		if (serializer == null)
+			throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
+		return serializer.getJson(condition);
+	}
 }
