@@ -7,21 +7,38 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.profiler.Profiler;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
-import net.minecraft.recipe.Recipe;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(RecipeManager.class)
 public class MixinRecipeManager {
-	@Redirect(method = "apply", at = @At(value = "INVOKE", target = "Ljava/util/Set;iterator()Ljava/util/Iterator;"))
-	private Iterator patchwork_filterRecipeSet(Set<Map.Entry<Identifier, JsonObject>> set) {
-		return set.stream().filter(item -> CraftingHelper.processConditions(item.getValue(), "conditions")).iterator();
+	@Shadow
+	@Final
+	private static Logger LOGGER;
+
+	@Inject(method = "apply", at = @At(value = "HEAD"))
+	private void filterRecipeMap(Map<Identifier, JsonObject> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
+		Iterator<Map.Entry<Identifier, JsonObject>> iterator = map.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Identifier, JsonObject> entry = iterator.next();
+			Identifier key = entry.getKey();
+
+			if (!CraftingHelper.processConditions(entry.getValue(), "conditions")) {
+				LOGGER.info("Skipping loading recipe {} as it's conditions were not met", key);
+				iterator.remove();
+			}
+		}
 	}
 }

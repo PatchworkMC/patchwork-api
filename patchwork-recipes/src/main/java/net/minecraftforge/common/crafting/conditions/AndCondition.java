@@ -41,8 +41,9 @@ public class AndCondition implements ICondition {
 		}
 
 		for (ICondition child : values) {
-			if (child == null)
+			if (child == null) {
 				throw new IllegalArgumentException("Value must not be null");
+			}
 		}
 
 		this.children = values;
