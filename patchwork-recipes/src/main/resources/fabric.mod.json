@@ -17,6 +17,9 @@
   "mixins": [
     "patchwork-recipes.mixins.json"
   ],
+  "entrypoints": {
+    "main": ["net.patchworkmc.impl.recipes.PatchworkRecipes"]
+  },
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
