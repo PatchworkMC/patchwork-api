@@ -22,9 +22,11 @@ package net.patchworkmc.mixin.event.render;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -59,5 +61,22 @@ public abstract class MixinGameRenderer {
 	private void hookRenderWorldLastEvent(float tickDelta, long endTime, CallbackInfo ci, WorldRenderer context) {
 		this.client.getProfiler().swap("forge_render_last");
 		RenderEvents.onRenderWorldLast(context, tickDelta);
+	}
+
+	/**
+	This effectively adds a condition to an if statement in renderHand.
+	The if statement contains a check for {@code this.client.options.perspective == 0}
+
+	If the RenderHandEvent is canceled, the constant 0 value is replaced with {@code client.options.perspective + 1}
+	Therefore, the new check is {@code this.client.options.perspective == this.client.options.perspective + 1}
+	This check obviously fails and causes the if statement to not be executed
+	 */
+	@ModifyConstant(method = "renderHand", constant = @Constant(intValue = 0))
+	private int hookRenderHandEvent(int oldValue, Camera camera, float tickDelta) {
+		if (RenderEvents.onRenderHand(client.worldRenderer, tickDelta)) {
+			return client.options.perspective + 1;
+		}
+
+		return 0;
 	}
 }

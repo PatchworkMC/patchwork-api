@@ -126,14 +126,12 @@ public class ForgeHooksClient {
 		throw new NotImplementedException("ForgeHooksClient stub");
 	}
 
-	@Stubbed
 	public static boolean renderFirstPersonHand(WorldRenderer context, float partialTicks) {
-		throw new NotImplementedException("ForgeHooksClient stub");
+		return RenderEvents.onRenderHand(context, partialTicks);
 	}
 
-	@Stubbed
 	public static boolean renderSpecificFirstPersonHand(Hand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack) {
-		throw new NotImplementedException("ForgeHooksClient stub");
+		return RenderEvents.onRenderSpecificHand(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack);
 	}
 
 	public static void onTextureStitchedPre(SpriteAtlasTexture map, Set<Identifier> resourceLocations) {

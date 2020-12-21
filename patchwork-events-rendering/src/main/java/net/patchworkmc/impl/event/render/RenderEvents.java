@@ -22,9 +22,11 @@ package net.patchworkmc.impl.event.render;
 import java.util.Set;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoader;
 
@@ -33,7 +35,9 @@ import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -74,5 +78,13 @@ public class RenderEvents {
 
 	public static void onRenderWorldLast(WorldRenderer context, float tickDelta) {
 		MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, tickDelta));
+	}
+
+	public static boolean onRenderHand(WorldRenderer context, float tickDelta) {
+		return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, tickDelta));
+	}
+
+	public static boolean onRenderSpecificHand(Hand hand, float tickDelta, float pitch, float swingProgress, float equipProgress, ItemStack stack) {
+		return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, tickDelta, pitch, swingProgress, equipProgress, stack));
 	}
 }
