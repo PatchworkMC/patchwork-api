@@ -40,26 +40,11 @@ public abstract class MixinHeldItemRenderer {
 			method = "renderFirstPersonItem(F)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;F)V",
-					ordinal = 0
+					target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;F)V"
 			)
 	)
-	private void redirect_renderFirstPersonItemMainHand(HeldItemRenderer heldItemRenderer, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack itemStack, float equipProgress) {
-		if (!RenderEvents.onRenderSpecificHand(Hand.MAIN_HAND, tickDelta, pitch, swingProgress, equipProgress, itemStack)) {
-			this.renderFirstPersonItem(player, tickDelta, pitch, hand, swingProgress, itemStack, equipProgress);
-		}
-	}
-
-	@Redirect(
-			method = "renderFirstPersonItem(F)V",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;F)V",
-					ordinal = 1
-			)
-	)
-	private void redirect_renderFirstPersonItemOffHand(HeldItemRenderer heldItemRenderer, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack itemStack, float equipProgress) {
-		if (!RenderEvents.onRenderSpecificHand(Hand.OFF_HAND, tickDelta, pitch, swingProgress, equipProgress, itemStack)) {
+	private void redirect_renderFirstPersonItem(HeldItemRenderer heldItemRenderer, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack itemStack, float equipProgress) {
+		if (!RenderEvents.onRenderSpecificHand(hand, tickDelta, pitch, swingProgress, equipProgress, itemStack)) {
 			this.renderFirstPersonItem(player, tickDelta, pitch, hand, swingProgress, itemStack, equipProgress);
 		}
 	}
