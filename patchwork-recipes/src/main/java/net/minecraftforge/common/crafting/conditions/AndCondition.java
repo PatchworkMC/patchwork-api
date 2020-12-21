@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import net.minecraftforge.common.crafting.CraftingHelper;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 public class AndCondition implements ICondition {
 	private static final Identifier NAME = new Identifier("forge", "and");
@@ -76,6 +77,7 @@ public class AndCondition implements ICondition {
 		@Override
 		public void write(JsonObject json, AndCondition value) {
 			JsonArray values = new JsonArray();
+
 			for (ICondition child : value.children) {
 				values.add(CraftingHelper.serialize(child));
 			}
@@ -86,6 +88,7 @@ public class AndCondition implements ICondition {
 		@Override
 		public AndCondition read(JsonObject json) {
 			List<ICondition> children = new ArrayList<>();
+
 			for (JsonElement j : JsonHelper.getArray(json, "values")) {
 				if (!j.isJsonObject()) {
 					throw new JsonSyntaxException("And condition values must be an array of JsonObjects");

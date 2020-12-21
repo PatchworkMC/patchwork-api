@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,57 +20,49 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
-public class NotCondition implements ICondition
-{
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+
+public class NotCondition implements ICondition {
 	private static final Identifier NAME = new Identifier("forge", "not");
 	private final ICondition child;
 
-	public NotCondition(ICondition child)
-	{
+	public NotCondition(ICondition child) {
 		this.child = child;
 	}
 
 	@Override
-	public Identifier getID()
-	{
+	public Identifier getID() {
 		return NAME;
 	}
 
 	@Override
-	public boolean test()
-	{
+	public boolean test() {
 		return !child.test();
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "!" + child;
 	}
 
-	public static class Serializer implements IConditionSerializer<NotCondition>
-	{
+	public static class Serializer implements IConditionSerializer<NotCondition> {
 		public static final Serializer INSTANCE = new Serializer();
 
 		@Override
-		public void write(JsonObject json, NotCondition value)
-		{
+		public void write(JsonObject json, NotCondition value) {
 			json.add("value", CraftingHelper.serialize(value.child));
 		}
 
 		@Override
-		public NotCondition read(JsonObject json)
-		{
+		public NotCondition read(JsonObject json) {
 			return new NotCondition(CraftingHelper.getCondition(JsonHelper.getObject(json, "value")));
 		}
 
 		@Override
-		public Identifier getID()
-		{
+		public Identifier getID() {
 			return NotCondition.NAME;
 		}
 	}

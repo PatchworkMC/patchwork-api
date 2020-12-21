@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,11 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
-import net.fabricmc.loader.api.FabricLoader;
+
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 public class ModLoadedCondition implements ICondition {
 	private static final Identifier NAME = new Identifier("forge", "mod_loaded");
