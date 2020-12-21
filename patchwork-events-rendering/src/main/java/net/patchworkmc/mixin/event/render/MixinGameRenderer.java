@@ -71,7 +71,7 @@ public abstract class MixinGameRenderer {
 	Therefore, the new check is {@code this.client.options.perspective == this.client.options.perspective + 1}
 	This check obviously fails and causes the if statement to not be executed
 	 */
-	@ModifyConstant(method = "renderHand", constant = @Constant(intValue = 0))
+	@ModifyConstant(method = "renderHand", constant = @Constant(intValue = 0, ordinal = 1))
 	private int hookRenderHandEvent(int oldValue, Camera camera, float tickDelta) {
 		if (RenderEvents.onRenderHand(client.worldRenderer, tickDelta)) {
 			return client.options.perspective + 1;
