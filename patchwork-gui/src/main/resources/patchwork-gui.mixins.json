@@ -9,7 +9,8 @@
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMouse",
-    "MixinScreen"
+    "MixinScreen",
+    "MixinInGameHud"
   ],
   "injectors": {
     "defaultRequire": 1,
