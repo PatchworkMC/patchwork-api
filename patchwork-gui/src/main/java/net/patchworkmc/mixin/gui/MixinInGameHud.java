@@ -56,7 +56,7 @@ public abstract class MixinInGameHud {
 		PatchworkIngameGui.eventParent = new RenderGameOverlayEvent(tickDelta, this.client.window);
 	}
 
-	// This fires all the Pre- events that are necessary for the status bars
+	// This fires all the events that are necessary for the status bars
 	// The results of these events are handled later
 	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void fireGuiEvents(CallbackInfo ci, PlayerEntity entity) {
@@ -75,7 +75,7 @@ public abstract class MixinInGameHud {
 	 *
 	 * 0 - 1 is calculated, which leaves {@code z = -1}
 	 *
-	 * The next condition will fail, as -1 >= 0 is not true,
+	 * The next condition will fail, as {@code -1 >= 0} is not true,
 	 * thus canceling the for loop and causing the health bar to not render
 	 */
 	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 4))
@@ -158,37 +158,110 @@ public abstract class MixinInGameHud {
 		return this.scaledHeight - PatchworkIngameGui.foodSnapshot.right_height;
 	}
 
+	/**
+	 * This helps disable the air bar. 
+	 * 
+	 * InGameHud contains the following if statement 
+	 * to decide whether to render the air bar:
+	 * {@code if (playerEntity.isInFluid(FluidTags.WATER) || ah < ai)}
+	 * 
+	 * This mixin redirects the PlayerEntity#isInFluid call. If the
+	 * pre-event is canceled, the returned value is false.
+	 *
+	 * The {@code ah < ai} condition is handled in {@link #modifyHookDisableAir}
+	 */
 	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInFluid(Lnet/minecraft/tag/Tag;)Z"))
 	private boolean redirectHookDisableAir(PlayerEntity playerEntity, Tag<Fluid> fluidTag) {
-		return !ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult;
+		if (ForgeIngameGui.renderAir && PatchworkIngameGui.airSnapshot.preResult) {
+			ForgeIngameGui.right_height += 10; // The bar will be rendered, so we need to increment right_height
+
+			return false; // false means "we are not underwater"
+		}
+
+		return playerEntity.isInFluid(fluidTag);
 	}
 
+	/**
+	 * This helps disable the air bar.
+	 *
+	 * InGameHud contains the following if statement
+	 * to decide whether to render the air bar:
+	 * {@code if (playerEntity.isInFluid(FluidTags.WATER) || ah < ai)}
+	 *
+	 * This mixin modifies ai, and replaces it with 0 if the event is canceled.
+	 * The condition will then look like {@code ah < 0}
+	 * ah is {@code playerEntity.getAir()}, which will be a positive value,
+	 * so the condition will fail.
+	 *
+	 * The {@code playerEntity.isInFluid} condition is handled in {@link #redirectHookDisableAir}
+	 */
 	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getMaxAir()I"), ordinal = 13)
 	private int modifyHookDisableAir(int originalValue) {
 		return (!ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult) ? 0 : originalValue;
 	}
 
-	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(D)I", ordinal = 0))
-	private void hookAirIncrementRightHeight(CallbackInfo ci) {
-		ForgeIngameGui.right_height += 10;
-	}
-
-
+	/**
+	 * Properly hooks the right_height field for the air bar.
+	 *
+	 * InGameHud renders the air bar with this method call:
+	 * {@code this.blit(n - ar * 8 - 9, t, 16, 18, 9, 9)}
+	 *
+	 * This modifies the t variable and replaces it with the
+	 * proper value for ForgeIngameGui.
+	 *
+	 * This mixin injects right after {@code method_1733} is called,
+	 * as t is then modified. The outputted mixin code looks like this:
+	 * <pre>
+	 * {@code
+	 *   ad = this.method_1733(aa) - 1;
+	 * + // mixin here
+	 *   t -= ad * 10;
+	 *  }
+	 * </pre>
+	 */
 	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(D)I", ordinal = 0), ordinal = 10)
 	private int hookAirRightHeight(int originalValue) {
 		return this.scaledHeight - PatchworkIngameGui.foodSnapshot.right_height - 10;
 	}
 
+	/**
+	 * This disables the mount health bar.
+	 *
+	 * InGameHud contains the following if statement
+	 * to decide whether to render the bar:
+	 * <pre>
+	 * {@code
+	 * int i = this.method_1744(livingEntity);
+	 * if (i != 0) {
+	 *  	// rendering code
+	 * }
+	 * }
+	 * </pre>
+	 *
+	 * This mixin redirects the {@code method_1744} call. If the event
+	 * is canceled, the value that is returned is 0. The new check
+	 * will then be {@code 0 != 0}, which obviously fails and causes the
+	 * mount health bar to not render.
+	 */
 	@Redirect(method = "renderMountHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;method_1744(Lnet/minecraft/entity/LivingEntity;)I"))
 	private int hookDisableMountHealth(InGameHud inGameHud, LivingEntity livingEntity) {
 		return (!ForgeIngameGui.renderHealthMount || PatchworkIngameGui.mountHealthSnapshot.preResult) ? 0 : this.method_1744(livingEntity);
 	}
 
+	/**
+	 * This properly hooks the right_height field for the mount health bar.
+	 *
+	 * InGameHud renders the mount health bar with this method call:
+	 * {@code this.blit(s, m, 88, 9, 9, 9)}
+	 *
+	 * The m variable is equal to another variable, k, which equals:
+	 * {@code int k = this.scaledHeight - 39}
+	 *
+	 * This mixin modifies the constant 39 value and replaces it with
+	 * the right_height variable.
+	 */
 	@ModifyConstant(method = "renderMountHealth", constant = @Constant(intValue = 39))
 	private int hookMountHealthRightHeight(int originalValue) {
 		return PatchworkIngameGui.mountHealthSnapshot.right_height;
 	}
-
-
-
 }
