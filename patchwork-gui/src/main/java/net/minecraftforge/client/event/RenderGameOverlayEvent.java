@@ -23,6 +23,10 @@ import net.minecraft.client.util.Window;
 import net.minecraftforge.eventbus.api.Event;
 
 public class RenderGameOverlayEvent extends Event {
+	private final float partialTicks;
+	private final Window window;
+	private final ElementType type;
+
 	public float getPartialTicks() {
 		return partialTicks;
 	}
@@ -35,7 +39,7 @@ public class RenderGameOverlayEvent extends Event {
 		return type;
 	}
 
-	public static enum ElementType {
+	public enum ElementType {
 		ALL,
 		HELMET,
 		PORTAL,
@@ -59,10 +63,6 @@ public class RenderGameOverlayEvent extends Event {
 		FPS_GRAPH,
 		VIGNETTE
 	}
-
-	private final float partialTicks;
-	private final Window window;
-	private final ElementType type;
 
 	public RenderGameOverlayEvent(float partialTicks, Window window) {
 		this.partialTicks = partialTicks;

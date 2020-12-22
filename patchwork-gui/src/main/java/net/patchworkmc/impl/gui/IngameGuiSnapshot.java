@@ -27,6 +27,7 @@ import net.minecraftforge.client.ForgeIngameGui;
  * For more info, see {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
  */
 public class IngameGuiSnapshot {
+	// Result of the fired pre-event
 	public boolean preResult;
 
 	public int left_height = ForgeIngameGui.left_height;

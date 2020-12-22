@@ -27,6 +27,11 @@ import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 
+/**
+ * Logic handler for {@link net.minecraftforge.client.ForgeIngameGui}
+ *
+ * This fires all the events and stores snapshots of the ForgeIngameGui state
+ */
 public class PatchworkIngameGui {
 	public static RenderGameOverlayEvent eventParent;
 
@@ -36,6 +41,8 @@ public class PatchworkIngameGui {
 	 * This allows ForgeIngameGui to be implemented without replacing
 	 * the entirety of the status bar rendering, but keeping the
 	 * event order intact.
+	 *
+	 * These snapshots are taken directly after the pre event is fired
 	 */
 	public static IngameGuiSnapshot healthSnapshot;
 	public static IngameGuiSnapshot armorSnapshot;
