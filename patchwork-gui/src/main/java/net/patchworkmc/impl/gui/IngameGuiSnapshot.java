@@ -19,19 +19,20 @@
 
 package net.patchworkmc.impl.gui;
 
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.client.ForgeIngameGui;
 
-public class PatchworkInGameGui {
-	public static RenderGameOverlayEvent eventParent;
+/**
+ * This stores a "snapshot" of the state of ForgeIngameGui.
+ *
+ * For more info, see {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
+ */
+public class IngameGuiSnapshot {
+	public boolean preResult;
 
-	public static boolean preRenderHealthResult;
-	public static boolean preRenderArmorResult;
-	public static boolean preRenderFoodResult;
+	public int left_height = ForgeIngameGui.left_height;
+	public int right_height = ForgeIngameGui.right_height;
 
-	public static void fireGuiPreEvents() {
-		preRenderHealthResult = MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Pre(eventParent, RenderGameOverlayEvent.ElementType.HEALTH));
-		preRenderArmorResult = MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Pre(eventParent, RenderGameOverlayEvent.ElementType.ARMOR));
-		preRenderFoodResult = MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Pre(eventParent, RenderGameOverlayEvent.ElementType.FOOD));
+	public IngameGuiSnapshot(boolean pre) {
+		this.preResult = pre;
 	}
 }

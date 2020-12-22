@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.ArrayList;
-import net.minecraft.client.gui.hud.ClientBossBar;
 import net.minecraft.client.util.Window;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -94,100 +92,7 @@ public class RenderGameOverlayEvent extends Event {
 		}
 	}
 
-	public static class BossInfo extends Pre {
-		private final ClientBossBar bossInfo;
-		private final int x;
-		private final int y;
-		private int increment;
-		public BossInfo(RenderGameOverlayEvent parent, ElementType type, ClientBossBar bossInfo, int x, int y, int increment) {
-			super(parent, type);
-			this.bossInfo = bossInfo;
-			this.x = x;
-			this.y = y;
-			this.increment = increment;
-		}
-
-		/**
-		 * @return The {@link BossInfoClient} currently being rendered
-		 */
-		public ClientBossBar getBossInfo() {
-			return bossInfo;
-		}
-
-		/**
-		 * @return The current x position we are rendering at
-		 */
-		public int getX() {
-			return x;
-		}
-
-		/**
-		 * @return The current y position we are rendering at
-		 */
-		public int getY() {
-			return y;
-		}
-
-		/**
-		 * @return How much to move down before rendering the next bar
-		 */
-		public int getIncrement() {
-			return increment;
-		}
-
-		/**
-		 * Sets the amount to move down before rendering the next bar
-		 * @param increment The increment to set
-		 */
-		public void setIncrement(int increment) {
-			this.increment = increment;
-		}
-	}
-
-	public static class Text extends Pre {
-		private final ArrayList<String> left;
-		private final ArrayList<String> right;
-		public Text(RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right) {
-			super(parent, ElementType.TEXT);
-			this.left = left;
-			this.right = right;
-		}
-
-		public ArrayList<String> getLeft() {
-			return left;
-		}
-
-		public ArrayList<String> getRight() {
-			return right;
-		}
-	}
-
-	public static class Chat extends Pre {
-		private int posX;
-		private int posY;
-
-		public Chat(RenderGameOverlayEvent parent, int posX, int posY) {
-			super(parent, ElementType.CHAT);
-			this.setPosX(posX);
-			this.setPosY(posY);
-		}
-
-		public int getPosX() {
-			return posX;
-		}
-
-		public void setPosX(int posX) {
-			this.posX = posX;
-		}
-
-		public int getPosY() {
-			return posY;
-		}
-
-		public void setPosY(int posY) {
-			this.posY = posY;
-		}
-	}
+	// TODO: BossInfo, Text, Chat
 
 	@Override
 	public boolean isCancelable() {

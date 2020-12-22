@@ -19,7 +19,25 @@
 
 package net.minecraftforge.client;
 
+/**
+ * No logic is performed inside ForgeIngameGui,
+ * as it invasively replaces the entirety of InGameHud.
+ * This class only exists for compatibility.
+ *
+ * Instead, logic is handled inside {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
+ * and {@link net.patchworkmc.mixin.gui.MixinInGameHud}.
+ */
 public class ForgeIngameGui {
+	public static boolean renderHealth = true;
+	public static boolean renderArmor = true;
+	public static boolean renderFood = true;
+
+	// TODO: Implement these
+	public static boolean renderHealthMount = true;
+	public static boolean renderAir = true;
+	public static boolean renderExperiance = true;
+	public static boolean renderJumpBar = true;
+	public static boolean renderObjective = true;
 	public static boolean renderVignette = true;
 	public static boolean renderHelmet = true;
 	public static boolean renderPortal = true;
@@ -27,14 +45,6 @@ public class ForgeIngameGui {
 	public static boolean renderHotbar = true;
 	public static boolean renderCrosshairs = true;
 	public static boolean renderBossHealth = true;
-	public static boolean renderHealth = true;
-	public static boolean renderArmor = true;
-	public static boolean renderFood = true;
-	public static boolean renderHealthMount = true;
-	public static boolean renderAir = true;
-	public static boolean renderExperiance = true;
-	public static boolean renderJumpBar = true;
-	public static boolean renderObjective = true;
 
 	public static int left_height = 39;
 	public static int right_height = 39;
