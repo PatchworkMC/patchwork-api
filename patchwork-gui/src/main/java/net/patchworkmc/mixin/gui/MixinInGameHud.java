@@ -21,7 +21,10 @@ package net.patchworkmc.mixin.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.tag.Tag;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -37,13 +40,16 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
  * Implements events in {@link net.minecraftforge.client.ForgeIngameGui}
  */
 @Mixin(InGameHud.class)
-public class MixinInGameHud {
+public abstract class MixinInGameHud {
 	@Shadow
 	@Final
 	private MinecraftClient client;
 
 	@Shadow
 	private int scaledHeight;
+
+	@Shadow
+	protected abstract int method_1744(LivingEntity livingEntity);
 
 	@Inject(method = "render", at = @At("HEAD"))
 	private void registerEventParent(float tickDelta, CallbackInfo ci) {
@@ -54,7 +60,7 @@ public class MixinInGameHud {
 	// The results of these events are handled later
 	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void fireGuiEvents(CallbackInfo ci, PlayerEntity entity) {
-		PatchworkIngameGui.fireGuiEvents(entity);
+		PatchworkIngameGui.fireStatusBarEvents(entity);
 	}
 
 	/**
@@ -74,7 +80,21 @@ public class MixinInGameHud {
 	 */
 	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 4))
 	private int hookDisableHealthBar(float arg) {
-		return ForgeIngameGui.renderHealth && PatchworkIngameGui.preRenderHealthSnapshot.preResult ? 0 : MathHelper.ceil(arg);
+		return (!ForgeIngameGui.renderHealth || PatchworkIngameGui.healthSnapshot.preResult) ? 0 : MathHelper.ceil(arg);
+	}
+
+	/**
+	 * Properly hooks the left_height field for the health bar.
+	 *
+	 * InGameHud renders the health bar with this method call:
+	 * {@code this.blit(ad, ae, aa + 54, 9 * af, 9, 9)}
+	 *
+	 * This modifies the ae variable and replaces it with the
+	 * proper value for ForgeIngameGui
+	 */
+	@ModifyVariable(method = "renderStatusBars", at = @At(value = "CONSTANT", args = "intValue=4", shift = At.Shift.BEFORE), ordinal = 19)
+	private int hookHealthLeftHeight(int originalValue) {
+		return this.scaledHeight - PatchworkIngameGui.healthSnapshot.left_height;
 	}
 
 	/**
@@ -90,7 +110,7 @@ public class MixinInGameHud {
 	 */
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 0, ordinal = 1))
 	private int hookDisableArmor(int originalValue) {
-		return ForgeIngameGui.renderArmor && PatchworkIngameGui.preRenderArmorSnapshot.preResult ? 10 : originalValue;
+		return (!ForgeIngameGui.renderArmor || PatchworkIngameGui.armorSnapshot.preResult) ? 10 : originalValue;
 	}
 
 	/**
@@ -104,38 +124,8 @@ public class MixinInGameHud {
 	 */
 	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", args = "ldc=armor"), ordinal = 9)
 	private int hookArmorLeftHeight(int originaValue) {
-		return this.scaledHeight - PatchworkIngameGui.preRenderArmorSnapshot.left_height;
+		return this.scaledHeight - PatchworkIngameGui.armorSnapshot.left_height;
 	}
-
-	/**
-	 * Properly hooks the left_height field for the health bar.
-	 *
-	 * InGameHud renders the health bar with this method call:
-	 * {@code this.blit(ad, ae, aa + 54, 9 * af, 9, 9)}
-	 *
-	 * This modifies the ae variable and replaces it with the
-	 * proper value for ForgeIngameGui
-	 */
-	@ModifyVariable(method = "renderStatusBars", at = @At(value = "CONSTANT", args = "intValue=4", shift = At.Shift.BEFORE), ordinal = 19)
-	private int hookHealthLeftHeight(int originalValue) {
-		return this.scaledHeight - PatchworkIngameGui.preRenderHealthSnapshot.left_height;
-	}
-
-	/**
-	 * Properly hooks the right_height field for the food bar.
-	 *
-	 * InGameHud renders the food bar with this method call:
-	 * {@code this.blit(al, ai, ad + 36, 27, 9, 9)}
-	 *
-	 * The ai variable is set to {@code ai = o}. This mixin
-	 * modifies the o variable as it's needed later in the food
-	 * bar.
-	 */
-	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=food"), ordinal = 5)
-	private int hookFoodLeftHeight(int originalValue) {
-		return this.scaledHeight - PatchworkIngameGui.preRenderFoodSnapshot.right_height;
-	}
-
 
 	/**
 	 * This disables the food bar.
@@ -150,6 +140,55 @@ public class MixinInGameHud {
 	 */
 	@ModifyConstant(method = "renderStatusBars", constant = @Constant(intValue = 0, ordinal = 4))
 	private int hookDisableFood(int originalValue) {
-		return ForgeIngameGui.renderFood && PatchworkIngameGui.preRenderFoodSnapshot.preResult ? 10 : originalValue;
+		return (!ForgeIngameGui.renderFood || PatchworkIngameGui.foodSnapshot.preResult) ? 10 : originalValue;
 	}
+
+	/**
+	 * Properly hooks the right_height field for the food bar.
+	 *
+	 * InGameHud renders the food bar with this method call:
+	 * {@code this.blit(al, ai, ad + 36, 27, 9, 9)}
+	 *
+	 * The ai variable is set to {@code ai = o}. This mixin
+	 * modifies the o variable as it's needed later in the food
+	 * bar.
+	 */
+	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=food"), ordinal = 5)
+	private int hookFoodRightHeight(int originalValue) {
+		return this.scaledHeight - PatchworkIngameGui.foodSnapshot.right_height;
+	}
+
+	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInFluid(Lnet/minecraft/tag/Tag;)Z"))
+	private boolean redirectHookDisableAir(PlayerEntity playerEntity, Tag<Fluid> fluidTag) {
+		return !ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult;
+	}
+
+	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getMaxAir()I"), ordinal = 13)
+	private int modifyHookDisableAir(int originalValue) {
+		return (!ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult) ? 0 : originalValue;
+	}
+
+	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(D)I", ordinal = 0))
+	private void hookAirIncrementRightHeight(CallbackInfo ci) {
+		ForgeIngameGui.right_height += 10;
+	}
+
+
+	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(D)I", ordinal = 0), ordinal = 10)
+	private int hookAirRightHeight(int originalValue) {
+		return this.scaledHeight - PatchworkIngameGui.foodSnapshot.right_height - 10;
+	}
+
+	@Redirect(method = "renderMountHealth", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;method_1744(Lnet/minecraft/entity/LivingEntity;)I"))
+	private int hookDisableMountHealth(InGameHud inGameHud, LivingEntity livingEntity) {
+		return (!ForgeIngameGui.renderHealthMount || PatchworkIngameGui.mountHealthSnapshot.preResult) ? 0 : this.method_1744(livingEntity);
+	}
+
+	@ModifyConstant(method = "renderMountHealth", constant = @Constant(intValue = 39))
+	private int hookMountHealthRightHeight(int originalValue) {
+		return PatchworkIngameGui.mountHealthSnapshot.right_height;
+	}
+
+
+
 }

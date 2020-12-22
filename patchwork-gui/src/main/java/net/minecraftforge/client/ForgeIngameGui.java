@@ -31,10 +31,10 @@ public class ForgeIngameGui {
 	public static boolean renderHealth = true;
 	public static boolean renderArmor = true;
 	public static boolean renderFood = true;
-
-	// TODO: Implement these
 	public static boolean renderHealthMount = true;
 	public static boolean renderAir = true;
+
+	// TODO: Implement these
 	public static boolean renderExperiance = true;
 	public static boolean renderJumpBar = true;
 	public static boolean renderObjective = true;

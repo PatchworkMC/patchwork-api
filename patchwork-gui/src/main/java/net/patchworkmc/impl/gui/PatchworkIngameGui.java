@@ -37,11 +37,13 @@ public class PatchworkIngameGui {
 	 * the entirety of the status bar rendering, but keeping the
 	 * event order intact.
 	 */
-	public static IngameGuiSnapshot preRenderHealthSnapshot;
-	public static IngameGuiSnapshot preRenderArmorSnapshot;
-	public static IngameGuiSnapshot preRenderFoodSnapshot;
+	public static IngameGuiSnapshot healthSnapshot;
+	public static IngameGuiSnapshot armorSnapshot;
+	public static IngameGuiSnapshot foodSnapshot;
+	public static IngameGuiSnapshot mountHealthSnapshot;
+	public static IngameGuiSnapshot airSnapshot;
 
-	public static void fireGuiEvents(PlayerEntity player) {
+	public static void fireStatusBarEvents(PlayerEntity player) {
 		ForgeIngameGui.left_height = 39;
 		ForgeIngameGui.right_height = 39;
 
@@ -56,6 +58,14 @@ public class PatchworkIngameGui {
 		if (ForgeIngameGui.renderFood) {
 			fireFoodEvents();
 		}
+
+		if (ForgeIngameGui.renderHealthMount) {
+			fireMountHealthEvents();
+		}
+
+		if (ForgeIngameGui.renderAir) {
+			fireAirEvents();
+		}
 	}
 
 	private static boolean firePre(RenderGameOverlayEvent.ElementType elementType) {
@@ -67,7 +77,7 @@ public class PatchworkIngameGui {
 	}
 
 	private static void fireHealthEvents(PlayerEntity player) {
-		preRenderHealthSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.HEALTH));
+		healthSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.HEALTH));
 
 		EntityAttributeInstance attrMaxHealth = player.getAttributeInstance(EntityAttributes.MAX_HEALTH);
 		float maxHealth = (float) attrMaxHealth.getValue();
@@ -86,7 +96,7 @@ public class PatchworkIngameGui {
 	}
 
 	private static void fireArmorEvents() {
-		preRenderArmorSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.ARMOR));
+		armorSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.ARMOR));
 
 		ForgeIngameGui.left_height += 10;
 
@@ -94,10 +104,22 @@ public class PatchworkIngameGui {
 	}
 
 	private static void fireFoodEvents() {
-		preRenderFoodSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.FOOD));
+		foodSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.FOOD));
 
 		ForgeIngameGui.right_height += 10;
 
 		firePost(RenderGameOverlayEvent.ElementType.FOOD);
+	}
+
+	private static void fireMountHealthEvents() {
+		mountHealthSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.HEALTHMOUNT));
+
+		firePost(RenderGameOverlayEvent.ElementType.HEALTHMOUNT);
+	}
+
+	private static void fireAirEvents() {
+		airSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.AIR));
+
+		firePost(RenderGameOverlayEvent.ElementType.AIR);
 	}
 }
