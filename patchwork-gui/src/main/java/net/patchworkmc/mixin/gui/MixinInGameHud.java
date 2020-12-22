@@ -123,7 +123,7 @@ public abstract class MixinInGameHud {
 	 * proper value for ForgeIngameGui
 	 */
 	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", args = "ldc=armor"), ordinal = 9)
-	private int hookArmorLeftHeight(int originaValue) {
+	private int hookArmorLeftHeight(int originalValue) {
 		return this.scaledHeight - PatchworkIngameGui.armorSnapshot.left_height;
 	}
 
