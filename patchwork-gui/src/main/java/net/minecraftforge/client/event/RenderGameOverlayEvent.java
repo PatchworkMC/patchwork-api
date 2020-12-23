@@ -19,8 +19,9 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.util.Window;
 import net.minecraftforge.eventbus.api.Event;
+
+import net.minecraft.client.util.Window;
 
 public class RenderGameOverlayEvent extends Event {
 	private final float partialTicks;

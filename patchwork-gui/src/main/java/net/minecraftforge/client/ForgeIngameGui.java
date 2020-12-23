@@ -24,8 +24,8 @@ package net.minecraftforge.client;
  * as it invasively replaces the entirety of InGameHud.
  * This class only exists for compatibility.
  *
- * Instead, logic is handled inside {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
- * and {@link net.patchworkmc.mixin.gui.MixinInGameHud}.
+ * <p>Instead, logic is handled inside {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
+ * and {@link net.patchworkmc.mixin.gui.MixinInGameHud}.</p>
  */
 public class ForgeIngameGui {
 	public static boolean renderHealth = true;

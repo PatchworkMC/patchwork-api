@@ -19,18 +19,19 @@
 
 package net.patchworkmc.impl.gui;
 
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
+
 /**
- * Logic handler for {@link net.minecraftforge.client.ForgeIngameGui}
+ * Logic handler for {@link net.minecraftforge.client.ForgeIngameGui}.
  *
- * This fires all the events and stores snapshots of the ForgeIngameGui state
+ * <p>This fires all the events and stores snapshots of the ForgeIngameGui state.</p>
  */
 public class PatchworkIngameGui {
 	public static RenderGameOverlayEvent eventParent;
@@ -38,11 +39,11 @@ public class PatchworkIngameGui {
 	/**
 	 * These stores "snapshots" of the state of ForgeIngameGui.
 	 *
-	 * This allows ForgeIngameGui to be implemented without replacing
+	 * <p>This allows ForgeIngameGui to be implemented without replacing
 	 * the entirety of the status bar rendering, but keeping the
-	 * event order intact.
+	 * event order intact.</p>
 	 *
-	 * These snapshots are taken directly after the pre event is fired
+	 * <p>These snapshots are taken directly after the pre event is fired.</p>
 	 */
 	public static IngameGuiSnapshot healthSnapshot;
 	public static IngameGuiSnapshot armorSnapshot;
@@ -58,7 +59,7 @@ public class PatchworkIngameGui {
 			fireHealthEvents(player);
 		}
 
-		if(ForgeIngameGui.renderArmor) {
+		if (ForgeIngameGui.renderArmor) {
 			fireArmorEvents();
 		}
 

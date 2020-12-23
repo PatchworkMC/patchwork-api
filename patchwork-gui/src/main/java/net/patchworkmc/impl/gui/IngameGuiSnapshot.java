@@ -24,7 +24,7 @@ import net.minecraftforge.client.ForgeIngameGui;
 /**
  * This stores a "snapshot" of the state of ForgeIngameGui.
  *
- * For more info, see {@link net.patchworkmc.impl.gui.PatchworkIngameGui}
+ * <p>For more info, see {@link net.patchworkmc.impl.gui.PatchworkIngameGui}.</p>
  */
 public class IngameGuiSnapshot {
 	// Result of the fired pre-event
