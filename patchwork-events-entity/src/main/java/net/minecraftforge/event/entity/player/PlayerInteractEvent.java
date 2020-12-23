@@ -33,6 +33,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 /**
@@ -133,7 +134,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>If we are on the client and result is not {@link ActionResult#SUCCESS}, the client will then try {@link EntityInteract}.</p>
 	 */
-	/* TODO public static class EntityInteractSpecific extends PlayerInteractEvent {
+	public static class EntityInteractSpecific extends PlayerInteractEvent {
 		private final Vec3d localPos;
 		private final Entity target;
 
@@ -149,7 +150,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		 * [-width / 2, width / 2] while Y values will be in the range [0, height]
 		 *
 		 * @return The local position
-		TODO
+		 */
 		public Vec3d getLocalPos() {
 			return localPos;
 		}
@@ -157,7 +158,12 @@ public class PlayerInteractEvent extends PlayerEvent {
 		public Entity getTarget() {
 			return target;
 		}
-	}*/
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
+	}
 
 	/**
 	 * This event is fired on both sides when the player right clicks an entity.
@@ -194,7 +200,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
 	 *
 	 * <p>This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
-	 * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.</p>
+	 * will be called after {@link net.minecraftforge.common.extensions.IForgeItem#onItemUseFirst} is called.</p>
 	 *
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
@@ -222,7 +228,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * DENY: Block will never be used.
-		 * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraft.item.Item#doesSneakBypassUse}).
+		 * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraftforge.common.extensions.IForgeItem#doesSneakBypassUse}).
 		 * ALLOW: Block will always be used, regardless of sneaking and doesSneakBypassUse.
 		 */
 		public void setUseBlock(Result triggerBlock) {
@@ -230,7 +236,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		/**
-		 * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#use} should be called
+		 * @return If {@link net.minecraftforge.common.extensions.IForgeItem#onItemUseFirst} and {@link net.minecraft.item.Item#use} should be called
 		 */
 		public Result getUseItem() {
 			return useItem;
@@ -285,16 +291,16 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	/* TODO public static class RightClickEmpty extends PlayerInteractEvent {
+	public static class RightClickEmpty extends PlayerInteractEvent {
 		public RightClickEmpty(PlayerEntity player, Hand hand) {
 			super(player, hand, new BlockPos(player), null);
 		}
-	}*/
+	}
 
 	/**
 	 * This event is fired when a player left clicks while targeting a block.
 	 *
-	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
+	 * <p>This event controls which of {@link net.minecraft.block.Block#onBlockBreakStart(net.minecraft.block.BlockState, World, BlockPos, PlayerEntity)} and/or the item harvesting methods will be called.</p>
 
 	 * <p>This event is cancellable.
 	 * Cancelling the event will cause none of the above noted methods to be called.</p>
@@ -307,7 +313,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 * <p>Also note that creative mode directly breaks the block without running any other logic.
 	 * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.</p>
 	 */
-	/* TODO public static class LeftClickBlock extends PlayerInteractEvent {
+	public static class LeftClickBlock extends PlayerInteractEvent {
 		private Result useBlock = Result.DEFAULT;
 		private Result useItem = Result.DEFAULT;
 
@@ -316,8 +322,8 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		/**
-		 * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
-		TODO
+		 * @return If {@link net.minecraft.block.Block#onBlockBreakStart(net.minecraft.block.BlockState, World, BlockPos, PlayerEntity)} should be called. Changing this has no effect in creative mode
+		*/
 		public Result getUseBlock() {
 			return useBlock;
 		}
@@ -328,7 +334,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 
 		/**
 		 * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
-		TODO
+		*/
 		public Result getUseItem() {
 			return useItem;
 		}
@@ -347,11 +353,11 @@ public class PlayerInteractEvent extends PlayerEvent {
 			super.setCanceled(canceled);
 
 			if (canceled) {
-				useBlock = DENY;
-				useItem = DENY;
+				useBlock = Result.DENY;
+				useItem = Result.DENY;
 			}
 		}
-	}*/
+	}
 
 	/**
 	 * This event is fired on the client side when the player left clicks empty space with any ItemStack.
@@ -359,9 +365,9 @@ public class PlayerInteractEvent extends PlayerEvent {
 	 *
 	 * <p>This event is not cancellable.</p>
 	 */
-	/* TODO public static class LeftClickEmpty extends PlayerInteractEvent {
+	public static class LeftClickEmpty extends PlayerInteractEvent {
 		public LeftClickEmpty(PlayerEntity player) {
 			super(player, Hand.MAIN_HAND, new BlockPos(player), null);
 		}
-	}*/
+	}
 }

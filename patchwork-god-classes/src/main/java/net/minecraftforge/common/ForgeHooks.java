@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -62,6 +63,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
@@ -270,46 +272,38 @@ public class ForgeHooks {
 		return EntityEvents.onTravelToDimension(entity, dimensionType);
 	}
 
-	// TODO: I left this here for now because it's a thin wrapper around the onInteractEntityAt below
 	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, HitResult ray, Hand hand) {
-		Vec3d vec3d = new Vec3d(ray.getPos().x - entity.x, ray.getPos().y - entity.y, ray.getPos().z - entity.z);
-		return onInteractEntityAt(player, entity, vec3d, hand);
+		return EntityEvents.onInteractEntityAt(player, entity, ray, hand);
 	}
 
-	@Stubbed
 	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, Vec3d vec3d, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		return EntityEvents.onInteractEntityAt(player, entity, vec3d, hand);
 	}
 
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		return EntityEvents.onInteractEntity(player, entity, hand);
 	}
 
-	@Stubbed
 	public static ActionResult onItemRightClick(PlayerEntity player, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		PlayerInteractEvent.RightClickItem event = EntityEvents.onItemRightClick(player, hand);
+
+		return event.isCanceled() ? event.getCancellationResult() : null;
 	}
 
-	/*
-	@Stubbed
 	public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(PlayerEntity player, BlockPos pos, Direction face) {
-		throw new NotImplementedException("ForgeHooks stub");
-	} */
-
-	/*
-	@Stubbed
-	public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
-		throw new NotImplementedException("ForgeHooks stub");
-	} */
-
-	@Stubbed
-	public static void onEmptyClick(PlayerEntity player, Hand hand) {
-		throw new NotImplementedException("ForgeHooks stub");
+		return EntityEvents.onBlockLeftClick(player, pos, face);
 	}
 
-	@Stubbed
+	public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
+		return EntityEvents.onBlockRightClick(player, hand, pos, face);
+	}
+
+	public static void onEmptyClick(PlayerEntity player, Hand hand) {
+		EntityEvents.onEmptyRightClick(player, hand);
+	}
+
 	public static void onEmptyLeftClick(PlayerEntity player) {
-		throw new NotImplementedException("ForgeHooks stub");
+		EntityEvents.onEmptyLeftClick(player);
 	}
 
 	//private static LootTableContext getLootTableContext() {

@@ -69,13 +69,18 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 
 import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
@@ -83,12 +88,58 @@ import net.patchworkmc.mixin.event.entity.StorageMinecartEntityAccessor;
 public class EntityEvents implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger("patchwork-events-entity");
 
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity entity, HitResult ray, Hand hand) {
+		Vec3d vec3d = new Vec3d(ray.getPos().x - entity.x, ray.getPos().y - entity.y, ray.getPos().z - entity.z);
+
+		return onInteractEntityAt(player, entity, vec3d, hand);
+	}
+
+	public static ActionResult onInteractEntityAt(PlayerEntity player, Entity target, Vec3d localPos, Hand hand) {
+		PlayerInteractEvent event = new PlayerInteractEvent.EntityInteractSpecific(player, hand, target, localPos);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event.isCanceled() ? event.getCancellationResult() : null;
+	}
+
 	public static ActionResult onInteractEntity(PlayerEntity player, Entity entity, Hand hand) {
 		PlayerInteractEvent.EntityInteract event = new PlayerInteractEvent.EntityInteract(player, hand, entity);
 
 		MinecraftForge.EVENT_BUS.post(event);
 
 		return event.isCanceled() ? event.getCancellationResult() : null;
+	}
+
+	public static PlayerInteractEvent.RightClickItem onItemRightClick(PlayerEntity player, Hand hand) {
+		PlayerInteractEvent.RightClickItem event = new PlayerInteractEvent.RightClickItem(player, hand);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
+	}
+
+	public static PlayerInteractEvent.RightClickBlock onBlockRightClick(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
+		PlayerInteractEvent.RightClickBlock event = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
+	}
+
+	public static void onEmptyRightClick(PlayerEntity player, Hand hand) {
+		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+	}
+
+	public static PlayerInteractEvent.LeftClickBlock onBlockLeftClick(PlayerEntity player, BlockPos pos, Direction face) {
+		PlayerInteractEvent.LeftClickBlock event = new PlayerInteractEvent.LeftClickBlock(player, pos, face);
+
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return event;
+	}
+
+	public static void onEmptyLeftClick(PlayerEntity player) {
+		MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
 	}
 
 	public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
@@ -262,9 +313,7 @@ public class EntityEvents implements ModInitializer {
 				return ActionResult.PASS;
 			}
 
-			PlayerInteractEvent.RightClickItem event = new PlayerInteractEvent.RightClickItem(player, hand);
-
-			MinecraftForge.EVENT_BUS.post(event);
+			PlayerInteractEvent.RightClickItem event = EntityEvents.onItemRightClick(player, hand);
 
 			if (event.isCanceled() && event.getCancellationResult() == ActionResult.PASS) {
 				// TODO: Fabric API doesn't have a way to express "cancelled, but return PASS"
@@ -282,9 +331,7 @@ public class EntityEvents implements ModInitializer {
 				return ActionResult.PASS;
 			}
 
-			PlayerInteractEvent.RightClickBlock event = new PlayerInteractEvent.RightClickBlock(player, hand, hitResult.getBlockPos(), hitResult.getSide());
-
-			MinecraftForge.EVENT_BUS.post(event);
+			PlayerInteractEvent.RightClickBlock event = EntityEvents.onBlockRightClick(player, hand, hitResult.getBlockPos(), hitResult.getSide());
 
 			if (event.isCanceled()) {
 				if (event.getCancellationResult() == ActionResult.PASS) {
@@ -308,6 +355,28 @@ public class EntityEvents implements ModInitializer {
 			return ActionResult.PASS;
 		});
 
-		// TODO: Note: UseEntityCallback is closer to EntityInteractSpecific. We're on our own for EntityInteract.
+		UseEntityCallback.EVENT.register(((playerEntity, world, hand, entity, entityHitResult) -> {
+			if (playerEntity.isSpectator()) {
+				return ActionResult.PASS;
+			}
+
+			ActionResult result = EntityEvents.onInteractEntityAt(playerEntity, entity, entityHitResult, hand);
+
+			if (result == null) {
+				return ActionResult.PASS;
+			}
+
+			return result;
+		}));
+
+		AttackBlockCallback.EVENT.register((playerEntity, world, hand, blockPos, direction) -> {
+			PlayerInteractEvent.LeftClickBlock event = EntityEvents.onBlockLeftClick(playerEntity, blockPos, direction);
+
+			if (event.isCanceled() || (!playerEntity.isCreative() && event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
+				return ActionResult.SUCCESS;
+			} else {
+				return ActionResult.PASS;
+			}
+		});
 	}
 }
