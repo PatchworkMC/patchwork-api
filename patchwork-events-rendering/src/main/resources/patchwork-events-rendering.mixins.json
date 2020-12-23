@@ -6,7 +6,8 @@
     "MixinItemColors",
     "MixinBlockColors",
     "MixinGameRenderer",
-    "MixinSpriteAtlasTexture"
+    "MixinSpriteAtlasTexture",
+    "MixinHeldItemRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
