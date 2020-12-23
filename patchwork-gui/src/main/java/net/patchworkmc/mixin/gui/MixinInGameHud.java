@@ -175,7 +175,7 @@ public abstract class MixinInGameHud {
 		if (ForgeIngameGui.renderAir && PatchworkIngameGui.airSnapshot.preResult) {
 			ForgeIngameGui.right_height += 10; // The bar will be rendered, so we need to increment right_height
 
-			return false; // false means "we are not underwater"
+			return false; // false means "we are not inside a fluid"
 		}
 
 		return playerEntity.isInFluid(fluidTag);

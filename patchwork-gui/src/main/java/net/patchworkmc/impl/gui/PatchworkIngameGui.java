@@ -99,7 +99,9 @@ public class PatchworkIngameGui {
 			ForgeIngameGui.left_height += 10 - rowHeight;
 		}
 
-		firePost(RenderGameOverlayEvent.ElementType.HEALTH);
+		if (!healthSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.HEALTH);
+		}
 	}
 
 	private static void fireArmorEvents() {
@@ -107,7 +109,9 @@ public class PatchworkIngameGui {
 
 		ForgeIngameGui.left_height += 10;
 
-		firePost(RenderGameOverlayEvent.ElementType.ARMOR);
+		if (!armorSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.ARMOR);
+		}
 	}
 
 	private static void fireFoodEvents() {
@@ -115,18 +119,24 @@ public class PatchworkIngameGui {
 
 		ForgeIngameGui.right_height += 10;
 
-		firePost(RenderGameOverlayEvent.ElementType.FOOD);
+		if (!foodSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.FOOD);
+		}
 	}
 
 	private static void fireMountHealthEvents() {
 		mountHealthSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.HEALTHMOUNT));
 
-		firePost(RenderGameOverlayEvent.ElementType.HEALTHMOUNT);
+		if (!mountHealthSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.HEALTHMOUNT);
+		}
 	}
 
 	private static void fireAirEvents() {
 		airSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.AIR));
 
-		firePost(RenderGameOverlayEvent.ElementType.AIR);
+		if (!airSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.AIR);
+		}
 	}
 }
