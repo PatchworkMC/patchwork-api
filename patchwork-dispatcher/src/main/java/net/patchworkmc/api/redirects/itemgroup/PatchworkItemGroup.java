@@ -53,4 +53,8 @@ public abstract class PatchworkItemGroup extends ItemGroup {
 
 	// TODO: when remapping in dev this fails (something about classpath context), so we get around it by adding another redirect
 	public abstract ItemStack patchwork$createIcon();
+
+	public static synchronized int getGroupCountSafe() {
+		return ItemGroup.GROUPS.length;
+	}
 }
