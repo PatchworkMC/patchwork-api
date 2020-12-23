@@ -129,7 +129,6 @@ public abstract class MixinInGameHud {
 	 * <p>InGameHud contains the following for loop
 	 * which renders the armor bar: {@code for(z = 0; z < 10; ++z)}</p>
 	 *
-	 *
 	 * <p>This mixin modifies the 0 constant. If the pre event is canceled,
 	 * the 0 constant is replaced with 10, so {@code z = 10}.
 	 * The next condition, {@code z < 10} will fail as {@code 10 < 10} is not true,
@@ -214,8 +213,8 @@ public abstract class MixinInGameHud {
 	 * to decide whether to render the air bar:
 	 * {@code if (playerEntity.isInFluid(FluidTags.WATER) || ah < ai)}</p>
 	 *
-	 * <p>ai is defined as {@code playerEntity.getMaxAir()}</p>
-	 * <p>This mixin redirects getMaxAir, and replaces it with 0 if the event is canceled.
+	 * <p>ai is defined as {@code playerEntity.getMaxAir()}
+	 * This mixin redirects getMaxAir, and replaces it with 0 if the event is canceled.
 	 * The condition will then look like {@code ah < 0}
 	 * ah is {@code playerEntity.getAir()}, which will be a positive value,
 	 * so the condition will fail.</p>
