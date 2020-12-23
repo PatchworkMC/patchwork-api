@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -90,7 +91,15 @@ public abstract class MixinInGameHud {
 	 * <p>The next condition will fail, as {@code -1 >= 0} is not true,
 	 * thus canceling the for loop and causing the health bar to not render</p>
 	 */
-	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 4))
+	@Redirect(
+			method = "renderStatusBars",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 0),
+			slice = @Slice(
+					from = @At(
+					value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=health"
+				)
+			)
+	)
 	private int hookDisableHealthBar(float arg) {
 		return (!ForgeIngameGui.renderHealth || PatchworkIngameGui.healthSnapshot.preResult) ? 0 : MathHelper.ceil(arg);
 	}
@@ -101,10 +110,15 @@ public abstract class MixinInGameHud {
 	 * <p>InGameHud renders the health bar with this method call:
 	 * {@code this.blit(ad, ae, aa + 54, 9 * af, 9, 9)}</p>
 	 *
-	 * <p>This modifies the ae variable and replaces it with the
+	 * <p>ae is defined as {@code ae = o - ai * r}</p>
+	 * <p>This modifies the o variable and replaces it with the
 	 * proper value for ForgeIngameGui</p>
 	 */
-	@ModifyVariable(method = "renderStatusBars", at = @At(value = "CONSTANT", args = "intValue=4", shift = At.Shift.BEFORE), ordinal = 19)
+	@ModifyVariable(
+			method = "renderStatusBars",
+			at = @At(value = "INVOKE_STRING", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", args = "ldc=health"),
+			ordinal = 5
+	)
 	private int hookHealthLeftHeight(int originalValue) {
 		return this.scaledHeight - PatchworkIngameGui.healthSnapshot.left_height;
 	}
@@ -200,16 +214,17 @@ public abstract class MixinInGameHud {
 	 * to decide whether to render the air bar:
 	 * {@code if (playerEntity.isInFluid(FluidTags.WATER) || ah < ai)}</p>
 	 *
-	 * <p>This mixin modifies ai, and replaces it with 0 if the event is canceled.
+	 * <p>ai is defined as {@code playerEntity.getMaxAir()}</p>
+	 * <p>This mixin redirects getMaxAir, and replaces it with 0 if the event is canceled.
 	 * The condition will then look like {@code ah < 0}
 	 * ah is {@code playerEntity.getAir()}, which will be a positive value,
 	 * so the condition will fail.</p>
 	 *
 	 * <p>The {@code playerEntity.isInFluid} condition is handled in {@link #redirectHookDisableAir}</p>
 	 */
-	@ModifyVariable(method = "renderStatusBars", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getMaxAir()I"), ordinal = 13)
-	private int modifyHookDisableAir(int originalValue) {
-		return (!ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult) ? 0 : originalValue;
+	@Redirect(method = "renderStatusBars", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/entity/player/PlayerEntity;getMaxAir()I"))
+	private int modifyHookDisableAir(PlayerEntity playerEntity) {
+		return (!ForgeIngameGui.renderAir || PatchworkIngameGui.airSnapshot.preResult) ? 0 : playerEntity.getMaxAir();
 	}
 
 	/**
