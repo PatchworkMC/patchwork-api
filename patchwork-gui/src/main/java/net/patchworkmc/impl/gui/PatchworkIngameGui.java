@@ -51,7 +51,7 @@ public class PatchworkIngameGui {
 	public static IngameGuiSnapshot mountHealthSnapshot;
 	public static IngameGuiSnapshot airSnapshot;
 
-	public static void fireStatusBarEvents(PlayerEntity player) {
+	public static void fireStatusBarPreEvents(PlayerEntity player) {
 		ForgeIngameGui.left_height = 39;
 		ForgeIngameGui.right_height = 39;
 
@@ -73,6 +73,28 @@ public class PatchworkIngameGui {
 
 		if (ForgeIngameGui.renderAir) {
 			fireAirEvents();
+		}
+	}
+
+	public static void fireStatusBarPostEvents() {
+		if (ForgeIngameGui.renderHealth && !healthSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.HEALTH);
+		}
+
+		if (ForgeIngameGui.renderArmor && !armorSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.ARMOR);
+		}
+
+		if (ForgeIngameGui.renderFood && !foodSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.FOOD);
+		}
+
+		if (ForgeIngameGui.renderHealthMount && !mountHealthSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.HEALTHMOUNT);
+		}
+
+		if (ForgeIngameGui.renderAir && !airSnapshot.preResult) {
+			firePost(RenderGameOverlayEvent.ElementType.AIR);
 		}
 	}
 
@@ -99,45 +121,25 @@ public class PatchworkIngameGui {
 		if (rowHeight != 10) {
 			ForgeIngameGui.left_height += 10 - rowHeight;
 		}
-
-		if (!healthSnapshot.preResult) {
-			firePost(RenderGameOverlayEvent.ElementType.HEALTH);
-		}
 	}
 
 	private static void fireArmorEvents() {
 		armorSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.ARMOR));
 
 		ForgeIngameGui.left_height += 10;
-
-		if (!armorSnapshot.preResult) {
-			firePost(RenderGameOverlayEvent.ElementType.ARMOR);
-		}
 	}
 
 	private static void fireFoodEvents() {
 		foodSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.FOOD));
 
 		ForgeIngameGui.right_height += 10;
-
-		if (!foodSnapshot.preResult) {
-			firePost(RenderGameOverlayEvent.ElementType.FOOD);
-		}
 	}
 
 	private static void fireMountHealthEvents() {
 		mountHealthSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.HEALTHMOUNT));
-
-		if (!mountHealthSnapshot.preResult) {
-			firePost(RenderGameOverlayEvent.ElementType.HEALTHMOUNT);
-		}
 	}
 
 	private static void fireAirEvents() {
 		airSnapshot = new IngameGuiSnapshot(firePre(RenderGameOverlayEvent.ElementType.AIR));
-
-		if (!airSnapshot.preResult) {
-			firePost(RenderGameOverlayEvent.ElementType.AIR);
-		}
 	}
 }

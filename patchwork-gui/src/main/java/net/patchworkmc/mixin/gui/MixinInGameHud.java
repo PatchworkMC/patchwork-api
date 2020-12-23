@@ -66,8 +66,13 @@ public abstract class MixinInGameHud {
 	// This fires all the events that are necessary for the status bars
 	// The results of these events are handled later
 	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;ceil(F)I", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void fireGuiEvents(CallbackInfo ci, PlayerEntity entity) {
-		PatchworkIngameGui.fireStatusBarEvents(entity);
+	private void firePreEvents(CallbackInfo ci, PlayerEntity entity) {
+		PatchworkIngameGui.fireStatusBarPreEvents(entity);
+	}
+
+	@Inject(method = "renderStatusBars", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;pop()V"))
+	private void firePostEvents(CallbackInfo ci) {
+		PatchworkIngameGui.fireStatusBarPostEvents();
 	}
 
 	/**
