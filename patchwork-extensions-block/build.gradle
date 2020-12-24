@@ -1,3 +1,7 @@
+plugins {
+	id 'patchwork-api.submodule-conventions'
+}
+
 archivesBaseName = "patchwork-extensions-block"
 version = getSubprojectVersion(project, "0.5.0")
 

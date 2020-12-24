@@ -1,3 +1,7 @@
+plugins {
+	id 'patchwork-api.submodule-conventions'
+}
+
 archivesBaseName = "patchwork-client-colors"
 version = getSubprojectVersion(project, "0.3.3")
 

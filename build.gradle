@@ -3,20 +3,15 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'maven-publish'
-	id 'fabric-loom' version '0.5-SNAPSHOT' apply false
 	id 'net.minecrell.licenser' version '0.4.1'
 	id "org.ajoberstar.grgit" version "3.1.1"
 	id 'com.jfrog.bintray' version '1.8.4'
+	id 'patchwork-api.module-conventions'
 }
 
 def ENV = System.getenv()
 
-class Globals {
-	static def baseVersion = "0.10.0"
-	static def mcVersion = "1.14.4"
-	static def yarnVersion = "+build.16"
-}
-version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
+version = project.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 
 logger.lifecycle("Building Patchwork: " + version)
 
@@ -44,86 +39,6 @@ def getBranch() {
 	return branch.substring(branch.lastIndexOf("/") + 1)
 }
 
-allprojects {
-	apply plugin: 'checkstyle'
-	apply plugin: 'maven-publish'
-	apply plugin: 'fabric-loom'
-	apply plugin: 'net.minecrell.licenser'
-	apply plugin: 'com.jfrog.bintray'
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-
-	group = "net.patchworkmc.patchwork-api"
-
-	loom {
-		shareCaches = true
-	}
-
-	repositories {
-		maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
-	}
-
-	dependencies {
-		minecraft "com.mojang:minecraft:$Globals.mcVersion"
-		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-		modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
-		modImplementation "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
-
-		implementation 'net.patchworkmc:patchwork-eventbus:2.0.1:all'
-		implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
-		// For EventBus
-		implementation 'net.jodah:typetools:0.6.0'
-	}
-
-	configurations {
-		dev
-	}
-
-	jar {
-		classifier = "dev"
-	}
-
-	afterEvaluate {
-		remapJar {
-			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
-			archiveName = "${archivesBaseName}-${version}.jar"
-		}
-
-		artifacts {
-			dev file: file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"), type: "jar", builtBy: jar
-		}
-
-		processResources {
-			inputs.property "version", project.version
-
-			from(sourceSets.main.resources.srcDirs) {
-				include "fabric.mod.json"
-				expand "version": project.version
-			}
-
-			from(sourceSets.main.resources.srcDirs) {
-				exclude "fabric.mod.json"
-			}
-		}
-
-		license {
-			header rootProject.file('HEADER')
-			include '**/*.java'
-		}
-	}
-
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		classifier = 'sources'
-		from sourceSets.main.allSource
-	}
-
-	checkstyle {
-		configFile = rootProject.file("checkstyle.xml")
-		toolVersion = '8.36.2'
-	}
-}
-
 javadoc {
 	options.memberLevel = "PACKAGE"
 	allprojects.each {
@@ -131,61 +46,6 @@ javadoc {
 	}
 	classpath = sourceSets.main.compileClasspath
 }
-
-subprojects {
-	task remapMavenJar(type: Copy, dependsOn: remapJar) {
-		afterEvaluate {
-			from("${project.buildDir}/libs/$archivesBaseName-${version}.jar")
-			into("${project.buildDir}/libs/")
-			rename {String fn -> "$archivesBaseName-${version}-maven.jar"}
-		}
-	}
-
-	publishing {
-		publications {
-			create("${archivesBaseName}_mavenJava", MavenPublication) {
-				afterEvaluate {
-					artifact(file("${project.buildDir}/libs/$archivesBaseName-${version}-maven.jar")) {
-						builtBy remapMavenJar
-					}
-					artifact(sourcesJar) {
-						builtBy remapSourcesJar
-					}
-				}
-			}
-		}
-	}
-
-	bintray {
-		user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
-		key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.getenv('bintray_key')
-		publish = true
-		override = true
-		publications = ["${archivesBaseName}_mavenJava"]
-		pkg {
-			repo = project.bintrayRepo
-			name = archivesBaseName
-			user = bintray.user
-			userOrg = project.repoOwner
-			licenses = [project.codeLicense]
-			desc = project.description
-			websiteUrl = "https://github.com/${project.repoOwner}/${project.repoName}"
-			issueTrackerUrl = "https://github.com/${project.repoOwner}/${project.repoName}/issues"
-			vcsUrl = "https://github.com/${project.repoOwner}/${project.repoName}.git"
-			publicDownloadNumbers = true
-
-			githubRepo = "${project.repoOwner}/${project.repoName}"
-			version {
-				name = project.version
-				released = new Date()
-			}
-		}
-	}
-
-	javadoc.enabled = false
-}
-
-subprojects.each { bintrayUpload.dependsOn("${it.path}:bintrayUpload") }
 
 bintray {
 	user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
@@ -247,8 +107,6 @@ publishing {
 }
 
 task licenseFormatAll
-subprojects {p -> licenseFormatAll.dependsOn("${p.path}:licenseFormat")}
-subprojects.each {remapJar.dependsOn("${it.path}:remapJar")}
 
 repositories {
 	flatDir {
@@ -259,15 +117,8 @@ repositories {
 }
 
 dependencies {
-	afterEvaluate {
-		subprojects.each {
-			compile project(path: ":${it.name}", configuration: "dev")
-			include project("${it.name}:")
-		}
-	}
-
-	minecraft "com.mojang:minecraft:$Globals.mcVersion"
-	mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
+	minecraft "com.mojang:minecraft:$project.mcVersion"
+	mappings "net.fabricmc:yarn:${project.mcVersion}${project.yarnVersion}:v2"
 	modImplementation "net.fabricmc:fabric-loader:0.10.0+build.208"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:0.15.1+build.260-1.14"
 
@@ -275,10 +126,6 @@ dependencies {
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'net.patchworkmc:patchwork-eventbus:2.0.0:all'
-}
-
-loom {
-	shareCaches = true
 }
 
 

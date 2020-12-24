@@ -1,3 +1,7 @@
+plugins {
+	id 'patchwork-api.submodule-conventions'
+}
+
 archivesBaseName = "patchwork-registries"
 version = getSubprojectVersion(project, "0.4.1")
 
