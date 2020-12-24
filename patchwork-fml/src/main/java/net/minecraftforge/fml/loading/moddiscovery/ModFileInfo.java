@@ -21,9 +21,11 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.fabricmc.loader.api.ModContainer;
 
+// TODO: stub
 public class ModFileInfo {
-	private ModFile modFile;
+	private final ModFile modFile;
 
+	// Patchwork-specific constructor; forge one is internal so doesn't matter
 	public ModFileInfo(ModContainer modContainer, String annotationJsonLocation) {
 		modFile = new ModFile(modContainer, annotationJsonLocation);
 	}

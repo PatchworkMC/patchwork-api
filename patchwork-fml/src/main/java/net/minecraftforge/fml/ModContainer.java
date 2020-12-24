@@ -19,17 +19,14 @@
 
 package net.minecraftforge.fml;
 
-import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import net.minecraftforge.eventbus.api.Event;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.config.ModConfig;
 
 // TODO: Stub
 public abstract class ModContainer {
@@ -37,15 +34,16 @@ public abstract class ModContainer {
 	protected final String modId;
 	protected final String namespace;
 	protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
-	protected final EnumMap<ModConfig.Type, ModConfig> configs;
+	//protected final EnumMap<ModConfig.Type, ModConfig> configs;
 	private net.fabricmc.loader.api.ModContainer fabricModContainer;
-	protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
+	//@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	//protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
 
 	public ModContainer(String modId) {
 		this.modId = modId;
 		// TODO: Currently not reading namespace from configuration..
 		this.namespace = modId;
-		this.configs = new EnumMap<>(ModConfig.Type.class);
+		//this.configs = new EnumMap<>(ModConfig.Type.class);
 	}
 
 	public final String getModId() {
@@ -71,19 +69,11 @@ public abstract class ModContainer {
 		}
 	}
 
-	public void addConfig(final ModConfig modConfig) {
-		configs.put(modConfig.getType(), modConfig);
-	}
-
-	public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
-		configHandler.ifPresent(configHandler -> configHandler.accept(event));
-	}
-
-	public final void setParent(net.fabricmc.loader.api.ModContainer fabricModContainer) {
+	public final void patchwork$setParent(net.fabricmc.loader.api.ModContainer fabricModContainer) {
 		this.fabricModContainer = fabricModContainer;
 	}
 
-	public final net.fabricmc.loader.api.ModContainer getParent() {
+	public final net.fabricmc.loader.api.ModContainer patchwork$getParent() {
 		return this.fabricModContainer;
 	}
 

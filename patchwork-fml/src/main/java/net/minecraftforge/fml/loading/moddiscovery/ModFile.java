@@ -23,9 +23,11 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import net.fabricmc.loader.api.ModContainer;
 
-public class ModFile {
+// TODO: Stub
+public class ModFile /* implements modlauncher IModFile */ {
 	private final ModFileScanData modFileScanData;
 
+	// both are patchwork-added constructors, but they are impl details in theory.
 	public ModFile(ModContainer fabricModContainer, String annotationJsonLocation) {
 		modFileScanData = new ModFileScanData(fabricModContainer, annotationJsonLocation);
 	}

@@ -19,90 +19,30 @@
 
 package net.minecraftforge.forgespi.language;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
 import net.fabricmc.loader.api.ModContainer;
 
+// TODO: mega stub
 public class ModFileScanData {
-	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Gson GSON = new Gson();
-
 	public static final ModFileScanData EMPTY = new ModFileScanData();
 
-	private ModContainer modContainer;
-	private String annotationJsonLocation;
-	private boolean initialized = false;
-	private Set<AnnotationData> annotationData;
-
 	public ModFileScanData(ModContainer modContainer, String annotationJsonLocation) {
-		this.modContainer = modContainer;
-		this.annotationJsonLocation = annotationJsonLocation;
+		//
 	}
 
-	// Create empty mod file scan data for Fabric mods
-	private ModFileScanData() {
-		initialized = true;
-		annotationData = Collections.emptySet();
-	}
-
-	private void init() {
-		initialized = true;
-
-		Path annotationJsonPath = modContainer.getPath(annotationJsonLocation);
-
-		try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(annotationJsonPath))) {
-			AnnotationStorage annotationStorage = GSON.fromJson(reader, AnnotationStorage.class);
-
-			annotationData = annotationStorage.entries.stream()
-					.map(ModFileScanData::getAnnotationData)
-					.collect(Collectors.toSet());
-		} catch (IOException e) {
-			LOGGER.error(String.format(
-					"Could not read annotations from %s %s (loaded from %s)",
-					getModid(), annotationJsonPath, modContainer.getRootPath()
-			));
-			e.printStackTrace();
-			annotationData = Collections.emptySet();
-		}
+	public ModFileScanData() {
+		//
 	}
 
 	public Set<AnnotationData> getAnnotations() {
-		if (!initialized) {
-			init();
-		}
-
-		return annotationData;
-	}
-
-	private static AnnotationData getAnnotationData(AnnotationStorage.Entry entry) {
-		Type annotationType = Type.getType(entry.annotationType);
-		Type targetInType = Type.getType("L" + entry.targetInClass + ";");
-		return new AnnotationData(
-				annotationType, entry.targetType, targetInType, entry.target
-		);
-	}
-
-	public String getModid() {
-		return modContainer.getMetadata().getId();
+		return Collections.emptySet();
 	}
 
 	public static class AnnotationData {
@@ -110,28 +50,14 @@ public class ModFileScanData {
 		private final ElementType targetType;
 		private final Type clazz;
 		private final String memberName;
+		private final Map<String, Object> annotationData;
 
-		private Map<String, Object> elements;
-
-		public AnnotationData(
-				final Type annotationType, final ElementType targetType,
-				final Type clazz, final String memberName
-		) {
+		public AnnotationData(final Type annotationType, final ElementType targetType, final Type clazz, final String memberName, final Map<String, Object> annotationData) {
 			this.annotationType = annotationType;
 			this.targetType = targetType;
 			this.clazz = clazz;
 			this.memberName = memberName;
-		}
-
-		public AnnotationData(
-				Type annotationType, ElementType targetType, Type clazz,
-				String memberName, Map<String, Object> elements
-		) {
-			this.annotationType = annotationType;
-			this.targetType = targetType;
-			this.clazz = clazz;
-			this.memberName = memberName;
-			this.elements = elements;
+			this.annotationData = annotationData;
 		}
 
 		public Type getAnnotationType() {
@@ -151,116 +77,35 @@ public class ModFileScanData {
 		}
 
 		public Map<String, Object> getAnnotationData() {
-			if (elements == null) {
-				initAnnotationData();
-			}
-
-			return elements;
-		}
-
-		private void initAnnotationData() {
-			elements = new HashMap<>();
-
-			try {
-				// TODO: This *may* load classes in the wrong order, but it shouldn't be an issue
-				Class<?> clazzObj = Class.forName(clazz.getClassName());
-				Class<?> annotationType = Class.forName(this.annotationType.getClassName());
-				Annotation annotationObject = getAnnotationObject(clazzObj, annotationType);
-
-				if (annotationObject == null) {
-					LOGGER.error(String.format("Cannot fetch annotation object %s %s %s %s",
-							annotationType, targetType, clazz, memberName
-					));
-					return;
-				}
-
-				Method[] elementGetters = annotationObject.getClass().getDeclaredMethods();
-
-				for (Method elementGetter : elementGetters) {
-					if (isElementGetter(elementGetter)) {
-						Object value = elementGetter.invoke(annotationObject);
-
-						elements.put(elementGetter.getName(), processElementObject(value));
-					}
-				}
-			} catch (Throwable e) {
-				LOGGER.catching(e);
-			}
-		}
-
-		private static boolean isElementGetter(Method method) {
-			String name = method.getName();
-			if (name.equals("toString")) return false;
-			if (name.equals("hashCode")) return false;
-			if (name.equals("getClass")) return false;
-			if (name.equals("equals")) return false;
-			if (name.equals("annotationType")) return false;
-
-			return true;
-		}
-
-		private Annotation getAnnotationObject(Class<?> clazzObj, Class annotationType) throws Throwable {
-			switch (targetType) {
-			case TYPE:
-				return clazzObj.getAnnotation(annotationType);
-			case FIELD:
-				return clazzObj.getField(memberName)
-						.getAnnotation(annotationType);
-			case METHOD:
-				String methodName = memberName.substring(0, memberName.indexOf('('));
-				Method[] methods = Arrays.stream(clazzObj.getDeclaredMethods())
-						.filter(method -> method.getName().equals(methodName))
-						.toArray(Method[]::new);
-				if (methods.length == 0) {
-					throw new RuntimeException("Cannot find method " + methodName);
-				}
-
-				if (methods.length > 1) {
-					//TODO handle overloaded methods
-					throw new RuntimeException("Currently Cannot Handle Overloaded Methods");
-				}
-
-				return methods[0].getAnnotation(annotationType);
-			default:
-				throw new RuntimeException("Invalid annotation type " + targetType);
-			}
+			return annotationData;
 		}
 
 		@Override
 		public boolean equals(final Object obj) {
-			if (!(obj instanceof AnnotationData)) {
+			if (obj == null) {
+				return false;
+			}
+
+			if (obj == this) {
+				return true;
+			}
+
+			if (obj.getClass() != getClass()) {
 				return false;
 			}
 
 			AnnotationData dat = (AnnotationData) obj;
+
 			return Objects.equals(annotationType, dat.annotationType)
 					&& Objects.equals(targetType, dat.targetType)
 					&& Objects.equals(clazz, dat.clazz)
-					&& Objects.equals(memberName, dat.memberName);
+					&& Objects.equals(memberName, dat.memberName)
+					&& Objects.equals(annotationData, dat.annotationData);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(annotationType, targetType, clazz, memberName);
+			return Objects.hash(annotationType, targetType, clazz, memberName, annotationData);
 		}
-	}
-
-	private static Object processElementObject(Object object) {
-		if (object instanceof Object[]) {
-			return Arrays.stream((Object[]) object)
-					.map(ModFileScanData::processElementObject)
-					.collect(Collectors.toList());
-		}
-
-		if (object instanceof Enum) {
-			Enum enumObject = (Enum) object;
-			String className = enumObject.getDeclaringClass().getName();
-			return new ModAnnotation.EnumHolder(
-					className.replace('.', '/'),
-					enumObject.toString()
-			);
-		}
-
-		return object;
 	}
 }

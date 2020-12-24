@@ -32,10 +32,6 @@ import net.patchworkmc.impl.fml.PatchworkFML;
 public enum LogicalSidedProvider {
 	WORKQUEUE(Supplier::get, Supplier::get),
 	INSTANCE(Supplier::get, Supplier::get),
-	/**
-	 * @deprecated "this is pretty dubious" - coderbot
-	 */
-	@Deprecated
 	CLIENTWORLD(c -> Optional.<World>of(c.get().world), s -> Optional.<World>empty());
 	private static Supplier<MinecraftClient> client;
 	private static Supplier<MinecraftServer> server;

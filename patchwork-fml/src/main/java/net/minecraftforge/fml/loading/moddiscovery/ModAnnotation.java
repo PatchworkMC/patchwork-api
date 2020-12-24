@@ -33,25 +33,23 @@ public class ModAnnotation {
 	private final ElementType type;
 	private final Type asmType;
 	private final String member;
-	private final Map<String, Object> elements;
+	private final Map<String, Object> values = Maps.newHashMap();
 	private ArrayList<Object> arrayList;
 	private String arrayName;
 
 	public static ModFileScanData.AnnotationData fromModAnnotation(Type clazz, ModAnnotation annotation) {
 		return new ModFileScanData.AnnotationData(
-				annotation.asmType, annotation.type, clazz, annotation.member, annotation.elements
+				annotation.asmType, annotation.type, clazz, annotation.member, annotation.values
 		);
 	}
 
 	public ModAnnotation(ElementType type, Type asmType, String member) {
-		this.elements = Maps.newHashMap();
 		this.type = type;
 		this.asmType = asmType;
 		this.member = member;
 	}
 
 	public ModAnnotation(Type asmType, ModAnnotation parent) {
-		this.elements = Maps.newHashMap();
 		this.type = parent.type;
 		this.asmType = asmType;
 		this.member = parent.member;
@@ -60,11 +58,15 @@ public class ModAnnotation {
 	public String toString() {
 		return MoreObjects.toStringHelper("Annotation")
 				.add("type", this.type).add("name", this.asmType.getClassName())
-				.add("member", this.member).add("values", this.elements).toString();
+				.add("member", this.member).add("values", this.values).toString();
 	}
 
 	public ElementType getType() {
 		return this.type;
+	}
+
+	public Type getASMType() {
+		return asmType;
 	}
 
 	public String getMember() {
@@ -72,7 +74,7 @@ public class ModAnnotation {
 	}
 
 	public Map<String, Object> getValues() {
-		return this.elements;
+		return this.values;
 	}
 
 	public void addArray(String name) {
@@ -84,7 +86,7 @@ public class ModAnnotation {
 		if (this.arrayList != null) {
 			this.arrayList.add(value);
 		} else {
-			this.elements.put(key, value);
+			this.values.put(key, value);
 		}
 	}
 
@@ -93,7 +95,7 @@ public class ModAnnotation {
 	}
 
 	public void endArray() {
-		this.elements.put(this.arrayName, this.arrayList);
+		this.values.put(this.arrayName, this.arrayList);
 		this.arrayList = null;
 	}
 

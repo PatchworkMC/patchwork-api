@@ -25,18 +25,9 @@ import net.minecraftforge.fml.ModLoadingContext;
 public class FMLJavaModLoadingContext {
 	private final FMLModContainer container;
 
-	// TODO: This should be package private
+	// note: package-private in Forge
 	public FMLJavaModLoadingContext(FMLModContainer container) {
 		this.container = container;
-	}
-
-	/**
-	 * Helper to get the right instance from the {@link ModLoadingContext} correctly.
-	 *
-	 * @return The FMLJavaMod language specific extension from the ModLoadingContext
-	 */
-	public static FMLJavaModLoadingContext get() {
-		return ModLoadingContext.get().extension();
 	}
 
 	/**
@@ -44,5 +35,13 @@ public class FMLJavaModLoadingContext {
 	 */
 	public IEventBus getModEventBus() {
 		return container.getEventBus();
+	}
+
+	/**
+	 * Helper to get the right instance from the {@link ModLoadingContext} correctly.
+	 * @return The FMLJavaMod language specific extension from the ModLoadingContext
+	 */
+	public static FMLJavaModLoadingContext get() {
+		return ModLoadingContext.get().extension();
 	}
 }

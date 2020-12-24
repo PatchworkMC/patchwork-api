@@ -46,12 +46,8 @@ public class FMLModContainer extends ModContainer {
 	}
 
 	private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] listeners, int i, Throwable throwable) {
+		LOGGER.error("EVENT FAILED! logging not yet implemented");
 		// TODO
-	}
-
-	@Override
-	protected void acceptEvent(final Event e) {
-		this.eventBus.post(e);
 	}
 
 	@Override
@@ -61,5 +57,10 @@ public class FMLModContainer extends ModContainer {
 
 	public void setMod(Object instance) {
 		this.instance = instance;
+	}
+
+	@Override
+	protected void acceptEvent(final Event e) {
+		this.eventBus.post(e);
 	}
 }

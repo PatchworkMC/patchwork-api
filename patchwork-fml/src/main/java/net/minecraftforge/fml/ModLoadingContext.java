@@ -21,9 +21,6 @@ package net.minecraftforge.fml;
 
 import java.util.function.Supplier;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
-
 public class ModLoadingContext {
 	private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
 	private Object languageExtension;
@@ -63,14 +60,6 @@ public class ModLoadingContext {
 	 */
 	public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
 		getActiveContainer().registerExtensionPoint(point, extension);
-	}
-
-	public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
-		getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
-	}
-
-	public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec, String fileName) {
-		getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
 	}
 
 	@SuppressWarnings("unchecked")
