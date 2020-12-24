@@ -45,7 +45,7 @@ public class PatchworkKeyBinding extends KeyBinding {
 		this(id, keyConflictContext, inputType.createFromCode(keyCode), category);
 	}
 
-	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, InputUtil.KeyCode keyCode, String category) {
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, InputUtil.Key keyCode, String category) {
 		this(id, keyConflictContext, KeyModifier.NONE, keyCode, category);
 	}
 
@@ -53,8 +53,8 @@ public class PatchworkKeyBinding extends KeyBinding {
 		this(id, keyConflictContext, keyModifier, inputType.createFromCode(keyCode), category);
 	}
 
-	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputUtil.KeyCode keyCode, String category) {
-		super(id, keyCode.getCategory(), keyCode.getKeyCode(), category);
+	public PatchworkKeyBinding(String id, IKeyConflictContext keyConflictContext, KeyModifier keyModifier, InputUtil.Key keyCode, String category) {
+		super(id, keyCode.getCategory(), keyCode.getCode(), category);
 		((IForgeKeybinding) this).setKeyConflictContext(keyConflictContext);
 		((IForgeKeybinding) this).setKeyModifierAndCode(keyModifier, keyCode);
 		((ForgeKeyBindingConstruct) this).patchwork$constructForgeKeyBindingOptions(keyConflictContext, keyModifier.matches(keyCode) ? KeyModifier.NONE : keyModifier);

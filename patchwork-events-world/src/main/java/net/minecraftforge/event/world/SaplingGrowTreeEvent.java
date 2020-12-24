@@ -23,13 +23,13 @@ import java.util.Random;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 
 /**
  * SaplingGrowTreeEvent is fired when a sapling grows into a tree.
  *
  * <p>This event is fired during sapling growth in
- * {@link net.minecraft.block.SaplingBlock#generate(IWorld, BlockPos, BlockState, Random)}.
+ * {@link net.minecraft.block.SaplingBlock#generate(WorldAccess, BlockPos, BlockState, Random)}.
  *
  * <p>{@link #pos} contains the coordinates of the growing sapling.
  * {@link #rand} contains an instance of Random for use.
@@ -44,7 +44,7 @@ public class SaplingGrowTreeEvent extends WorldEvent {
 	private final BlockPos pos;
 	private final Random rand;
 
-	public SaplingGrowTreeEvent(IWorld world, Random rand, BlockPos pos) {
+	public SaplingGrowTreeEvent(WorldAccess world, Random rand, BlockPos pos) {
 		super(world);
 		this.rand = rand;
 		this.pos = pos;

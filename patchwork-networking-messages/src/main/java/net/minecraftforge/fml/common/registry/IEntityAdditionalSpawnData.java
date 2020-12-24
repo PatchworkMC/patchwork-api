@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 /**
  * A interface for Entities that need extra information to be communicated

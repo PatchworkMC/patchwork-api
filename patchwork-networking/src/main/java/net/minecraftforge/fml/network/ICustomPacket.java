@@ -20,8 +20,8 @@
 package net.minecraftforge.fml.network;
 
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 
 /**
  * Implemented on {@link CustomPayloadC2SPacket}, {@link CustomPayloadS2CPacket}, {@link LoginQueryRequestS2CPacket},

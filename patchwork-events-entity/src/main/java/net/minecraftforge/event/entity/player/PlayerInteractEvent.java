@@ -199,7 +199,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 	/**
 	 * This event is fired on both sides whenever the player right clicks while targeting a block.
 	 *
-	 * <p>This event controls which of {@link net.minecraft.block.Block#activate} and/or {@link net.minecraft.item.Item#use}
+	 * <p>This event controls which of {@link net.minecraft.block.Block#onUse} and/or {@link net.minecraft.item.Item#use}
 	 * will be called after {@link net.minecraftforge.common.extensions.IForgeItem#onItemUseFirst} is called.</p>
 	 *
 	 * <p>This event is cancellable.
@@ -220,7 +220,7 @@ public class PlayerInteractEvent extends PlayerEvent {
 		}
 
 		/**
-		 * @return If {@link net.minecraft.block.Block#activate} should be called
+		 * @return If {@link net.minecraft.block.Block#onUse} should be called
 		 */
 		public Result getUseBlock() {
 			return useBlock;

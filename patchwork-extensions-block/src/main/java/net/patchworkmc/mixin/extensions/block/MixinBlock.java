@@ -73,7 +73,7 @@ public class MixinBlock implements IForgeBlock {
 		if (cachedTags == null || tagVersion != BlockTagsAccessor.getLatestVersion()) {
 			this.cachedTags = new HashSet<>();
 
-			for (final Map.Entry<Identifier, Tag<Block>> entry : BlockTags.getContainer().getEntries().entrySet()) {
+			for (final Map.Entry<Identifier, Tag<Block>> entry : BlockTags.getTagGroup().getEntries().entrySet()) {
 				if (entry.getValue().contains((Block) (Object) this)) {
 					cachedTags.add(entry.getKey());
 				}

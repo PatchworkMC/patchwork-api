@@ -44,7 +44,7 @@ public class MixinFishingBobberEntity {
 
 	@Inject(method = "method_6957(Lnet/minecraft/item/ItemStack;)I", at = @At(value = "INVOKE", target = LOOT_CONTEXT_BUILD_TARGET), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void patchwork_addFishingParameters(ItemStack stack, CallbackInfoReturnable<Integer> callback, int rodDamage, LootContext.Builder builder, LootTable supplier) {
-		builder.put(LootContextParameters.KILLER_ENTITY, this.owner);
-		builder.put(LootContextParameters.THIS_ENTITY, (Entity) (Object) this);
+		builder.parameter(LootContextParameters.KILLER_ENTITY, this.owner);
+		builder.parameter(LootContextParameters.THIS_ENTITY, (Entity) (Object) this);
 	}
 }

@@ -23,10 +23,9 @@ import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 
 @Mixin(LoginQueryResponseC2SPacket.class)
 public class MixinLoginQueryResponseC2SPacket implements ICustomPacket<LoginQueryResponseC2SPacket> {

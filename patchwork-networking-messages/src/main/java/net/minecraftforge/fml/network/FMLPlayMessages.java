@@ -28,11 +28,11 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.container.ContainerType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.text.Text;
-import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
@@ -235,8 +235,8 @@ public class FMLPlayMessages {
 		private final PacketByteBuf additionalData;
 
 		// Note: package-private on Forge
-		public OpenContainer(ContainerType<?> id, int windowId, Text name, PacketByteBuf additionalData) {
-			this(Registry.CONTAINER.getRawId(id), windowId, name, additionalData);
+		public OpenContainer(ScreenHandlerType<?> id, int windowId, Text name, PacketByteBuf additionalData) {
+			this(Registry.SCREEN_HANDLER.getRawId(id), windowId, name, additionalData);
 		}
 
 		private OpenContainer(int id, int windowId, Text name, PacketByteBuf additionalData) {
@@ -286,8 +286,8 @@ public class FMLPlayMessages {
 			context.setPacketHandled(true);
 		}
 
-		public final ContainerType<?> getType() {
-			return Registry.CONTAINER.get(this.id);
+		public final ScreenHandlerType<?> getType() {
+			return Registry.SCREEN_HANDLER.get(this.id);
 		}
 
 		public int getWindowId() {

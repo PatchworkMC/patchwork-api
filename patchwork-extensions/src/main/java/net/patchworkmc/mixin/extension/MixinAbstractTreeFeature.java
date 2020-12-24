@@ -22,24 +22,23 @@ package net.patchworkmc.mixin.extension;
 import net.minecraftforge.common.extensions.IForgeBlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.world.gen.feature.AbstractTreeFeature;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.ModifiableTestableWorld;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.gen.feature.TreeFeature;
 import net.minecraft.util.math.BlockPos;
 
-@Mixin(AbstractTreeFeature.class)
+@Mixin(TreeFeature.class)
 public abstract class MixinAbstractTreeFeature {
 	@Shadow
 	protected abstract void setToDirt(ModifiableTestableWorld world, BlockPos pos);
 
 	// TODO: How can we make this accessible in fabric mods?
 	protected void setDirtAt(ModifiableTestableWorld reader, BlockPos pos, BlockPos origin) {
-		if (!(reader instanceof IWorld)) {
+		if (!(reader instanceof WorldAccess)) {
 			setToDirt(reader, pos);
 			return;
 		}
 
-		((IForgeBlockState) ((IWorld) reader).getBlockState(pos)).onPlantGrow((IWorld) reader, pos, origin);
+		((IForgeBlockState) ((WorldAccess) reader).getBlockState(pos)).onPlantGrow((WorldAccess) reader, pos, origin);
 	}
 }

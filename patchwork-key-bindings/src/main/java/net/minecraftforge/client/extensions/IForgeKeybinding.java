@@ -33,17 +33,17 @@ public interface IForgeKeybinding {
 	}
 
 	@Nonnull
-	InputUtil.KeyCode getKey();
+	InputUtil.Key getKey();
 
 	/**
 	 * Checks that the key conflict context and modifier are active, and that the keyCode matches this binding.
 	 */
-	default boolean isActiveAndMatches(InputUtil.KeyCode keyCode) {
-		return keyCode.getKeyCode() != 0 && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
+	default boolean isActiveAndMatches(InputUtil.Key keyCode) {
+		return keyCode.getCode() != 0 && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
 	}
 
 	default void setToDefault() {
-		setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefaultKeyCode());
+		setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefaultKey());
 	}
 
 	IKeyConflictContext getKeyConflictContext();
@@ -54,7 +54,7 @@ public interface IForgeKeybinding {
 
 	KeyModifier getKeyModifier();
 
-	void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.KeyCode keyCode);
+	void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.Key keyCode);
 
 	/**
 	 * Returns true when one of the bindings' key codes conflicts with the other's modifier.

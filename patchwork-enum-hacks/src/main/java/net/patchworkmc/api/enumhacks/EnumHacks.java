@@ -35,8 +35,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.enchantment.EnchantmentTarget;
-import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -147,8 +147,8 @@ public final class EnumHacks {
 		return constructAndAdd(Rarity.class, ordinal -> RarityAccessor.invokeConstructor(name, ordinal, formatting));
 	}
 
-	public static EntityCategory createEntityCategory(String constantName, String name, int spawnCap, boolean peaceful, boolean animal) {
-		return constructAndAdd(EntityCategory.class, ordinal -> EntityCategoryAccessor.invokeConstructor(constantName, ordinal, name, spawnCap, peaceful, animal));
+	public static SpawnGroup createEntityCategory(String constantName, String name, int spawnCap, boolean peaceful, boolean animal) {
+		return constructAndAdd(SpawnGroup.class, ordinal -> EntityCategoryAccessor.invokeConstructor(constantName, ordinal, name, spawnCap, peaceful, animal));
 	}
 
 	public static StructurePool.Projection createStructurePoolProjection(String name, String id, ImmutableList<StructureProcessor> processors) {

@@ -24,8 +24,8 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 
 /**
  * Dispatcher for sending packets in response to a received packet. Abstracts out the difference between wrapped packets

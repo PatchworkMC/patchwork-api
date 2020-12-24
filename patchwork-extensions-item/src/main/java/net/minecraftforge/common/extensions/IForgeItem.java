@@ -34,6 +34,7 @@ import net.minecraftforge.common.ToolType;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.item.ModelPredicateProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.enchantment.Enchantment;
@@ -46,7 +47,6 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
@@ -73,10 +73,10 @@ public interface IForgeItem {
 
 	// TODO: Call locations: Patches: LivingEntity, ItemStack
 	/**
-	 * ItemStack sensitive version of {@link Item#getModifiers}.
+	 * ItemStack sensitive version of {@link Item#getAttributeModifiers}.
 	 */
 	default Multimap<String, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		return getItem().getModifiers(slot);
+		return getItem().getAttributeModifiers(slot);
 	}
 
 	// TODO: Call locations: Patches: PlayerEntity*, Forge classes: IForgeItemStack
@@ -709,7 +709,7 @@ public interface IForgeItem {
 		return null;
 	}
 
-	Map<Identifier, ItemPropertyGetter> patchwork_getPropertyGetters();
+	Map<Identifier, ModelPredicateProvider> patchwork_getPropertyGetters();
 
 	default ImmutableMap<String, UnaryOperator<Float>/* TODO: ITimeValue */> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity) {
 		ImmutableMap.Builder<String, UnaryOperator<Float>/* TODO: ITimeValue */> builder = ImmutableMap.builder();
@@ -776,7 +776,7 @@ public interface IForgeItem {
 	// TODO: Call locations: Patches: MinecraftClient
 	/**
 	 * Retrieves a list of tags names this is known to be associated with. This should be
-	 * used in favor of {@link net.minecraft.tag.TagContainer#getTagsFor(Item)}, as
+	 * used in favor of {@link net.minecraft.tag.TagGroupLoader#getTagsFor(Item)}, as
 	 * this caches the result and automatically updates when the TagContainer changes.
 	 */
 	Set<Identifier> getTags();

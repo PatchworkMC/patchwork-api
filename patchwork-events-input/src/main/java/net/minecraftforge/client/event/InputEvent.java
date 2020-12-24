@@ -202,7 +202,7 @@ public class InputEvent extends Event {
 
 		/**
 		 * Platform-specific scan code.
-		 * Used for {@link net.minecraft.client.util.InputUtil#getKeyCode(int, int)}
+		 * Used for {@link net.minecraft.client.util.InputUtil#fromKeyCode(int, int)}
 		 *
 		 * <p>The scan code is unique for every key, regardless of whether it has a key code.
 		 * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending

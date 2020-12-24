@@ -26,29 +26,28 @@ import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-
+import net.minecraft.world.WorldAccess;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 
 public class BlockEvent extends Event {
-	private final IWorld world;
+	private final WorldAccess world;
 	private final BlockPos pos;
 	private final BlockState state;
 
-	public BlockEvent(IWorld world, BlockPos pos, BlockState state) {
+	public BlockEvent(WorldAccess world, BlockPos pos, BlockState state) {
 		this.pos = pos;
 		this.world = world;
 		this.state = state;
 	}
 
-	public IWorld getWorld() {
+	public WorldAccess getWorld() {
 		return world;
 	}
 

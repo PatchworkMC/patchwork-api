@@ -22,10 +22,10 @@ package net.minecraftforge.common;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DefaultedList;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 
 /**
  * This allows for mods to create their own Shear-like items
@@ -66,7 +66,7 @@ public interface IShearable {
 	 * @param fortune The fortune level of the shears being used.
 	 * @return a list of items to be dropped as a result of the shearing process.
 	 */
-	default List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
+	default List<ItemStack> onSheared(ItemStack item, WorldAccess world, BlockPos pos, int fortune) {
 		return DefaultedList.of();
 	}
 }

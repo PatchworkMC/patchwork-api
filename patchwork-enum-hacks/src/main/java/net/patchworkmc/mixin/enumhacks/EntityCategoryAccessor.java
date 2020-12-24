@@ -19,15 +19,14 @@
 
 package net.patchworkmc.mixin.enumhacks;
 
+import net.minecraft.entity.SpawnGroup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import net.minecraft.entity.EntityCategory;
-
-@Mixin(EntityCategory.class)
+@Mixin(SpawnGroup.class)
 public interface EntityCategoryAccessor {
 	@Invoker("<init>")
-	static EntityCategory invokeConstructor(String constantName, int index, String name, int spawnCap, boolean peaceful, boolean animal) {
+	static SpawnGroup invokeConstructor(String constantName, int index, String name, int spawnCap, boolean peaceful, boolean animal) {
 		throw new IllegalStateException("Mixin did not transform accessor! Something is very wrong!");
 	}
 }

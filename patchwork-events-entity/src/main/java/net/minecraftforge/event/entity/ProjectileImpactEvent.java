@@ -21,8 +21,8 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.util.hit.HitResult;
 
 /**
@@ -57,14 +57,14 @@ public class ProjectileImpactEvent extends EntityEvent {
 	}
 
 	public static class Arrow extends ProjectileImpactEvent {
-		private final ProjectileEntity arrow;
+		private final PersistentProjectileEntity arrow;
 
-		public Arrow(ProjectileEntity arrow, HitResult ray) {
+		public Arrow(PersistentProjectileEntity arrow, HitResult ray) {
 			super(arrow, ray);
 			this.arrow = arrow;
 		}
 
-		public ProjectileEntity getArrow() {
+		public PersistentProjectileEntity getArrow() {
 			return arrow;
 		}
 	}

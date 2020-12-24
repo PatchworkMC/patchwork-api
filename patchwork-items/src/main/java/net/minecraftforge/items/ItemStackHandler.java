@@ -26,8 +26,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.util.DefaultedList;
-
+import net.minecraft.util.collection.DefaultedList;
 import net.fabricmc.fabric.api.util.NbtType;
 
 public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {

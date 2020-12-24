@@ -31,13 +31,12 @@ import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
-
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
@@ -49,11 +48,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
 public class WorldEvents implements ModInitializer {
-	public static boolean onCreateWorldSpawn(IWorld world, LevelInfo settings) {
+	public static boolean onCreateWorldSpawn(WorldAccess world, LevelInfo settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
 
-	public static List<Biome.SpawnEntry> getPotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<Biome.SpawnEntry> oldSpawns) {
+	public static List<Biome.SpawnEntry> getPotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<Biome.SpawnEntry> oldSpawns) {
 		WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldSpawns);
 
 		if (MinecraftForge.EVENT_BUS.post(event)) {
@@ -63,15 +62,15 @@ public class WorldEvents implements ModInitializer {
 		return event.getList();
 	}
 
-	public static void onWorldLoad(IWorld world) {
+	public static void onWorldLoad(WorldAccess world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 	}
 
-	public static void onWorldUnload(IWorld world) {
+	public static void onWorldUnload(WorldAccess world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(world));
 	}
 
-	public static void onWorldSave(IWorld world) {
+	public static void onWorldSave(WorldAccess world) {
 		MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(world));
 	}
 
@@ -88,7 +87,7 @@ public class WorldEvents implements ModInitializer {
 	 * @return the IWorld instance holding the given chunk, null if not applicable.
 	 */
 	@Nullable
-	public static IWorld getWorldForChunk(Chunk chunk) {
+	public static WorldAccess getWorldForChunk(Chunk chunk) {
 		// replaces IForgeChunk.getWorldForge()
 		return chunk instanceof WorldChunk ? ((WorldChunk) chunk).getWorld() : null;
 	}
@@ -109,7 +108,7 @@ public class WorldEvents implements ModInitializer {
 		ServerChunkEvents.CHUNK_UNLOAD.register((server, chunk) -> MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(chunk)));
 	}
 
-	public static boolean onSaplingGrowTree(IWorld world, Random rand, BlockPos pos) {
+	public static boolean onSaplingGrowTree(WorldAccess world, Random rand, BlockPos pos) {
 		SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
 		MinecraftForge.EVENT_BUS.post(event);
 		return event.getResult() != Event.Result.DENY;

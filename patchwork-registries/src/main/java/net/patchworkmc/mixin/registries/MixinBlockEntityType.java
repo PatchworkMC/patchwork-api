@@ -45,7 +45,7 @@ public class MixinBlockEntityType implements ExtendedForgeRegistryEntry {
 	public Identifier getRegistryName() {
 		BlockEntityType<?> blockEntityType = (BlockEntityType) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.BLOCK_ENTITY, blockEntityType, registryName);
+		return Identifiers.getOrFallback(Registry.BLOCK_ENTITY_TYPE, blockEntityType, registryName);
 	}
 
 	public Class<BlockEntityType> getRegistryType() {

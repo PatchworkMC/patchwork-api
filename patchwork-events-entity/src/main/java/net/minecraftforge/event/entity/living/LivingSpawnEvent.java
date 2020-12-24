@@ -20,11 +20,10 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.entity.SpawnType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
+import net.minecraft.world.WorldAccess;
 
 /**
  * <p>LivingSpawnEvent is fired for any events associated with Living Entities spawn status.
@@ -39,12 +38,12 @@ import net.minecraft.world.MobSpawnerLogic;
  * <p>All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
  */
 public class LivingSpawnEvent extends LivingEvent {
-	private final IWorld world;
+	private final WorldAccess world;
 	private final double x;
 	private final double y;
 	private final double z;
 
-	public LivingSpawnEvent(MobEntity entity, IWorld world, double x, double y, double z) {
+	public LivingSpawnEvent(MobEntity entity, WorldAccess world, double x, double y, double z) {
 		super(entity);
 		this.world = world;
 		this.x = x;
@@ -52,7 +51,7 @@ public class LivingSpawnEvent extends LivingEvent {
 		this.z = z;
 	}
 
-	public IWorld getWorld() {
+	public WorldAccess getWorld() {
 		return world;
 	}
 
@@ -85,7 +84,7 @@ public class LivingSpawnEvent extends LivingEvent {
 	public static class CheckSpawn extends LivingSpawnEvent {
 		@Nullable
 		private final MobSpawnerLogic spawner;
-		private final SpawnType type;
+		private final SpawnReason type;
 
 		/**
 		 * CheckSpawn is fired when an Entity is about to be spawned.
@@ -98,8 +97,8 @@ public class LivingSpawnEvent extends LivingEvent {
 		 * @param spawner the spawner that spawned this entity null if it this spawn is
 		 *               coming from a world spawn or other non-spawner source
 		 */
-		public CheckSpawn(MobEntity entity, IWorld world, double x, double y, double z,
-				@Nullable MobSpawnerLogic spawner, SpawnType type) {
+		public CheckSpawn(MobEntity entity, WorldAccess world, double x, double y, double z,
+				@Nullable MobSpawnerLogic spawner, SpawnReason type) {
 			super(entity, world, x, y, z);
 			this.spawner = spawner;
 			this.type = type;
@@ -114,7 +113,7 @@ public class LivingSpawnEvent extends LivingEvent {
 			return spawner;
 		}
 
-		public SpawnType getSpawnReason() {
+		public SpawnReason getSpawnReason() {
 			return type;
 		}
 
@@ -128,7 +127,7 @@ public class LivingSpawnEvent extends LivingEvent {
 	 * <p>SpecialSpawn is fired when an Entity is to be spawned.
 	 * This allows you to do special initializers in the new entity.</p>
 	 *
-	 * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#doSpecialSpawn(MobEntity, IWorld, double, double, double, MobSpawnerLogic, SpawnType)}.</p>
+	 * <p>This event is fired via {@link net.patchworkmc.impl.event.entity.EntityEvents#doSpecialSpawn(MobEntity, WorldAccess, double, double, double, MobSpawnerLogic, SpawnReason)}.</p>
 	 *
 	 * <p>This event is cancellable.
 	 * If this event is canceled, the entity's {@link MobEntity#initialize} method is not called.</p>
@@ -140,7 +139,7 @@ public class LivingSpawnEvent extends LivingEvent {
 	public static class SpecialSpawn extends LivingSpawnEvent {
 		@Nullable
 		private final MobSpawnerLogic spawner;
-		private final SpawnType type;
+		private final SpawnReason type;
 
 		/**
 		 * @param entity the spawning entity
@@ -151,8 +150,8 @@ public class LivingSpawnEvent extends LivingEvent {
 		 * @param spawner the spawner that spawned this entity, or null if this spawn is
 		 *        coming from a world spawn or other non-spawner source
 		 */
-		public SpecialSpawn(MobEntity entity, IWorld world, double x, double y, double z,
-				@Nullable MobSpawnerLogic spawner, SpawnType type) {
+		public SpecialSpawn(MobEntity entity, WorldAccess world, double x, double y, double z,
+				@Nullable MobSpawnerLogic spawner, SpawnReason type) {
 			super(entity, world, x, y, z);
 			this.spawner = spawner;
 			this.type = type;
@@ -167,7 +166,7 @@ public class LivingSpawnEvent extends LivingEvent {
 			return spawner;
 		}
 
-		public SpawnType getSpawnReason() {
+		public SpawnReason getSpawnReason() {
 			return type;
 		}
 

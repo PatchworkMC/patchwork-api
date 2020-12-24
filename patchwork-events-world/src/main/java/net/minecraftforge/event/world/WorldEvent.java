@@ -30,15 +30,15 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ProgressListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.biome.Biome.SpawnEntry;
 import net.minecraft.world.dimension.DimensionType;
@@ -57,13 +57,13 @@ import net.minecraft.world.level.LevelProperties;
  * <p>All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.</p>
  */
 public class WorldEvent extends Event {
-	private final IWorld world;
+	private final WorldAccess world;
 
-	public WorldEvent(IWorld world) {
+	public WorldEvent(WorldAccess world) {
 		this.world = world;
 	}
 
-	public IWorld getWorld() {
+	public WorldAccess getWorld() {
 		return world;
 	}
 
@@ -82,7 +82,7 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Load extends WorldEvent {
-		public Load(IWorld world) {
+		public Load(WorldAccess world) {
 			super(world);
 		}
 	}
@@ -103,7 +103,7 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Unload extends WorldEvent {
-		public Unload(IWorld world) {
+		public Unload(WorldAccess world) {
 			super(world);
 		}
 	}
@@ -121,7 +121,7 @@ public class WorldEvent extends Event {
 	 * <p>This event is fired on the {@link MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class Save extends WorldEvent {
-		public Save(IWorld world) {
+		public Save(WorldAccess world) {
 			super(world);
 		}
 	}
@@ -129,17 +129,17 @@ public class WorldEvent extends Event {
 	/**
 	 * Called by {@link ServerWorld} to gather a list of all possible entities that can spawn at the specified location.
 	 * If an entry is added to the list, it needs to be a globally unique instance.
-	 * The event is called in {@link SpawnHelper#method_8664(ChunkGenerator, EntityCategory, Random, BlockPos)} as well as
-	 * {@link SpawnHelper#method_8659(ChunkGenerator, EntityCategory, SpawnEntry, BlockPos)}
+	 * The event is called in {@link SpawnHelper#pickRandomSpawnEntry(ChunkGenerator, SpawnGroup, Random, BlockPos)} as well as
+	 * {@link SpawnHelper#containsSpawnEntry(ChunkGenerator, SpawnGroup, SpawnEntry, BlockPos)}
 	 * where the latter checks for identity, meaning both events must add the same instance.
 	 * Canceling the event will result in a empty list, meaning no entity will be spawned.
 	 */
 	public static class PotentialSpawns extends WorldEvent {
-		private final EntityCategory type;
+		private final SpawnGroup type;
 		private final BlockPos pos;
 		private final List<SpawnEntry> list;
 
-		public PotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<SpawnEntry> oldList) {
+		public PotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<SpawnEntry> oldList) {
 			super(world);
 			this.pos = pos;
 			this.type = type;
@@ -151,7 +151,7 @@ public class WorldEvent extends Event {
 			}
 		}
 
-		public EntityCategory getType() {
+		public SpawnGroup getType() {
 			return type;
 		}
 
@@ -176,7 +176,7 @@ public class WorldEvent extends Event {
 	public static class CreateSpawnPosition extends WorldEvent {
 		private final LevelInfo settings;
 
-		public CreateSpawnPosition(IWorld world, LevelInfo settings) {
+		public CreateSpawnPosition(WorldAccess world, LevelInfo settings) {
 			super(world);
 			this.settings = settings;
 		}

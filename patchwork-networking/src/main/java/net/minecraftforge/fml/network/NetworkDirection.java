@@ -29,13 +29,12 @@ import net.minecraftforge.fml.LogicalSide;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.c2s.login.LoginQueryResponseC2SPacket;
 import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
 import net.minecraft.network.packet.s2c.login.LoginQueryRequestS2CPacket;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
-
 import net.patchworkmc.mixin.networking.accessor.CustomPayloadC2SPacketAccessor;
 import net.patchworkmc.mixin.networking.accessor.CustomPayloadS2CPacketAccessor;
 

@@ -51,18 +51,18 @@ public interface ForgeBlockModelRenderer {
 	default boolean tesselate(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
 		patchwork$tesselate_ModelData(modelData);
-		return me.tesselate(view, model, state, pos, buffer, testSides, random, l);
+		return me.render(view, model, state, pos, buffer, testSides, random, l);
 	}
 
 	default boolean renderModelSmooth(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
 		patchwork$tesselateSmoothFlat_ModelData(modelData);
-		return me.tesselateSmooth(view, model, state, pos, buffer, testSides, random, l);
+		return me.renderSmooth(view, model, state, pos, buffer, testSides, random, l);
 	}
 
 	default boolean renderModelFlat(BlockRenderView view, BakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean testSides, Random random, long l, IModelData modelData) {
 		BlockModelRenderer me = (BlockModelRenderer) this;
 		patchwork$tesselateSmoothFlat_ModelData(modelData);
-		return me.tesselateFlat(view, model, state, pos, buffer, testSides, random, l);
+		return me.renderFlat(view, model, state, pos, buffer, testSides, random, l);
 	}
 }

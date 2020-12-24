@@ -26,12 +26,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At.Shift;
-
-import net.minecraft.container.CraftingResultSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.screen.slot.CraftingResultSlot;
 import net.patchworkmc.impl.event.entity.PlayerEvents;
 
 @Mixin(CraftingResultSlot.class)

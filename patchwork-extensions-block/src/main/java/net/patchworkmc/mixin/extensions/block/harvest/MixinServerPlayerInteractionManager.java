@@ -43,9 +43,8 @@ import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-
+import net.minecraft.world.WorldAccess;
 import net.patchworkmc.impl.extensions.block.BlockContext;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.extensions.block.Signatures;
@@ -101,7 +100,7 @@ public abstract class MixinServerPlayerInteractionManager {
 	}
 
 	@Redirect(method = "tryBreakBlock", at = @At(value = "INVOKE", target = Signatures.Block_onBroken, ordinal = 0))
-	private void patchwork$tryBreakBlock_onBroken(Block block, IWorld world, BlockPos pos, BlockState state) {
+	private void patchwork$tryBreakBlock_onBroken(Block block, WorldAccess world, BlockPos pos, BlockState state) {
 		// Suppress this call
 	}
 

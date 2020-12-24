@@ -26,8 +26,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.CustomizeBuffetLevelScreen;
 import net.minecraft.client.gui.screen.CustomizeFlatLevelScreen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.layer.AddBambooJungleLayer;
 import net.minecraft.world.biome.layer.EaseBiomeEdgeLayer;
 import net.minecraft.world.biome.layer.ScaleLayer;
@@ -67,7 +67,7 @@ public interface IForgeWorldType {
 		}
 	}
 
-	default boolean handleSlimeSpawnReduction(Random random, IWorld world) {
+	default boolean handleSlimeSpawnReduction(Random random, WorldAccess world) {
 		return this == LevelGeneratorType.FLAT && random.nextInt(4) != 1;
 	}
 

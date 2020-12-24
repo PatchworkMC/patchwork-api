@@ -27,7 +27,7 @@ import com.google.common.base.Preconditions;
 
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DefaultedList;
+import net.minecraft.util.collection.DefaultedList;
 
 /**
  * This event is called when a player fishes an item.
@@ -43,7 +43,7 @@ public class ItemFishedEvent extends PlayerEvent {
 	private int rodDamage;
 
 	public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingBobberEntity hook) {
-		super(hook.getOwner());
+		super(hook.getPlayerOwner());
 		this.stacks.addAll(stacks);
 		this.rodDamage = rodDamage;
 		this.hook = hook;

@@ -28,7 +28,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import com.google.common.collect.BiMap;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Int2ObjectBiMap;
+import net.minecraft.util.collection.Int2ObjectBiMap;
 import net.minecraft.util.registry.SimpleRegistry;
 
 /**
@@ -66,7 +66,7 @@ public class ForgeModRegistry<V extends IForgeRegistryEntry<V>> extends SimpleRe
 	/////////////////////////////
 	@Override
 	public BiMap<Identifier, V> entries() {
-		return this.entries;
+		return this.idToEntry;
 	}
 
 	@Override

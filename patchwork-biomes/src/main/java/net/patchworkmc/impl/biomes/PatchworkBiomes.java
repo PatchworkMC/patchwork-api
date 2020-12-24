@@ -26,8 +26,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
-
+import net.minecraft.world.biome.BiomeKeys;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biomes.v1.OverworldBiomes;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
@@ -83,12 +82,12 @@ public final class PatchworkBiomes implements ModInitializer {
 	}
 
 	public static Biome getDefaultRiver(Biome biome) {
-		if (biome == Biomes.SNOWY_TUNDRA) {
-			return Biomes.FROZEN_RIVER;
-		} else if (biome == Biomes.MUSHROOM_FIELDS || biome == Biomes.MUSHROOM_FIELD_SHORE) {
-			return Biomes.MUSHROOM_FIELD_SHORE;
+		if (biome == BiomeKeys.SNOWY_TUNDRA) {
+			return BiomeKeys.FROZEN_RIVER;
+		} else if (biome == BiomeKeys.MUSHROOM_FIELDS || biome == BiomeKeys.MUSHROOM_FIELD_SHORE) {
+			return BiomeKeys.MUSHROOM_FIELD_SHORE;
 		}
 
-		return Biomes.RIVER;
+		return BiomeKeys.RIVER;
 	}
 }

@@ -30,10 +30,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 
 public class Shearables {
-	public static void shearEntity(ItemStack stack, IWorld world, BlockPos pos, IShearable target) {
+	public static void shearEntity(ItemStack stack, WorldAccess world, BlockPos pos, IShearable target) {
 		if (!(target instanceof Entity)) {
 			throw new IllegalArgumentException("Tried to call shearEntity on something that was not an entity!");
 		}

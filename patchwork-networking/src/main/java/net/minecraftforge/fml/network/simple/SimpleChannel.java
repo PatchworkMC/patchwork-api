@@ -38,9 +38,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
-
 import net.patchworkmc.impl.networking.ListenableChannel;
 
 public class SimpleChannel implements ListenableChannel {

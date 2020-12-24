@@ -43,11 +43,11 @@ public class FakePlayer extends ServerPlayerEntity {
 	}
 
 	@Override
-	public void addChatMessage(Text text, boolean actionBar) {
+	public void sendMessage(Text text, boolean actionBar) {
 	}
 
 	@Override
-	public void sendMessage(Text component) {
+	public void sendSystemMessage(Text component) {
 	}
 
 	@Override

@@ -21,12 +21,11 @@ package net.patchworkmc.mixin.event.world;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 @Mixin(ChunkGenerator.class)
 public interface MixinChunkGenerator {
 	@Accessor
-	IWorld getWorld();
+	WorldAccess getWorld();
 }

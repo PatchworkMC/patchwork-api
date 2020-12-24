@@ -22,15 +22,14 @@ package net.patchworkmc.mixin.registries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import net.minecraft.container.ContainerType;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
-@Mixin(ContainerType.class)
+@Mixin(ScreenHandlerType.class)
 public class MixinContainerType implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;
@@ -43,12 +42,12 @@ public class MixinContainerType implements ExtendedForgeRegistryEntry {
 	}
 
 	public Identifier getRegistryName() {
-		ContainerType<?> containerType = (ContainerType<?>) (Object) this;
+		ScreenHandlerType<?> containerType = (ScreenHandlerType<?>) (Object) this;
 
-		return Identifiers.getOrFallback(Registry.CONTAINER, containerType, registryName);
+		return Identifiers.getOrFallback(Registry.SCREEN_HANDLER, containerType, registryName);
 	}
 
-	public Class<ContainerType> getRegistryType() {
-		return ContainerType.class;
+	public Class<ScreenHandlerType> getRegistryType() {
+		return ScreenHandlerType.class;
 	}
 }

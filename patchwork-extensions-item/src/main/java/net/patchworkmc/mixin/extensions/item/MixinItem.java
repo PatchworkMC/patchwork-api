@@ -38,10 +38,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.item.ModelPredicateProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
@@ -92,10 +92,10 @@ public abstract class MixinItem implements IForgeItem {
 	}
 
 	@Shadow
-	Map<Identifier, ItemPropertyGetter> propertyGetters;
+	Map<Identifier, ModelPredicateProvider> propertyGetters;
 
 	@Override
-	public Map<Identifier, ItemPropertyGetter> patchwork_getPropertyGetters() {
+	public Map<Identifier, ModelPredicateProvider> patchwork_getPropertyGetters() {
 		return propertyGetters;
 	}
 
@@ -107,7 +107,7 @@ public abstract class MixinItem implements IForgeItem {
 		if (cachedTags == null || tagVersion != ItemTagsAccessor.getLatestVersion()) {
 			this.cachedTags = new HashSet<>();
 
-			for (final Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getContainer().getEntries().entrySet()) {
+			for (final Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getTagGroup().getEntries().entrySet()) {
 				if (entry.getValue().contains((Item) (Object) this)) {
 					cachedTags.add(entry.getKey());
 				}

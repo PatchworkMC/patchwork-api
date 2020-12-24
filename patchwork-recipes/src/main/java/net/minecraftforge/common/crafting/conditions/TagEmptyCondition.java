@@ -50,7 +50,7 @@ public class TagEmptyCondition implements ICondition {
 
 	@Override
 	public boolean test() {
-		Tag<Item> tag = ItemTags.getContainer().get(tag_name);
+		Tag<Item> tag = ItemTags.getTagGroup().get(tag_name);
 		return tag == null || tag.values().isEmpty();
 	}
 

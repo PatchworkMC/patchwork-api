@@ -23,13 +23,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.hit.HitResult;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;
 
-@Mixin(ProjectileEntity.class)
+@Mixin(PersistentProjectileEntity.class)
 public class MixinProjectileEntity {
 	/**
 	 * Mixin to the projectile hit method, to call {@link net.minecraftforge.event.entity.ProjectileImpactEvent}.
@@ -44,7 +43,7 @@ public class MixinProjectileEntity {
 	@Inject(method = "onHit(Lnet/minecraft/util/hit/HitResult;)V", at = @At("HEAD"), cancellable = true)
 	private void hookHit(HitResult hitResult, CallbackInfo callback) {
 		if (hitResult.getType() != HitResult.Type.MISS) {
-			ProjectileEntity entity = (ProjectileEntity) (Object) this;
+			PersistentProjectileEntity entity = (PersistentProjectileEntity) (Object) this;
 
 			if (EntityEvents.onProjectileImpact(entity, hitResult)) {
 				callback.cancel();

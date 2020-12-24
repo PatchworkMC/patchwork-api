@@ -36,7 +36,7 @@ public class ItemTooltipEvent extends PlayerEvent {
 	private final List<Text> toolTip;
 
 	/**
-	 * This event is fired in {@link ItemStack#getTooltip(PlayerEntity, TooltipContext)}, which in turn is called from it's respective {@link net.minecraft.client.gui.screen.ingame.ContainerScreen}.
+	 * This event is fired in {@link ItemStack#getTooltip(PlayerEntity, TooltipContext)}, which in turn is called from it's respective {@link net.minecraft.client.gui.screen.ingame.HandledScreen}.
 	 * Tooltips are also gathered with a null entityPlayer during startup by {@link net.minecraft.client.MinecraftClient#initializeSearchableContainers()}.
 	 */
 	public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable PlayerEntity entityPlayer, List<Text> list, TooltipContext flags) {

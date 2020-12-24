@@ -27,7 +27,7 @@ import com.google.common.collect.BiMap;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Int2ObjectBiMap;
+import net.minecraft.util.collection.Int2ObjectBiMap;
 import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;

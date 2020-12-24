@@ -55,14 +55,14 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -72,9 +72,9 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.api.ModInitializer;
@@ -199,7 +199,7 @@ public class EntityEvents implements ModInitializer {
 		return event.getNewHeight();
 	}
 
-	public static Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
+	public static Result canEntitySpawn(MobEntity entity, WorldAccess world, double x, double y, double z, MobSpawnerLogic spawner, SpawnReason spawnType) {
 		if (entity == null) {
 			return Result.DEFAULT;
 		}
@@ -210,28 +210,28 @@ public class EntityEvents implements ModInitializer {
 	}
 
 	public static boolean canEntitySpawnFromSpawner(MobEntity entity, World world, double x, double y, double z, MobSpawnerLogic spawner) {
-		Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnType.SPAWNER);
+		Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnReason.SPAWNER);
 
 		if (result == Result.DEFAULT) {
 			// Vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
-			return entity.canSpawn(world, SpawnType.SPAWNER) && entity.canSpawn(world);
+			return entity.canSpawn(world, SpawnReason.SPAWNER) && entity.canSpawn(world);
 		} else {
 			return result == Result.ALLOW;
 		}
 	}
 
-	public static boolean canEntitySpawnNaturally(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType, double sqDistanceFromPlayer) {
+	public static boolean canEntitySpawnNaturally(MobEntity entity, WorldAccess world, double x, double y, double z, MobSpawnerLogic spawner, SpawnReason spawnType, double sqDistanceFromPlayer) {
 		Result result = canEntitySpawn(entity, world, x, y, z, spawner, spawnType);
 
 		if (result == Result.DEFAULT) {
 			// Vanilla logic, but inverted since we're checking if it CAN spawn instead of if it CAN'T
-			return !(sqDistanceFromPlayer > 16384.0D && entity.canImmediatelyDespawn(sqDistanceFromPlayer)) && entity.canSpawn(world, SpawnType.NATURAL) && entity.canSpawn(world);
+			return !(sqDistanceFromPlayer > 16384.0D && entity.canImmediatelyDespawn(sqDistanceFromPlayer)) && entity.canSpawn(world, SpawnReason.NATURAL) && entity.canSpawn(world);
 		} else {
 			return result == Result.ALLOW;
 		}
 	}
 
-	public static boolean doSpecialSpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnType) {
+	public static boolean doSpecialSpawn(MobEntity entity, WorldAccess world, double x, double y, double z, MobSpawnerLogic spawner, SpawnReason spawnType) {
 		return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnType));
 	}
 
@@ -275,7 +275,7 @@ public class EntityEvents implements ModInitializer {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(entity, ray));
 	}
 
-	public static boolean onProjectileImpact(ProjectileEntity arrow, HitResult ray) {
+	public static boolean onProjectileImpact(PersistentProjectileEntity arrow, HitResult ray) {
 		return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Arrow(arrow, ray));
 	}
 

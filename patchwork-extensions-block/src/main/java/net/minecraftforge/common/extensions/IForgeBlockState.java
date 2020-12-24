@@ -54,8 +54,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.explosion.Explosion;
 
 import net.fabricmc.api.EnvType;
@@ -177,7 +177,7 @@ public interface IForgeBlockState {
 	 * @param world       The current world
 	 * @param pos         Block position in world
 	 * @param player      The player damaging the block, may be null
-	 * @param willHarvest True if {@link Block#onBroken(IWorld, BlockPos, BlockState)} will be called after this if this method returns true.
+	 * @param willHarvest True if {@link Block#onBroken(WorldAccess, BlockPos, BlockState)} will be called after this if this method returns true.
 	 *                    Can be useful to delay the destruction of block entities till after onBroken
 	 * @param fluid       The current fluid state at current position
 	 * @return True if the block is actually destroyed.
@@ -463,7 +463,7 @@ public interface IForgeBlockState {
 	 * @param pos    Block position in world
 	 * @param source Source plant's position in world
 	 */
-	default void onPlantGrow(IWorld world, BlockPos pos, BlockPos source) {
+	default void onPlantGrow(WorldAccess world, BlockPos pos, BlockPos source) {
 		patchwork$getForgeBlock().onPlantGrow(getBlockState(), world, pos, source);
 	}
 
@@ -505,7 +505,7 @@ public interface IForgeBlockState {
 		return patchwork$getForgeBlock().getExpDrop(getBlockState(), world, pos, fortune, silktouch);
 	}
 
-	default BlockState rotate(IWorld world, BlockPos pos, BlockRotation direction) {
+	default BlockState rotate(WorldAccess world, BlockPos pos, BlockRotation direction) {
 		return patchwork$getForgeBlock().rotate(getBlockState(), world, pos, direction);
 	}
 
@@ -530,7 +530,7 @@ public interface IForgeBlockState {
 	 * @param color   Color to recolor to.
 	 * @return if the block was affected
 	 */
-	default boolean recolorBlock(IWorld world, BlockPos pos, Direction facing, DyeColor color) {
+	default boolean recolorBlock(WorldAccess world, BlockPos pos, Direction facing, DyeColor color) {
 		return patchwork$getForgeBlock().recolorBlock(getBlockState(), world, pos, facing, color);
 	}
 
@@ -685,7 +685,7 @@ public interface IForgeBlockState {
 	 * @param hand   The hand the block is being placed from
 	 * @return The state to be placed in the world
 	 */
-	default BlockState getStateForPlacement(Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
+	default BlockState getStateForPlacement(Direction facing, BlockState state2, WorldAccess world, BlockPos pos1, BlockPos pos2, Hand hand) {
 		return patchwork$getForgeBlock().getStateForPlacement(getBlockState(), facing, state2, world, pos1, pos2, hand);
 	}
 

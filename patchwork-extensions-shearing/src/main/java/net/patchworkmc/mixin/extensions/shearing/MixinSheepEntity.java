@@ -36,8 +36,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 /**
  * Patches {@link SheepEntity} to allow using {@link IShearable} for dropping wool.
@@ -69,7 +69,7 @@ public abstract class MixinSheepEntity extends AnimalEntity implements IShearabl
 	}
 
 	@Override
-	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(ItemStack item, WorldAccess world, BlockPos pos, int fortune) {
 		List<ItemStack> drops = new java.util.ArrayList<>();
 
 		if (!this.world.isClient) {

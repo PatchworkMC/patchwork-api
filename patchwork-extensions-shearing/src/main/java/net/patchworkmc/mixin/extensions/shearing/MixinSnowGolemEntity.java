@@ -30,7 +30,7 @@ import net.minecraft.entity.passive.SnowGolemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 
 /**
  * Patches {@link SnowGolemEntity} to allow using {@link IShearable} for removing its pumpkin. The pumpkin will not be dropped as an item.
@@ -51,7 +51,7 @@ public abstract class MixinSnowGolemEntity implements IShearable {
 	}
 
 	@Override
-	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(ItemStack item, WorldAccess world, BlockPos pos, int fortune) {
 		this.setHasPumpkin(false);
 
 		return new ArrayList<>();

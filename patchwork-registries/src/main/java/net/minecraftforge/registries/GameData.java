@@ -29,7 +29,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.container.ContainerType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.brain.Activity;
@@ -44,6 +43,7 @@ import net.minecraft.particle.ParticleType;
 import net.minecraft.potion.Potion;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.stat.StatType;
 import net.minecraft.structure.StructurePieceType;
@@ -129,7 +129,7 @@ public class GameData {
 		wrap(ENTITIES, EntityType.class);
 		wrap(TILEENTITIES, BlockEntityType.class);
 		wrap(PARTICLE_TYPES, ParticleType.class);
-		wrap(CONTAINERS, ContainerType.class);
+		wrap(CONTAINERS, ScreenHandlerType.class);
 		wrap(PAINTING_TYPES, PaintingMotive.class);
 		wrap(RECIPE_SERIALIZERS, RecipeSerializer.class);
 		wrap(STAT_TYPES, StatType.class);

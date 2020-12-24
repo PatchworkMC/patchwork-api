@@ -74,9 +74,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.ModifiableWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.dimension.TheEndDimension;
 import net.minecraft.world.explosion.Explosion;
 
@@ -236,7 +236,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	 * @param world       The current world
 	 * @param pos         Block position in world
 	 * @param player      The player damaging the block, may be null
-	 * @param willHarvest True if {@link Block#onBroken(IWorld, BlockPos, BlockState)} will be called after this if this method returns true.
+	 * @param willHarvest True if {@link Block#onBroken(WorldAccess, BlockPos, BlockState)} will be called after this if this method returns true.
 	 *                    Can be useful to delay the destruction of block entities till after onBroken
 	 * @param fluid       The current fluid state at current position
 	 * @return True if the block is actually destroyed.
@@ -392,7 +392,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	 */
 	default boolean canBeReplacedByLogs(BlockState state, CollisionView world, BlockPos pos) {
 		return (isAir(state, world, pos) || state.matches(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || Block.isNaturalDirt(getBlock())
-				|| getBlock().matches(BlockTags.LOGS) || getBlock().matches(BlockTags.SAPLINGS) || this == Blocks.VINE;
+				|| getBlock().isIn(BlockTags.LOGS) || getBlock().isIn(BlockTags.SAPLINGS) || this == Blocks.VINE;
 	}
 
 	// This comment is here to note that I didn't miss getting the calls for this method, there just aren't any.
@@ -605,7 +605,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	 * @param pos    Block position in world
 	 * @param source Source plant's position in world
 	 */
-	default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source) {
+	default void onPlantGrow(BlockState state, WorldAccess world, BlockPos pos, BlockPos source) {
 		if (Block.isNaturalDirt(getBlock())) {
 			world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
 		}
@@ -662,7 +662,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	}
 
 	// TODO Call locations: Patches: PistonBlock
-	default BlockState rotate(BlockState state, IWorld world, BlockPos pos, BlockRotation direction) {
+	default BlockState rotate(BlockState state, WorldAccess world, BlockPos pos, BlockRotation direction) {
 		return state.rotate(direction);
 	}
 
@@ -713,7 +713,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	 * @return if the block was affected
 	 */
 	@SuppressWarnings("unchecked")
-	default boolean recolorBlock(BlockState state, IWorld world, BlockPos pos, Direction facing, DyeColor color) {
+	default boolean recolorBlock(BlockState state, WorldAccess world, BlockPos pos, Direction facing, DyeColor color) {
 		for (Property<?> prop : state.getProperties()) {
 			if (prop.getName().equals("color") && prop.getType() == DyeColor.class) {
 				DyeColor current = (DyeColor) state.get(prop);
@@ -920,7 +920,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	 * @param hand   The hand the block is being placed from
 	 * @return The state to be placed in the world
 	 */
-	default BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand) {
+	default BlockState getStateForPlacement(BlockState state, Direction facing, BlockState state2, WorldAccess world, BlockPos pos1, BlockPos pos2, Hand hand) {
 		return this.getBlock().getStateForNeighborUpdate(state, facing, state2, world, pos1, pos2);
 	}
 
@@ -1086,7 +1086,7 @@ public interface IForgeBlock extends PatchworkBlock {
 	// Call locations: Patches: DebugHud (no todo because this works fine without it -- this method should never be overridden anyway.)
 	/**
 	 * Retrieves a list of tags names this is known to be associated with.
-	 * This should be used in favor of {@link net.minecraft.tag.TagContainer#getTagsFor}, as this caches the result.
+	 * This should be used in favor of {@link net.minecraft.tag.TagGroupLoader#getTagsFor}, as this caches the result.
 	 */
 	Set<Identifier> getTags();
 
@@ -1111,6 +1111,6 @@ public interface IForgeBlock extends PatchworkBlock {
 	 * Use this to replicate fence and wall behavior.
 	 */
 	default boolean collisionExtendsVertically(BlockState state, BlockView world, BlockPos pos, Entity collidingEntity) {
-		return getBlock().matches(BlockTags.FENCES) || getBlock().matches(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
+		return getBlock().isIn(BlockTags.FENCES) || getBlock().isIn(BlockTags.WALLS) || getBlock() instanceof FenceGateBlock;
 	}
 }

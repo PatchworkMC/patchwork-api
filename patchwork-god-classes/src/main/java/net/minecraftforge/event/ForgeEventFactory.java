@@ -31,19 +31,18 @@ import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 import org.apache.commons.lang3.NotImplementedException;
-
-import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
@@ -54,18 +53,18 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.PlayerSaveHandler;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DefaultedList;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.level.LevelInfo;
@@ -118,7 +117,7 @@ public class ForgeEventFactory {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
-	public static Event.Result canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+	public static Event.Result canEntitySpawn(MobEntity entity, WorldAccess world, double x, double y, double z, MobSpawnerLogic spawner, SpawnReason spawnReason) {
 		return EntityEvents.canEntitySpawn(entity, world, x, y, z, spawner, spawnReason);
 	}
 
@@ -126,7 +125,7 @@ public class ForgeEventFactory {
 		return EntityEvents.canEntitySpawnFromSpawner(entity, world, x, y, z, spawner);
 	}
 
-	public static boolean doSpecialSpawn(MobEntity entity, World world, float x, float y, float z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+	public static boolean doSpecialSpawn(MobEntity entity, World world, float x, float y, float z, MobSpawnerLogic spawner, SpawnReason spawnReason) {
 		return EntityEvents.doSpecialSpawn(entity, world, x, y, z, spawner, spawnReason);
 	}
 
@@ -147,7 +146,7 @@ public class ForgeEventFactory {
 
 	@Stubbed
 	@Nullable
-	public static List<Biome.SpawnEntry> getPotentialSpawns(IWorld world, EntityCategory type, BlockPos pos, List<Biome.SpawnEntry> oldList) {
+	public static List<Biome.SpawnEntry> getPotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<Biome.SpawnEntry> oldList) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
@@ -168,7 +167,7 @@ public class ForgeEventFactory {
 	}
 
 	@Stubbed
-	public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state) {
+	public static BlockState fireFluidPlaceBlockEvent(WorldAccess world, BlockPos pos, BlockPos liquidPos, BlockState state) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
@@ -406,7 +405,7 @@ public class ForgeEventFactory {
 		return EntityEvents.onProjectileImpact(entity, ray);
 	}
 
-	public static boolean onProjectileImpact(ProjectileEntity arrow, HitResult ray) {
+	public static boolean onProjectileImpact(PersistentProjectileEntity arrow, HitResult ray) {
 		return EntityEvents.onProjectileImpact(arrow, ray);
 	}
 
@@ -453,7 +452,7 @@ public class ForgeEventFactory {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
-	public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos) {
+	public static boolean saplingGrowTree(WorldAccess world, Random rand, BlockPos pos) {
 		return WorldEvents.onSaplingGrowTree(world, rand, pos);
 	}
 

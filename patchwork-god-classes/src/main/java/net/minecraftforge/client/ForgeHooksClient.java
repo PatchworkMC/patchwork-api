@@ -54,7 +54,6 @@ import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.Window;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -69,6 +68,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.input.InputEvents;
@@ -252,7 +252,7 @@ public class ForgeHooksClient {
 	// moved and expanded from WorldVertexBufferUploader.draw
 
 	@Stubbed
-	public static BakedModel handleCameraTransforms(BakedModel model, ModelTransformation.Type cameraTransformType, boolean leftHandHackery) {
+	public static BakedModel handleCameraTransforms(BakedModel model, ModelTransformation.Mode cameraTransformType, boolean leftHandHackery) {
 		throw new NotImplementedException("ForgeHooksClient stub");
 	}
 
@@ -380,7 +380,7 @@ public class ForgeHooksClient {
 
 	@SuppressWarnings("deprecation")
 	@Stubbed
-	public static Pair<? extends BakedModel, Matrix4f> handlePerspective(BakedModel model, ModelTransformation.Type type) {
+	public static Pair<? extends BakedModel, Matrix4f> handlePerspective(BakedModel model, ModelTransformation.Mode type) {
 		throw new NotImplementedException("ForgeHooksClient stub");
 	}
 

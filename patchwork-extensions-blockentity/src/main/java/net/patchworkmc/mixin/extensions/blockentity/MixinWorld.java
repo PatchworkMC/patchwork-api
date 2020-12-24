@@ -58,7 +58,7 @@ public class MixinWorld {
 
 		if (blockEntity.getWorld() != me) {
 			// Forge - set the world early as vanilla doesn't set it until next tick
-			blockEntity.setWorld(me);
+			blockEntity.setLocation(me);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class MixinWorld {
 
 		if (blockEntity.getWorld() != me) {
 			// Forge - set the world early as vanilla doesn't set it until next tick
-			blockEntity.setWorld(me);
+			blockEntity.setLocation(me);
 		}
 	}
 

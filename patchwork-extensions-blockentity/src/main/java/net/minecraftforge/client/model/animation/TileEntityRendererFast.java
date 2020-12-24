@@ -64,7 +64,7 @@ public abstract class TileEntityRendererFast<T extends BlockEntity> extends Bloc
 	public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
-		this.bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
+		this.bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 		DiffuseLighting.disable();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.enableBlend();
@@ -83,7 +83,7 @@ public abstract class TileEntityRendererFast<T extends BlockEntity> extends Bloc
 
 		tessellator.draw();
 
-		DiffuseLighting.enable();
+		DiffuseLighting.enableForLevel();
 	}
 
 	/**

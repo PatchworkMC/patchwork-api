@@ -45,6 +45,6 @@ public interface ForgeBlockRenderManager {
 	default boolean renderBlock(BlockState blockState, BlockPos blockPos, BlockRenderView blockRenderView, BufferBuilder bufferBuilder, Random random, IModelData modelData) {
 		BlockRenderManager me = (BlockRenderManager) this;
 		patchwork$tesselateBlock_ModelData(modelData);
-		return me.tesselateBlock(blockState, blockPos, blockRenderView, bufferBuilder, random);
+		return me.renderBlock(blockState, blockPos, blockRenderView, bufferBuilder, random);
 	}
 }

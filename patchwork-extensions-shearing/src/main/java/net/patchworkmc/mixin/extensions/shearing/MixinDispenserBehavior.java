@@ -60,7 +60,7 @@ public class MixinDispenserBehavior extends FallibleItemDispenserBehavior {
 
 		if (!world.isClient()) {
 			BlockPos pos = pointer.getBlockPos().offset(pointer.getBlockState().get(DispenserBlock.FACING));
-			List<Entity> entities = world.getEntities(Entity.class, new Box(pos),
+			List<Entity> entities = world.getEntitiesByClass(Entity.class, new Box(pos),
 					entity -> !entity.isSpectator() && entity instanceof IShearable && entity.getType() != EntityType.SHEEP
 			);
 

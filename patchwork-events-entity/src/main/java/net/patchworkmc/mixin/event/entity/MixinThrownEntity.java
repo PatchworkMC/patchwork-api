@@ -23,8 +23,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import net.minecraft.entity.thrown.ThrownEntity;
+import net.minecraft.entity.projectile.thrown.ThrownEntity;
 import net.minecraft.util.hit.HitResult;
 
 import net.patchworkmc.impl.event.entity.EntityEvents;

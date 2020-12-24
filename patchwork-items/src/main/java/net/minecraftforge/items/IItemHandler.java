@@ -91,7 +91,7 @@ public interface IItemHandler {
 	int getSlotLimit(int slot);
 
 	/**
-	 * <p>This function re-implements the vanilla function {@link Inventory#isValidInvStack(int, ItemStack)}.
+	 * <p>This function re-implements the vanilla function {@link Inventory#isValid(int, ItemStack)}.
 	 * It should be used instead of simulated insertions in cases where the contents and state of the inventory are
 	 * irrelevant, mainly for the purpose of automation and logic (for instance, testing if a minecart can wait
 	 * to deposit its items into a full inventory, or if the items in the minecart can never be placed into the

@@ -36,8 +36,8 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.CollisionView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 /**
  * Patches {@link MooshroomEntity} to allow using {@link IShearable} for shearing the mooshroom when it is an adult, dropping mushrooms.
@@ -59,7 +59,7 @@ public abstract class MixinMooshroomEntity extends AnimalEntity implements IShea
 	}
 
 	@Override
-	public List<ItemStack> onSheared(ItemStack item, IWorld world, BlockPos pos, int fortune) {
+	public List<ItemStack> onSheared(ItemStack item, WorldAccess world, BlockPos pos, int fortune) {
 		List<ItemStack> drops = new ArrayList<>();
 		this.world.addParticle(ParticleTypes.EXPLOSION, this.x, this.y + (double) (this.getHeight() / 2.0F), this.z, 0.0D, 0.0D, 0.0D);
 
@@ -69,7 +69,7 @@ public abstract class MixinMooshroomEntity extends AnimalEntity implements IShea
 			CowEntity cow = EntityType.COW.create(this.world);
 			cow.refreshPositionAndAngles(this.x, this.y, this.z, this.yaw, this.pitch);
 			cow.setHealth(this.getHealth());
-			cow.field_6283 = this.field_6283;
+			cow.bodyYaw = this.bodyYaw;
 
 			if (this.hasCustomName()) {
 				cow.setCustomName(this.getCustomName());

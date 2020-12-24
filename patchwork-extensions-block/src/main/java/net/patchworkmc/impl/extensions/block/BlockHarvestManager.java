@@ -41,7 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.DefaultedList;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.EmptyBlockView;
@@ -127,7 +127,7 @@ public class BlockHarvestManager {
 		// method_21701 => canMine
 		// Isn't the function really canNotMine?
 
-		if (player.method_21701(world, pos, gameMode)) {
+		if (player.isBlockBreakingRestricted(world, pos, gameMode)) {
 			preCancelEvent = true;
 		}
 

@@ -20,8 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraftforge.common.MinecraftForge;
-
-import net.minecraft.world.IWorld;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.Chunk;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
@@ -44,7 +43,7 @@ public class ChunkEvent extends WorldEvent {
 		this.chunk = chunk;
 	}
 
-	public ChunkEvent(Chunk chunk, IWorld world) {
+	public ChunkEvent(Chunk chunk, WorldAccess world) {
 		super(world);
 		this.chunk = chunk;
 	}

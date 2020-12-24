@@ -23,20 +23,18 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
-
-import net.minecraft.entity.EntityCategory;
-
+import net.minecraft.entity.SpawnGroup;
 import net.patchworkmc.impl.enumhacks.HackableEnum;
 
-@Mixin(EntityCategory.class)
-public class MixinEntityCategory implements HackableEnum<EntityCategory> {
+@Mixin(SpawnGroup.class)
+public class MixinEntityCategory implements HackableEnum<SpawnGroup> {
 	@Shadow
 	@Final
 	@Mutable
-	private static EntityCategory[] field_6301;
+	private static SpawnGroup[] field_6301;
 
 	@Override
-	public void patchwork_setValues(EntityCategory[] values) {
+	public void patchwork_setValues(SpawnGroup[] values) {
 		field_6301 = values;
 	}
 }

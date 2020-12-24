@@ -96,7 +96,7 @@ public class GuiUtils {
 	 * @param zLevel the zLevel to draw at
 	 */
 	public static void drawContinuousTexturedBox(Identifier res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel) {
-		MinecraftClient.getInstance().getTextureManager().bindTexture(res);
+		MinecraftClient.getInstance().getTextureManager().bindTextureInner(res);
 		drawContinuousTexturedBox(x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
 	}
 

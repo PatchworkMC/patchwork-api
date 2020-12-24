@@ -33,12 +33,12 @@ public class ItemHandlerInventoryWrapper implements Inventory {
 	}
 
 	@Override
-	public int getInvSize() {
+	public int size() {
 		return itemHandler.getSlots();
 	}
 
 	@Override
-	public boolean isInvEmpty() {
+	public boolean isEmpty() {
 		for (int i = 0; i < itemHandler.getSlots(); i++) {
 			if (!itemHandler.getStackInSlot(i).isEmpty()) {
 				return false;
@@ -49,24 +49,24 @@ public class ItemHandlerInventoryWrapper implements Inventory {
 	}
 
 	@Override
-	public ItemStack getInvStack(int slot) {
+	public ItemStack getStack(int slot) {
 		return itemHandler.getStackInSlot(slot);
 	}
 
 	@Override
-	public ItemStack takeInvStack(int slot, int amount) {
+	public ItemStack removeStack(int slot, int amount) {
 		return itemHandler.extractItem(slot, amount, false);
 	}
 
 	@Override
-	public ItemStack removeInvStack(int slot) {
+	public ItemStack removeStack(int slot) {
 		ItemStack copy = itemHandler.getStackInSlot(slot).copy();
 		itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
 		return copy;
 	}
 
 	@Override
-	public void setInvStack(int slot, ItemStack stack) {
+	public void setStack(int slot, ItemStack stack) {
 		itemHandler.setStackInSlot(slot, stack);
 	}
 
@@ -75,7 +75,7 @@ public class ItemHandlerInventoryWrapper implements Inventory {
 	}
 
 	@Override
-	public boolean canPlayerUseInv(PlayerEntity player) {
+	public boolean canPlayerUse(PlayerEntity player) {
 		return false;
 	}
 

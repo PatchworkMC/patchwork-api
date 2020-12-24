@@ -38,7 +38,7 @@ import net.patchworkmc.impl.keybindings.ForgeKeyBindingConstruct;
 @Mixin(KeyBinding.class)
 public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeKeybinding, ForgeKeyBindingConstruct {
 	@Shadow
-	private InputUtil.KeyCode keyCode;
+	private InputUtil.Key keyCode;
 
 	// These exist in forge to allow modifiers and conflicting keys to work, this is not implemented
 	// but these remain to avoid stubbing the methods
@@ -58,7 +58,7 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 	}
 
 	@Override
-	public InputUtil.KeyCode getKey() {
+	public InputUtil.Key getKey() {
 		return this.keyCode;
 	}
 
@@ -83,7 +83,7 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 	}
 
 	@Override
-	public void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.KeyCode keyCode) {
+	public void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.Key keyCode) {
 		this.keyCode = keyCode;
 
 		if (keyModifier.matches(keyCode)) {

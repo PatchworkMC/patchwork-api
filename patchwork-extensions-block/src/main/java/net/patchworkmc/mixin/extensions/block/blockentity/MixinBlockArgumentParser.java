@@ -25,8 +25,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.command.arguments.BlockArgumentParser;
-
+import net.minecraft.command.argument.BlockArgumentParser;
 import net.patchworkmc.impl.extensions.block.BlockContext;
 import net.patchworkmc.impl.extensions.block.Signatures;
 

@@ -25,11 +25,10 @@ import java.util.Random;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
@@ -42,15 +41,15 @@ public class MixinSpawnHelper {
 	// For the chosen injection point, we need to shift back 1 so that the change gets applied in time for the isEmpty call.
 
 	@ModifyVariable(method = "method_8664", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
-	private static List<Biome.SpawnEntry> hookRandomSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, EntityCategory entityCategory, Random random, BlockPos blockPos) {
-		IWorld world = ((MixinChunkGenerator) chunkGenerator).getWorld();
+	private static List<Biome.SpawnEntry> hookRandomSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, SpawnGroup entityCategory, Random random, BlockPos blockPos) {
+		WorldAccess world = ((MixinChunkGenerator) chunkGenerator).getWorld();
 
 		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
 	}
 
 	@ModifyVariable(method = "method_8659", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
-	private static List<Biome.SpawnEntry> hookCanSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, EntityCategory entityCategory, Biome.SpawnEntry spawnEntry, BlockPos blockPos) {
-		IWorld world = ((MixinChunkGenerator) chunkGenerator).getWorld();
+	private static List<Biome.SpawnEntry> hookCanSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, SpawnGroup entityCategory, Biome.SpawnEntry spawnEntry, BlockPos blockPos) {
+		WorldAccess world = ((MixinChunkGenerator) chunkGenerator).getWorld();
 
 		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
 	}

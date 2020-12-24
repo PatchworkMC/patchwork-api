@@ -35,7 +35,6 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.advancement.Advancement;
 import net.minecraft.block.BlockState;
-import net.minecraft.container.AnvilContainer;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -43,7 +42,6 @@ import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
-import net.minecraft.util.Int2ObjectBiMap;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
@@ -52,23 +50,24 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
+import net.minecraft.screen.AnvilScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.Int2ObjectBiMap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.MobSpawnerLogic;
 import net.minecraft.world.World;
-
+import net.minecraft.world.WorldAccess;
 import net.patchworkmc.impl.event.entity.EntityEvents;
 import net.patchworkmc.impl.extensions.block.BlockHarvestManager;
 import net.patchworkmc.impl.loot.LootHooks;
@@ -239,7 +238,7 @@ public class ForgeHooks {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	public static boolean onAnvilChange(AnvilContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, Inventory outputSlot, String name, int baseCost) {
+	public static boolean onAnvilChange(AnvilScreenHandler container, @Nonnull ItemStack left, @Nonnull ItemStack right, Inventory outputSlot, String name, int baseCost) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
@@ -388,7 +387,7 @@ public class ForgeHooks {
 	}
 
 	// yes this is a direct copy of a forge method for once
-	public static int canEntitySpawn(MobEntity entity, IWorld world, double x, double y, double z, MobSpawnerLogic spawner, SpawnType spawnReason) {
+	public static int canEntitySpawn(MobEntity entity, WorldAccess world, double x, double y, double z, MobSpawnerLogic spawner, SpawnReason spawnReason) {
 		Event.Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
 		return res == Event.Result.DEFAULT ? 0 : res == Event.Result.DENY ? -1 : 1;
 	}

@@ -19,11 +19,11 @@
 
 package net.minecraftforge.fml.network;
 
-import net.minecraft.container.ContainerType;
-import net.minecraft.container.NameableContainerFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.Packet;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import net.patchworkmc.impl.networking.ListenableChannel;
@@ -54,14 +54,14 @@ public class NetworkHooks {
 	/**
 	 * Request to open a GUI on the client, from the server
 	 *
-	 * <p>The {@link ContainerType} for the container must be registered on both sides, it handles the creation of the container on the client.
+	 * <p>The {@link ScreenHandlerType} for the container must be registered on both sides, it handles the creation of the container on the client.
 	 *
 	 * @param player   The player to open the GUI for
 	 * @param provider Provides the container name and allows creation of new container instances
 	 */
-	public static void openGui(ServerPlayerEntity player, NameableContainerFactory provider) {
+	public static void openGui(ServerPlayerEntity player, NamedScreenHandlerFactory provider) {
 		// TODO: IForgeContainerType
-		player.openContainer(provider);
+		player.openHandledScreen(provider);
 	}
 
 	/*TODO

@@ -29,13 +29,13 @@ import javax.annotation.Nullable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.simple.IndexedMessageCodec.MessageHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 
 public class IndexedMessageCodec {
 	private static final Logger LOGGER = LogManager.getLogger();

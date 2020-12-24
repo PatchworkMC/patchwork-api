@@ -25,17 +25,15 @@ import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.network.FMLPlayMessages;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraft.container.Container;
-import net.minecraft.container.ContainerType;
-import net.minecraft.container.NameableContainerFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
@@ -72,12 +70,12 @@ public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageF
 	}
 
 	@Override
-	public void sendContainerOpenPacket(ServerPlayerEntity player, NameableContainerFactory factory, Consumer<PacketByteBuf> extraDataWriter) {
+	public void sendContainerOpenPacket(ServerPlayerEntity player, NamedScreenHandlerFactory factory, Consumer<PacketByteBuf> extraDataWriter) {
 		if (player.world.isClient) {
 			return;
 		}
 
-		player.method_14247();
+		player.closeScreenHandler();
 
 		ContainerSyncAccess access = (ContainerSyncAccess) player;
 		int openContainerId = access.patchwork$getNewContainerSyncId();
@@ -96,15 +94,15 @@ public class PatchworkPlayNetworkingMessages implements ModInitializer, MessageF
 			throw new IllegalArgumentException("Invalid PacketByteBuf for openGui, found " + output.readableBytes() + " bytes");
 		}
 
-		Container c = factory.createMenu(openContainerId, player.inventory, player);
-		ContainerType<?> type = c.getType();
+		ScreenHandler c = factory.createMenu(openContainerId, player.inventory, player);
+		ScreenHandlerType<?> type = c.getType();
 
 		FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, factory.getDisplayName(), output);
 		Packet<?> packet = PatchworkPlayNetworkingMessages.getOpenContainerPacket(msg);
 
 		player.networkHandler.sendPacket(packet);
-		player.container = c;
-		player.container.addListener(player);
+		player.currentScreenHandler = c;
+		player.currentScreenHandler.addListener(player);
 
 		// TODO MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
 	}
