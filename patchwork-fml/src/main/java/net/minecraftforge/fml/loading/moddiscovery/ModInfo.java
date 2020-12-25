@@ -19,29 +19,18 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.language.ModFileScanData;
-
-import net.fabricmc.loader.api.ModContainer;
-
 // TODO: Stub
-public class ModFile /* implements modlauncher IModFile */ {
-	protected final ModContainer patchwork$modContainer;
-	private final ModFileScanData modFileScanData;
-	private final ModFileInfo modFileInfo;
-
-	// both are patchwork-added constructors, but they are impl details in theory.
-	public ModFile(ModContainer fabricModContainer) {
-		this.modFileInfo = new ModFileInfo(this);
-		this.patchwork$modContainer = fabricModContainer;
-		// TODO: retrieve mod annotation scan location
-		this.modFileScanData = ModFileScanData.EMPTY;
+public class ModInfo /* implements IModInfo*/ {
+	private final ModFileInfo owningFile;
+	public ModInfo(ModFileInfo owningFile) {
+		this.owningFile = owningFile;
 	}
 
-	public ModFileInfo getModFileInfo() {
-		return modFileInfo;
+	public String getModId() {
+		return owningFile.getFile().patchwork$modContainer.getMetadata().getId();
 	}
 
-	public ModFileScanData getScanResult() {
-		return modFileScanData;
+	public ModFileInfo getOwningFile() {
+		return owningFile;
 	}
 }

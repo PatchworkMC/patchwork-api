@@ -19,6 +19,8 @@
 
 package net.patchworkmc.mixin;
 
+import org.spongepowered.asm.mixin.Dynamic;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,21 +35,18 @@ import net.patchworkmc.impl.PatchworkClientModLoader;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient {
+	@Final
 	@Shadow
 	private ReloadableResourceManager resourceManager;
 
-	@Inject(method = "init", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target = "net/minecraft/resource/ResourcePackManager.scanPacks()V"))
+	@Inject(method = "<init>", at = @At(value = "INVOKE", shift = Shift.BEFORE, ordinal = 0, target = "net/minecraft/resource/ResourcePackManager.scanPacks()V"))
 	private void initForgeModsOnClient(CallbackInfo ci) {
 		MinecraftClient me = (MinecraftClient) (Object) this;
-		PatchworkClientModLoader.begin(me, me.getResourcePackManager(), resourceManager, me.getResourcePackDownloader());
+		PatchworkClientModLoader.begin(me, resourceManager, me.getResourcePackDownloader());
 	}
 
-	//	this.setOverlay(new SplashScreen(this, this.resourceManager.beginInitialMonitoredReload(SystemUtil.getServerWorkerExecutor(), this, voidFuture), () -> {
-	//		if (SharedConstants.isDevelopment) this.checkGameData();
-	//	+	if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error sceen
-	//	+	// Show either ConnectScreen or TitleScreen
-	//	}
-	@Inject(method = "method_18504", at = @At("RETURN"))
+	@Dynamic("nested lambda in constructor")
+	@Inject(method = "method_29338", at = @At("TAIL"))
 	private void onResourceReloadComplete(CallbackInfo ci) {
 		PatchworkClientModLoader.onResourceReloadComplete(!PatchworkClientModLoader.completeModLoading());
 	}

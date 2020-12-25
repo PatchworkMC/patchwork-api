@@ -19,22 +19,31 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.fabricmc.loader.api.ModContainer;
+import java.util.Collections;
+import java.util.List;
 
 // TODO: stub
 public class ModFileInfo {
 	private final ModFile modFile;
+	private final ModInfo modInfo;
 
 	// Patchwork-specific constructor; forge one is internal so doesn't matter
-	public ModFileInfo(ModContainer modContainer, String annotationJsonLocation) {
-		modFile = new ModFile(modContainer, annotationJsonLocation);
-	}
-
-	public ModFileInfo() {
-		modFile = new ModFile();
+	public ModFileInfo(ModFile file) {
+		this.modFile = file;
+		this.modInfo = new ModInfo(this);
 	}
 
 	public ModFile getFile() {
 		return modFile;
+	}
+
+	public ModInfo patchwork$getInfo() {
+		return modInfo;
+	}
+
+	// TODO: uses the modlauncher interface
+	public List<ModInfo> getMods() {
+		// patchwork: 1 modinfo per mod id, for now
+		return Collections.singletonList(modInfo);
 	}
 }

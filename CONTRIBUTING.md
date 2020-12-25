@@ -13,9 +13,7 @@ Patchwork is a somewhat complex project, and there's a few things you should hav
 
 ## Contribution notes
 
-We use [MinecraftForge 28.1.109 @ d28cd0352b6b0fe86e062f29e681c3b14572c6d5](https://github.com/MinecraftForge/MinecraftForge/tree/d28cd0352b6b0fe86e062f29e681c3b14572c6d5) as our reference commit. All features should be based on this version of Forge for consistency. For you convenience, ramidzkh has [remapped](https://github.com/PatchworkMC/YarnForge/tree/04d384add800bc395f4934507721f72eb733389f) Forge from MCP to Yarn: contributors should use this remapped version of Forge instead.
-
-This will be changed once we update to 1.15.
+We use [A set version of Forge](https://github.com/PatchworkMC/YarnForge) as our reference commit. All features should be based on this version of Forge for consistency. The version at this link has been remapped to Yarn, but you can find the original Forge commit by reading the full commit message (for example, [here](https://github.com/PatchworkMC/YarnForge/commit/bb6ad3ceb8a2f5d1e27514ab62b08b8554288c51))
 
 
 ## What is the general flow of contribution?
@@ -32,11 +30,20 @@ This will be changed once we update to 1.15.
     * If you're not sure what to do, ask on [Discord](https://discord.gg/YYZtNBG) in `#api`.
     * In general, look at existing modules to see the naming conventions.
 4. Implement the feature and get it running.
+   * If you're writing mixins, make sure to follow these guidelines:
+        * Avoid overwrites if at all possible. Try to write your mixin in the way that touches the least amount of code.
+        * All annotations besides `@Inject` must have full signatures in the method target, like this:
+        `method = "method(I)Ljava/lang/Object;"`
+        * All `@At` annotations must include an ordinal (besides ones where it does nothing like `HEAD` and `TAIL`)
+        * If your ordinal is greater than 1, you should try to use a slice.
+        * Methods added by Forge must have a duck interface
+        * By the same token, make duck interfaces with getter/setter methods for fields
+        * Any added methods that are not from forge should have the prefix `patchwork$`
 5. Clean up the code so that it adheres to Patchwork's standards.
     * Remove [obvious lambda abuse](https://github.com/PatchworkMC/YarnForge/blob/04d384add800bc395f4934507721f72eb733389f/src/main/java/net/minecraftforge/fml/network/NetworkRegistry.java#L164-L180) and replace it with more readable code.
     * Avoid [reckless usage](https://github.com/PatchworkMC/YarnForge/blob/04d384add800bc395f4934507721f72eb733389f/src/main/java/net/minecraftforge/fml/network/ICustomPacket.java) at runtime of Unsafe, Reflection, or ASM if possible.
-    * Clean up the JavaDoc to replace [MCP names](https://github.com/PatchworkMC/YarnForge/blob/04d384add800bc395f4934507721f72eb733389f/src/main/java/net/minecraftforge/event/entity/EntityEvent.java#L64-L76) with Yarn names. Also replace usage of `<br>` with proper paragraph tags.
+    * Clean up the JavaDoc to replace [MCP names](https://github.com/PatchworkMC/YarnForge/blob/04d384add800bc395f4934507721f72eb733389f/src/main/java/net/minecraftforge/event/entity/EntityEvent.java#L64-L76) with Yarn names.
     * Make sure your code passes checkstyle by running `./gradlew checkstyleMain` (`gradlew.bat checkstyleMain` on Windows)
 6. Test your feature.
-    * You can either use the built in (but fragile) test mods feature by placing mods within `jars` (in the root project directory) or running `gradlew clean build` and grabbing the compiled jar out of `build/libs`, then setting up a Fabric instance in the launcher of your choice.
+    * Simply drop your patched mods into the `run/mods` folder.
 7. Submit a pull request to [Patchwork](https://github.com/PatchworkMC/patchwork-api)!

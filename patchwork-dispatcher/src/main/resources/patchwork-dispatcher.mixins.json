@@ -3,7 +3,7 @@
   "package": "net.patchworkmc.mixin",
   "compatibilityLevel": "JAVA_8",
   "server": [
-    "MixinMinecraftDedicatedServer"
+    "MixinMain"
   ],
   "client": [
     "MixinMinecraftClient"

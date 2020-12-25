@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -36,17 +35,14 @@ import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
-import net.minecraft.client.resource.ClientResourcePackProfile;
 import net.minecraft.resource.ReloadableResourceManager;
-import net.minecraft.resource.ResourcePackManager;
 
 public class PatchworkClientModLoader {
 	private static final Logger LOGGER = LogManager.getLogger(PatchworkClientModLoader.class);
 	private static boolean loading;
 	private static MinecraftClient mc;
 
-	public static void begin(final MinecraftClient minecraft, final ResourcePackManager<ClientResourcePackProfile> defaultResourcePacks,
-						final ReloadableResourceManager mcResourceManager, ClientBuiltinResourcePackProvider metadataSerializer) {
+	public static void begin(final MinecraftClient minecraft, final ReloadableResourceManager mcResourceManager, ClientBuiltinResourcePackProvider metadataSerializer) {
 		loading = true;
 		PatchworkClientModLoader.mc = minecraft;
 		Patchwork.gatherAndInitializeMods();
@@ -70,7 +66,7 @@ public class PatchworkClientModLoader {
 	}
 
 	private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
-		perModContainerEventProcessor.accept(ModelRegistryEvent::new);
+		//perModContainerEventProcessor.accept(ModelRegistryEvent::new);
 	}
 
 	private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {

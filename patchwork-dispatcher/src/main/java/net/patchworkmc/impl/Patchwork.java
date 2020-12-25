@@ -29,7 +29,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -41,7 +40,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,7 +51,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.CustomValue;
 
 import net.patchworkmc.api.ModInstance;
-import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
@@ -79,7 +76,7 @@ public class Patchwork {
 	}
 
 	public static void gatherAndInitializeMods() {
-		ForgeRegistries.init();
+		//ForgeRegistries.init();
 
 		List<FMLModContainer> mods = new ArrayList<>();
 		List<Pair<String, Supplier<ModInstance>>> modInitializers = new ArrayList<>();
@@ -173,15 +170,15 @@ public class Patchwork {
 			throw error;
 		}
 
-		ModList.get().setLoadedMods(mods);
+		ModList.get().setLoadedMods(mods.stream().map(it -> (ModContainer) it).collect(Collectors.toList()));
 		// note: forge fires this per-class when it is registered.
 		dispatchEntrypoint(mods, "patchwork:commonAutomaticSubscribers");
 		// Send initialization events
-		dispatch(mods, new RegistryEvent.NewRegistry());
+		//dispatch(mods, new RegistryEvent.NewRegistry());
 		dispatchEntrypoint("patchwork:objectHolders");
 		dispatchEntrypoint("patchwork:capabilityInject");
 
-		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+		//RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 	}
 
 	/**
@@ -231,14 +228,7 @@ public class Patchwork {
 		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Start mod loading.");
 		Patchwork.gatherAndInitializeMods();
 		Patchwork.loadMods(container -> new FMLDedicatedServerSetupEvent(supplier, container), dummy -> { }, dummy -> { });
-	}
-
-	public static void endOfServerModLoading() {
-		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Finish mod loading.");
 		Patchwork.finishMods();
-
-		LOGGER.debug("Patchwork Dedicated Server Mod Loader: Complete mod loading");
-		// Assume there's no error.
 		MinecraftForge.EVENT_BUS.start();
 	}
 
