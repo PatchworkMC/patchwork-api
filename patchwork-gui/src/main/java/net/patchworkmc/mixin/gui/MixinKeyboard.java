@@ -88,7 +88,7 @@ public abstract class MixinKeyboard {
 
 	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
 	private static void preCharTyped(Element element, char character, int mods, CallbackInfo info) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, character, mods))) {
 			info.cancel();
 		}
 	}

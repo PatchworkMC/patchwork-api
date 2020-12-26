@@ -28,7 +28,7 @@ import net.minecraft.client.gui.screen.Screen;
  * happen, cancel the event. If you want to override this Screen, simply set the
  * Screen variable to your own Screen.
  *
- * @author jk-5, Rikka0w0
+ * @author Rikka0w0
  */
 public class GuiOpenEvent extends Event {
 	private Screen screen;

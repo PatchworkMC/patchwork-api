@@ -21,6 +21,7 @@ package net.patchworkmc.mixin.gui;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
@@ -38,7 +39,8 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 	@Shadow
 	public abstract boolean isHovered();
 
-	protected int packedFGColor = 0;
+	private static final int UNSET_FG_COLOR = -1;
+	protected int packedFGColor = UNSET_FG_COLOR;
 
 	public int getHeight() {
 		return this.height;
@@ -48,25 +50,21 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper {
 		this.height = value;
 	}
 
-	@ModifyVariable(method = "renderButton", at = @At(value = "INVOKE_ASSIGN"), index = 7)
-	public int hookRenderButton(int original) {
+	@ModifyVariable(method = "renderButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/AbstractButtonWidget;getMessage()Lnet/minecraft/text/Text;", ordinal = 0), ordinal = 2, print = true)
+	private int hookRenderButton(int original) {
 		return getFGColor();
 	}
 
 	public int getFGColor() {
-		if (packedFGColor != 0) return packedFGColor;
-		int ret = 14737632;
-
-		if (!this.active) {
-			ret = 10526880;
-		} else if (this.isHovered()) {
-			ret = 16777120;
-		}
-
-		return ret;
+		if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
+		return this.active ? 16777215 : 10526880; // White : Light Grey
 	}
 
 	public void setFGColor(int color) {
 		this.packedFGColor = color;
+	}
+
+	public void clearFGColor() {
+		this.packedFGColor = UNSET_FG_COLOR;
 	}
 }

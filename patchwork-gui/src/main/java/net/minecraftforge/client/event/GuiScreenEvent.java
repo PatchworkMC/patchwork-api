@@ -1,6 +1,6 @@
 /*
- * Minecraft Forge, Patchwork Project
- * Copyright (c) 2016-2020, 2019-2020
+ * Minecraft Forge
+ * Copyright (c) 2016-2020.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,17 +24,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import net.minecraftforge.eventbus.api.Event;
-import org.lwjgl.glfw.GLFW;
-
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-
+import net.minecraft.client.util.InputUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.AbstractButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraftforge.eventbus.api.Event;
+
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Event classes for GuiScreen events.
@@ -85,10 +86,10 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires just after initializing {@link Screen#minecraft}, {@link Screen#font},
-		 * {@link Screen#width}, and {@link Screen#height}.
+		 * This event fires just after initializing {@link Screen#client}, {@link Screen#textRenderer},
+		 * {@link Screen#width}, and {@link Screen#height}.<br/><br/>
 		 *
-		 * <p>If canceled the following lines are skipped in {@link Screen#init(net.minecraft.client.MinecraftClient, int, int)}:</p>
+		 * <p>If canceled the following lines are skipped in {@link Screen#init(MinecraftClient, int, int)}:</p>
 		 * <p>{@code this.buttons.clear();}</p>
 		 * <p>{@code this.children.clear();}</p>
 		 * <p>{@code this.init();}</p>
@@ -116,15 +117,24 @@ public class GuiScreenEvent extends Event {
 	}
 
 	public static class DrawScreenEvent extends GuiScreenEvent {
+		private final MatrixStack mStack;
 		private final int mouseX;
 		private final int mouseY;
 		private final float renderPartialTicks;
 
-		public DrawScreenEvent(Screen gui, int mouseX, int mouseY, float renderPartialTicks) {
+		public DrawScreenEvent(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks) {
 			super(gui);
+			this.mStack = mStack;
 			this.mouseX = mouseX;
 			this.mouseY = mouseY;
 			this.renderPartialTicks = renderPartialTicks;
+		}
+
+		/**
+		 * The MatrixStack to render with.
+		 */
+		public MatrixStack getMatrixStack() {
+			return mStack;
 		}
 
 		/**
@@ -149,12 +159,12 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires just before {@link Screen#render(int, int, float)} is called.
-		 * Cancel this event to skip {@link Screen#render(int, int, float)}.
+		 * This event fires just before {@link Screen#render(MatrixStack, int, int, float)} is called.
+		 * Cancel this event to skip {@link Screen#render(MatrixStack, int, int, float)}.
 		 */
 		public static class Pre extends DrawScreenEvent {
-			public Pre(Screen gui, int mouseX, int mouseY, float renderPartialTicks) {
-				super(gui, mouseX, mouseY, renderPartialTicks);
+			public Pre(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks) {
+				super(gui, mStack, mouseX, mouseY, renderPartialTicks);
 			}
 
 			@Override
@@ -164,27 +174,37 @@ public class GuiScreenEvent extends Event {
 		}
 
 		/**
-		 * This event fires just after {@link Screen#render(int, int, float)} is called.
+		 * This event fires just after {@link Screen#render(MatrixStack, int, int, float)} is called.
 		 */
 		public static class Post extends DrawScreenEvent {
-			public Post(Screen gui, int mouseX, int mouseY, float renderPartialTicks) {
-				super(gui, mouseX, mouseY, renderPartialTicks);
+			public Post(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks) {
+				super(gui, mStack, mouseX, mouseY, renderPartialTicks);
 			}
 		}
 	}
 
 	/**
-	 * This event fires at the end of {@link Screen#renderBackground(int)} and before the rest of the Gui draws.
+	 * This event fires at the end of {@link Screen#renderBackground(MatrixStack, int)} and before the rest of the Gui draws.
 	 * This allows drawing next to Guis, above the background but below any tooltips.
 	 */
 	public static class BackgroundDrawnEvent extends GuiScreenEvent {
-		public BackgroundDrawnEvent(Screen gui) {
+		private final MatrixStack mStack;
+
+		public BackgroundDrawnEvent(Screen gui, MatrixStack mStack) {
 			super(gui);
+			this.mStack = mStack;
+		}
+
+		/**
+		 * The MatrixStack to render with.
+		 */
+		public MatrixStack getMatrixStack() {
+			return mStack;
 		}
 	}
 
 	/**
-	 * This event fires in {@link AbstractInventoryScreen#drawPotionEffects()}
+	 * This event fires in {@link AbstractInventoryScreen#applyStatusEffectOffset()}
 	 * when potion effects are active and the gui wants to move over.
 	 * Cancel this event to prevent the Gui from being moved.
 	 */
@@ -199,60 +219,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public static class ActionPerformedEvent extends GuiScreenEvent {
-		private ButtonWidget button;
-		private List<ButtonWidget> buttonList;
-
-		public ActionPerformedEvent(Screen gui, ButtonWidget button, List<ButtonWidget> buttonList) {
-			super(gui);
-			this.setButton(button);
-			this.setButtonList(new ArrayList<>(buttonList));
-		}
-
-		/**
-		 * The button that was clicked.
-		 */
-		public ButtonWidget getButton() {
-			return button;
-		}
-
-		public void setButton(ButtonWidget button) {
-			this.button = button;
-		}
-
-		/**
-		 * A COPY of the {@link #buttonList} field from {@link Screen#buttons} referenced by {@link #gui}.
-		 */
-		public List<ButtonWidget> getButtonList() {
-			return buttonList;
-		}
-
-		public void setButtonList(List<ButtonWidget> buttonList) {
-			this.buttonList = buttonList;
-		}
-
-		/**
-		 * This event fires once it has been determined that a {@link ButtonWidget} object has been clicked.
-		 * Replace button with a different button from buttonList to have that button's action executed.
-		 */
-		public static class Pre extends ActionPerformedEvent {
-			public Pre(Screen gui, ButtonWidget button, List<ButtonWidget> buttonList) {
-				super(gui, button, buttonList);
-			}
-		}
-
-		/**
-		 * This event fires after {@link Screen#actionPerformed(GuiButton)} provided that the active
-		 * screen has not been changed as a result of {@link Screen#actionPerformed(GuiButton)}.
-		 */
-		public static class Post extends ActionPerformedEvent {
-			public Post(Screen gui, ButtonWidget button, List<ButtonWidget> buttonList) {
-				super(gui, button, buttonList);
-			}
-		}
-	}
-
-	public abstract static class MouseInputEvent extends GuiScreenEvent {
+	public static abstract class MouseInputEvent extends GuiScreenEvent {
 		private final double mouseX;
 		private final double mouseY;
 
@@ -271,7 +238,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public abstract static class MouseClickedEvent extends MouseInputEvent {
+	public static abstract class MouseClickedEvent extends MouseInputEvent {
 		private final int button;
 
 		public MouseClickedEvent(Screen gui, double mouseX, double mouseY, int button) {
@@ -357,7 +324,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public abstract static class MouseDragEvent extends MouseInputEvent {
+	public static abstract class MouseDragEvent extends MouseInputEvent {
 		private final int mouseButton;
 		private final double dragX;
 		private final double dragY;
@@ -426,16 +393,11 @@ public class GuiScreenEvent extends Event {
 
 		/**
 		 * This event fires when a mouse scroll is detected for a Screen, before it is handled.
-		 * Cancel this event to bypass {@link Element#mouseScrolled(double)}.
+		 * Cancel this event to bypass {@link Element#mouseScrolled(double, double, double)}.
 		 */
 		public static class Pre extends MouseScrollEvent {
 			public Pre(Screen gui, double mouseX, double mouseY, double scrollDelta) {
 				super(gui, mouseX, mouseY, scrollDelta);
-			}
-
-			@Override
-			public boolean isCancelable() {
-				return true;
 			}
 		}
 
@@ -479,7 +441,7 @@ public class GuiScreenEvent extends Event {
 
 		/**
 		 * Platform-specific scan code.
-		 * Used for {@link net.minecraft.client.util.InputUtil#fromKeyCode(int, int)}
+		 * Used for {@link InputUtil#fromKeyCode(int, int)}
 		 *
 		 * <p>The scan code is unique for every key, regardless of whether it has a key code.
 		 * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
@@ -539,7 +501,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public abstract static class KeyboardKeyReleasedEvent extends KeyboardKeyEvent {
+	public static abstract class KeyboardKeyReleasedEvent extends KeyboardKeyEvent {
 		public KeyboardKeyReleasedEvent(Screen gui, int keyCode, int scanCode, int modifiers) {
 			super(gui, keyCode, scanCode, modifiers);
 		}
@@ -611,11 +573,6 @@ public class GuiScreenEvent extends Event {
 		public static class Pre extends KeyboardCharTypedEvent {
 			public Pre(Screen gui, char codePoint, int modifiers) {
 				super(gui, codePoint, modifiers);
-			}
-
-			@Override
-			public boolean isCancelable() {
-				return true;
 			}
 		}
 
