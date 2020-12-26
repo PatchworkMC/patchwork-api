@@ -46,22 +46,22 @@ public abstract class MixinMouse implements ForgeMouse {
 		}
 	}
 
-	@Inject(method = "onMouseScroll", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSpectator()Z", shift = Shift.BEFORE), cancellable = true)
+	@Inject(method = "onMouseScroll", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/network/ClientPlayerEntity;isSpectator()Z", shift = Shift.BEFORE), cancellable = true)
 	private void onMouseScroll(long window, double d, double e, CallbackInfo info, double scrollDelta, float i) {
 		if (InputEvents.onMouseScroll((Mouse) (Object) this, scrollDelta)) {
 			info.cancel();
 		}
 	}
 
-	// Methods added by forge
+	// Methods added by Forge
 	@Shadow
-	boolean middleButtonClicked;
+	private boolean middleButtonClicked;
 
 	@Shadow
-	double cursorDeltaX;
+	private double cursorDeltaX;
 
 	@Shadow
-	double cursorDeltaY;
+	private double cursorDeltaY;
 
 	@Override
 	public boolean isMiddleDown() {
