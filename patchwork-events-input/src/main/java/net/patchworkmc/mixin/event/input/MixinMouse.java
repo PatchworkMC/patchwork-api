@@ -34,7 +34,8 @@ import net.patchworkmc.impl.event.input.InputEvents;
 
 @Mixin(Mouse.class)
 public abstract class MixinMouse implements ForgeMouse {
-	@Inject(method = "onMouseButton", at = @At("RETURN"), cancellable = true)
+	// We want to target all returns here in order for the event to fire correctly.
+	@Inject(method = "onMouseButton", at = @At("RETURN"))
 	private void fireMouseInput(long window, int button, int action, int mods, CallbackInfo info) {
 		InputEvents.fireMouseInput(button, action, mods);
 	}

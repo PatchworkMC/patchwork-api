@@ -37,6 +37,7 @@ public abstract class MixinKeyboard {
 	@Final
 	private MinecraftClient client;
 
+	// We want to target all returns here to correctly fire the event when a key is pressed
 	@Inject(method = "onKey", at = @At("RETURN"))
 	private void fireKeyInput(long window, int key, int scancode, int action, int modifiers, CallbackInfo info) {
 		if (window == this.client.getWindow().getHandle()) {
