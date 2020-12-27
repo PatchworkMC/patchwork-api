@@ -21,6 +21,7 @@ package net.patchworkmc.mixin.gui;
 
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +39,7 @@ public abstract class MixinKeyboard {
 	@Shadow
 	private boolean repeatEvents;
 
+	@Dynamic("lambda in onKey")
 	@Inject(method = "method_1454", at = @At("HEAD"), cancellable = true)
 	private void preKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int mods, CallbackInfo info) {
 		if (i != 1 && (i != 2 || !this.repeatEvents)) {
@@ -55,6 +57,7 @@ public abstract class MixinKeyboard {
 		}
 	}
 
+	@Dynamic("lambda in onKey")
 	@Inject(method = "method_1454", at = @At("RETURN"))
 	private void postKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int mods, CallbackInfo info) {
 		if (bls[0]) {
@@ -74,6 +77,7 @@ public abstract class MixinKeyboard {
 		}
 	}
 
+	@Dynamic("lambda in onChar")
 	@Inject(method = "method_1458", at = @At("HEAD"), cancellable = true)
 	private static void preCharTyped(Element element, int character, int mods, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, (char) character, mods))) {
@@ -81,11 +85,13 @@ public abstract class MixinKeyboard {
 		}
 	}
 
-	@Redirect(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
+	@Dynamic("lambda in onChar")
+	@Redirect(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
 	private static boolean charTyped(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}
 
+	@Dynamic("lambda in onChar")
 	@Inject(method = "method_1473", at = @At("HEAD"), cancellable = true)
 	private static void preCharTyped(Element element, char character, int mods, CallbackInfo info) {
 		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Pre((Screen) element, character, mods))) {
@@ -93,7 +99,8 @@ public abstract class MixinKeyboard {
 		}
 	}
 
-	@Redirect(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z"))
+	@Dynamic("lambda in onChar")
+	@Redirect(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
 	private static boolean charTyped2(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}

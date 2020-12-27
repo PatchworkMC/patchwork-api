@@ -62,22 +62,22 @@ public class MixinMinecraftClient {
 	 * the obfuscated environment(PATCHWORK_REOBF_CLS_xxx).
 	 */
 	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
-	public Screen patchwork$yarn$fireOpenEvent(Screen screen) {
+	private Screen yarn$fireOpenEvent(Screen screen) {
 		return patchwork$impl$fireOpenEvent(screen);
 	}
 
 	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
-	public Screen patchwork$reobf$fireOpenEvent(Screen screen) {
+	private Screen reobf$fireOpenEvent(Screen screen) {
 		return patchwork$impl$fireOpenEvent(screen);
 	}
 
 	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN), cancellable = true, require = 0)
-	public void patchwork$yarn$cancelOpening(Screen screen, CallbackInfo callback) {
+	private void yarn$cancelOpening(Screen screen, CallbackInfo callback) {
 		patchwork$impl$cancelOpening(screen, callback);
 	}
 
 	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN), cancellable = true, require = 0)
-	public void patchwork$reobf$cancelOpening(Screen screen, CallbackInfo callback) {
+	private void reobf$cancelOpening(Screen screen, CallbackInfo callback) {
 		patchwork$impl$cancelOpening(screen, callback);
 	}
 

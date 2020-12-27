@@ -17,36 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.patchworkmc.impl.gui;
 
-import net.minecraftforge.eventbus.api.Event;
+public interface ForgeAbstractButtonWidget {
+	int getHeight();
+	void setHeight(int value);
 
-import net.minecraft.client.gui.screen.Screen;
-
-/**
- * This event is called before any Screen will open. If you don't want this to
- * happen, cancel the event. If you want to override this Screen, simply set the
- * Screen variable to your own Screen.
- *
- * @author jk-5, Rikka0w0
- */
-public class GuiOpenEvent extends Event {
-	private Screen screen;
-
-	public GuiOpenEvent(Screen screen) {
-		this.setGui(screen);
-	}
-
-	public Screen getGui() {
-		return screen;
-	}
-
-	public void setGui(Screen screen) {
-		this.screen = screen;
-	}
-
-	@Override
-	public boolean isCancelable() {
-		return true;
-	}
+	int getFGColor();
+	void setFGColor(int color);
+	void clearFGColor();
 }

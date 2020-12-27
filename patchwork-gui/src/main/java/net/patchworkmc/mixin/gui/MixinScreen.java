@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.patchworkmc.impl.gui.ForgeScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,7 +42,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
 @Mixin(Screen.class)
-public abstract class MixinScreen {
+public abstract class MixinScreen implements ForgeScreen {
 	@Shadow
 	@Final
 	protected List<AbstractButtonWidget> buttons;
@@ -80,6 +81,7 @@ public abstract class MixinScreen {
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent((Screen) (Object) this, matrices));
 	}
 
+	@Override
 	public MinecraftClient getMinecraft() {
 		return this.client;
 	}
