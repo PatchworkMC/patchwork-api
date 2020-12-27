@@ -19,23 +19,23 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+
+import net.minecraftforge.eventbus.api.Event;
+import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.util.InputUtil;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraftforge.eventbus.api.Event;
 
-import org.lwjgl.glfw.GLFW;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 /**
  * Event classes for GuiScreen events.
@@ -219,7 +219,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public static abstract class MouseInputEvent extends GuiScreenEvent {
+	public abstract static class MouseInputEvent extends GuiScreenEvent {
 		private final double mouseX;
 		private final double mouseY;
 
@@ -238,7 +238,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public static abstract class MouseClickedEvent extends MouseInputEvent {
+	public abstract static class MouseClickedEvent extends MouseInputEvent {
 		private final int button;
 
 		public MouseClickedEvent(Screen gui, double mouseX, double mouseY, int button) {
@@ -324,7 +324,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public static abstract class MouseDragEvent extends MouseInputEvent {
+	public abstract static class MouseDragEvent extends MouseInputEvent {
 		private final int mouseButton;
 		private final double dragX;
 		private final double dragY;
@@ -501,7 +501,7 @@ public class GuiScreenEvent extends Event {
 		}
 	}
 
-	public static abstract class KeyboardKeyReleasedEvent extends KeyboardKeyEvent {
+	public abstract static class KeyboardKeyReleasedEvent extends KeyboardKeyEvent {
 		public KeyboardKeyReleasedEvent(Screen gui, int keyCode, int scanCode, int modifiers) {
 			super(gui, keyCode, scanCode, modifiers);
 		}

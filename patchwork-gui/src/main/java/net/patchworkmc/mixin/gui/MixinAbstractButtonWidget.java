@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.gui;
 
-import net.patchworkmc.impl.gui.ForgeAbstractButtonWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,6 +27,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
+
+import net.patchworkmc.impl.gui.ForgeAbstractButtonWidget;
 
 @Mixin(AbstractButtonWidget.class)
 public abstract class MixinAbstractButtonWidget extends DrawableHelper implements ForgeAbstractButtonWidget {

@@ -21,7 +21,6 @@ package net.patchworkmc.mixin.gui;
 
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.patchworkmc.impl.gui.ForgeMouse;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,6 +33,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+
+import net.patchworkmc.impl.gui.ForgeMouse;
 
 @Mixin(Mouse.class)
 public abstract class MixinMouse implements ForgeMouse {
