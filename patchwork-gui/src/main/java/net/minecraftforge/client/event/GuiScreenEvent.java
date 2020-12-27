@@ -87,7 +87,7 @@ public class GuiScreenEvent extends Event {
 
 		/**
 		 * This event fires just after initializing {@link Screen#client}, {@link Screen#textRenderer},
-		 * {@link Screen#width}, and {@link Screen#height}.<br/><br/>
+		 * {@link Screen#width}, and {@link Screen#height}.
 		 *
 		 * <p>If canceled the following lines are skipped in {@link Screen#init(MinecraftClient, int, int)}:</p>
 		 * <p>{@code this.buttons.clear();}</p>
