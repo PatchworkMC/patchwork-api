@@ -27,6 +27,6 @@ import net.minecraft.client.color.item.ItemColors;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient {
-	@Accessor("itemColorMap")
+	@Accessor("itemColors")
 	public abstract ItemColors getItemColors();
 }
