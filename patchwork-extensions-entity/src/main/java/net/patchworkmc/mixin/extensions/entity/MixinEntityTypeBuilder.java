@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extensions.entity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,10 +27,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.EntityType;
 
-import net.patchworkmc.impl.extension.PatchworkEntityTypeExtensions;
+import net.patchworkmc.impl.extensions.entity.PatchworkEntityTypeBuilderExtensions;
+import net.patchworkmc.impl.extensions.entity.PatchworkEntityTypeExtensions;
 
-@Mixin(EntityType.class)
-public class MixinEntityType implements PatchworkEntityTypeExtensions {
+@Mixin(EntityType.Builder.class)
+public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensions {
 	@Unique
 	private Integer updateInterval = null;
 	@Unique
@@ -38,39 +39,38 @@ public class MixinEntityType implements PatchworkEntityTypeExtensions {
 	@Unique
 	private Boolean shouldRecieveVelocityUpdates = null;
 
-	@Inject(method = "getMaxTrackDistance", at = @At("HEAD"), cancellable = true)
-	private void hookGetMaxTrackingDistance(CallbackInfoReturnable<Integer> cir) {
-		if (trackingRange != null) {
-			cir.setReturnValue(trackingRange);
-		}
-	}
+	@Inject(method = "build", at = @At("RETURN"))
+	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType> cir) {
+		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
 
-	@Inject(method = "getTrackTickInterval", at = @At("HEAD"), cancellable = true)
-	private void hookGetTrackTickInterval(CallbackInfoReturnable<Integer> cir) {
 		if (updateInterval != null) {
-			cir.setReturnValue(updateInterval);
+			type.patchwork$setUpdateInterval(updateInterval);
 		}
-	}
 
-	@Inject(method = "alwaysUpdateVelocity", at = @At("HEAD"), cancellable = true)
-	private void hookAlwaysUpdateVelocity(CallbackInfoReturnable<Boolean> cir) {
+		if (trackingRange != null) {
+			type.patchwork$setTrackingRange(trackingRange);
+		}
+
 		if (shouldRecieveVelocityUpdates != null) {
-			cir.setReturnValue(shouldRecieveVelocityUpdates);
+			type.patchwork$setShouldReceiveVelocityUpdates(shouldRecieveVelocityUpdates);
 		}
 	}
 
 	@Override
-	public void patchwork$setUpdateInterval(int interval) {
+	public EntityType.Builder setUpdateInterval(int interval) {
 		this.updateInterval = interval;
+		return (EntityType.Builder) (Object) this;
 	}
 
 	@Override
-	public void patchwork$setTrackingRange(int range) {
+	public EntityType.Builder setTrackingRange(int range) {
 		this.trackingRange = range;
+		return (EntityType.Builder) (Object) this;
 	}
 
 	@Override
-	public void patchwork$setShouldReceiveVelocityUpdates(boolean value) {
+	public EntityType.Builder setShouldReceiveVelocityUpdates(boolean value) {
 		this.shouldRecieveVelocityUpdates = value;
+		return (EntityType.Builder) (Object) this;
 	}
 }

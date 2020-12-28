@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extensions.entity;
 
 import java.util.Collection;
 

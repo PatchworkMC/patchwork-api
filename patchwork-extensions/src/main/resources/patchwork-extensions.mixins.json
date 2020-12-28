@@ -5,11 +5,7 @@
   "mixins": [
     "MixinAbstractTreeFeature",
     "MixinDimension",
-    "MixinEntity",
-    "MixinEntityType",
-    "MixinEntityTypeBuilder",
     "MixinMinecraftClient",
-    "MixinServerPlayerEntity",
     "MixinStatusEffect"
   ],
   "injectors": {

@@ -3,5 +3,5 @@ version = getSubprojectVersion(project, "0.3.1")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
-	implementation project(path: ':patchwork-extensions-block', configuration: 'dev')
+	//implementation project(path: ':patchwork-extensions-block', configuration: 'dev')
 }

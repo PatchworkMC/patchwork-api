@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.extension;
+package net.patchworkmc.impl.extensions.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

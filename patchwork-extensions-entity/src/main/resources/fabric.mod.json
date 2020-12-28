@@ -12,10 +12,12 @@
   "authors": [
     "PatchworkMC"
   ],
-  "accessWidener": "patchwork-MobEntity.accesswidener",
   "depends": {
     "patchwork-api-base": "*"
   },
+  "mixins": [
+    "patchwork-extensions-entity.mixins.json"
+  ],
   "description": "Various extensions and APIs related to entities.",
   "custom": {
     "modmenu:api": true,
