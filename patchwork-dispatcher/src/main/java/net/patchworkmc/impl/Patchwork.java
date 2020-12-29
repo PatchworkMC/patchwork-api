@@ -33,6 +33,8 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -47,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.Pair;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.CustomValue;
@@ -193,8 +196,11 @@ public class Patchwork {
 	public static void loadMods(Function<ModContainer, Event> lifeCycleEvent, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
 		List<FMLModContainer> mods = ModList.get().applyForEachModContainer(m -> (FMLModContainer) m).collect(Collectors.toList());
 
-		// Loading mod config
-		// TODO: Load client and common configs here
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FabricLoader.getInstance().getConfigDir());
+		}
+
+		ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FabricLoader.getInstance().getConfigDir());
 
 		// Mod setup: SETUP
 		dispatch(mods, FMLCommonSetupEvent::new);

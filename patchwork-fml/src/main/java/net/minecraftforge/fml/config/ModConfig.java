@@ -25,6 +25,7 @@ import java.util.concurrent.Callable;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.sun.tools.javac.util.StringUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
@@ -36,7 +37,6 @@ public class ModConfig {
 	private final ModContainer container;
 	private final ConfigFileTypeHandler configHandler;
 	private CommentedConfig configData;
-	private Callable<Void> saveHandler;
 
 	public ModConfig(final Type type, final ForgeConfigSpec spec, final ModContainer container, final String fileName) {
 		this.type = type;
@@ -87,8 +87,6 @@ public class ModConfig {
 
 	void fireEvent(final ModConfigEvent configEvent) {
 		this.container.dispatchConfigEvent(configEvent);
-
-		//throw new UnsupportedOperationException();
 	}
 
 	public void save() {
@@ -126,7 +124,7 @@ public class ModConfig {
 		SERVER;
 
 		public String extension() {
-			return name().toLowerCase(Locale.ROOT);
+			return StringUtils.toLowerCase(name());
 		}
 	}
 
@@ -148,8 +146,8 @@ public class ModConfig {
 		}
 	}
 
-	public static class ConfigReloading extends ModConfigEvent {
-		ConfigReloading(final ModConfig config) {
+	public static class Reloading extends ModConfigEvent {
+		Reloading(final ModConfig config) {
 			super(config);
 		}
 	}

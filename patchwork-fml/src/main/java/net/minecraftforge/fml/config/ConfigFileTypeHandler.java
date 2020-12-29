@@ -29,7 +29,9 @@ import java.util.function.Function;
 import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +52,12 @@ public class ConfigFileTypeHandler {
 					.writingMode(WritingMode.REPLACE)
 					.build();
 			LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
-			configData.load();
+			try {
+				configData.load();
+			} catch (ParsingException ex) {
+				throw new ConfigLoadingException(c, ex);
+			}
+
 			LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
 
 			try {
@@ -64,9 +71,18 @@ public class ConfigFileTypeHandler {
 		};
 	}
 
+	public void unload(Path configBasePath, ModConfig config) {
+		Path configPath = configBasePath.resolve(config.getFileName());
+
+		try {
+			FileWatcher.defaultInstance().removeWatch(configBasePath.resolve(config.getFileName()));
+		} catch (RuntimeException e) {
+			LOGGER.error("Failed to remove config {} from tracker!", configPath.toString(), e);
+		}
+	}
+
 	private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
 		Path p = defaultConfigPath.resolve(modConfig.getFileName());
-
 		if (Files.exists(p)) {
 			LOGGER.info(CONFIG, "Loading default config file from path {}", p);
 			Files.copy(p, file);
@@ -93,12 +109,21 @@ public class ConfigFileTypeHandler {
 		public void run() {
 			// Force the regular classloader onto the special thread
 			Thread.currentThread().setContextClassLoader(realClassLoader);
-
 			if (!this.modConfig.getSpec().isCorrecting()) {
-				this.commentedFileConfig.load();
+				try {
+					this.commentedFileConfig.load();
+				} catch (ParsingException ex) {
+					throw new ConfigLoadingException(modConfig, ex);
+				}
 				LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
-				this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
+				this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
 			}
+		}
+	}
+
+	private static class ConfigLoadingException extends RuntimeException {
+		public ConfigLoadingException(ModConfig config, Exception cause) {
+			super("Failed loading config file " + config.getFileName() + " of type " + config.getType() + " for modid " + config.getModId(), cause);
 		}
 	}
 }

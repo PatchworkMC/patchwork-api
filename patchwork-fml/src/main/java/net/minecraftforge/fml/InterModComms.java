@@ -48,21 +48,21 @@ public class InterModComms {
 		 * @return The modid of the sender. This is supplied by the caller, or by the active mod container context.
 		 * Consider it unreliable.
 		 */
-		public String getSenderModId() {
+		public final String getSenderModId() {
 			return this.senderModId;
 		}
 
 		/**
 		 * @return The modid being sent to.
 		 */
-		public String getModId() {
+		public final String getModId() {
 			return this.modId;
 		}
 
 		/**
 		 * @return The method being sent to.
 		 */
-		public String getMethod() {
+		public final String getMethod() {
 			return this.method;
 		}
 
@@ -71,12 +71,12 @@ public class InterModComms {
 		 * @return A {@link Supplier} of the message.
 		 */
 		@SuppressWarnings("unchecked")
-		public <T> Supplier<T> getMessageSupplier() {
+		public final <T> Supplier<T> getMessageSupplier() {
 			return (Supplier<T>) this.thing;
 		}
 	}
 
-	private static ConcurrentMap<String, ConcurrentLinkedQueue<IMCMessage>> containerQueues = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String, ConcurrentLinkedQueue<IMCMessage>> containerQueues = new ConcurrentHashMap<>();
 
 	/**
 	 * Send IMC to remote. Sender will default to the active modcontainer, or minecraft if not.
@@ -145,7 +145,7 @@ public class InterModComms {
 		private final Predicate<String> methodFilter;
 		private final Iterator<IMCMessage> iterator;
 
-		private QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
+		public QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
 			this.queue = queue;
 			this.iterator = queue.iterator();
 			this.methodFilter = methodFilter;
@@ -180,7 +180,7 @@ public class InterModComms {
 
 		@Override
 		public Spliterator<IMCMessage> trySplit() {
-			throw new UnsupportedOperationException("forge behavior is return null, report this to Patchwork!");
+			return null;
 		}
 	}
 }

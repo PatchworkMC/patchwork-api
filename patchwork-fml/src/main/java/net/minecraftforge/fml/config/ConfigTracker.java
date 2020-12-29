@@ -36,12 +36,12 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 public class ConfigTracker {
-	public static final ConfigTracker INSTANCE = new ConfigTracker();
-	static final Marker CONFIG = MarkerManager.getMarker("CONFIG");
 	private static final Logger LOGGER = LogManager.getLogger();
+	static final Marker CONFIG = MarkerManager.getMarker("CONFIG");
+	public static final ConfigTracker INSTANCE = new ConfigTracker();
 	private final ConcurrentHashMap<String, ModConfig> fileMap;
 	private final EnumMap<ModConfig.Type, Set<ModConfig>> configSets;
-	private ConcurrentHashMap<String, Map<ModConfig.Type, ModConfig>> configsByMod;
+	private final ConcurrentHashMap<String, Map<ModConfig.Type, ModConfig>> configsByMod;
 
 	private ConfigTracker() {
 		this.fileMap = new ConcurrentHashMap<>();
@@ -69,7 +69,11 @@ public class ConfigTracker {
 		this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
 	}
 
-	// TODO
+	public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
+		LOGGER.debug(CONFIG, "Unloading configs type {}", type);
+		this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
+	}
+
 	/*public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs(boolean isLocal) {
 		final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
 			try {
@@ -78,23 +82,31 @@ public class ConfigTracker {
 				throw new RuntimeException(e);
 			}
 		}));
-		return configData.entrySet().stream().map(e->Pair.of("Config "+e.getKey(), new FMLHandshakeMessages.S2CConfigData(e.getKey(), e.getValue()))).collect(Collectors.toList());
+		return configData.entrySet().stream().map(e -> Pair.of("Config " + e.getKey(), new FMLHandshakeMessages.S2CConfigData(e.getKey(), e.getValue()))).collect(Collectors.toList());
 	}*/
 
 	private void openConfig(final ModConfig config, final Path configBasePath) {
-		LOGGER.debug(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+		LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
 		final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
 		config.setConfigData(configData);
 		config.fireEvent(new ModConfig.Loading(config));
 		config.save();
 	}
 
-	// TODO
+	private void closeConfig(final ModConfig config, final Path configBasePath) {
+		if (config.getConfigData() != null) {
+			LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
+			config.save();
+			config.getHandler().unload(configBasePath, config);
+			config.setConfigData(null);
+		}
+	}
+
 	/*public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
-		if (!Minecraft.getInstance().isIntegratedServerRunning()) {
-			Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
+		if (!MinecraftClient.getInstance().isInSingleplayer()) {
+			Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc -> {
 				mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
-				mc.fireEvent(new ModConfig.ConfigReloading(mc));
+				mc.fireEvent(new ModConfig.Reloading(mc));
 			});
 		}
 	}*/
@@ -109,7 +121,7 @@ public class ConfigTracker {
 	}
 
 	public String getConfigFileName(String modId, ModConfig.Type type) {
-		return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null))
-				.map(ModConfig::getFullPath).map(Object::toString).orElse(null);
+		return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).
+				map(ModConfig::getFullPath).map(Object::toString).orElse(null);
 	}
 }
