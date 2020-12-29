@@ -33,6 +33,7 @@ import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 import net.patchworkmc.impl.registries.ForgeRegistryProvider;
 
@@ -78,6 +79,7 @@ public class RegistryManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(Identifier key) {
+		// Patchwork: use a vanilla registry instead
 		key = getVanillaRegistryId(key);
 		Registry<?> vanillaRegistry = Registry.REGISTRIES.get(key);
 
@@ -89,7 +91,12 @@ public class RegistryManager {
 		return null;
 	}
 
+	public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(RegistryKey<? extends Registry<V>> key) {
+		return getRegistry(key.getValue());
+	}
+
 	public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> clazz) {
+		// patchwork: use getName instead
 		Identifier existingKey = this.getName(clazz);
 
 		if (existingKey == null) {
@@ -122,7 +129,7 @@ public class RegistryManager {
 		return this.superTypes.values();
 	}
 
-	<V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier forgeName, RegistryBuilder<V> builder) {
+	/*package-private*/ <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(Identifier forgeName, RegistryBuilder<V> builder) {
 		Set<Class<?>> parents = new HashSet<>();
 		findSuperTypes(builder.getType(), parents);
 		SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
@@ -136,9 +143,9 @@ public class RegistryManager {
 					"Duplicate registry parent type found - you can only have one registry for a particular super type");
 		}
 
-		ForgeRegistry<V> reg = new ForgeRegistry<V>(this, forgeName, builder);
+		ForgeRegistry<V> reg = new ForgeRegistry<>(this, forgeName, builder);
 		superTypes.put(builder.getType(), forgeName);
-		Identifier vanillaId = builder.getVanillaId();
+		Identifier vanillaId = builder.patchwork$getVanillaRegistryKey().getValue();
 
 		if (vanillaId != null && !vanillaId.equals(forgeName)) {
 			vanillaRegistryIds.put(forgeName, vanillaId);

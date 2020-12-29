@@ -24,8 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraftforge.registries.IForgeRegistry.AddCallback;
@@ -35,9 +33,11 @@ import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
 import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
 import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private static final int MAX_ID = Integer.MAX_VALUE - 1;
@@ -56,28 +56,31 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
 	private boolean sync = true;
 	private boolean allowOverrides = true;
 	private boolean allowModifications = false;
+	private boolean hasWrapper = false;
+	@Nullable
 	private DummyFactory<T> dummyFactory;
 	private MissingFactory<T> missingFactory;
 	private Set<Identifier> legacyNames = new HashSet<>();
 
-	private Identifier vanillaId;
+	private RegistryKey<?> patchwork$vanillaRegistryKey;
 	private static final Logger LOGGER = LogManager.getLogger(RegistryBuilder.class);
 
 	/**
 	 * Used by the Patchwork Vanilla Wrapper.
 	 */
-	public RegistryBuilder<T> setVanillaRegistryId(Identifier vanillaId) {
-		this.vanillaId = vanillaId;
+	public RegistryBuilder<T> setVanillaRegistryKey(RegistryKey<?> vanillaRegistryKey) {
+		this.patchwork$vanillaRegistryKey = vanillaRegistryKey;
 		return this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public Registry<T> getVanillaRegistry() {
-		return this.vanillaId == null ? null : (Registry<T>) Registry.REGISTRIES.get(this.vanillaId);
+	public Registry<T> patchwork$getVanillaRegistry() {
+		// generics are pain, life is pain, just use the identifier instead and hope it works
+		return this.patchwork$vanillaRegistryKey == null ? null : (Registry<T>) Registry.REGISTRIES.get(this.patchwork$vanillaRegistryKey.getValue());
 	}
 
-	public Identifier getVanillaId() {
-		return this.vanillaId;
+	public RegistryKey<?> patchwork$getVanillaRegistryKey() {
+		return this.patchwork$vanillaRegistryKey;
 	}
 
 	public RegistryBuilder<T> setName(Identifier name) {

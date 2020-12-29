@@ -21,13 +21,15 @@ package net.patchworkmc.mixin.registries;
 
 import net.minecraftforge.registries.ForgeRegistry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.util.registry.SimpleRegistry;
 
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
 @Mixin(SimpleRegistry.class)
-public abstract class MixinSimpleRegistry<T> implements VanillaRegistry {
+public abstract class MixinSimpleRegistry implements VanillaRegistry {
+	@Unique
 	private ForgeRegistry forgeRegistry;
 
 	@Override

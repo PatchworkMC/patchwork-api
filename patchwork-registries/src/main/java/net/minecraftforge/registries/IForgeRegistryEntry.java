@@ -19,33 +19,43 @@
 
 package net.minecraftforge.registries;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.util.Identifier;
 
 public interface IForgeRegistryEntry<V> {
 	/**
-	 * A unique {@link Identifier} for this entry, if this entry is registered already it will return it's official {@link Identifier}.
-	 * Otherwise it will return the name set in {@link #setRegistryName(Identifier)}. If neither are valid {@code null} is returned.
+	 * Sets a unique name for this Item. This should be used for uniquely identify the instance of the Item.
+	 * This is the valid replacement for the atrocious 'getUnlocalizedName().substring(6)' stuff that everyone does.
+	 * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
 	 *
-	 * @return the unique {@link Identifier} or {@code null}.
-	 */
-	Identifier getRegistryName();
-
-	/**
-	 * The supplied {@link Identifier} will be prefixed with the currently active mod's modId.
-	 * If the supplied {@link Identifier} already has a prefix that is different, it will be used and a warning will be logged.
+	 * The supplied name will be prefixed with the currently active mod's modId.
+	 * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.
 	 *
-	 * <p>If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.</p>
+	 * If a name already exists, or this Item is already registered in a registry, then an IllegalStateException is thrown.
 	 *
-	 * @param name the unique {@link Identifier}
-	 * @return this instance, to allow for chaining
+	 * Returns 'this' to allow for chaining.
+	 *
+	 * @param name Unique registry name
+	 * @return This instance
 	 */
 	V setRegistryName(Identifier name);
 
 	/**
-	 * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one
-	 * {@link net.minecraft.util.registry.Registry} per concrete {@link Class}.
+	 * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
+	 * Otherwise it will return the name set in setRegistryName().
+	 * If neither are valid null is returned.
 	 *
-	 * @return the root registry type
+	 * @return Unique identifier or null.
+	 */
+	@Nullable
+	Identifier getRegistryName();
+
+	/**
+	 * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one
+	 * registry per concrete class.
+	 *
+	 * @return Root registry type.
 	 */
 	Class<V> getRegistryType();
 }

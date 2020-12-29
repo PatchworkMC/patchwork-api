@@ -1,13 +1,7 @@
-# Implemented features
-1. `RegistryEvent.NewRegistry` for allowing forge mods to add their own registry
-2. `RegistryEvent.Register` for different in-game object registration and forge mods' custom registry 
-3. (TODO 9) StructureFeature and Feature registry
-4. IForgeRegistry callbacks: CreateCallback, AddCallback and ClearCallback
-5. Default entry support
-6. Slave maps for wrapped vanilla registries: IForgeRegistry#getSlaveMap
-7. (TODO 2) A fully modifiable registry for custom Forge mod registries
-8. (TODO 5) Forge mods can now access fabric registries via the vanilla registry, if they really need to.
-
+# Still needing updating
+1. Biomes
+2. Client registries
+3. Some semi-internal classes lack newer helper methods (RegistryBuilder, etc.)
 # TODO
 1. StructureFeature registration needs more testing
 2. ~~A fully modifiable Forge mod registry implementation~~

@@ -23,9 +23,11 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.
@@ -42,48 +44,45 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 	void registerAll(@SuppressWarnings("unchecked") V... values);
 
 	boolean containsKey(Identifier key);
-
 	boolean containsValue(V value);
-
 	boolean isEmpty();
 
-	V getValue(Identifier key);
+	@Nullable V getValue(Identifier key);
 
-	Identifier getKey(V value);
+	@Nullable Identifier getKey(V value);
 
-	Identifier getDefaultKey();
+	@Nullable Identifier getDefaultKey();
 
+	@NotNull
 	Set<Identifier> getKeys();
+	@NotNull Collection<V> getValues();
 
-	Collection<V> getValues();
-
-	Set<Entry<Identifier, V>> getEntries();
+	@NotNull Set<Entry<RegistryKey<V>, V>> getEntries();
 
 	/**
-	 * Retrieve the slave map of type T from the registry. Slave maps are maps which
-	 * are dependent on registry content in some way.
-	 *
+	 * Retrieve the slave map of type T from the registry.
+	 * Slave maps are maps which are dependent on registry content in some way.
 	 * @param slaveMapName The name of the slavemap
-	 * @param type         The type
-	 * @param              <T> Type to return
+	 * @param type The type
+	 * @param <T> Type to return
 	 * @return The slavemap if present
 	 */
 	<T> T getSlaveMap(Identifier slaveMapName, Class<T> type);
 
-	// Forge registry callbacks
 	/**
-	 * Callback fired when objects are added to the registry. This will fire when
-	 * the registry is rebuilt on the client side from a server side
-	 * synchronization, or when a world is loaded.
+	 * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
+	 * on the client side from a server side synchronization, or when a world is loaded.
 	 */
+	@FunctionalInterface
 	interface AddCallback<V extends IForgeRegistryEntry<V>> {
 		void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
 	}
 
 	/**
-	 * Callback fired when the registry is cleared. This is done before a registry
-	 * is reloaded from client or server.
+	 * Callback fired when the registry is cleared. This is done before a registry is reloaded from client
+	 * or server.
 	 */
+	@FunctionalInterface
 	interface ClearCallback<V extends IForgeRegistryEntry<V>> {
 		void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
 	}
@@ -91,6 +90,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 	/**
 	 * Callback fired when a registry instance is created. Populate slave maps here.
 	 */
+	@FunctionalInterface
 	interface CreateCallback<V extends IForgeRegistryEntry<V>> {
 		void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
 	}
@@ -98,30 +98,32 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 	/**
 	 * Callback fired when the registry contents are validated.
 	 */
+	@FunctionalInterface
 	interface ValidateCallback<V extends IForgeRegistryEntry<V>> {
 		void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, Identifier key, V obj);
 	}
 
 	/**
-	 * Callback fired when the registry is done processing. Used to calculate state
-	 * ID maps.
+	 * Callback fired when the registry is done processing. Used to calculate state ID maps.
 	 */
+	@FunctionalInterface
 	interface BakeCallback<V extends IForgeRegistryEntry<V>> {
 		void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
 	}
 
 	/**
-	 * Factory for creating dummy entries, allowing worlds to be loaded and keep the
-	 * missing block references.
+	 * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
 	 */
-	interface DummyFactory<V> {
+	@FunctionalInterface
+	interface DummyFactory<V extends IForgeRegistryEntry<V>> {
 		V createDummy(Identifier key);
 	}
 
 	/**
-	 * TODO: Currently not implemented.
+	 *
 	 */
-	interface MissingFactory<V> {
+	@FunctionalInterface
+	interface MissingFactory<V extends IForgeRegistryEntry<V>> {
 		V createMissing(Identifier key, boolean isNetwork);
 	}
 }

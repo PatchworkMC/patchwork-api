@@ -9,7 +9,6 @@ pluginManagement {
 		mavenLocal()
 	}
 }
-
 rootProject.name = "patchwork-api"
 
 include 'patchwork-api-base'
@@ -42,7 +41,7 @@ include 'patchwork-fml'
 //include 'patchwork-networking'
 //include 'patchwork-networking-messages'
 //include 'patchwork-recipes'
-//include 'patchwork-registries'
+include 'patchwork-registries'
 //include 'patchwork-resource'
 //include 'patchwork-tags'
 //include 'patchwork-tooltype'
