@@ -35,24 +35,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.RegistryKey;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
+import net.patchworkmc.api.registries.PatchworkRegistryKey;
 import net.patchworkmc.impl.registries.RemovableRegistry;
-import net.patchworkmc.impl.registries.ForgeModDefaultRegistry;
-import net.patchworkmc.impl.registries.ForgeModRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		IForgeRegistryModifiable<V>, IForgeRegistryInternal<V>, RegistryEntryAddedCallback<V> {
 	public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
 	private static Logger LOGGER = LogManager.getLogger();
-	private final Identifier name; // The forge name
+
 	private final boolean isVanilla;
 	private final Registry<V> vanilla;
 	private final Class<V> superType;
@@ -69,6 +69,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	private boolean isFrozen = false;
 	private V oldValue; // context of AddCallback, is not used elsewhere
 
+	private final Identifier name; // The forge name
+	private final RegistryKey<Registry<V>> key;
+
 	/**
 	 * Called by RegistryBuilder, for modded registries.
 	 * @param stage
@@ -79,6 +82,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	protected ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
 		this.stage = stage;
 		this.name = name;
+		this.key = RegistryKey.ofRegistry(name);
 		this.superType = builder.getType();
 		this.min = builder.getMinId();
 		this.max = builder.getMaxId();
@@ -88,14 +92,15 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		this.allowOverrides = builder.getAllowOverrides();
 		this.isModifiable = builder.getAllowModifications();
 
-		Registry<V> vanilla = builder.getVanillaRegistry();
+		Registry<V> vanilla = builder.patchwork$getVanillaRegistry();
 
 		if (vanilla == null) {
+			throw new UnsupportedOperationException("Custom forge registries not yet implemented for 1.16");
 			// Forge modded registry
-			Identifier defaultKey = builder.getDefault();
-			this.vanilla = defaultKey == null ? new ForgeModRegistry<>(this, builder) : new ForgeModDefaultRegistry<>(this, builder);
-			Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
-			this.isVanilla = false;
+			//Identifier defaultKey = builder.getDefault();
+			//this.vanilla = defaultKey == null ? new ForgeModRegistry<>(this, builder) : new ForgeModDefaultRegistry<>(this, builder);
+			//Registry.REGISTRIES.add(name, (MutableRegistry) this.vanilla);
+			//this.isVanilla = false;
 		} else {
 			// Vanilla registry
 			this.vanilla = vanilla;
@@ -215,21 +220,21 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	}
 
 	@Override
-	public Set<Identifier> getKeys() {
+	public @NotNull Set<Identifier> getKeys() {
 		return vanilla.getIds();
 	}
 
 	@Override
-	public Collection<V> getValues() {
+	public @NotNull Collection<V> getValues() {
 		return vanilla.stream().collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	@Override
-	public Set<Map.Entry<Identifier, V>> getEntries() {
-		HashSet<Map.Entry<Identifier, V>> entries = new HashSet<>();
+	public @NotNull Set<Map.Entry<RegistryKey<V>, V>> getEntries() {
+		HashSet<Map.Entry<RegistryKey<V>, V>> entries = new HashSet<>();
 
 		for (Identifier identifier : vanilla.getIds()) {
-			entries.add(new Entry<>(identifier, vanilla.get(identifier)));
+			entries.add(new Entry<V>(PatchworkRegistryKey.of(this.key, identifier), vanilla.get(identifier)));
 		}
 
 		return entries;
@@ -249,18 +254,18 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		return type + ", " + this.name.toString() + vanillaName;
 	}
 
-	private static class Entry<V> implements Map.Entry<Identifier, V> {
-		private Identifier identifier;
+	private static class Entry<V> implements Map.Entry<RegistryKey<V>, V> {
+		private RegistryKey<V> key;
 		private V value;
 
-		private Entry(Identifier identifier, V value) {
-			this.identifier = identifier;
+		private Entry(RegistryKey<V> key, V value) {
+			this.key = key;
 			this.value = value;
 		}
 
 		@Override
-		public Identifier getKey() {
-			return identifier;
+		public RegistryKey<V> getKey() {
+			return key;
 		}
 
 		@Override
@@ -286,12 +291,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 
 			Entry e = (Entry) o;
 
-			return identifier.equals(e.identifier) && value.equals(e.value);
+			return key.equals(e.key) && value.equals(e.value);
 		}
 
 		@Override
 		public int hashCode() {
-			return identifier.hashCode() * 33 + value.hashCode();
+			return key.hashCode() * 33 + value.hashCode();
 		}
 	}
 

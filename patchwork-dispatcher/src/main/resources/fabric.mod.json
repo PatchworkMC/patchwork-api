@@ -13,9 +13,7 @@
   "depends": {
     "patchwork-api-base": "*",
     "patchwork-fml": "*",
-    "patchwork-registries": "*",
-    "patchwork-events-lifecycle": "*",
-    "patchwork-model-loader": "*"
+    "patchwork-registries": "*"
   },
   "mixins": [
     "patchwork-dispatcher.mixins.json"

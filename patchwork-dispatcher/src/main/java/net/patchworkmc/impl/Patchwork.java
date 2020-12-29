@@ -40,6 +40,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,6 +52,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.CustomValue;
 
 import net.patchworkmc.api.ModInstance;
+import net.patchworkmc.impl.registries.RegistryEventDispatcher;
 
 public class Patchwork {
 	private static final Logger LOGGER = LogManager.getLogger(Patchwork.class);
@@ -76,7 +78,7 @@ public class Patchwork {
 	}
 
 	public static void gatherAndInitializeMods() {
-		//ForgeRegistries.init();
+		ForgeRegistries.init();
 
 		List<FMLModContainer> mods = new ArrayList<>();
 		List<Pair<String, Supplier<ModInstance>>> modInitializers = new ArrayList<>();
@@ -177,8 +179,7 @@ public class Patchwork {
 		//dispatch(mods, new RegistryEvent.NewRegistry());
 		dispatchEntrypoint("patchwork:objectHolders");
 		dispatchEntrypoint("patchwork:capabilityInject");
-
-		//RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
+		RegistryEventDispatcher.dispatchRegistryEvents(event -> dispatch(mods, event));
 	}
 
 	/**

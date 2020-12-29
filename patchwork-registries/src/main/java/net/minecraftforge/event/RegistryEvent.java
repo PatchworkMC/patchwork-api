@@ -26,7 +26,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import net.minecraft.util.Identifier;
 
-public class RegistryEvent<T> extends GenericEvent<T> {
+public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> {
 	RegistryEvent(Class<T> clazz) {
 		super(clazz);
 	}
@@ -41,21 +41,32 @@ public class RegistryEvent<T> extends GenericEvent<T> {
 		}
 	}
 
-	public static class Register<V extends IForgeRegistryEntry<V>> extends RegistryEvent<V> {
-		private final IForgeRegistry<V> registry;
+	/**
+	 * Register your objects for the appropriate registry type when you receive this event.
+	 *
+	 * <code>event.getRegistry().register(...)</code>
+	 *
+	 * The registries will be visited in alphabetic order of their name, except blocks and items,
+	 * which will be visited FIRST and SECOND respectively.
+	 *
+	 * ObjectHolders will reload between Blocks and Items, and after all registries have been visited.
+	 * @param <T> The registry top level type
+	 */
+	public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T> {
+		private final IForgeRegistry<T> registry;
 		private final Identifier name;
 
-		public Register(IForgeRegistry<V> registry) {
+		public Register(IForgeRegistry<T> registry) {
 			this(registry.getRegistryName(), registry);
 		}
 
-		public Register(Identifier name, IForgeRegistry<V> registry) {
+		public Register(Identifier name, IForgeRegistry<T> registry) {
 			super(registry.getRegistrySuperType());
 			this.name = name;
 			this.registry = registry;
 		}
 
-		public IForgeRegistry<V> getRegistry() {
+		public IForgeRegistry<T> getRegistry() {
 			return registry;
 		}
 

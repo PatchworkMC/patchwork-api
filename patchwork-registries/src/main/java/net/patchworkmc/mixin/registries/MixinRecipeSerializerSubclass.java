@@ -28,6 +28,7 @@ import net.minecraft.recipe.CuttingRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.recipe.SpecialRecipeSerializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -35,7 +36,8 @@ import net.minecraft.util.registry.Registry;
 import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
 import net.patchworkmc.impl.registries.Identifiers;
 
-@Mixin({ShapedRecipe.Serializer.class, ShapelessRecipe.Serializer.class, CookingRecipeSerializer.class, CuttingRecipe.Serializer.class, SpecialRecipeSerializer.class})
+@Mixin({ ShapedRecipe.Serializer.class, ShapelessRecipe.Serializer.class, SpecialRecipeSerializer.class,
+		CookingRecipeSerializer.class, CuttingRecipe.Serializer.class, SmithingRecipe.Serializer.class })
 public class MixinRecipeSerializerSubclass implements ExtendedForgeRegistryEntry {
 	@Unique
 	private Identifier registryName;

@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraftforge.registries.IForgeRegistry;
@@ -38,10 +39,25 @@ import net.minecraft.util.Identifier;
 import net.patchworkmc.api.registries.ObjectHolderRegistry;
 
 public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> implements Supplier<T> {
-	private static RegistryObject<?> EMPTY = new RegistryObject<>();
 	private final Identifier name;
 	@Nullable
 	private T value;
+
+	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final Identifier name, Supplier<Class<? super T>> registryType) {
+		return new RegistryObject<>(name, registryType);
+	}
+
+	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final Identifier name, IForgeRegistry<T> registry) {
+		return new RegistryObject<>(name, registry);
+	}
+
+	private static final RegistryObject<?> EMPTY = new RegistryObject<>();
+
+	private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
+		@SuppressWarnings("unchecked")
+		RegistryObject<T> t = (RegistryObject<T>) EMPTY;
+		return t;
+	}
 
 	private RegistryObject() {
 		this.name = null;
@@ -58,42 +74,20 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 		}
 
 		this.name = name;
-		ObjectHolderRegistry.INSTANCE.register(registry.getRegistrySuperType(), name.getNamespace(), name.getPath(), value -> {
-			this.value = (T) value;
-		});
-	}
-
-	@Deprecated
-	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
-		return of(new Identifier(name), registryType);
-	}
-
-	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final Identifier name, Supplier<Class<? super T>> registryType) {
-		return new RegistryObject<>(name, registryType);
-	}
-
-	@Deprecated
-	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, IForgeRegistry<T> registry) {
-		return of(new Identifier(name), registry);
-	}
-
-	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final Identifier name, IForgeRegistry<T> registry) {
-		return new RegistryObject<>(name, registry);
-	}
-
-	private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
-		@SuppressWarnings("unchecked")
-		RegistryObject<T> t = (RegistryObject<T>) EMPTY;
-		return t;
+		// Patchwork: use our own objectholder registry
+		ObjectHolderRegistry.INSTANCE.register(registry.getRegistrySuperType(), name.getNamespace(), name.getPath(), value -> this.value = (T) value);
 	}
 
 	/**
 	 * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
+	 * Will throw NPE if the value is null, use isPresent to check first. Or use any of the other guarded functions.
 	 */
-	@Nullable
 	@Override
+	@Nonnull
 	public T get() {
-		return this.value;
+		T ret = this.value;
+		Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);
+		return ret;
 	}
 
 	public void updateReference(IForgeRegistry<? extends T> registry) {
@@ -102,14 +96,6 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 
 	public Identifier getId() {
 		return this.name;
-	}
-
-	/**
-	 * @deprecated Prefer {@link #getId()}
-	 */
-	@Deprecated
-	public String getName() {
-		return getId().toString();
 	}
 
 	public Stream<T> stream() {
@@ -122,7 +108,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * @return {@code true} if there is a mod object present, otherwise {@code false}
 	 */
 	public boolean isPresent() {
-		return get() != null;
+		return this.value != null;
 	}
 
 	/**
@@ -131,10 +117,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 *
 	 * @param consumer block to be executed if a mod object is present
 	 * @throws NullPointerException if mod object is present and {@code consumer} is
-	 *                              null
+	 * null
 	 */
 	public void ifPresent(Consumer<? super T> consumer) {
-		if (get() != null) {
+		if (isPresent()) {
 			consumer.accept(get());
 		}
 	}
@@ -165,14 +151,15 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * and if the result is non-null, return an {@code Optional} describing the
 	 * result.  Otherwise return an empty {@code Optional}.
 	 *
-	 * @param <U>    The type of the result of the mapping function
+	 * @apiNote This method supports post-processing on optional values, without
+	 * the need to explicitly check for a return status.
+	 *
+	 * @param <U> The type of the result of the mapping function
 	 * @param mapper a mapping function to apply to the mod object, if present
 	 * @return an {@code Optional} describing the result of applying a mapping
 	 * function to the mod object of this {@code RegistryObject}, if a mod object is present,
 	 * otherwise an empty {@code Optional}
 	 * @throws NullPointerException if the mapping function is null
-	 * @apiNote This method supports post-processing on optional values, without
-	 * the need to explicitly check for a return status.
 	 */
 	public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
 		Objects.requireNonNull(mapper);
@@ -192,14 +179,14 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * and if invoked, {@code flatMap} does not wrap it with an additional
 	 * {@code Optional}.
 	 *
-	 * @param <U>    The type parameter to the {@code Optional} returned by
+	 * @param <U> The type parameter to the {@code Optional} returned by
 	 * @param mapper a mapping function to apply to the mod object, if present
-	 *               the mapping function
+	 *           the mapping function
 	 * @return the result of applying an {@code Optional}-bearing mapping
 	 * function to the value of this {@code Optional}, if a value is present,
 	 * otherwise an empty {@code Optional}
 	 * @throws NullPointerException if the mapping function is null or returns
-	 *                              a null result
+	 * a null result
 	 */
 	public <U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper) {
 		Objects.requireNonNull(mapper);
@@ -216,14 +203,15 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * returning a supplier for the transformed result. If this object is empty, or the
 	 * mapping function returns {@code null}, the supplier will return {@code null}.
 	 *
-	 * @param <U>    The type of the result of the mapping function
+	 * @apiNote This method supports post-processing on optional values, without
+	 * the need to explicitly check for a return status.
+	 *
+	 * @param <U> The type of the result of the mapping function
 	 * @param mapper A mapping function to apply to the mod object, if present
 	 * @return A {@code Supplier} lazily providing the result of applying a mapping
 	 * function to the mod object of this {@code RegistryObject}, if a mod object is present,
 	 * otherwise a supplier returning {@code null}
 	 * @throws NullPointerException if the mapping function is {@code null}
-	 * @apiNote This method supports post-processing on optional values, without
-	 * the need to explicitly check for a return status.
 	 */
 	public <U> Supplier<U> lazyMap(Function<? super T, ? extends U> mapper) {
 		Objects.requireNonNull(mapper);
@@ -234,7 +222,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * Return the mod object if present, otherwise return {@code other}.
 	 *
 	 * @param other the mod object to be returned if there is no mod object present, may
-	 *              be null
+	 * be null
 	 * @return the mod object, if present, otherwise {@code other}
 	 */
 	public T orElse(T other) {
@@ -246,10 +234,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * the result of that invocation.
 	 *
 	 * @param other a {@code Supplier} whose result is returned if no mod object
-	 *              is present
+	 * is present
 	 * @return the mod object if present otherwise the result of {@code other.get()}
 	 * @throws NullPointerException if mod object is not present and {@code other} is
-	 *                              null
+	 * null
 	 */
 	public T orElseGet(Supplier<? extends T> other) {
 		return isPresent() ? get() : other.get();
@@ -259,19 +247,20 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * Return the contained mod object, if present, otherwise throw an exception
 	 * to be created by the provided supplier.
 	 *
-	 * @param <X>               Type of the exception to be thrown
-	 * @param exceptionSupplier The supplier which will return the exception to
-	 *                          be thrown
-	 * @return the present mod object
-	 * @throws X                    if there is no mod object present
-	 * @throws NullPointerException if no mod object is present and
-	 *                              {@code exceptionSupplier} is null
 	 * @apiNote A method reference to the exception constructor with an empty
 	 * argument list can be used as the supplier. For example,
 	 * {@code IllegalStateException::new}
+	 *
+	 * @param <X> Type of the exception to be thrown
+	 * @param exceptionSupplier The supplier which will return the exception to
+	 * be thrown
+	 * @return the present mod object
+	 * @throws X if there is no mod object present
+	 * @throws NullPointerException if no mod object is present and
+	 * {@code exceptionSupplier} is null
 	 */
 	public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-		if (get() != null) {
+		if (isPresent()) {
 			return get();
 		} else {
 			throw exceptionSupplier.get();

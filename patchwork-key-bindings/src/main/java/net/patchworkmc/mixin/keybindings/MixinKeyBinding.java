@@ -38,9 +38,9 @@ import net.patchworkmc.impl.keybindings.ForgeKeyBindingConstruct;
 @Mixin(KeyBinding.class)
 public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeKeybinding, ForgeKeyBindingConstruct {
 	@Shadow
-	private InputUtil.Key keyCode;
+	private InputUtil.Key boundKey;
 
-	// These exist in forge to allow modifiers and conflicting keys to work, this is not implemented
+	// These exist in Forge to allow modifiers and conflicting keys to work, this is not implemented
 	// but these remain to avoid stubbing the methods
 	@Unique
 	private KeyModifier keyModifierDefault = KeyModifier.NONE;
@@ -49,7 +49,7 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 	@Unique
 	private IKeyConflictContext keyConflictContext = KeyConflictContext.UNIVERSAL;
 
-	@Inject(method = "isPressed()Z", at = @At("HEAD"))
+	@Inject(method = "isPressed", at = @At("HEAD"))
 	public void isPressed(CallbackInfoReturnable<Boolean> info) {
 		if (!getKeyConflictContext().isActive()) {
 			info.setReturnValue(false);
@@ -59,7 +59,7 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 
 	@Override
 	public InputUtil.Key getKey() {
-		return this.keyCode;
+		return this.boundKey;
 	}
 
 	@Override
@@ -83,10 +83,10 @@ public abstract class MixinKeyBinding implements Comparable<KeyBinding>, IForgeK
 	}
 
 	@Override
-	public void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.Key keyCode) {
-		this.keyCode = keyCode;
+	public void setKeyModifierAndCode(KeyModifier keyModifier, InputUtil.Key boundKey) {
+		this.boundKey = boundKey;
 
-		if (keyModifier.matches(keyCode)) {
+		if (keyModifier.matches(boundKey)) {
 			keyModifier = KeyModifier.NONE;
 		}
 

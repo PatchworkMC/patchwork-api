@@ -25,9 +25,10 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.glfw.GLFW;
 
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 
 public enum KeyModifier {
@@ -49,10 +50,9 @@ public enum KeyModifier {
 		}
 
 		@Override
-		public String getLocalizedComboName(InputUtil.Key key, Supplier<String> defaultLogic) {
-			String keyName = defaultLogic.get();
+		public Text getCombinedName(InputUtil.Key key, Supplier<Text> defaultLogic) {
 			String localizationFormatKey = MinecraftClient.IS_SYSTEM_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-			return I18n.translate(localizationFormatKey, keyName);
+			return new TranslatableText(localizationFormatKey, defaultLogic.get());
 		}
 	},
 	SHIFT {
@@ -67,8 +67,8 @@ public enum KeyModifier {
 		}
 
 		@Override
-		public String getLocalizedComboName(InputUtil.Key key, Supplier<String> defaultLogic) {
-			return I18n.translate("forge.controlsgui.shift", defaultLogic.get());
+		public Text getCombinedName(InputUtil.Key key, Supplier<Text> defaultLogic) {
+			return new TranslatableText("forge.controlsgui.shift", defaultLogic.get());
 		}
 	},
 	ALT {
@@ -83,8 +83,8 @@ public enum KeyModifier {
 		}
 
 		@Override
-		public String getLocalizedComboName(InputUtil.Key keyCode, Supplier<String> defaultLogic) {
-			return I18n.translate("forge.controlsgui.alt", defaultLogic.get());
+		public Text getCombinedName(InputUtil.Key keyCode, Supplier<Text> defaultLogic) {
+			return new TranslatableText("forge.controlsgui.alt", defaultLogic.get());
 		}
 	},
 	NONE {
@@ -107,7 +107,7 @@ public enum KeyModifier {
 		}
 
 		@Override
-		public String getLocalizedComboName(InputUtil.Key key, Supplier<String> defaultLogic) {
+		public Text getCombinedName(InputUtil.Key key, Supplier<Text> defaultLogic) {
 			return defaultLogic.get();
 		}
 	};
@@ -146,5 +146,5 @@ public enum KeyModifier {
 
 	public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-	public abstract String getLocalizedComboName(InputUtil.Key key, Supplier<String> defaultLogic);
+	public abstract Text getCombinedName(InputUtil.Key key, Supplier<Text> defaultLogic);
 }

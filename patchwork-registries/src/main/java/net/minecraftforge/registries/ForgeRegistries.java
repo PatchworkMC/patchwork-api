@@ -20,7 +20,40 @@
 package net.minecraftforge.registries;
 
 import net.minecraft.Bootstrap;
+import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.brain.Activity;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.Schedule;
+import net.minecraft.entity.ai.brain.sensor.SensorType;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.decoration.painting.PaintingMotive;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Item;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.potion.Potion;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.stat.StatType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.village.VillagerProfession;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.gen.carver.Carver;
+import net.minecraft.world.gen.decorator.Decorator;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.foliage.FoliagePlacerType;
+import net.minecraft.world.gen.placer.BlockPlacerType;
+import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
+import net.minecraft.world.gen.surfacebuilder.SurfaceBuilder;
+import net.minecraft.world.gen.tree.TreeDecoratorType;
+import net.minecraft.world.poi.PointOfInterestType;
 
 /**
  * A class that exposes static references to all vanilla registries.
@@ -31,86 +64,104 @@ import net.minecraft.util.Identifier;
  */
 @SuppressWarnings("rawtypes")
 public class ForgeRegistries {
-	// Java doesn't know that the proper interfaces are implemented with mixins.
-	public static final IForgeRegistry BLOCKS;
-	public static final IForgeRegistry ITEMS;
-	public static final IForgeRegistry ACTIVITIES;
-	public static final IForgeRegistry BIOMES;
-	public static final IForgeRegistry BIOME_PROVIDER_TYPES;
-	public static final IForgeRegistry TILE_ENTITIES;
-	public static final IForgeRegistry WORLD_CARVERS;
-	public static final IForgeRegistry CHUNK_GENERATOR_TYPES;
-	public static final IForgeRegistry CHUNK_STATUS;
-	public static final IForgeRegistry DECORATORS;
-	public static final IForgeRegistry ENCHANTMENTS;
-	public static final IForgeRegistry ENTITIES;
-	public static final IForgeRegistry FEATURES;
-	public static final IForgeRegistry FLUIDS;
-	public static final IForgeRegistry MEMORY_MODULE_TYPES;
-	public static final IForgeRegistry CONTAINERS;
-	public static final IForgeRegistry POTIONS;
-	public static final IForgeRegistry PAINTING_TYPES;
-	public static final IForgeRegistry PARTICLE_TYPES;
-	public static final IForgeRegistry POI_TYPES;
-	public static final IForgeRegistry POTION_TYPES;
-	public static final IForgeRegistry RECIPE_SERIALIZERS;
-	public static final IForgeRegistry SCHEDULES;
-	public static final IForgeRegistry SENSOR_TYPES;
-	public static final IForgeRegistry SOUND_EVENTS;
-	public static final IForgeRegistry STAT_TYPES;
-	public static final IForgeRegistry SURFACE_BUILDERS;
-	public static final IForgeRegistry PROFESSIONS;
-
-	// TODO: Forge Registries, unimplemented
-	// public static final IForgeRegistry MOD_DIMENSIONS = wrap(ModDimension.class);
-	// public static final IForgeRegistry DATA_SERIALIZERS = wrap(DataSerializerEntry.class);
-
 	static {
 		// Make sure all the registries have been setup first.
+		Keys.init();
+		GameData.init();
 		Bootstrap.initialize();
-
-		BLOCKS = GameData.wrapVanilla(GameData.BLOCKS);
-		ITEMS = GameData.wrapVanilla(GameData.ITEMS);
-		ACTIVITIES = GameData.wrapVanilla(GameData.ACTIVITIES);
-		BIOMES = GameData.wrapVanilla(GameData.BIOMES);
-		BIOME_PROVIDER_TYPES = GameData.wrapVanilla(GameData.BIOME_PROVIDER_TYPES);
-		TILE_ENTITIES = GameData.wrapVanilla(GameData.TILEENTITIES);
-		WORLD_CARVERS = GameData.wrapVanilla(GameData.WORLD_CARVERS);
-		CHUNK_GENERATOR_TYPES = GameData.wrapVanilla(GameData.CHUNK_GENERATOR_TYPES);
-		CHUNK_STATUS = GameData.wrapVanilla(GameData.CHUNK_STATUS);
-		wrap("custom_stat");
-		DECORATORS = GameData.wrapVanilla(GameData.DECORATORS);
-		wrap("dimension_type");
-		ENCHANTMENTS = GameData.wrapVanilla(GameData.ENCHANTMENTS);
-		ENTITIES = GameData.wrapVanilla(GameData.ENTITIES);
-		FEATURES = GameData.wrapVanilla(GameData.FEATURES);
-		FLUIDS = GameData.wrapVanilla(GameData.FLUIDS);
-		MEMORY_MODULE_TYPES = GameData.wrapVanilla(GameData.MEMORY_MODULE_TYPES);
-		CONTAINERS = GameData.wrapVanilla(GameData.CONTAINERS);
-		POTIONS = GameData.wrapVanilla(GameData.POTIONS);
-		PAINTING_TYPES = GameData.wrapVanilla(GameData.PAINTING_TYPES);
-		PARTICLE_TYPES = GameData.wrapVanilla(GameData.PARTICLE_TYPES);
-		POI_TYPES = GameData.wrapVanilla(GameData.POI_TYPES);
-		POTION_TYPES = GameData.wrapVanilla(GameData.POTIONTYPES);
-		RECIPE_SERIALIZERS = GameData.wrapVanilla(GameData.RECIPE_SERIALIZERS);
-		wrap("recipe_type");
-		wrap("rule_test");
-		SCHEDULES = GameData.wrapVanilla(GameData.SCHEDULES);
-		SENSOR_TYPES = GameData.wrapVanilla(GameData.SENSOR_TYPES);
-		SOUND_EVENTS = GameData.wrapVanilla(GameData.SOUNDEVENTS);
-		STAT_TYPES = GameData.wrapVanilla(GameData.STAT_TYPES);
-		wrap("structure_feature");
-		wrap("structure_piece");
-		wrap("structure_pool_element");
-		wrap("structure_processor");
-		SURFACE_BUILDERS = GameData.wrapVanilla(GameData.SURFACE_BUILDERS);
-		PROFESSIONS = GameData.wrapVanilla(GameData.PROFESSIONS);
-		wrap("villager_type");
+		// TODO: Tags.init();
 	}
 
-	@SuppressWarnings("unchecked")
-	private static void wrap(String vanillaName) {
-		GameData.wrapVanilla(new Identifier(vanillaName));
+	// Java doesn't know that the proper interfaces are implemented with mixins
+	// Game objects
+	public static final IForgeRegistry BLOCKS = GameData.wrap(Keys.BLOCKS, Block.class);
+	public static final IForgeRegistry FLUIDS = GameData.wrap(Keys.FLUIDS, Fluid.class);
+	public static final IForgeRegistry ITEMS = GameData.wrap(Keys.ITEMS, Item.class);
+	// yes, EFFECTS does map to POTIONS, and POTIONS maps to POTION_TYPES
+	public static final IForgeRegistry POTIONS = GameData.wrap(Keys.EFFECTS, StatusEffect.class);
+	public static final IForgeRegistry SOUND_EVENTS = GameData.wrap(Keys.SOUND_EVENTS, SoundEvent.class);
+	public static final IForgeRegistry POTION_TYPES = GameData.wrap(Keys.POTIONS, Potion.class);
+	public static final IForgeRegistry ENCHANTMENTS = GameData.wrap(Keys.ENCHANTMENTS, Enchantment.class);
+	public static final IForgeRegistry ENTITIES = GameData.wrap(Keys.ENTITY_TYPES, EntityType.class);
+	public static final IForgeRegistry TILE_ENTITIES = GameData.wrap(Keys.TILE_ENTITY_TYPES, BlockEntityType.class);
+	public static final IForgeRegistry PARTICLE_TYPES = GameData.wrap(Keys.PARTICLE_TYPES, ParticleType.class);
+	public static final IForgeRegistry CONTAINERS = GameData.wrap(Keys.CONTAINER_TYPES, ScreenHandlerType.class);
+	public static final IForgeRegistry PAINTING_TYPES = GameData.wrap(Keys.PAINTING_TYPES, PaintingMotive.class);
+	public static final IForgeRegistry RECIPE_SERIALIZERS = GameData.wrap(Keys.RECIPE_SERIALIZERS, RecipeSerializer.class);
+	public static final IForgeRegistry ATTRIBUTES = GameData.wrap(Keys.ATTRIBUTES, EntityAttribute.class);
+	public static final IForgeRegistry STAT_TYPES = GameData.wrap(Keys.STAT_TYPES, StatType.class);
+
+	// Villages
+	public static final IForgeRegistry PROFESSIONS = GameData.wrap(Keys.VILLAGER_PROFESSIONS, VillagerProfession.class);
+	public static final IForgeRegistry POI_TYPES = GameData.wrap(Keys.POI_TYPES, PointOfInterestType.class);
+	public static final IForgeRegistry MEMORY_MODULE_TYPES = GameData.wrap(Keys.MEMORY_MODULE_TYPES, MemoryModuleType.class);
+	public static final IForgeRegistry SENSOR_TYPES = GameData.wrap(Keys.SENSOR_TYPES, SensorType.class);
+	public static final IForgeRegistry SCHEDULES = GameData.wrap(Keys.SCHEDULES, Schedule.class);
+	public static final IForgeRegistry ACTIVITIES = GameData.wrap(Keys.ACTIVITIES, Activity.class);
+
+	// Worldgen
+	public static final IForgeRegistry WORLD_CARVERS = GameData.wrap(Keys.WORLD_CARVERS, Carver.class);
+	public static final IForgeRegistry SURFACE_BUILDERS = GameData.wrap(Keys.SURFACE_BUILDERS, SurfaceBuilder.class);
+	public static final IForgeRegistry FEATURES = GameData.wrap(Keys.FEATURES, Feature.class);
+	public static final IForgeRegistry DECORATORS = GameData.wrap(Keys.DECORATORS, Decorator.class);
+	public static final IForgeRegistry CHUNK_STATUS = GameData.wrap(Keys.CHUNK_STATUS, ChunkStatus.class);
+	public static final IForgeRegistry STRUCTURE_FEATURES = GameData.wrap(Keys.STRUCTURE_FEATURES, StructureFeature.class);
+	public static final IForgeRegistry BLOCK_STATE_PROVIDER_TYPES = GameData.wrap(Keys.BLOCK_STATE_PROVIDER_TYPES, BlockStateProviderType.class);
+	public static final IForgeRegistry BLOCK_PLACER_TYPES = GameData.wrap(Keys.BLOCK_PLACER_TYPES, BlockPlacerType.class);
+	public static final IForgeRegistry FOLIAGE_PLACER_TYPES = GameData.wrap(Keys.FOLIAGE_PLACER_TYPES, FoliagePlacerType.class);
+	public static final IForgeRegistry TREE_DECORATOR_TYPES = GameData.wrap(Keys.TREE_DECORATOR_TYPES, TreeDecoratorType.class);
+	// Dynamic/Data driven.
+	//public static final IForgeRegistry BIOMES = GameData.wrap(Keys.BIOMES, Biome.class);
+	// TODO: Forge Registries, unimplemented
+	// DATA_SERIALIZERS, LOOT_MODIFIER_SERIALIZERS, WORLD_TYPES
+
+	public static final class Keys {
+		//Vanilla
+		public static final RegistryKey<Registry<Block>> BLOCKS = key("block");
+		public static final RegistryKey<Registry<Fluid>> FLUIDS = key("fluid");
+		public static final RegistryKey<Registry<Item>> ITEMS = key("item");
+		public static final RegistryKey<Registry<StatusEffect>> EFFECTS = key("mob_effect");
+		public static final RegistryKey<Registry<Potion>> POTIONS = key("potion");
+		public static final RegistryKey<Registry<EntityAttribute>> ATTRIBUTES = key("attribute");
+		public static final RegistryKey<Registry<StatType<?>>> STAT_TYPES = key("stat_type");
+		public static final RegistryKey<Registry<SoundEvent>> SOUND_EVENTS = key("sound_event");
+		public static final RegistryKey<Registry<Enchantment>> ENCHANTMENTS = key("enchantment");
+		public static final RegistryKey<Registry<EntityType<?>>> ENTITY_TYPES = key("entity_type");
+		public static final RegistryKey<Registry<PaintingMotive>> PAINTING_TYPES = key("motive");
+		public static final RegistryKey<Registry<ParticleType<?>>> PARTICLE_TYPES = key("particle_type");
+		public static final RegistryKey<Registry<ScreenHandlerType<?>>> CONTAINER_TYPES = key("menu");
+		public static final RegistryKey<Registry<BlockEntityType<?>>> TILE_ENTITY_TYPES = key("block_entity_type");
+		public static final RegistryKey<Registry<RecipeSerializer<?>>> RECIPE_SERIALIZERS = key("recipe_serializer");
+		public static final RegistryKey<Registry<VillagerProfession>> VILLAGER_PROFESSIONS = key("villager_profession");
+		public static final RegistryKey<Registry<PointOfInterestType>> POI_TYPES = key("point_of_interest_type");
+		public static final RegistryKey<Registry<MemoryModuleType<?>>> MEMORY_MODULE_TYPES = key("memory_module_type");
+		public static final RegistryKey<Registry<SensorType<?>>> SENSOR_TYPES = key("sensor_type");
+		public static final RegistryKey<Registry<Schedule>> SCHEDULES = key("schedule");
+		public static final RegistryKey<Registry<Activity>> ACTIVITIES = key("activity");
+		public static final RegistryKey<Registry<Carver<?>>> WORLD_CARVERS = key("worldgen/carver");
+		public static final RegistryKey<Registry<SurfaceBuilder<?>>> SURFACE_BUILDERS = key("worldgen/surface_builder");
+		public static final RegistryKey<Registry<Feature<?>>> FEATURES = key("worldgen/feature");
+		public static final RegistryKey<Registry<Decorator<?>>> DECORATORS = key("worldgen/decorator");
+		public static final RegistryKey<Registry<ChunkStatus>> CHUNK_STATUS = key("chunk_status");
+		public static final RegistryKey<Registry<StructureFeature<?>>> STRUCTURE_FEATURES = key("worldgen/structure_feature");
+		public static final RegistryKey<Registry<BlockStateProviderType<?>>> BLOCK_STATE_PROVIDER_TYPES = key("worldgen/block_state_provider_type");
+		public static final RegistryKey<Registry<BlockPlacerType<?>>> BLOCK_PLACER_TYPES = key("worldgen/block_placer_type");
+		public static final RegistryKey<Registry<FoliagePlacerType<?>>> FOLIAGE_PLACER_TYPES = key("worldgen/foliage_placer_type");
+		public static final RegistryKey<Registry<TreeDecoratorType<?>>> TREE_DECORATOR_TYPES = key("worldgen/tree_decorator_type");
+		// Vanilla Dynamic
+		//public static final RegistryKey<Registry<Biome>> BIOMES = key("worldgen/biome");
+		//Forge
+		//public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
+		//public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
+		//public static final RegistryKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
+
+		private static <T> RegistryKey<Registry<T>> key(String name) {
+			return RegistryKey.ofRegistry(new Identifier(name));
+		}
+
+		private static void init() {
+			//
+		}
 	}
 
 	public static void init() {

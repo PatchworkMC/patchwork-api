@@ -19,37 +19,33 @@
 
 package net.patchworkmc.impl.registries;
 
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import net.minecraft.util.Identifier;
 
+/**
+ * This serves as a replacement for ForgeRegistryEntry since we can't change the superclass of objects with Mixin.
+ * @param <V>
+ */
 @SuppressWarnings("unchecked")
 public interface ExtendedForgeRegistryEntry<V extends IForgeRegistryEntry<V>> extends IForgeRegistryEntry<V> {
-	default V setRegistryName(String full) {
-		String activeNamespace = ModLoadingContext.get().getActiveNamespace();
-
-		if (activeNamespace == null || activeNamespace.equals("minecraft")) {
-			System.err.println("Currently active namespace is minecraft while registering item: " + full);
+	default V setRegistryName(String name) {
+		if (getRegistryName() != null) {
+			throw new IllegalStateException("Attempted to set registry name with existing registry name! New: "
+					+ name + " Old: " + getRegistryName());
 		}
 
-		Identifier identifier;
-
-		if (full.contains(":")) {
-			identifier = new Identifier(full);
-		} else {
-			identifier = new Identifier(activeNamespace, full);
-		}
-
-		if (!identifier.getNamespace().equals(activeNamespace)) {
-			System.err.printf("Potentially Dangerous alternative prefix `%s` for name `%s`, expected `%s`. This could be a intended override, but in most cases indicates a broken mod.\n", identifier.getNamespace(), identifier.getPath(), activeNamespace);
-		}
-
-		return this.setRegistryName(identifier);
+		return this.setRegistryName(checkRegistryName(name));
 	}
 
 	default V setRegistryName(String namespace, String name) {
 		return this.setRegistryName(new Identifier(namespace, name));
+	}
+
+	// package-private in forge, but we don't have the luxury of classes here
+	default Identifier checkRegistryName(String name) {
+		return GameData.checkPrefix(name, true);
 	}
 
 	@Override

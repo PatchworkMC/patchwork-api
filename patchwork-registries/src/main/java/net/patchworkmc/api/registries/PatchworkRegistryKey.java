@@ -17,38 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.registries;
+package net.patchworkmc.api.registries;
 
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
-import net.patchworkmc.impl.registries.ExtendedForgeRegistryEntry;
-import net.patchworkmc.impl.registries.Identifiers;
-
-@Mixin(SoundEvent.class)
-public class MixinSoundEvent implements ExtendedForgeRegistryEntry {
-	@Unique
-	private Identifier registryName;
-
-	@Override
-	public IForgeRegistryEntry setRegistryName(Identifier name) {
-		this.registryName = name;
-
-		return this;
-	}
-
-	public Identifier getRegistryName() {
-		SoundEvent soundEvent = (SoundEvent) (Object) this;
-
-		return Identifiers.getOrFallback(Registry.SOUND_EVENT, soundEvent, registryName);
-	}
-
-	public Class<SoundEvent> getRegistryType() {
-		return SoundEvent.class;
+// TODO: put this in Patcher
+public class PatchworkRegistryKey {
+	public static <T> RegistryKey<T> of(RegistryKey<? extends Registry<T>> parent, Identifier location) {
+		return RegistryKey.of(parent.getValue(), location);
 	}
 }

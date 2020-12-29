@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.event.input;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,11 +34,13 @@ import net.patchworkmc.impl.event.input.InputEvents;
 @Mixin(Keyboard.class)
 public abstract class MixinKeyboard {
 	@Shadow
-	MinecraftClient client;
+	@Final
+	private MinecraftClient client;
 
+	// We want to target all returns here to correctly fire the event when a key is pressed
 	@Inject(method = "onKey", at = @At("RETURN"))
 	private void fireKeyInput(long window, int key, int scancode, int action, int modifiers, CallbackInfo info) {
-		if (window == this.client.window.getHandle()) {
+		if (window == this.client.getWindow().getHandle()) {
 			InputEvents.fireKeyInput(key, scancode, action, modifiers);
 		}
 	}
