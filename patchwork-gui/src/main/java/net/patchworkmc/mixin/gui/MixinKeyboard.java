@@ -58,7 +58,7 @@ public abstract class MixinKeyboard {
 	}
 
 	@Dynamic("lambda in onKey")
-	@Inject(method = "method_1454", at = @At("RETURN"))
+	@Inject(method = "method_1454", at = @At("TAIL"))
 	private void postKeyEvent(int i, boolean[] bls, ParentElement element, int key, int scanCode, int mods, CallbackInfo info) {
 		if (bls[0]) {
 			return;
@@ -86,7 +86,7 @@ public abstract class MixinKeyboard {
 	}
 
 	@Dynamic("lambda in onChar")
-	@Redirect(method = "method_1458", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
+	@Redirect(method = "method_1458(Lnet/minecraft/client/gui/Element;II)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
 	private static boolean charTyped(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}
@@ -100,7 +100,7 @@ public abstract class MixinKeyboard {
 	}
 
 	@Dynamic("lambda in onChar")
-	@Redirect(method = "method_1473", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
+	@Redirect(method = "method_1473(Lnet/minecraft/client/gui/Element;CI)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Element;charTyped(CI)Z", ordinal = 0))
 	private static boolean charTyped2(Element element, char character, int mods) {
 		return element.charTyped(character, mods) || MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.KeyboardCharTypedEvent.Post((Screen) element, character, mods));
 	}

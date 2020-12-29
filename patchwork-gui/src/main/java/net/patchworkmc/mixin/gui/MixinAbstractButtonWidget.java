@@ -44,8 +44,8 @@ public abstract class MixinAbstractButtonWidget extends DrawableHelper implement
 	@Unique
 	protected int packedFGColor = UNSET_FG_COLOR;
 
-	@ModifyVariable(method = "renderButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/AbstractButtonWidget;getMessage()Lnet/minecraft/text/Text;", ordinal = 0), ordinal = 2)
-	private int hookRenderButton(int original) {
+	@ModifyVariable(method = "renderButton(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/AbstractButtonWidget;getMessage()Lnet/minecraft/text/Text;", ordinal = 0), ordinal = 2)
+	private int hookFGColor(int original) {
 		return getFGColor();
 	}
 
