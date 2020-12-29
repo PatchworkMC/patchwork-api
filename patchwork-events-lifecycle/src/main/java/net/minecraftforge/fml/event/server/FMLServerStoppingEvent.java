@@ -17,25 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.lifecycle;
+package net.minecraftforge.fml.event.server;
 
-import java.util.function.BooleanSupplier;
+import net.minecraft.server.MinecraftServer;
 
-import net.minecraftforge.event.TickEvent;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.world.World;
-
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
-
-@Mixin(ClientWorld.class)
-public class MixinClientWorld {
-	@Inject(method = "tick", at = @At("HEAD"))
-	private void tick(BooleanSupplier supplier, CallbackInfo callback) {
-		LifecycleEvents.fireWorldTickEvent(TickEvent.Phase.START, (World) (Object) this);
+/**
+ * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
+ *
+ * @author cpw
+ */
+public class FMLServerStoppingEvent extends ServerLifecycleEvent {
+	public FMLServerStoppingEvent(MinecraftServer server) {
+		super(server);
 	}
 }

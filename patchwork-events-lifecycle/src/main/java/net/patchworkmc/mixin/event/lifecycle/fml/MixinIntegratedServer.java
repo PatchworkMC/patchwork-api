@@ -17,21 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.lifecycle;
+package net.patchworkmc.mixin.event.lifecycle.fml;
 
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.integrated.IntegratedServer;
 
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
+@Mixin(IntegratedServer.class)
+public class MixinIntegratedServer {
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/integrated/IntegratedServer;loadWorld()V", ordinal = 0),
+			cancellable = true)
+	private void patchwork$serverAboutToStart(CallbackInfoReturnable<Boolean> cir) {
+		if (!ServerLifecycleHooks.handleServerAboutToStart((MinecraftServer) (Object) this)) {
+			cir.setReturnValue(false);
+		}
+	}
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer {
-	@Inject(method = "run", at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.exit ()V"))
-	private void serverStoppedHook(CallbackInfo ci) {
-		LifecycleEvents.handleServerStopped((MinecraftServer) (Object) this);
+	@Inject(method = "setupServer", at = @At("TAIL"), cancellable = true)
+	private void patchwork$serverStarting(CallbackInfoReturnable<Boolean> cir) {
+		cir.setReturnValue(ServerLifecycleHooks.handleServerStarting((MinecraftServer) (Object) this));
 	}
 }

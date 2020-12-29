@@ -17,9 +17,6 @@
     "patchwork-fml": "*"
   },
   "entrypoints": {
-    "main": [
-      "net.patchworkmc.impl.event.lifecycle.LifecycleEvents"
-    ]
   },
   "mixins": [
     "patchwork-events-lifecycle.mixins.json"
@@ -28,5 +25,6 @@
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"
-  }
+  },
+  "accessWidener": "patchwork-events-lifecycle.accesswidener"
 }

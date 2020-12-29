@@ -121,7 +121,7 @@ public class ConfigTracker {
 	}
 
 	public String getConfigFileName(String modId, ModConfig.Type type) {
-		return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null)).
-				map(ModConfig::getFullPath).map(Object::toString).orElse(null);
+		return Optional.ofNullable(configsByMod.getOrDefault(modId, Collections.emptyMap()).getOrDefault(type, null))
+				.map(ModConfig::getFullPath).map(Object::toString).orElse(null);
 	}
 }

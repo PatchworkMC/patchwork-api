@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
@@ -55,6 +74,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
 	public void setConfig(CommentedConfig config) {
 		this.childConfig = config;
+
 		if (config != null && !isCorrect(config)) {
 			String configName =
 					config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
@@ -85,6 +105,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
 	public void save() {
 		Preconditions.checkNotNull(childConfig, "Cannot save config value without assigned Config object present");
+
 		if (childConfig instanceof FileConfig) {
 			((FileConfig) childConfig).save();
 		}
@@ -131,6 +152,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 			if (specValue instanceof Config) {
 				if (configValue instanceof CommentedConfig) {
 					count += correct((Config) specValue, (CommentedConfig) configValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+
 					if (count > 0 && dryRun) {
 						return count;
 					}
@@ -187,6 +209,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 		// Second step: removes the unspecified values
 		for (Iterator<Map.Entry<String, Object>> ittr = configMap.entrySet().iterator(); ittr.hasNext(); ) {
 			Map.Entry<String, Object> entry = ittr.next();
+
 			if (!specMap.containsKey(entry.getKey())) {
 				if (dryRun) {
 					return 1;
@@ -344,27 +367,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 			return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
 		}
 
-		public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue,
-		                                                   @SuppressWarnings("unchecked")
-				                                                   V... acceptableValues) {
+		public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
 			return defineEnum(split(path), defaultValue, acceptableValues);
 		}
 
-		public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter,
-		                                                   @SuppressWarnings("unchecked")
-				                                                   V... acceptableValues) {
+		public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
 			return defineEnum(split(path), defaultValue, converter, acceptableValues);
 		}
 
-		public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue,
-		                                                   @SuppressWarnings("unchecked")
-				                                                   V... acceptableValues) {
+		public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
 			return defineEnum(path, defaultValue, Arrays.asList(acceptableValues));
 		}
 
-		public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter,
-		                                                   @SuppressWarnings("unchecked")
-				                                                   V... acceptableValues) {
+		public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
 			return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
 		}
 
@@ -618,7 +633,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 		}
 
 		@SuppressWarnings("unchecked")
-		public <V extends Comparable<? super V>> Range<V> getRange() { return (Range<V>) this.range; }
+		public <V extends Comparable<? super V>> Range<V> getRange() {
+			return (Range<V>) this.range;
+		}
 
 		public void worldRestart() {
 			this.worldRestart = true;
@@ -754,7 +771,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 		}
 
 		public String getTranslationKey() {
-		return langKey;
+			return langKey;
 		}
 
 		@SuppressWarnings("unchecked")

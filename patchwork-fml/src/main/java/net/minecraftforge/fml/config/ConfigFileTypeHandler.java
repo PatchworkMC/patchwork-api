@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.config;
 
-import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +29,6 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,7 +36,7 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public class ConfigFileTypeHandler {
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Path defaultConfigPath = FabricLoader.getInstance().getConfigDirectory().toPath();
+	private static final Path defaultConfigPath = FabricLoader.getInstance().getConfigDir();
 	static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
 
 	public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
@@ -51,18 +48,19 @@ public class ConfigFileTypeHandler {
 					.onFileNotFound((newfile, configFormat) -> setupConfigFile(c, newfile, configFormat))
 					.writingMode(WritingMode.REPLACE)
 					.build();
-			LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
+			LOGGER.debug(ConfigTracker.CONFIG, "Built TOML config for {}", configPath.toString());
+
 			try {
 				configData.load();
 			} catch (ParsingException ex) {
 				throw new ConfigLoadingException(c, ex);
 			}
 
-			LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
+			LOGGER.debug(ConfigTracker.CONFIG, "Loaded TOML config file {}", configPath.toString());
 
 			try {
 				FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
-				LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
+				LOGGER.debug(ConfigTracker.CONFIG, "Watching TOML config file {} for changes", configPath.toString());
 			} catch (IOException e) {
 				throw new RuntimeException("Couldn't watch config file", e);
 			}
@@ -83,8 +81,9 @@ public class ConfigFileTypeHandler {
 
 	private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
 		Path p = defaultConfigPath.resolve(modConfig.getFileName());
+
 		if (Files.exists(p)) {
-			LOGGER.info(CONFIG, "Loading default config file from path {}", p);
+			LOGGER.info(ConfigTracker.CONFIG, "Loading default config file from path {}", p);
 			Files.copy(p, file);
 		} else {
 			Files.createFile(file);
@@ -109,20 +108,22 @@ public class ConfigFileTypeHandler {
 		public void run() {
 			// Force the regular classloader onto the special thread
 			Thread.currentThread().setContextClassLoader(realClassLoader);
+
 			if (!this.modConfig.getSpec().isCorrecting()) {
 				try {
 					this.commentedFileConfig.load();
 				} catch (ParsingException ex) {
 					throw new ConfigLoadingException(modConfig, ex);
 				}
-				LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
+
+				LOGGER.debug(ConfigTracker.CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
 				this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
 			}
 		}
 	}
 
 	private static class ConfigLoadingException extends RuntimeException {
-		public ConfigLoadingException(ModConfig config, Exception cause) {
+		ConfigLoadingException(ModConfig config, Exception cause) {
 			super("Failed loading config file " + config.getFileName() + " of type " + config.getType() + " for modid " + config.getModId(), cause);
 		}
 	}

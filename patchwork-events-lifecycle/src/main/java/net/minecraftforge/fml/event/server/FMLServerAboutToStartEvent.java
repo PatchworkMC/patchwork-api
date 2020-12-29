@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.event.server;
 
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-
 import net.minecraft.server.MinecraftServer;
 
 /**

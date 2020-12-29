@@ -48,21 +48,21 @@ public class InterModComms {
 		 * @return The modid of the sender. This is supplied by the caller, or by the active mod container context.
 		 * Consider it unreliable.
 		 */
-		public final String getSenderModId() {
+		public String getSenderModId() {
 			return this.senderModId;
 		}
 
 		/**
 		 * @return The modid being sent to.
 		 */
-		public final String getModId() {
+		public String getModId() {
 			return this.modId;
 		}
 
 		/**
 		 * @return The method being sent to.
 		 */
-		public final String getMethod() {
+		public String getMethod() {
 			return this.method;
 		}
 
@@ -71,7 +71,7 @@ public class InterModComms {
 		 * @return A {@link Supplier} of the message.
 		 */
 		@SuppressWarnings("unchecked")
-		public final <T> Supplier<T> getMessageSupplier() {
+		public <T> Supplier<T> getMessageSupplier() {
 			return (Supplier<T>) this.thing;
 		}
 	}
@@ -145,7 +145,7 @@ public class InterModComms {
 		private final Predicate<String> methodFilter;
 		private final Iterator<IMCMessage> iterator;
 
-		public QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
+		QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
 			this.queue = queue;
 			this.iterator = queue.iterator();
 			this.methodFilter = methodFilter;

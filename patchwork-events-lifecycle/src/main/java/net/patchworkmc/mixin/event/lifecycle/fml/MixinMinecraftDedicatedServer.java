@@ -17,29 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.event.lifecycle;
+package net.patchworkmc.mixin.event.lifecycle.fml;
 
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 
-import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
-
-@Mixin(IntegratedServer.class)
-public class MixinIntegratedServer {
-	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/integrated/IntegratedServer;loadWorld(Ljava/lang/String;Ljava/lang/String;JLnet/minecraft/world/level/LevelGeneratorType;Lcom/google/gson/JsonElement;)V"))
-	private void onServerAboutToStart(CallbackInfoReturnable<Boolean> cir) {
-		LifecycleEvents.handleServerAboutToStart((MinecraftServer) (Object) this);
+@Mixin(MinecraftDedicatedServer.class)
+public class MixinMinecraftDedicatedServer {
+	@Inject(method = "setupServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/UserCache;setUseRemote(Z)V",
+			ordinal = 0, shift = At.Shift.AFTER), cancellable = true)
+	private void patchwork$serverAboutToStart(CallbackInfoReturnable<Boolean> cir) {
+		if (!ServerLifecycleHooks.handleServerAboutToStart((MinecraftServer) (Object) this)) {
+			cir.setReturnValue(false);
+		}
 	}
 
-	@Inject(method = "setupServer", at = @At(value = "RETURN", ordinal = 0), cancellable = true, slice =
-			@Slice(from = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.setMotd(Ljava/lang/String;)V")))
+	// Beware: This is the TAIL now, but please double check when updating this module.
+	@Inject(method = "setupServer", at = @At("TAIL"), cancellable = true)
 	private void handleServerStarting(CallbackInfoReturnable<Boolean> cir) {
-		cir.setReturnValue(LifecycleEvents.handleServerStarting((MinecraftServer) (Object) this));
+		cir.setReturnValue(ServerLifecycleHooks.handleServerStarting((MinecraftServer) (Object) this));
 	}
 }

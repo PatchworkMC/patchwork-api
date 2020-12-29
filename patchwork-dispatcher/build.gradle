@@ -5,6 +5,7 @@ dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 	implementation project(path: ':patchwork-fml', configuration: 'dev')
 	implementation project(path: ':patchwork-registries', configuration: 'dev')
-//	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
+	// technically we don't use any code, but we do rely on lifecycle events for initializing the server config
+	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
 //	implementation project(path: ':patchwork-model-loader', configuration: 'dev')
 }

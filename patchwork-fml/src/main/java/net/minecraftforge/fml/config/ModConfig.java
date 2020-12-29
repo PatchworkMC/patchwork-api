@@ -21,11 +21,9 @@ package net.minecraftforge.fml.config;
 
 import java.nio.file.Path;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.sun.tools.javac.util.StringUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
@@ -124,7 +122,7 @@ public class ModConfig {
 		SERVER;
 
 		public String extension() {
-			return StringUtils.toLowerCase(name());
+			return name().toLowerCase(Locale.ROOT);
 		}
 	}
 
