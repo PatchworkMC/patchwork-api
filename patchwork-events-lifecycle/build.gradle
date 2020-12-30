@@ -5,3 +5,7 @@ dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 	implementation project(path: ':patchwork-fml', configuration: 'dev')
 }
+
+loom {
+	accessWidener "src/main/resources/patchwork-events-lifecycle.accesswidener"
+}

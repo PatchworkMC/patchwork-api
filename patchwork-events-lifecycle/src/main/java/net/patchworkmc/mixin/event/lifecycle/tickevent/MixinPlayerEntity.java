@@ -17,33 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.registries;
+package net.patchworkmc.mixin.event.lifecycle.tickevent;
 
-import net.minecraftforge.registries.ForgeRegistry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 
-import net.patchworkmc.impl.registries.VanillaRegistry;
+import net.patchworkmc.impl.event.lifecycle.LifecycleEvents;
 
-@Mixin(SimpleRegistry.class)
-public abstract class MixinSimpleRegistry implements VanillaRegistry {
-	@Unique
-	private ForgeRegistry forgeRegistry;
-
-	@Override
-	public boolean patchwork$setForgeRegistry(ForgeRegistry forgeRegistry) {
-		if (this.forgeRegistry == null) {
-			this.forgeRegistry = forgeRegistry;
-			return true;
-		} else {
-			return false;
-		}
+@Mixin(PlayerEntity.class)
+public class MixinPlayerEntity {
+	@Inject(method = "tick", at = @At("HEAD"))
+	public void patchwork$onPlayerPreTick(CallbackInfo ci) {
+		LifecycleEvents.onPlayerPreTick((PlayerEntity) (Object) this);
 	}
 
-	@Override
-	public ForgeRegistry patchwork$getForgeRegistry() {
-		return this.forgeRegistry;
+	@Inject(method = "tick", at = @At("TAIL"))
+	public void patchwork$onPlayerPostTick(CallbackInfo ci) {
+		LifecycleEvents.onPlayerPostTick((PlayerEntity) (Object) this);
 	}
 }

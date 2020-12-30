@@ -17,33 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.registries;
+package net.minecraftforge.fml.event.server;
 
-import net.minecraftforge.registries.ForgeRegistry;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import net.minecraft.server.MinecraftServer;
 
-import net.minecraft.util.registry.SimpleRegistry;
-
-import net.patchworkmc.impl.registries.VanillaRegistry;
-
-@Mixin(SimpleRegistry.class)
-public abstract class MixinSimpleRegistry implements VanillaRegistry {
-	@Unique
-	private ForgeRegistry forgeRegistry;
-
-	@Override
-	public boolean patchwork$setForgeRegistry(ForgeRegistry forgeRegistry) {
-		if (this.forgeRegistry == null) {
-			this.forgeRegistry = forgeRegistry;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public ForgeRegistry patchwork$getForgeRegistry() {
-		return this.forgeRegistry;
+/**
+ * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
+ *
+ * @author cpw
+ */
+public class FMLServerStoppingEvent extends ServerLifecycleEvent {
+	public FMLServerStoppingEvent(MinecraftServer server) {
+		super(server);
 	}
 }

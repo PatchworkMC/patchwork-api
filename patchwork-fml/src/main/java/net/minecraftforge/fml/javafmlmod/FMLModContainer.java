@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import java.util.Optional;
+
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,12 +35,7 @@ public class FMLModContainer extends ModContainer {
 		super(id);
 
 		this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
-	}
-
-	public FMLModContainer(String id, IEventBus bus) {
-		super(id);
-
-		this.eventBus = bus;
+		super.configHandler = Optional.of(this.eventBus::post);
 	}
 
 	public IEventBus getEventBus() {

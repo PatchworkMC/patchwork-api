@@ -34,13 +34,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
+import net.patchworkmc.impl.gui.ForgeScreen;
+
 @Mixin(Screen.class)
-public abstract class MixinScreen {
+public abstract class MixinScreen implements ForgeScreen {
 	@Shadow
 	@Final
 	protected List<AbstractButtonWidget> buttons;
@@ -54,10 +57,10 @@ public abstract class MixinScreen {
 
 	@Shadow
 	@Nullable
-	protected MinecraftClient minecraft;
+	protected MinecraftClient client;
 
 	@Unique
-	private Consumer<AbstractButtonWidget> remove = (b) -> {
+	private final Consumer<AbstractButtonWidget> remove = (b) -> {
 		buttons.remove(b);
 		children.remove(b);
 	};
@@ -74,12 +77,13 @@ public abstract class MixinScreen {
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.InitGuiEvent.Post((Screen) (Object) this, this.buttons, this::addButton, remove));
 	}
 
-	@Inject(method = "renderBackground(I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;fillGradient(IIIIII)V", ordinal = 0, shift = At.Shift.AFTER))
-	private void renderBackground(int alpha, CallbackInfo info) {
-		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent((Screen) (Object) this));
+	@Inject(method = "renderBackground(Lnet/minecraft/client/util/math/MatrixStack;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;fillGradient(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V", ordinal = 0, shift = At.Shift.AFTER))
+	private void renderBackground(MatrixStack matrices, int vOffset, CallbackInfo ci) {
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.BackgroundDrawnEvent((Screen) (Object) this, matrices));
 	}
 
+	@Override
 	public MinecraftClient getMinecraft() {
-		return this.minecraft;
+		return this.client;
 	}
 }

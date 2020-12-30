@@ -9,7 +9,6 @@ pluginManagement {
 		mavenLocal()
 	}
 }
-
 rootProject.name = "patchwork-api"
 
 include 'patchwork-api-base'
@@ -20,7 +19,7 @@ include 'patchwork-dispatcher'
 //include 'patchwork-enum-hacks'
 //include 'patchwork-events-entity'
 include 'patchwork-events-input'
-//include 'patchwork-events-lifecycle'
+include 'patchwork-events-lifecycle'
 //include 'patchwork-events-rendering'
 //include 'patchwork-events-world'
 include 'patchwork-extensions'
@@ -33,16 +32,16 @@ include 'patchwork-extensions-entity'
 //include 'patchwork-fake-players'
 include 'patchwork-fml'
 //include 'patchwork-god-classes'
-//include 'patchwork-gui'
+include 'patchwork-gui'
 //include 'patchwork-items'
-//include 'patchwork-key-bindings'
+include 'patchwork-key-bindings'
 //include 'patchwork-level-generators'
 //include 'patchwork-loot'
 //include 'patchwork-model-loader'
 //include 'patchwork-networking'
 //include 'patchwork-networking-messages'
 //include 'patchwork-recipes'
-//include 'patchwork-registries'
+include 'patchwork-registries'
 //include 'patchwork-resource'
 //include 'patchwork-tags'
 //include 'patchwork-tooltype'

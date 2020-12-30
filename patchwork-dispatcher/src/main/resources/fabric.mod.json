@@ -14,8 +14,7 @@
     "patchwork-api-base": "*",
     "patchwork-fml": "*",
     "patchwork-registries": "*",
-    "patchwork-events-lifecycle": "*",
-    "patchwork-model-loader": "*"
+    "patchwork-events-lifecycle": "*"
   },
   "mixins": [
     "patchwork-dispatcher.mixins.json"

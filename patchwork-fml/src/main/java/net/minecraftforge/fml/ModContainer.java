@@ -19,12 +19,15 @@
 
 package net.minecraftforge.fml;
 
+import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,10 +37,10 @@ public abstract class ModContainer {
 	protected final String modId;
 	protected final String namespace;
 	protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
-	//protected final EnumMap<ModConfig.Type, ModConfig> configs;
+	protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
 	private net.fabricmc.loader.api.ModContainer fabricModContainer;
-	//@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	//protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
 
 	public ModContainer(String modId) {
 		this.modId = modId;
@@ -75,6 +78,14 @@ public abstract class ModContainer {
 
 	public final net.fabricmc.loader.api.ModContainer patchwork$getParent() {
 		return this.fabricModContainer;
+	}
+
+	public void addConfig(final ModConfig modConfig) {
+		configs.put(modConfig.getType(), modConfig);
+	}
+
+	public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
+		configHandler.ifPresent(configHandler -> configHandler.accept(event));
 	}
 
 	public abstract Object getMod();

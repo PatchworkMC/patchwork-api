@@ -44,41 +44,41 @@ public class MixinMinecraftClient {
 	private static final String PATCHWORK_YARN_CLS_TITLESCREEN = "classValue=net/minecraft/client/gui/screen/TitleScreen";
 	private static final String PATCHWORK_REOBF_CLS_TITLESCREEN = "classValue=net/minecraft/class_442";
 
-	private static Screen patchwork_oldScreen;
+	private static Screen patchwork$oldScreen;
 
 	@Shadow
 	public Screen currentScreen;
 
 	@Redirect(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "INVOKE", target = PATCHWORK_YARN_MTD_SCREEN_REMOVE))
-	private void patchwork_suppressScreenRemoved(Screen screen) {
-		// No-op (handled in patchwork_fireOpenEvent)
+	private void suppressScreenRemoved(Screen screen) {
+		// No-op (handled in patchwork$fireOpenEvent)
 	}
 
 	/**
-	 * patchwork_yarn_fireOpenEvent and patchwork_yarn_cancelOpening use @(value = "CONSTANT", args = xxx),
+	 * patchwork$yarn_fireOpenEvent and patchwork$yarn_cancelOpening use @(value = "CONSTANT", args = xxx),
 	 * the classname specified in "args" is not processed by obfuscator, so we need to have 2 @ModifyVariable
 	 * here to make it work in both
 	 * the development(method name PATCHWORK_YARN_CLS_xxx) and
 	 * the obfuscated environment(PATCHWORK_REOBF_CLS_xxx).
 	 */
 	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
-	public Screen patchwork_yarn_fireOpenEvent(Screen screen) {
-		return patchwork_impl_fireOpenEvent(screen);
+	private Screen yarn$fireOpenEvent(Screen screen) {
+		return patchwork$impl$fireOpenEvent(screen);
 	}
 
 	@ModifyVariable(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN, shift = Shift.BY, by = -2), require = 0)
-	public Screen patchwork_reobf_fireOpenEvent(Screen screen) {
-		return patchwork_impl_fireOpenEvent(screen);
+	private Screen reobf$fireOpenEvent(Screen screen) {
+		return patchwork$impl$fireOpenEvent(screen);
 	}
 
 	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_YARN_CLS_TITLESCREEN), cancellable = true, require = 0)
-	public void patchwork_yarn_cancelOpening(Screen screen, CallbackInfo callback) {
-		patchwork_impl_cancelOpening(screen, callback);
+	private void yarn$cancelOpening(Screen screen, CallbackInfo callback) {
+		patchwork$impl$cancelOpening(screen, callback);
 	}
 
 	@Inject(method = PATCHWORK_YARN_MTD_OPENSCREEN, at = @At(value = "CONSTANT", args = PATCHWORK_REOBF_CLS_TITLESCREEN), cancellable = true, require = 0)
-	public void patchwork_reobf_cancelOpening(Screen screen, CallbackInfo callback) {
-		patchwork_impl_cancelOpening(screen, callback);
+	private void reobf$cancelOpening(Screen screen, CallbackInfo callback) {
+		patchwork$impl$cancelOpening(screen, callback);
 	}
 
 	/**
@@ -95,10 +95,10 @@ public class MixinMinecraftClient {
 	 *
 	 * @return the screen object which can be replaced during the GuiOpenEvent.
 	 */
-	private Screen patchwork_impl_fireOpenEvent(Screen screen) {
+	private Screen patchwork$impl$fireOpenEvent(Screen screen) {
 		// This is called just before: if (screen instanceof TitleScreen ... )
 		// We need to save a copy of currentScreen, just in case if it gets changed during GuiOpenEvent
-		patchwork_oldScreen = this.currentScreen;
+		patchwork$oldScreen = this.currentScreen;
 		GuiOpenEvent event = new GuiOpenEvent(screen);
 
 		if (MinecraftForge.EVENT_BUS.post(event)) {
@@ -108,17 +108,17 @@ public class MixinMinecraftClient {
 		}
 	}
 
-	private void patchwork_impl_cancelOpening(Screen screen, CallbackInfo callback) {
+	private void patchwork$impl$cancelOpening(Screen screen, CallbackInfo callback) {
 		if (screen == GuiOpenEventCancelMarker.INSTANCE) {
-			patchwork_oldScreen = null;
+			patchwork$oldScreen = null;
 			callback.cancel();
 			return;
 		}
 
-		if (patchwork_oldScreen != null && screen != patchwork_oldScreen) {
-			patchwork_oldScreen.removed();
+		if (patchwork$oldScreen != null && screen != patchwork$oldScreen) {
+			patchwork$oldScreen.removed();
 		}
 
-		patchwork_oldScreen = null;
+		patchwork$oldScreen = null;
 	}
 }

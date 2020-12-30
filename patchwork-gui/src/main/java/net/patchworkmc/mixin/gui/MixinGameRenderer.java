@@ -29,6 +29,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 
@@ -38,15 +39,15 @@ public abstract class MixinGameRenderer {
 	@Final
 	private MinecraftClient client;
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(IIF)V"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void beforeRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY) {
-		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(client.currentScreen, mouseX, mouseY, tickDelta))) {
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void beforeRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY, MatrixStack matrixStack) {
+		if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(client.currentScreen, matrixStack, mouseX, mouseY, tickDelta))) {
 			info.cancel();
 		}
 	}
 
-	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(IIF)V", shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void afterRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY) {
-		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(client.currentScreen, mouseX, mouseY, tickDelta));
+	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", ordinal = 0, shift = At.Shift.BY, by = 2), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void afterRenderScreen(float tickDelta, long startTime, boolean fullRender, CallbackInfo info, int mouseX, int mouseY, MatrixStack matrixStack) {
+		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(client.currentScreen, matrixStack, mouseX, mouseY, tickDelta));
 	}
 }

@@ -19,16 +19,33 @@
 
 package net.patchworkmc.impl.registries;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import net.minecraftforge.registries.GameData;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
+/**
+ * Not every registry entry is registered the Forge way, so we need to delegate to Vanilla.
+ */
 @ParametersAreNonnullByDefault
 public class Identifiers {
 	private Identifiers() {
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> Identifier getOrFallback(Class<T> clazz, Object instance, @Nullable Identifier fallback) {
+		RegistryKey<?> key = GameData.patchwork$REGISTRY_MAP.get(clazz);
+		Objects.requireNonNull(key, "registryKey is null?");
+		Registry<T> registry = (Registry<T>) Registry.REGISTRIES.get(key.getValue());
+		Objects.requireNonNull(registry, "registry is null?");
+		return getOrFallback(registry, (T) instance, fallback);
 	}
 
 	/**
@@ -42,8 +59,8 @@ public class Identifiers {
 	@Nullable
 	public static <T> Identifier getOrFallback(Registry<T> registry, T instance, @Nullable Identifier fallback) {
 		if (registry instanceof DefaultedRegistry) {
-			// While we could just cast here, I want to catch these cases where they come up and fix them in the mixin.
-			throw new IllegalArgumentException("Used the non-defaulted getOrFallback method with a DefaultedRegistry");
+			//noinspection unchecked,rawtypes
+			return getOrFallback(((DefaultedRegistry) registry), instance, fallback);
 		}
 
 		Identifier current = registry.getId(instance);

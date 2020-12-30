@@ -17,33 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.registries;
+package net.patchworkmc.api.registries;
 
-import net.minecraftforge.registries.ForgeRegistry;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
-import net.minecraft.util.registry.SimpleRegistry;
-
-import net.patchworkmc.impl.registries.VanillaRegistry;
-
-@Mixin(SimpleRegistry.class)
-public abstract class MixinSimpleRegistry implements VanillaRegistry {
-	@Unique
-	private ForgeRegistry forgeRegistry;
-
-	@Override
-	public boolean patchwork$setForgeRegistry(ForgeRegistry forgeRegistry) {
-		if (this.forgeRegistry == null) {
-			this.forgeRegistry = forgeRegistry;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public ForgeRegistry patchwork$getForgeRegistry() {
-		return this.forgeRegistry;
+// TODO: put this in Patcher
+public class PatchworkRegistryKey {
+	public static <T> RegistryKey<T> of(RegistryKey<? extends Registry<T>> parent, Identifier location) {
+		return RegistryKey.of(parent.getValue(), location);
 	}
 }

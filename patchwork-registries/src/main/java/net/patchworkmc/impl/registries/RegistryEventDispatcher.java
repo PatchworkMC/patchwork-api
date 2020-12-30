@@ -42,13 +42,13 @@ public class RegistryEventDispatcher {
 	private static List<Identifier> getExpectedOrdering() {
 		List<Identifier> registries = new ArrayList<>(RegistryManager.ACTIVE.getRegistryNames());
 
-		registries.remove(Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.remove(Registry.REGISTRIES.getId(Registry.ITEM));
+		registries.remove(Registry.BLOCK_KEY.getValue());
+		registries.remove(Registry.ITEM_KEY.getValue());
 
 		registries.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
-		registries.add(0, Registry.REGISTRIES.getId(Registry.BLOCK));
-		registries.add(1, Registry.REGISTRIES.getId(Registry.ITEM));
+		registries.add(0, Registry.BLOCK_KEY.getValue());
+		registries.add(1, Registry.ITEM_KEY.getValue());
 
 		return registries;
 	}
@@ -59,6 +59,14 @@ public class RegistryEventDispatcher {
 		int registeredSize = RegistryManager.ACTIVE.getRegistryNames().size();
 
 		if (registeredSize < expectedOrder.size()) {
+			for (Identifier identifier : expectedOrder) {
+				System.out.println("expected: " + identifier);
+			}
+
+			for (Identifier identifier : RegistryManager.ACTIVE.getRegistryNames()) {
+				System.out.println("got: " + identifier);
+			}
+
 			throw new IllegalStateException("RegistryEventDispatcher is missing " + (expectedOrder.size() - registeredSize) + " registries!");
 		}
 
