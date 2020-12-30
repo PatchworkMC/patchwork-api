@@ -21,52 +21,57 @@ package net.patchworkmc.mixin.gui;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 
+import net.patchworkmc.impl.gui.ForgeAbstractButtonWidget;
+
 @Mixin(AbstractButtonWidget.class)
-public abstract class MixinAbstractButtonWidget extends DrawableHelper {
+public abstract class MixinAbstractButtonWidget extends DrawableHelper implements ForgeAbstractButtonWidget {
 	@Shadow
 	protected int height;
 
 	@Shadow
 	public boolean active;
 
-	@Shadow
-	public abstract boolean isHovered();
+	@Unique
+	private static final int UNSET_FG_COLOR = -1;
 
-	protected int packedFGColor = 0;
+	@Unique
+	protected int packedFGColor = UNSET_FG_COLOR;
 
+	@ModifyVariable(method = "renderButton(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/AbstractButtonWidget;getMessage()Lnet/minecraft/text/Text;", ordinal = 0), ordinal = 2)
+	private int hookFGColor(int original) {
+		return getFGColor();
+	}
+
+	@Override
 	public int getHeight() {
 		return this.height;
 	}
 
+	@Override
 	public void setHeight(int value) {
 		this.height = value;
 	}
 
-	@ModifyVariable(method = "renderButton", at = @At(value = "INVOKE_ASSIGN"), index = 7)
-	public int hookRenderButton(int original) {
-		return getFGColor();
-	}
-
+	@Override
 	public int getFGColor() {
-		if (packedFGColor != 0) return packedFGColor;
-		int ret = 14737632;
-
-		if (!this.active) {
-			ret = 10526880;
-		} else if (this.isHovered()) {
-			ret = 16777120;
-		}
-
-		return ret;
+		if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
+		return this.active ? 16777215 : 10526880; // White : Light Grey
 	}
 
+	@Override
 	public void setFGColor(int color) {
 		this.packedFGColor = color;
+	}
+
+	@Override
+	public void clearFGColor() {
+		this.packedFGColor = UNSET_FG_COLOR;
 	}
 }

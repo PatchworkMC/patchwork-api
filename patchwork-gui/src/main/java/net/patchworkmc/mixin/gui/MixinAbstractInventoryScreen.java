@@ -36,15 +36,15 @@ import net.minecraft.text.Text;
 @Mixin(AbstractInventoryScreen.class)
 public abstract class MixinAbstractInventoryScreen extends HandledScreen {
 	@Shadow
-	protected boolean offsetGuiForEffects;
+	protected boolean drawStatusEffects;
 
 	public MixinAbstractInventoryScreen(ScreenHandler container, PlayerInventory playerInventory, Text name) {
 		super(container, playerInventory, name);
 	}
 
-	@Inject(method = "method_2476", at = @At("RETURN"))
+	@Inject(method = "applyStatusEffectOffset", at = @At("TAIL"))
 	private void potionShift(CallbackInfo info) {
-		if (offsetGuiForEffects) {
+		if (drawStatusEffects) {
 			if (MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.PotionShiftEvent(this))) {
 				this.x = (this.width - this.backgroundWidth) / 2;
 			}

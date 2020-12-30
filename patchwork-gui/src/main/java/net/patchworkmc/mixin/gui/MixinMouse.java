@@ -34,8 +34,10 @@ import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 
+import net.patchworkmc.impl.gui.ForgeMouse;
+
 @Mixin(Mouse.class)
-public abstract class MixinMouse {
+public abstract class MixinMouse implements ForgeMouse {
 	@Shadow
 	@Final
 	private MinecraftClient client;
@@ -120,14 +122,17 @@ public abstract class MixinMouse {
 		MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.MouseScrollEvent.Post(client.currentScreen, mouseX, mouseY, amount));
 	}
 
+	@Override
 	public boolean isMiddleDown() {
 		return this.middleButtonClicked;
 	}
 
+	@Override
 	public double getXVelocity() {
 		return this.cursorDeltaX;
 	}
 
+	@Override
 	public double getYVelocity() {
 		return this.cursorDeltaY;
 	}
