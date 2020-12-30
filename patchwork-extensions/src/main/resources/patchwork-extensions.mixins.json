@@ -3,8 +3,6 @@
   "package": "net.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinAbstractTreeFeature",
-    "MixinDimension",
     "MixinMinecraftClient",
     "MixinStatusEffect"
   ],

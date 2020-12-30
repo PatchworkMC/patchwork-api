@@ -21,13 +21,15 @@ package net.patchworkmc.mixin.extensions.entity;
 
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
+
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity {
@@ -43,5 +45,33 @@ public class MixinServerPlayerEntity {
 		} else {
 			return world.spawnEntity(itemEntity);
 		}
+	}
+
+	@ModifyConstant(method = "moveToWorld",
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
+					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;")),
+			constant = @Constant())
+	private boolean nullifyMoveRemovedAssignment(boolean constant) {
+		return ((Entity) (Object) this).removed;
+	}
+
+	@Inject(method = "moveToWorld",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;"))
+	private void onMoveReviveEntity(CallbackInfoReturnable<Entity> ci) {
+		((IForgeEntity) this).revive();
+	}
+
+	@ModifyConstant(method = "teleport",
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
+					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V")),
+			constant = @Constant())
+	private boolean nullifyTeleportRemovedAssignment(boolean constant) {
+		return ((Entity) (Object) this).removed;
+	}
+
+	@Inject(method = "teleport",
+	at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V"))
+	private void onTeleportReviveEntity(CallbackInfo ci) {
+		((IForgeEntity) this).revive();
 	}
 }

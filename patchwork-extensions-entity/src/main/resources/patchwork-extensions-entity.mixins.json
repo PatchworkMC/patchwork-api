@@ -6,7 +6,15 @@
     "MixinEntity",
     "MixinEntityType",
     "MixinEntityTypeBuilder",
-    "MixinServerPlayerEntity"
+    "MixinLivingEntity",
+    "MixinProjectileUtil",
+    "MixinServerPlayerEntity",
+    "MixinServerWorld",
+    "MixinSpawnHelper"
+  ],
+  "client": [
+    "MixinClientWorld",
+    "MixinLivingEntityRenderer"
   ],
   "injectors": {
     "defaultRequire": 1
