@@ -47,6 +47,10 @@ public class MixinServerPlayerEntity {
 		}
 	}
 
+	/**
+	 * Replaces the constant {@code false} in {@code this.removed = false;} with the current value of {@code this.removed}.
+	 * This nullifies the action of this line, and allows us to control the revival instead with an inject.
+	 */
 	@ModifyConstant(method = "moveToWorld",
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
 					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;")),
@@ -55,12 +59,20 @@ public class MixinServerPlayerEntity {
 		return ((Entity) (Object) this).removed;
 	}
 
+	/**
+	 * Handles reviving the entity, as an alternative to the nullified {@code this.removed = false;}. By default, this
+	 * will just run {@code this.removed = false;} anyways, but forge-added entities can provide an alternative implementation.
+	 */
 	@Inject(method = "moveToWorld",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;"))
 	private void onMoveReviveEntity(CallbackInfoReturnable<Entity> ci) {
 		((IForgeEntity) this).revive();
 	}
 
+	/**
+	 * Replaces the constant {@code false} in {@code this.removed = false;} with the current value of {@code this.removed}.
+	 * This nullifies the action of this line, and allows us to control the revival instead with an inject.
+	 */
 	@ModifyConstant(method = "teleport",
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
 					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V")),
@@ -69,8 +81,12 @@ public class MixinServerPlayerEntity {
 		return ((Entity) (Object) this).removed;
 	}
 
+	/**
+	 * Handles reviving the entity, as an alternative to the nullified {@code this.removed = false;}. By default, this
+	 * will just run {@code this.removed = false;} anyways, but forge-added entities can provide an alternative implementation.
+	 */
 	@Inject(method = "teleport",
-	at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V"))
 	private void onTeleportReviveEntity(CallbackInfo ci) {
 		((IForgeEntity) this).revive();
 	}

@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge, Patchwork Project
+ * Copyright (c) 2016-2020, 2019-2020
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.patchworkmc.impl.extensions.entity;
 
 import net.minecraft.entity.Entity;
@@ -11,9 +30,19 @@ import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
+import net.minecraft.util.hit.HitResult;
 
 public class PatchworkEntityItems {
-	public static ItemStack getEntityItem(Entity entity) {
+	/**
+	 * Get the {@link ItemStack} to be given to the player when they use the creative pick block button on an entity.
+	 *
+	 * <p>This provides the default implementation for {@link net.minecraftforge.common.extensions.IForgeEntity#getPickedResult(HitResult)},
+	 * how forge mods will access this method.</p>
+	 *
+	 * @param entity The entity picked by the player.
+	 * @return The ItemStack to be added to the player's inventory.
+	 */
+	public static ItemStack getPickedItem(Entity entity) {
 		if (entity instanceof PaintingEntity) {
 			return new ItemStack(Items.PAINTING);
 		} else if (entity instanceof LeashKnotEntity) {
@@ -44,6 +73,13 @@ public class PatchworkEntityItems {
 		return ItemStack.EMPTY;
 	}
 
+	/**
+	 * Gets the {@link ItemStack} associated with a minecart entity. This is used to get the picked creative item, and
+	 * is the default implementation for {@code IForgeEntity#getCartItem}.
+	 *
+	 * @param minecart The minecart entity.
+	 * @return The ItemStack associated with this entity.
+	 */
 	public static ItemStack getCartItem(AbstractMinecartEntity minecart) {
 		switch (minecart.getMinecartType()) {
 			case FURNACE:

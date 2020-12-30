@@ -73,11 +73,17 @@ public abstract class MixinEntity implements IForgeEntity {
 		}
 	}
 
+	/**
+	 * While other tags are being serialized, add "CanUpdate" to the {@link CompoundTag} for this entity.
+	 */
 	@Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V", ordinal = 0))
 	private void serializeUpdate(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
 		tag.putBoolean("CanUpdate", canUpdate);
 	}
 
+	/**
+	 * While other tags are being deserialized, read "CanUpdate" from the {@link CompoundTag} for this entity.
+	 */
 	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setGlowing(Z)V", ordinal = 0))
 	private void deserializeUpdate(CompoundTag tag, CallbackInfo callbackInfo) {
 		if (tag.contains("CanUpdate", 99)) {
@@ -85,6 +91,10 @@ public abstract class MixinEntity implements IForgeEntity {
 		}
 	}
 
+	/**
+	 * Before running a tick as a passenger, check if this entity allows updating via {@link #canUpdate()}. If it does
+	 * not, cancel the rest of {@link Entity#tickRiding()}, but still update the position of the entity as a passenger.
+	 */
 	@Inject(method = "tickRiding", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V", ordinal = 0), cancellable = true)
 	private void onTickAttempt(CallbackInfo ci) {
 		if (!canUpdate()) {

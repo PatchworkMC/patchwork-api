@@ -24,14 +24,11 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
 
 import net.patchworkmc.impl.extensions.entity.PatchworkEntityItems;
 
@@ -65,7 +62,7 @@ public interface IForgeEntity {
 	 * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
 	 */
 	default ItemStack getPickedResult(HitResult target) {
-		return PatchworkEntityItems.getEntityItem((Entity) this);
+		return PatchworkEntityItems.getPickedItem((Entity) this);
 	}
 
 	/**
