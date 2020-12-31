@@ -27,6 +27,7 @@ import net.minecraft.client.color.item.ItemColors;
 /**
  * Use these events to register block/item
  * color handlers at the appropriate time.
+ * TODO: This is supposed to implement IModBusEvent, which is not yet implemented
  */
 public abstract class ColorHandlerEvent extends Event {
 	public static class Block extends ColorHandlerEvent {

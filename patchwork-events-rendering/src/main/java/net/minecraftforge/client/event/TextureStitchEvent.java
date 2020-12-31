@@ -26,6 +26,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
 
+// TODO: This is supposed to implement IModBusEvent, which is not yet implemented
 public class TextureStitchEvent extends Event {
 	private final SpriteAtlasTexture map;
 

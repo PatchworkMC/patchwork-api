@@ -31,7 +31,7 @@ import net.patchworkmc.impl.event.render.RenderEvents;
 
 @Mixin(ItemColors.class)
 public class MixinItemColors {
-	@Inject(method = "create", at = @At("RETURN"))
+	@Inject(method = "create", at = @At("TAIL"))
 	private static void onCreate(BlockColors blockColors, CallbackInfoReturnable<ItemColors> cir) {
 		RenderEvents.onItemColorsInit(cir.getReturnValue(), blockColors);
 	}

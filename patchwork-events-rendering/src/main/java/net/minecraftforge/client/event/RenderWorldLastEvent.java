@@ -19,24 +19,42 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.eventbus.api.Event;
-
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.client.render.WorldRenderer;
 
-public class RenderWorldLastEvent extends Event {
+public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event {
 	private final WorldRenderer context;
+	private final MatrixStack mat;
 	private final float partialTicks;
+	private final Matrix4f projectionMatrix;
+	private final long finishTimeNano;
 
-	public RenderWorldLastEvent(WorldRenderer context, float partialTicks) {
+	public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano) {
 		this.context = context;
+		this.mat = mat;
 		this.partialTicks = partialTicks;
+		this.projectionMatrix = projectionMatrix;
+		this.finishTimeNano = finishTimeNano;
 	}
 
 	public WorldRenderer getContext() {
 		return context;
 	}
 
+	public MatrixStack getMatrixStack() {
+		return mat;
+	}
+
 	public float getPartialTicks() {
 		return partialTicks;
+	}
+
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
+	}
+
+	public long getFinishTimeNano() {
+		return finishTimeNano;
 	}
 }

@@ -30,7 +30,7 @@ import net.patchworkmc.impl.event.render.RenderEvents;
 
 @Mixin(BlockColors.class)
 public class MixinBlockColors {
-	@Inject(method = "create", at = @At("RETURN"))
+	@Inject(method = "create", at = @At("TAIL"))
 	private static void onCreate(CallbackInfoReturnable<BlockColors> cir) {
 		RenderEvents.onBlockColorsInit(cir.getReturnValue());
 	}

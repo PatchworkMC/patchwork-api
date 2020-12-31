@@ -5,7 +5,6 @@
   "client": [
     "MixinItemColors",
     "MixinBlockColors",
-    "MixinGameRenderer",
     "MixinSpriteAtlasTexture",
     "MixinHeldItemRenderer"
   ],

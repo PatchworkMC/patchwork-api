@@ -24,6 +24,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.item.ItemStack;
@@ -34,18 +36,19 @@ import net.patchworkmc.impl.event.render.RenderEvents;
 @Mixin(HeldItemRenderer.class)
 public abstract class MixinHeldItemRenderer {
 	@Shadow
-	public abstract void renderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float f, ItemStack item, float equipProgress);
+	protected abstract void renderFirstPersonItem(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light);
 
 	@Redirect(
-			method = "renderFirstPersonItem(F)V",
+			method = "renderItem(FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider$Immediate;Lnet/minecraft/client/network/ClientPlayerEntity;I)V",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;F)V"
+					target = "Lnet/minecraft/client/render/item/HeldItemRenderer;renderFirstPersonItem(Lnet/minecraft/client/network/AbstractClientPlayerEntity;FFLnet/minecraft/util/Hand;FLnet/minecraft/item/ItemStack;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V"
+			// We're intentionally targeting both invocations of renderFirstPersonItem - it saves unnecessary code
 			)
 	)
-	private void redirect_renderFirstPersonItem(HeldItemRenderer heldItemRenderer, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack itemStack, float equipProgress) {
-		if (!RenderEvents.onRenderSpecificHand(hand, tickDelta, pitch, swingProgress, equipProgress, itemStack)) {
-			this.renderFirstPersonItem(player, tickDelta, pitch, hand, swingProgress, itemStack, equipProgress);
+	private void redirectRenderFirstPersonItem(HeldItemRenderer heldItemRenderer, AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+		if (!RenderEvents.onRenderHand(hand, matrices, vertexConsumers, light, tickDelta, pitch, swingProgress, equipProgress, item)) {
+			this.renderFirstPersonItem(player, tickDelta, pitch, hand, swingProgress, item, equipProgress, matrices, vertexConsumers, light);
 		}
 	}
 }
