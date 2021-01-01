@@ -52,11 +52,11 @@ public class MixinServerPlayerEntity {
 	 * This nullifies the action of this line, and allows us to control the revival instead with an inject.
 	 */
 	@ModifyConstant(method = "moveToWorld",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
-					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;")),
-			constant = @Constant())
-	private boolean nullifyMoveRemovedAssignment(boolean constant) {
-		return ((Entity) (Object) this).removed;
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V", ordinal = 1),
+					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;", ordinal = 0)),
+			constant = @Constant(intValue = 0))
+	private int nullifyMoveRemovedAssignment(int constant) {
+		return ((Entity) (Object) this).removed ? 1 : 0;
 	}
 
 	/**
@@ -76,9 +76,9 @@ public class MixinServerPlayerEntity {
 	@ModifyConstant(method = "teleport",
 			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
 					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V")),
-			constant = @Constant())
-	private boolean nullifyTeleportRemovedAssignment(boolean constant) {
-		return ((Entity) (Object) this).removed;
+			constant = @Constant(intValue = 0))
+	private int nullifyTeleportRemovedAssignment(int constant) {
+		return ((Entity) (Object) this).removed ? 1 : 0;
 	}
 
 	/**
