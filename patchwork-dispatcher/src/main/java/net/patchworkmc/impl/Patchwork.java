@@ -178,6 +178,7 @@ public class Patchwork {
 		ModList.get().setLoadedMods(mods.stream().map(it -> (ModContainer) it).collect(Collectors.toList()));
 		// note: forge fires this per-class when it is registered.
 		dispatchEntrypoint(mods, "patchwork:commonAutomaticSubscribers");
+		dispatchEntrypoint(mods, "patchwork:" + (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? "client" : "server") + "AutomaticSubscribers");
 		// Send initialization events
 		//dispatch(mods, new RegistryEvent.NewRegistry());
 		dispatchEntrypoint("patchwork:objectHolders");
