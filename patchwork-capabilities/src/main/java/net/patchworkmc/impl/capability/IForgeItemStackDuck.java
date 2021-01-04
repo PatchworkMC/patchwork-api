@@ -19,22 +19,19 @@
 
 package net.patchworkmc.impl.capability;
 
-import javax.annotation.Nullable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-import net.minecraftforge.common.capabilities.CapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
-public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-	private final T provider;
-
-	public BaseCapabilityProvider(Class<T> baseClass, Object provider) {
-		super(baseClass);
-		//noinspection unchecked
-		this.provider = (T) provider;
+public interface IForgeItemStackDuck extends ICapabilitySerializable<CompoundTag> {
+	default ItemStack getStack() {
+		return (ItemStack) (Object) this;
 	}
 
-	@Override
-	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
+	default CompoundTag serializeNBT() {
+		CompoundTag ret = new CompoundTag();
+		getStack().toTag(ret);
+		return ret;
 	}
 }

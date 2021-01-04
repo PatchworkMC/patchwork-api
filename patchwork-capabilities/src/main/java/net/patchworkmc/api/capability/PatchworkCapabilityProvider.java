@@ -17,24 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.capability;
-
-import javax.annotation.Nullable;
+package net.patchworkmc.api.capability;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-	private final T provider;
-
-	public BaseCapabilityProvider(Class<T> baseClass, Object provider) {
+public class PatchworkCapabilityProvider<B> extends CapabilityProvider<B> {
+	protected PatchworkCapabilityProvider(Class<B> baseClass) {
 		super(baseClass);
-		//noinspection unchecked
-		this.provider = (T) provider;
-	}
-
-	@Override
-	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
 	}
 }

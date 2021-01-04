@@ -19,22 +19,18 @@
 
 package net.patchworkmc.impl.capability;
 
-import javax.annotation.Nullable;
-
-import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 
-public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-	private final T provider;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
-	public BaseCapabilityProvider(Class<T> baseClass, Object provider) {
-		super(baseClass);
-		//noinspection unchecked
-		this.provider = (T) provider;
-	}
-
-	@Override
-	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
+/**
+ * Provides a method in IForgeItem we need to call from capabilities, but we can't have a circular dependency.
+ */
+public interface IForgeItemDuck {
+	@Nullable
+	default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag out) {
+		return null;
 	}
 }

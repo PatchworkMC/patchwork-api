@@ -17,33 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.capability;
+package net.patchworkmc.api.capability;
 
 import javax.annotation.Nonnull;
 
 import net.minecraftforge.common.capabilities.CapabilityProvider;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.world.chunk.WorldChunk;
-
-import net.patchworkmc.impl.capability.BaseCapabilityProvider;
-import net.patchworkmc.impl.capability.CapabilityProviderHolder;
-
-@Mixin(WorldChunk.class)
-public class WorldChunkMixin implements CapabilityProviderHolder {
-	private final CapabilityProvider<WorldChunk> provider = new BaseCapabilityProvider<>(WorldChunk.class, (WorldChunk) (Object) this);
-
+public interface CapabilityProviderConvertible {
 	@Nonnull
-	@Override
-	public CapabilityProvider<WorldChunk> getCapabilityProvider() {
-		return provider;
-	}
-
-	@Inject(method = "<init>", at = @At("RETURN"))
-	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		gatherCapabilities();
-	}
+	CapabilityProvider<?> patchwork$getCapabilityProvider();
 }

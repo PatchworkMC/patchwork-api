@@ -29,7 +29,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import net.minecraftforge.common.capabilities.Capability;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,16 +36,16 @@ import org.apache.logging.log4j.Logger;
 /**
  * This object encapsulates a lazy value, with typical transformation operations
  * (map/ifPresent) available, much like {@link Optional}.
- *
- * <p>It also provides the ability to listen for invalidation, via
+ * <p>
+ * It also provides the ability to listen for invalidation, via
  * {@link #addListener(NonNullConsumer)}. This method is invoked when the provider of
  * this object calls {@link #invalidate()}.
- *
- * <p>To create an instance of this class, use {@link #of(NonNullSupplier)}. Note
+ * <p>
+ * To create an instance of this class, use {@link #of(NonNullSupplier)}. Note
  * that this accepts a {@link NonNullSupplier}, so the result of the supplier
  * must never be null.
- *
- * <p>The empty instance can be retrieved with {@link #empty()}.
+ * <p>
+ * The empty instance can be retrieved with {@link #empty()}.
  *
  * @param <T> The type of the optional value.
  */
@@ -82,7 +81,7 @@ public class LazyOptional<T> {
 	/**
 	 * This method hides an unchecked cast to the inferred type. Only use this if
 	 * you are sure the type should match. For capabilities, generally
-	 * {@link Capability#orEmpty(Capability, LazyOptional)} should be used.
+	 * Capability#orEmpty should be used.
 	 *
 	 * @return This {@link LazyOptional}, cast to the inferred generic type
 	 */
@@ -114,6 +113,7 @@ public class LazyOptional<T> {
 			}
 
 			resolved.set(temp);
+
 			return resolved.get();
 		}
 
@@ -160,43 +160,73 @@ public class LazyOptional<T> {
 	 * If a this {@link LazyOptional} is non-empty, return a new
 	 * {@link LazyOptional} encapsulating the mapping function. Otherwise, returns
 	 * {@link #empty()}.
+	 * <p>
+	 * The supplier inside this object is <strong>NOT</strong> resolved.
 	 *
-	 * <p>The supplier inside this object is <strong>NOT</strong> resolved.
+	 * @apiNote This method supports post-processing on optional values, without the
+	 *          need to explicitly check for a return status.
 	 *
-	 * @param <U>    The type of the result of the mapping function
+	 * @apiNote The returned value does not receive invalidation messages from the original {@link LazyOptional}.
+	 *          If you need the invalidation, you will need to manage them yourself.
+	 *
 	 * @param mapper A mapping function to apply to the mod object, if present
 	 * @return A {@link LazyOptional} describing the result of applying a mapping
-	 * function to the value of this {@link LazyOptional}, if a value is
-	 * present, otherwise an empty {@link LazyOptional}
-	 * @throws NullPointerException if {@code mapper} is null and this {@link LazyOptional} is non-empty
-	 * @apiNote This method supports post-processing on optional values, without the
-	 * need to explicitly check for a return status.
+	 *         function to the value of this {@link LazyOptional}, if a value is
+	 *         present, otherwise an empty {@link LazyOptional}
+	 * @throws NullPointerException if {@code mapper} is null.
 	 */
-	public <U> LazyOptional<U> map(NonNullFunction<? super T, ? extends U> mapper) {
+	public <U> LazyOptional<U> lazyMap(NonNullFunction<? super T, ? extends U> mapper) {
 		Objects.requireNonNull(mapper);
 		return isPresent() ? of(() -> mapper.apply(getValueUnsafe())) : empty();
 	}
 
 	/**
+	 * If a this {@link LazyOptional} is non-empty, return a new
+	 * {@link Optional} encapsulating the mapped value. Otherwise, returns
+	 * {@link Optional#empty()}.
+	 *
+	 * @apiNote This method explicitly resolves the value of the {@link LazyOptional}.
+	 *          For a non-resolving mapper that will lazily run the mapping, use {@link #lazyMap(NonNullFunction)}.
+	 *
+	 * @param mapper A mapping function to apply to the mod object, if present
+	 * @return An {@link Optional} describing the result of applying a mapping
+	 *         function to the value of this {@link Optional}, if a value is
+	 *         present, otherwise an empty {@link Optional}
+	 * @throws NullPointerException if {@code mapper} is null.
+	 */
+	public <U> Optional<U> map(NonNullFunction<? super T, ? extends U> mapper) {
+		Objects.requireNonNull(mapper);
+		return isPresent() ? Optional.of(mapper.apply(getValueUnsafe())) : Optional.empty();
+	}
+
+	/**
 	 * Resolve the contained supplier if non-empty, and filter it by the given
 	 * {@link NonNullPredicate}, returning empty if false.
-	 *
-	 * <p><em>It is important to note that this method is <strong>not</strong> lazy, as
+	 * <p>
+	 * <em>It is important to note that this method is <strong>not</strong> lazy, as
 	 * it must resolve the value of the supplier to validate it with the
 	 * predicate.</em>
 	 *
 	 * @param predicate A {@link NonNullPredicate} to apply to the result of the
 	 *                  contained supplier, if non-empty
-	 * @return A {@link LazyOptional} containing the result of the contained
-	 * supplier, if and only if the passed {@link NonNullPredicate} returns
-	 * true, otherwise an empty {@link LazyOptional}
+	 * @return An {@link Optional} containing the result of the contained
+	 *         supplier, if and only if the passed {@link NonNullPredicate} returns
+	 *         true, otherwise an empty {@link Optional}
 	 * @throws NullPointerException If {@code predicate} is null and this
-	 *                              {@link LazyOptional} is non-empty
+	 *                              {@link Optional} is non-empty
 	 */
-	public LazyOptional<T> filter(NonNullPredicate<? super T> predicate) {
+	public Optional<T> filter(NonNullPredicate<? super T> predicate) {
 		Objects.requireNonNull(predicate);
 		final T value = getValue(); // To keep the non-null contract we have to evaluate right now. Should we allow this function at all?
-		return value != null && predicate.test(value) ? of(() -> value) : empty();
+		return value != null && predicate.test(value) ? Optional.of(value) : Optional.empty();
+	}
+
+	/**
+	 * Resolves the value of this LazyOptional, turning it into a standard non-lazy {@link Optional}
+	 * @return The resolved optional.
+	 */
+	public Optional<T> resolve() {
+		return isPresent() ? Optional.of(getValueUnsafe()) : Optional.empty();
 	}
 
 	/**
@@ -218,7 +248,7 @@ public class LazyOptional<T> {
 	 * @param other A {@link NonNullSupplier} whose result is returned if this
 	 *              {@link LazyOptional} is empty
 	 * @return The result of the supplier, if non-empty, otherwise the result of
-	 * {@code other.get()}
+	 *         {@code other.get()}
 	 * @throws NullPointerException If {@code other} is null and this
 	 *                              {@link LazyOptional} is non-empty
 	 */
@@ -231,16 +261,17 @@ public class LazyOptional<T> {
 	 * Resolve the contained supplier if non-empty and return the result, otherwise throw the
 	 * exception created by the provided {@link NonNullSupplier}.
 	 *
-	 * @param <X>               Type of the exception to be thrown
+	 * @apiNote A method reference to the exception constructor with an empty
+	 *          argument list can be used as the supplier. For example,
+	 *          {@code IllegalStateException::new}
+	 *
+	 * @param                   <X> Type of the exception to be thrown
 	 * @param exceptionSupplier The {@link NonNullSupplier} which will return the
 	 *                          exception to be thrown
 	 * @return The result of the supplier
 	 * @throws X                    If this {@link LazyOptional} is empty
 	 * @throws NullPointerException If {@code exceptionSupplier} is null and this
 	 *                              {@link LazyOptional} is empty
-	 * @apiNote A method reference to the exception constructor with an empty
-	 * argument list can be used as the supplier. For example,
-	 * {@code IllegalStateException::new}
 	 */
 	public <X extends Throwable> T orElseThrow(NonNullSupplier<? extends X> exceptionSupplier) throws X {
 		T val = getValue();
@@ -254,8 +285,8 @@ public class LazyOptional<T> {
 
 	/**
 	 * Register a {@link NonNullConsumer listener} that will be called when this {@link LazyOptional} becomes invalid (via {@link #invalidate()}).
-	 *
-	 * <p>If this {@link LazyOptional} is empty, the listener will be called immediately.
+	 * <p>
+	 * If this {@link LazyOptional} is empty, the listener will be called immediately.
 	 */
 	public void addListener(NonNullConsumer<LazyOptional<T>> listener) {
 		if (isPresent()) {
@@ -269,17 +300,20 @@ public class LazyOptional<T> {
 	 * Invalidate this {@link LazyOptional}, making it unavailable for further use,
 	 * and notifying any {@link #addListener(NonNullConsumer) listeners} that this
 	 * has become invalid and they should update.
-	 *
-	 * <p>This would typically be used with capability objects. For example, a TE would
+	 * <p>
+	 * This would typically be used with capability objects. For example, a TE would
 	 * call this, if they are covered with a microblock panel, thus cutting off pipe
 	 * connectivity to this side.
-	 *
-	 * <p>Also should be called for all when a TE is invalidated, or a world/chunk
-	 * unloads, or a entity dies, etc... This allows modders to keep a cache of
-	 * capability objects instead of re-checking them every tick.
+	 * <p>
+	 * Also should be called for all when a TE is invalidated (for example, when
+	 * the TE is removed or unloaded), or a world/chunk unloads, or a entity dies,
+	 * etc... This allows modders to keep a cache of capability objects instead of
+	 * re-checking them every tick.
 	 */
 	public void invalidate() {
-		this.isValid = false;
-		this.listeners.forEach(e -> e.accept(this));
+		if (this.isValid) {
+			this.isValid = false;
+			this.listeners.forEach(e -> e.accept(this));
+		}
 	}
 }

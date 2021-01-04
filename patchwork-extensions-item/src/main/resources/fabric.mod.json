@@ -15,8 +15,7 @@
     "PatchworkMC"
   ],
   "depends": {
-    "patchwork-api-base": "*",
-    "patchwork-tooltype": "*"
+    "patchwork-api-base": "*"
   },
   "mixins": [
     "patchwork-extensions-item.mixins.json"

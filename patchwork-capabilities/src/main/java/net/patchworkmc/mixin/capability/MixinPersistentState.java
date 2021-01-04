@@ -17,24 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.capability;
+package net.patchworkmc.mixin.capability;
 
-import javax.annotation.Nullable;
+import net.minecraftforge.common.util.INBTSerializable;
+import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraftforge.common.capabilities.CapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.PersistentState;
 
-public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
-	private final T provider;
-
-	public BaseCapabilityProvider(Class<T> baseClass, Object provider) {
-		super(baseClass);
-		//noinspection unchecked
-		this.provider = (T) provider;
+@Mixin(PersistentState.class)
+public class MixinPersistentState implements INBTSerializable<CompoundTag> {
+	@Override
+	public void deserializeNBT(CompoundTag nbt) {
+		((PersistentState) (Object) this).fromTag(nbt);
 	}
 
 	@Override
-	public void gatherCapabilities(@Nullable ICapabilityProvider parent) {
-		capabilities = CapabilityEvents.gatherCapabilities(baseClass, provider, parent);
+	public CompoundTag serializeNBT() {
+		return ((PersistentState) (Object) this).toTag(new CompoundTag());
 	}
 }

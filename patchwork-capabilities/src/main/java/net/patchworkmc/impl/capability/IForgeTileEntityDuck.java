@@ -17,23 +17,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.capability;
+package net.patchworkmc.impl.capability;
 
-import org.spongepowered.asm.mixin.Mixin;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.PersistentState;
 
-@Mixin(PersistentState.class)
-public class PersistentStateMixin implements INBTSerializable<CompoundTag> {
+/**
+ * Adds and implements a method in IForgeTileEntity we need from here.
+ */
+public interface IForgeTileEntityDuck extends ICapabilitySerializable<CompoundTag> {
+	default BlockEntity getTileEntity() {
+		return (BlockEntity) this;
+	}
+
+	default void onChunkUnloaded() { }
+
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		((PersistentState) (Object) this).fromTag(nbt);
+	default void deserializeNBT(CompoundTag nbt) {
+		//TODO re-evaluate
+		deserializeNBT(null, nbt);
+	}
+
+	//    @Override TODO  re-evaluate
+	default void deserializeNBT(BlockState state, CompoundTag nbt) {
+		getTileEntity().fromTag(state, nbt);
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
-		return ((PersistentState) (Object) this).toTag(new CompoundTag());
+	default CompoundTag serializeNBT() {
+		CompoundTag ret = new CompoundTag();
+		getTileEntity().toTag(ret);
+		return ret;
 	}
 }

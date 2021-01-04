@@ -3,4 +3,5 @@ version = getSubprojectVersion(project, "0.5.0")
 
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
+	implementation project(path: ':patchwork-fml', configuration: 'dev')
 }

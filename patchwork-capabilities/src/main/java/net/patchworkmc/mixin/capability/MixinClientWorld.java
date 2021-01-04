@@ -19,25 +19,28 @@
 
 package net.patchworkmc.mixin.capability;
 
+import java.util.function.Supplier;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.patchworkmc.impl.capability.CapabilityProviderHolder;
 
-@Mixin(ItemEntity.class)
-public class ItemEntityMixin {
-	@Inject(method = "merge", at = @At("HEAD"), cancellable = true)
-	private static void merge(ItemEntity targetEntity, ItemStack targetStack, ItemEntity sourceEntity, ItemStack sourceStack, CallbackInfo callbackInfo) {
-		CapabilityProviderHolder source = (CapabilityProviderHolder) (Object) sourceStack;
-		CapabilityProviderHolder target = (CapabilityProviderHolder) (Object) targetStack;
-
-		if (!source.areCapsCompatible(target.getCapabilityProvider())) {
-			callbackInfo.cancel();
-		}
+// WorldEvent.Load is fired at the same injection point, let's be smart and avoid any potential conflicts
+@Mixin(value = ClientWorld.class, priority = 900)
+public abstract class MixinClientWorld implements CapabilityProviderHolder {
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void patchwork$callGatherCapabilities(ClientPlayNetworkHandler networkHandler, ClientWorld.Properties properties, RegistryKey<World> registryRef, DimensionType dimensionType, int loadDistance, Supplier<Profiler> profiler, WorldRenderer worldRenderer, boolean debugWorld, long seed, CallbackInfo ci) {
+		this.gatherCapabilities();
 	}
 }

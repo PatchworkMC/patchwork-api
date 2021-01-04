@@ -17,23 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.capability;
+package net.patchworkmc.impl.capability;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.minecraft.nbt.CompoundTag;
 
-import net.minecraft.client.world.ClientWorld;
-
-import net.patchworkmc.impl.capability.CapabilityProviderHolder;
-
-// World implements CapabilityProviderHolder already because of WorldMixin
-@Mixin(ClientWorld.class)
-public abstract class ClientWorldMixin implements CapabilityProviderHolder {
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		// TODO: Requires Dimension API (IForgeDimension)
-		gatherCapabilities(null);
-	}
+public interface ItemStackCapabilityAccess {
+	CompoundTag patchwork$getCapNBT();
+	void patchwork$setCapNBT(CompoundTag tag);
+	void patchwork$initCaps();
 }

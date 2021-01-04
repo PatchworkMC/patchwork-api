@@ -19,23 +19,26 @@
 
 package net.patchworkmc.mixin.capability;
 
-import javax.annotation.Nonnull;
-
-import net.minecraftforge.common.capabilities.CapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.world.World;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.ItemStack;
 
-import net.patchworkmc.impl.capability.BaseCapabilityProvider;
+import net.patchworkmc.api.capability.CapabilityProviderConvertible;
 import net.patchworkmc.impl.capability.CapabilityProviderHolder;
 
-@Mixin(World.class)
-public class WorldMixin implements CapabilityProviderHolder {
-	private final CapabilityProvider<World> provider = new BaseCapabilityProvider<>(World.class, (World) (Object) this);
-
-	@Nonnull
-	@Override
-	public CapabilityProvider<World> getCapabilityProvider() {
-		return provider;
+@Mixin(ItemEntity.class)
+public class MixinItemEntity {
+	@SuppressWarnings("ConstantConditions")
+	@Inject(method = "canMerge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z",
+			at = @At("TAIL"), cancellable = true)
+	private static void patchwork$checkAreCapsCompatible(ItemStack stack1, ItemStack stack2, CallbackInfoReturnable<Boolean> cir) {
+		if (!((CapabilityProviderHolder) (Object) stack1)
+				.areCapsCompatible(((CapabilityProviderConvertible) (Object) stack2).patchwork$getCapabilityProvider())) {
+			cir.setReturnValue(false);
+		}
 	}
 }

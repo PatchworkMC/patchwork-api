@@ -17,15 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.api.registries;
+package net.minecraftforge.fml;
 
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
-// TODO: put this in Patcher
-public class PatchworkRegistryKey {
-	public static <T> RegistryKey<T> of(RegistryKey<? extends Registry<T>> parent, Identifier location) {
-		return RegistryKey.of(parent.getValue(), location);
-	}
+public class Logging {
+	// Lots of markers
+	public static final Marker CORE = MarkerManager.getMarker("CORE");
+	public static final Marker LOADING = MarkerManager.getMarker("LOADING");
+	public static final Marker SCAN = MarkerManager.getMarker("SCAN");
+	public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
+	public static final Marker CAPABILITIES = MarkerManager.getMarker("CAPABILITIES");
+	public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
+
+	// --log CORE:+DEBUG,SCAN:-OFF
+	// forge log debug 5
 }

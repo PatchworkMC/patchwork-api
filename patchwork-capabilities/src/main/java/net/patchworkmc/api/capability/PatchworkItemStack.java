@@ -17,23 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.capability;
+package net.patchworkmc.api.capability;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
-import net.patchworkmc.impl.capability.CapabilityProviderHolder;
+import net.patchworkmc.impl.capability.ItemStackCapabilityAccess;
 
-// World implements CapabilityProviderHolder already because of WorldMixin
-@Mixin(ServerWorld.class)
-public abstract class ServerWorldMixin implements CapabilityProviderHolder {
-	@Inject(method = "<init>", at = @At("TAIL"))
-	private void initializeCapabilities(CallbackInfo callbackInfo) {
-		// TODO: Requires Dimension API (IForgeDimension)
-		gatherCapabilities(null);
+/**
+ * Subclassing ItemStack isn't a great idea, so we're going the factory route instead.
+ */
+public class PatchworkItemStack {
+	public static ItemStack of(ItemConvertible in, int count, @Nullable CompoundTag capNBT) {
+		ItemStack out = new ItemStack(in, count);
+		ItemStackCapabilityAccess access = (ItemStackCapabilityAccess) (Object) out;
+		access.patchwork$setCapNBT(capNBT);
+		access.patchwork$initCaps();
+
+		return out;
 	}
 }

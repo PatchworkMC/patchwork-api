@@ -44,7 +44,6 @@ import net.minecraft.util.registry.RegistryKey;
 
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 
-import net.patchworkmc.api.registries.PatchworkRegistryKey;
 import net.patchworkmc.impl.registries.RemovableRegistry;
 import net.patchworkmc.impl.registries.VanillaRegistry;
 
@@ -234,7 +233,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 		HashSet<Map.Entry<RegistryKey<V>, V>> entries = new HashSet<>();
 
 		for (Identifier identifier : vanilla.getIds()) {
-			entries.add(new Entry<V>(PatchworkRegistryKey.of(this.key, identifier), vanilla.get(identifier)));
+			entries.add(new Entry<V>(RegistryKey.of(this.key, identifier), vanilla.get(identifier)));
 		}
 
 		return entries;
