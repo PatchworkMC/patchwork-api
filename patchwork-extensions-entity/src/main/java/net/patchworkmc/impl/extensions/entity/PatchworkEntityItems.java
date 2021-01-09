@@ -48,7 +48,8 @@ public class PatchworkEntityItems {
 		} else if (entity instanceof LeashKnotEntity) {
 			return new ItemStack(Items.LEAD);
 		} else if (entity instanceof ItemFrameEntity) {
-			ItemStack held = ((ItemFrameEntity)entity).getHeldItemStack();
+			ItemStack held = ((ItemFrameEntity) entity).getHeldItemStack();
+
 			if (held.isEmpty()) {
 				return new ItemStack(Items.ITEM_FRAME);
 			} else {
@@ -66,16 +67,18 @@ public class PatchworkEntityItems {
 			return new ItemStack(Items.END_CRYSTAL);
 		} else {
 			SpawnEggItem egg = SpawnEggItem.forEntity(entity.getType());
+
 			if (egg != null) {
 				return new ItemStack(egg);
 			}
 		}
+
 		return ItemStack.EMPTY;
 	}
 
 	/**
 	 * Gets the {@link ItemStack} associated with a minecart entity. This is used to get the picked creative item, and
-	 * is the default implementation for {@code IForgeEntity#getCartItem}.
+	 * is the default implementation for {@code IForgeEntityMinecart#getCartItem}.
 	 *
 	 * @param minecart The minecart entity.
 	 * @return The ItemStack associated with this entity.

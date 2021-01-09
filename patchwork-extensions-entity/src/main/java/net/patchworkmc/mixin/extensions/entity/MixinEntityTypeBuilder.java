@@ -39,7 +39,7 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 	@Unique
 	private Boolean shouldRecieveVelocityUpdates = null;
 
-	@Inject(method = "build", at = @At("RETURN"))
+	@Inject(method = "build", at = @At("TAIL"))
 	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType> cir) {
 		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
 

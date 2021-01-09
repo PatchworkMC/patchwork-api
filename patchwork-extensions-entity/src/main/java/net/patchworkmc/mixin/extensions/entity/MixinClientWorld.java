@@ -19,18 +19,30 @@
 
 package net.patchworkmc.mixin.extensions.entity;
 
-import net.minecraft.client.world.ClientWorld;
-
-import net.minecraft.entity.Entity;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 
 @Mixin(ClientWorld.class)
 public class MixinClientWorld {
+	/**
+	 * Before running a tick as a non-passenger, check if this entity allows updating via
+	 * {@link IForgeEntity#canUpdate()}. If it does not, cancel the call to {@link Entity#tick()}.
+	 */
+	@Redirect(method = "tickEntity(Lnet/minecraft/entity/Entity;)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V", ordinal = 0))
+	private void onNonPassengerTick(Entity entity) {
+		if (((IForgeEntity) entity).canUpdate()) {
+			entity.tick();
+		}
+	}
+
 	/**
 	 * Hook the end of client-side entity adding, notifying any forge mods that have implemented
 	 * {@link IForgeEntity#onAddedToWorld()}.

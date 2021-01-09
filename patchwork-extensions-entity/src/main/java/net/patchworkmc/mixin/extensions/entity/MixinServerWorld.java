@@ -19,9 +19,6 @@
 
 package net.patchworkmc.mixin.extensions.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,13 +26,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.server.world.ServerWorld;
+
 @Mixin(ServerWorld.class)
 public class MixinServerWorld {
 	/**
 	 * Before running a tick as a non-passenger, check if this entity allows updating via
 	 * {@link IForgeEntity#canUpdate()}. If it does not, cancel the call to {@link Entity#tick()}.
 	 */
-	@Redirect(method = "tickEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V", ordinal = 0))
+	@Redirect(method = "tickEntity(Lnet/minecraft/entity/Entity;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V", ordinal = 0))
 	private void onNonPassengerTick(Entity entity) {
 		if (((IForgeEntity) entity).canUpdate()) {
 			entity.tick();

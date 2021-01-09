@@ -19,13 +19,13 @@
 
 package net.patchworkmc.mixin.extensions.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 
 @Mixin(ProjectileUtil.class)
 public class MixinProjectileUtil {
@@ -39,9 +39,10 @@ public class MixinProjectileUtil {
 	 * @param targetEntity The entity targeted in the raycast
 	 * @return The root entity of the target, or null if the rider is allowed to interact with the target.
 	 */
-	@Redirect(method = "raycast", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getRootVehicle()Lnet/minecraft/entity/Entity;", ordinal = 0))
+	@Redirect(method = "raycast(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;D)Lnet/minecraft/util/hit/EntityHitResult;",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getRootVehicle()Lnet/minecraft/entity/Entity;", ordinal = 0))
 	private static Entity onRiderCheck(Entity targetEntity) {
-		if (((IForgeEntity)targetEntity).canRiderInteract()) {
+		if (((IForgeEntity) targetEntity).canRiderInteract()) {
 			return null;
 		} else {
 			return targetEntity.getRootVehicle();

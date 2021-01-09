@@ -21,20 +21,28 @@ package net.patchworkmc.mixin.extensions.entity;
 
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity {
+	/**
+	 * If drops are being captured by the {@link IForgeEntity}, do not spawn the entities in the world. Instead, store
+	 * them to the current {@link IForgeEntity#captureDrops()}.
+	 */
 	@Redirect(method = "dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", ordinal = 0))
 	private boolean hookDropItemForCapture(World world, Entity entity) {
 		ItemEntity itemEntity = (ItemEntity) entity;
 		IForgeEntity forgeEntity = (IForgeEntity) this;
@@ -51,11 +59,11 @@ public class MixinServerPlayerEntity {
 	 * Replaces the constant {@code false} in {@code this.removed = false;} with the current value of {@code this.removed}.
 	 * This nullifies the action of this line, and allows us to control the revival instead with an inject.
 	 */
-	@ModifyConstant(method = "moveToWorld",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V", ordinal = 1),
-					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;", ordinal = 0)),
+	@ModifyConstant(method = {"moveToWorld(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/entity/Entity;", "teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V"},
+			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/PlayerManager;sendCommandTree(Lnet/minecraft/server/network/ServerPlayerEntity;)V", ordinal = 0),
+					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;setWorld(Lnet/minecraft/world/World;)V", ordinal = 0)),
 			constant = @Constant(intValue = 0))
-	private int nullifyMoveRemovedAssignment(int constant) {
+	private int nullifyRemovedAssignment(int constant) {
 		return ((Entity) (Object) this).removed ? 1 : 0;
 	}
 
@@ -64,21 +72,9 @@ public class MixinServerPlayerEntity {
 	 * will just run {@code this.removed = false;} anyways, but forge-added entities can provide an alternative implementation.
 	 */
 	@Inject(method = "moveToWorld",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;" ,ordinal = 0))
 	private void onMoveReviveEntity(CallbackInfoReturnable<Entity> ci) {
 		((IForgeEntity) this).revive();
-	}
-
-	/**
-	 * Replaces the constant {@code false} in {@code this.removed = false;} with the current value of {@code this.removed}.
-	 * This nullifies the action of this line, and allows us to control the revival instead with an inject.
-	 */
-	@ModifyConstant(method = "teleport",
-			slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;removePlayer(Lnet/minecraft/server/network/ServerPlayerEntity;)V"),
-					to = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V")),
-			constant = @Constant(intValue = 0))
-	private int nullifyTeleportRemovedAssignment(int constant) {
-		return ((Entity) (Object) this).removed ? 1 : 0;
 	}
 
 	/**
@@ -86,7 +82,7 @@ public class MixinServerPlayerEntity {
 	 * will just run {@code this.removed = false;} anyways, but forge-added entities can provide an alternative implementation.
 	 */
 	@Inject(method = "teleport",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;refreshPositionAndAngles(DDDFF)V", ordinal = 0))
 	private void onTeleportReviveEntity(CallbackInfo ci) {
 		((IForgeEntity) this).revive();
 	}

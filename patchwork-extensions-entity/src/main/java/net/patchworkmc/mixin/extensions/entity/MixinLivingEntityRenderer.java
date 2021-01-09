@@ -19,14 +19,13 @@
 
 package net.patchworkmc.mixin.extensions.entity;
 
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-
-import net.minecraft.entity.LivingEntity;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.entity.LivingEntity;
 
 @Mixin(LivingEntityRenderer.class)
 public class MixinLivingEntityRenderer {
@@ -38,7 +37,8 @@ public class MixinLivingEntityRenderer {
 	 * @param entity The "rider" entity being rendered
 	 * @return If the entity should be rendered as sitting
 	 */
-	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;hasVehicle()Z"))
+	@Redirect(method = "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;hasVehicle()Z"))
 	private boolean redirectHasVehicle(LivingEntity entity) {
 		return entity.hasVehicle() && ((IForgeEntity) entity.getVehicle()).shouldRiderSit();
 	}

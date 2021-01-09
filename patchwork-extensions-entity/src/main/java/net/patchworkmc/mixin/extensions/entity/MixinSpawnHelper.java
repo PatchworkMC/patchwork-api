@@ -19,14 +19,9 @@
 
 package net.patchworkmc.mixin.extensions.entity;
 
+import java.util.Iterator;
+
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.util.math.GravityField;
-import net.minecraft.world.SpawnHelper;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,7 +31,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Iterator;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.util.math.GravityField;
+import net.minecraft.world.SpawnHelper;
 
 @Mixin(SpawnHelper.class)
 public class MixinSpawnHelper {
@@ -54,13 +53,13 @@ public class MixinSpawnHelper {
 			locals = LocalCapture.CAPTURE_FAILHARD,
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityType;getSpawnGroup()Lnet/minecraft/entity/SpawnGroup;", ordinal = 0))
 	private static void onEntitySetup(int spawningChunkCount,
-									  Iterable<Entity> entities,
-									  SpawnHelper.ChunkSource chunkSource,
-									  CallbackInfoReturnable<SpawnHelper.Info> cir,
-									  GravityField gravityField,
-									  Object2IntOpenHashMap<SpawnGroup> object2IntOpenHashMap,
-									  Iterator<Entity> var5,
-									  Entity entity) {
+										Iterable<Entity> entities,
+										SpawnHelper.ChunkSource chunkSource,
+										CallbackInfoReturnable<SpawnHelper.Info> cir,
+										GravityField gravityField,
+										Object2IntOpenHashMap<SpawnGroup> object2IntOpenHashMap,
+										Iterator<Entity> var5,
+										Entity entity) {
 		latestCalculatedEntity.set((IForgeEntity) entity);
 	}
 
@@ -70,7 +69,7 @@ public class MixinSpawnHelper {
 	 *
 	 * <p>The default implementation for getClassification is identical to the original, but forge mods may replace it.</p>
 	 */
-	@Redirect(method = "setupSpawn",
+	@Redirect(method = "setupSpawn(ILjava/lang/Iterable;Lnet/minecraft/world/SpawnHelper$ChunkSource;)Lnet/minecraft/world/SpawnHelper$Info;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityType;getSpawnGroup()Lnet/minecraft/entity/SpawnGroup;", ordinal = 0))
 	private static SpawnGroup onClassification(EntityType<?> entityType) {
 		return latestCalculatedEntity.get().getClassification(true);

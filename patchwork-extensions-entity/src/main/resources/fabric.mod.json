@@ -15,11 +15,6 @@
   "depends": {
     "patchwork-api-base": "*"
   },
-  "entrypoints": {
-    "client": [
-      "net.patchworkmc.impl.extensions.entity.EntityExtensionsInitializer"
-    ]
-  },
   "mixins": [
     "patchwork-extensions-entity.mixins.json"
   ],

@@ -23,22 +23,20 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.CompoundTag;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.world.World;
-
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 
 @Mixin(Entity.class)
 public abstract class MixinEntity implements IForgeEntity {
@@ -55,21 +53,22 @@ public abstract class MixinEntity implements IForgeEntity {
 	private Collection<ItemEntity> captureDrops = null;
 
 	@Unique
-	private boolean canUpdate;
+	private boolean canUpdate = true;
 
 	@Unique
 	private boolean addedToWorld;
 
-	@Redirect(method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", ordinal = 0))
-	private boolean hookDropStackForCapture(World world, Entity entity) {
-		ItemEntity itemEntity = (ItemEntity) entity;
-
+	/**
+	 * If drops are being captured by the {@link IForgeEntity}, do not spawn the entities in the world. Instead, store
+	 * them to the current {@link IForgeEntity#captureDrops()}.
+	 */
+	@Inject(method = "dropStack(Lnet/minecraft/item/ItemStack;F)Lnet/minecraft/entity/ItemEntity;",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z", ordinal = 0),
+			locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
+	private void onSpawnDroppedStack(ItemStack stack, float yOffset, CallbackInfoReturnable<ItemEntity> cir, ItemEntity itemEntity) {
 		if (captureDrops() != null) {
 			captureDrops().add(itemEntity);
-			return true;
-		} else {
-			return world.spawnEntity(itemEntity);
+			cir.setReturnValue(itemEntity);
 		}
 	}
 
@@ -98,12 +97,12 @@ public abstract class MixinEntity implements IForgeEntity {
 	@Inject(method = "tickRiding", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;tick()V", ordinal = 0), cancellable = true)
 	private void onTickAttempt(CallbackInfo ci) {
 		if (!canUpdate()) {
+			ci.cancel();
+
 			// Replicate vanilla behavior for the rest of tickRiding, since we only want to cancel the tick() call.
 			if (this.hasVehicle()) {
 				this.getVehicle().updatePassengerPosition((Entity) (Object) this);
 			}
-
-			ci.cancel();
 		}
 	}
 
@@ -124,10 +123,10 @@ public abstract class MixinEntity implements IForgeEntity {
 	}
 
 	@Override
-	public Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> value) {
-		Collection<ItemEntity> ret = captureDrops;
-		this.captureDrops = value;
-		return ret;
+	public Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> newCapture) {
+		Collection<ItemEntity> oldDrops = captureDrops;
+		this.captureDrops = newCapture;
+		return oldDrops;
 	}
 
 	@Override

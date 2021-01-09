@@ -23,16 +23,18 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.HitResult;
 
+import net.fabricmc.fabric.api.entity.EntityPickInteractionAware;
+
 import net.patchworkmc.impl.extensions.entity.PatchworkEntityItems;
 
-public interface IForgeEntity {
+public interface IForgeEntity extends EntityPickInteractionAware {
 	default Entity getEntity() {
 		return (Entity) this;
 	}
@@ -44,7 +46,7 @@ public interface IForgeEntity {
 	@Nullable
 	Collection<ItemEntity> captureDrops();
 
-	Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> captureDrops);
+	Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> newCapture);
 
 	/**
 	 * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
@@ -65,9 +67,13 @@ public interface IForgeEntity {
 		return PatchworkEntityItems.getPickedItem((Entity) this);
 	}
 
+	@Override
+	default ItemStack getPickedStack(PlayerEntity playerEntity, HitResult hitResult) {
+		return getPickedResult(hitResult);
+	}
+
 	/**
-	 * If a rider of this entity can interact with this entity. Should return true on the
-	 * ridden entity if so.
+	 * If a rider of this entity can interact with this entity. Should return true on the ridden entity if so.
 	 *
 	 * @return if the entity can be interacted with from a rider
 	 */
