@@ -72,7 +72,7 @@ public class MixinServerPlayerEntity {
 	 * will just run {@code this.removed = false;} anyways, but forge-added entities can provide an alternative implementation.
 	 */
 	@Inject(method = "moveToWorld",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;" ,ordinal = 0))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;getTeleportTarget(Lnet/minecraft/server/world/ServerWorld;)Lnet/minecraft/world/TeleportTarget;", ordinal = 0))
 	private void onMoveReviveEntity(CallbackInfoReturnable<Entity> ci) {
 		((IForgeEntity) this).revive();
 	}
