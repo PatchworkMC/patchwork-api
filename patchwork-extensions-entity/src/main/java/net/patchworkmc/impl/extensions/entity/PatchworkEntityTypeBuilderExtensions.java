@@ -17,15 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.impl.extensions.entity;
 
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 
-import net.minecraft.world.dimension.Dimension;
+/**
+ * Forge does this through patching the constructor instead, we just add methods with mixins instead.
+ */
+public interface PatchworkEntityTypeBuilderExtensions<T extends Entity> {
+	EntityType.Builder<T> setUpdateInterval(int interval);
 
-@Mixin(Dimension.class)
-public abstract class MixinDimension {
-	public int getHeight() {
-		return 256; // TODO: IForgeDimension
-	}
+	EntityType.Builder<T> setTrackingRange(int range);
+
+	EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value);
 }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extensions.entity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,8 +27,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.EntityType;
 
-import net.patchworkmc.impl.extension.PatchworkEntityTypeBuilderExtensions;
-import net.patchworkmc.impl.extension.PatchworkEntityTypeExtensions;
+import net.patchworkmc.impl.extensions.entity.PatchworkEntityTypeBuilderExtensions;
+import net.patchworkmc.impl.extensions.entity.PatchworkEntityTypeExtensions;
 
 @Mixin(EntityType.Builder.class)
 public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensions {
@@ -39,7 +39,7 @@ public class MixinEntityTypeBuilder implements PatchworkEntityTypeBuilderExtensi
 	@Unique
 	private Boolean shouldRecieveVelocityUpdates = null;
 
-	@Inject(method = "build", at = @At("RETURN"))
+	@Inject(method = "build", at = @At("TAIL"))
 	private void onBuildReturn(String id, CallbackInfoReturnable<EntityType> cir) {
 		PatchworkEntityTypeExtensions type = (PatchworkEntityTypeExtensions) cir.getReturnValue();
 

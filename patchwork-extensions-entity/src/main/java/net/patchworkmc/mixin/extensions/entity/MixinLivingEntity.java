@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.mixin.extensions.entity;
 
 import net.minecraftforge.common.extensions.IForgeEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,23 +25,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.entity.LivingEntity;
 
-@Mixin(ServerPlayerEntity.class)
-public class MixinServerPlayerEntity {
-	@Redirect(method = "dropItem(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
-	private boolean hookDropItemForCapture(World world, Entity entity) {
-		ItemEntity itemEntity = (ItemEntity) entity;
-		IForgeEntity forgeEntity = (IForgeEntity) this;
-
-		if (forgeEntity.captureDrops() != null) {
-			forgeEntity.captureDrops().add(itemEntity);
-			return true;
-		} else {
-			return world.spawnEntity(itemEntity);
-		}
+@Mixin(LivingEntity.class)
+public class MixinLivingEntity {
+	/**
+	 * Use the rider-specific variant of {@link Entity#canBeRiddenInWater()} to check if a rider should be ejected.
+	 */
+	@Redirect(method = "baseTick()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;canBeRiddenInWater()Z", ordinal = 0))
+	private boolean onUnderwaterRidingCheck(Entity vehicle) {
+		return ((IForgeEntity) vehicle).canBeRiddenInWater((Entity) (Object) this);
 	}
 }
