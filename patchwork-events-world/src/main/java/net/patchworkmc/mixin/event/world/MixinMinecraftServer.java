@@ -22,9 +22,6 @@ package net.patchworkmc.mixin.event.world;
 import java.io.IOException;
 import java.util.Map;
 
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,6 +36,8 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
