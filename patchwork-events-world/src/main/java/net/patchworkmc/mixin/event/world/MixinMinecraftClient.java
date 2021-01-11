@@ -43,7 +43,7 @@ public abstract class MixinMinecraftClient {
 		}
 	}
 
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "Lnet/minecraft/client/MinecraftClient;world:Lnet/minecraft/client/world/ClientWorld;"))
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, ordinal = 0, target = "Lnet/minecraft/client/MinecraftClient;world:Lnet/minecraft/client/world/ClientWorld;"))
 	private void hookDisconnect(CallbackInfo info) {
 		if (this.world != null) {
 			WorldEvents.onWorldUnload(this.world);

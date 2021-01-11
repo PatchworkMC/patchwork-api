@@ -34,7 +34,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -54,7 +53,7 @@ public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<Serve
 	// Fabric usually fires the event much earlier in the method, so this is just picking a point closer to when Forge would fire it.
 	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/SimpleRegistry;getEntries()Ljava/util/Set;"))
 	private void fireLoadForOverworld(CallbackInfo info) {
-		WorldEvents.onWorldLoad(worlds.get(DimensionType.OVERWORLD));
+		WorldEvents.onWorldLoad(worlds.get(World.OVERWORLD));
 	}
 
 	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close()V"))

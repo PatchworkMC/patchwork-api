@@ -27,31 +27,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.SpawnHelper;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.SpawnSettings;
+import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(SpawnHelper.class)
 public abstract class MixinSpawnHelper {
-	// Forge adds a parameter to these methods in order to get the world. This... does not seem feasible to do through mixins.
-	// So, we extract the world from the ChunkGenerator, courtesy of an interface mixin.
-	// For the chosen injection point, we need to shift back 1 so that the change gets applied in time for the isEmpty call.
-
-	@ModifyVariable(method = "method_8664", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
-	private static List<Biome.SpawnEntry> hookRandomSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, SpawnGroup entityCategory, Random random, BlockPos blockPos) {
-		WorldAccess world = ((MixinChunkGenerator) chunkGenerator).getWorld();
-
-		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
-	}
-
-	@ModifyVariable(method = "method_8659", at = @At(value = "INVOKE", target = "java/util/List.isEmpty ()Z", shift = At.Shift.BEFORE))
-	private static List<Biome.SpawnEntry> hookCanSpawn(List<Biome.SpawnEntry> oldSpawns, ChunkGenerator<?> chunkGenerator, SpawnGroup entityCategory, Biome.SpawnEntry spawnEntry, BlockPos blockPos) {
-		WorldAccess world = ((MixinChunkGenerator) chunkGenerator).getWorld();
-
-		return WorldEvents.getPotentialSpawns(world, entityCategory, blockPos, oldSpawns);
+	@ModifyVariable(method = "pickRandomSpawnEntry", at = @At(value = "INVOKE", target = "java/util/List.isEmpty()Z", shift = At.Shift.BEFORE))
+	private static List<SpawnSettings.SpawnEntry> hookRandomSpawn(List<SpawnSettings.SpawnEntry> oldSpawns, ServerWorld world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, SpawnGroup spawnGroup, Random random, BlockPos blockPos) {
+		return WorldEvents.getPotentialSpawns(world, spawnGroup, blockPos, oldSpawns);
 	}
 }
