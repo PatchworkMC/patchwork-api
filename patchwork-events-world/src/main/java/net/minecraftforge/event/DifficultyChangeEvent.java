@@ -27,7 +27,7 @@ import net.minecraft.world.Difficulty;
 /**
  * DifficultyChangeEvent is fired when difficulty is changing.
  *
- * <p>This event is fired via the {@link ForgeHooks#onDifficultyChange(EnumDifficulty, EnumDifficulty)}.</p>
+ * <p>This event is fired via {@link net.patchworkmc.impl.event.world.WorldEvents#onDifficultyChange(Difficulty, Difficulty)}.</p>
  *
  * <p>This event does not have a result.</p>
  *
