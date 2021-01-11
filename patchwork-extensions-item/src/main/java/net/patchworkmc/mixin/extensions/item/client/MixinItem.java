@@ -31,23 +31,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
-import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
+import net.patchworkmc.api.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {
 	@Unique
 	@Nullable
-	private BuiltinModelItemRenderer teisr;
+	private BuiltinModelItemRenderer ister;
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
 		final PatchworkItemSettingsExtensions extension = (PatchworkItemSettingsExtensions) settings;
 
-		this.teisr = extension.getTeisr();
+		this.ister = extension.patchwork$ISTER();
 	}
 
 	@Override
-	public BuiltinModelItemRenderer getTileEntityItemStackRenderer() {
-		return teisr;
+	public BuiltinModelItemRenderer getItemStackTileEntityRenderer() {
+		return ister;
 	}
 }

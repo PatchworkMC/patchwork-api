@@ -3,18 +3,10 @@
   "package": "net.patchworkmc.mixin.extensions.item",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ItemTagsAccessor",
-    "MixinAxeItem",
-    "MixinEnchantedBookItem",
     "MixinItem",
-    "MixinItemSettings",
-    "MixinPlayerInventory",
-    "MixinPotionItems",
-    "MixinSpawnEggItem"
+    "MixinItemSettings"
   ],
   "client": [
-    "client.MixinArmorBipedFeatureRenderer",
-    "client.MixinArmorFeatureRenderer",
     "client.MixinItem",
     "client.MixinItemSettings"
   ],

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.impl.extensions.item;
+package net.patchworkmc.api.extensions.item;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -31,21 +31,22 @@ import net.minecraft.item.Item;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.patchworkmc.annotations.Stubbed;
+
 /**
  * Forge does this through patching the constructor, we just add methods with
  * mixins instead.
  */
 public interface PatchworkItemSettingsExtensions {
+	@Stubbed
 	Item.Settings setNoRepair();
-
+	@Stubbed
 	Item.Settings addToolType(ToolType type, int level);
+	Item.Settings setISTER(Supplier<Callable<BuiltinModelItemRenderer>> ister);
 
-	Item.Settings setTEISR(Supplier<Callable<BuiltinModelItemRenderer>> teisr);
-
-	boolean canRepair();
-
-	Map<ToolType, Integer> getToolClasses();
-
+	boolean patchwork$canRepair();
+	Map<ToolType, Integer> patchwork$toolTypes();
 	@Environment(EnvType.CLIENT)
-	BuiltinModelItemRenderer getTeisr();
+	// Patchwork avoids the misdirection of Suppliers by just being smart about client only annotations
+	BuiltinModelItemRenderer patchwork$ISTER();
 }

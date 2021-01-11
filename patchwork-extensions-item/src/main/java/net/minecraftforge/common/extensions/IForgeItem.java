@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -26,12 +28,14 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -44,22 +48,32 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.AxeItem;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
+import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.TippedArrowItem;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionUtil;
+import net.minecraft.potion.Potions;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.patchworkmc.annotations.Stubbed;
 import net.patchworkmc.impl.capability.IForgeItemDuck;
 
 public interface IForgeItem extends IForgeItemDuck {
@@ -72,7 +86,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * ItemStack sensitive version of getItemAttributeModifiers
 	 */
 	@SuppressWarnings("deprecation")
-	// TODO: impl
+	@Stubbed
 	default Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
 		return getItem().getAttributeModifiers(slot);
 	}
@@ -85,7 +99,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param player The player that dropped the item
 	 * @param item   The item stack, before the item is removed.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean onDroppedByPlayer(ItemStack item, PlayerEntity player) {
 		return true;
 	}
@@ -99,7 +113,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param displayName the name that will be displayed unless it is changed in
 	 *                    this method.
 	 */
-	// TODO impl
+	@Stubbed
 	default Text getHighlightTip(ItemStack item, Text displayName) {
 		return displayName;
 	}
@@ -109,7 +123,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *
 	 * @return Return PASS to allow vanilla handling, any other to skip normal code.
 	 */
-	// TODO: impl
+	@Stubbed
 	default ActionResult onItemUseFirst(ItemStack stack, ItemUsageContext context) {
 		return ActionResult.PASS;
 	}
@@ -119,7 +133,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *
 	 * @return True if this item can be used as "currency" by piglins
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isPiglinCurrency(ItemStack stack) {
 		return stack.getItem() == PiglinBrain.BARTERING_ITEM;
 	}
@@ -131,7 +145,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param wearer The entity wearing this ItemStack
 	 * @return True if piglins are neutral to players wearing this item in an armor slot
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) {
 		return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getMaterial() == ArmorMaterials.GOLD;
 	}
@@ -141,14 +155,15 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *
 	 * @return True if reparable
 	 */
-	// TODO: impl
+	@Stubbed
+	// TODO: needs call location in IForgeItemStack
 	boolean isRepairable(ItemStack stack);
 
 	/**
 	 * Determines the amount of durability the mending enchantment
 	 * will repair, on average, per point of experience.
 	 */
-	// TODO: impl
+	@Stubbed
 	default float getXpRepairRatio(ItemStack stack) {
 		return 2f;
 	}
@@ -169,7 +184,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The stack to send the NBT tag for
 	 * @return The NBT tag
 	 */
-	// TODO: impl
+	@Stubbed
 	@Nullable
 	default CompoundTag getShareTag(ItemStack stack) {
 		return stack.getTag();
@@ -182,10 +197,8 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The stack that received NBT
 	 * @param nbt   Received NBT, can be null
 	 */
-	// TODO: impl
-	default void readShareTag(ItemStack stack,
-	                          @Nullable
-			                          CompoundTag nbt) {
+	@Stubbed
+	default void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
 		stack.setTag(nbt);
 	}
 
@@ -200,7 +213,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param player    The Player that is wielding the item
 	 * @return True to prevent harvesting, false to continue as normal
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, PlayerEntity player) {
 		return false;
 	}
@@ -213,7 +226,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param count  The amount of time in tick the item has been used for
 	 *               continuously
 	 */
-	// TODO: impl
+	@Stubbed
 	default void onUsingTick(ItemStack stack, LivingEntity player, int count) {
 	}
 
@@ -227,7 +240,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity The entity being attacked
 	 * @return True to cancel the rest of the interaction.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
 		return false;
 	}
@@ -239,7 +252,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param itemStack The current ItemStack
 	 * @return The resulting ItemStack
 	 */
-	// TODO: impl
+	@Stubbed
 	@SuppressWarnings("deprecation")
 	default ItemStack getContainerItem(ItemStack itemStack) {
 		if (!hasContainerItem(itemStack)) {
@@ -255,7 +268,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The current item stack
 	 * @return True if this item has a 'container'
 	 */
-	// TODO: impl
+	@Stubbed
 	@SuppressWarnings("deprecation")
 	default boolean hasContainerItem(ItemStack stack) {
 		return getItem().hasRecipeRemainder();
@@ -269,7 +282,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param world     The world the entity is in
 	 * @return The normal lifespan in ticks.
 	 */
-	// TODO: impl
+	@Stubbed
 	default int getEntityLifespan(ItemStack itemStack, World world) {
 		return 6000;
 	}
@@ -284,7 +297,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @return True of the item has a custom entity, If true,
 	 * Item#createCustomEntity will be called
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean hasCustomEntity(ItemStack stack) {
 		return false;
 	}
@@ -300,7 +313,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param itemstack The current item stack
 	 * @return A new Entity object to spawn or null
 	 */
-	// TODO; impl
+	@Stubbed
 	@Nullable
 	default Entity createEntity(World world, Entity location, ItemStack itemstack) {
 		return null;
@@ -314,7 +327,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity The entity Item
 	 * @return Return true to skip any further update code.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
 		return false;
 	}
@@ -326,9 +339,8 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *
 	 * @return A list of all tabs that this item could possibly be one.
 	 */
-	// TODO: impl
-	default java.util.Collection<ItemGroup> getCreativeTabs() {
-		return java.util.Collections.singletonList(getItem().getGroup());
+	default Collection<ItemGroup> getCreativeTabs() {
+		return Collections.singletonList(getItem().getGroup());
 	}
 
 	/**
@@ -339,7 +351,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param item The item stack the player is picking up.
 	 * @return The amount to award for each item.
 	 */
-	// TODO: impl
+	@Stubbed
 	default float getSmeltingExperience(ItemStack item) {
 		return -1; // -1 will default to the old lookups.
 	}
@@ -353,7 +365,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param player The Player that is wielding the item
 	 * @return
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.WorldView world, BlockPos pos, PlayerEntity player) {
 		return false;
 	}
@@ -361,7 +373,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	/**
 	 * Called to tick armor in the armor slot. Override to do something
 	 */
-	// TODO: impl
+	@Stubbed
 	default void onArmorTick(ItemStack stack, World world, PlayerEntity player) {
 	}
 
@@ -374,7 +386,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity    The entity trying to equip the armor
 	 * @return True if the given ItemStack can be inserted in the slot
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
 		return MobEntity.getPreferredEquipmentSlot(stack) == armorType;
 	}
@@ -389,7 +401,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
 	 * decide
 	 */
-	// TODO: impl
+	@Stubbed
 	@Nullable
 	default EquipmentSlot getEquipmentSlot(ItemStack stack) {
 		return null;
@@ -402,7 +414,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param book  The book
 	 * @return if the enchantment is allowed
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isBookEnchantable(ItemStack stack, ItemStack book) {
 		return true;
 	}
@@ -420,7 +432,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param type   The subtype, can be null or "overlay"
 	 * @return Path of texture to bind, or null to use default
 	 */
-	// TODO: impl
+	@Stubbed
 	@Nullable
 	default String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
 		return null;
@@ -433,7 +445,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The current item stack
 	 * @return A instance of FontRenderer or null to use default
 	 */
-	// TODO: impl
+	@Stubbed
 	@Environment(EnvType.CLIENT)
 	@Nullable
 	default net.minecraft.client.font.TextRenderer getFontRenderer(ItemStack stack) {
@@ -449,7 +461,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param _default     Original armor model. Will have attributes set.
 	 * @return A ModelBiped to render instead of the default
 	 */
-	// TODO: impl
+	@Stubbed
 	@Environment(EnvType.CLIENT)
 	@Nullable
 	default <A extends BipedEntityModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, A _default) {
@@ -462,7 +474,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity The entity swinging the item.
 	 * @return True to cancel any further processing by EntityLiving
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
 		return false;
 	}
@@ -477,7 +489,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *                     configured GUI Scale
 	 * @param partialTicks Partial ticks for the renderer, useful for interpolation
 	 */
-	// TODO: impl
+	@Stubbed
 	@Environment(EnvType.CLIENT)
 	default void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks) {
 	}
@@ -489,7 +501,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The itemstack that is damaged
 	 * @return the damage value
 	 */
-	// TODO: impl
+	@Stubbed
 	default int getDamage(ItemStack stack) {
 		return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
 	}
@@ -502,7 +514,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The current Item Stack
 	 * @return True if it should render the 'durability' bar.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean showDurabilityBar(ItemStack stack) {
 		return stack.isDamaged();
 	}
@@ -514,7 +526,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged /
 	 * empty bar)
 	 */
-	// TODO: impl
+	@Stubbed
 	default double getDurabilityForDisplay(ItemStack stack) {
 		return (double) stack.getDamage() / (double) stack.getMaxDamage();
 	}
@@ -527,7 +539,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack Stack to get durability from
 	 * @return A packed RGB value for the durability colour (0x00RRGGBB)
 	 */
-	// TODO: impl
+	@Stubbed
 	default int getRGBDurabilityForDisplay(ItemStack stack) {
 		return MathHelper.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
 	}
@@ -539,7 +551,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The itemstack that is damaged
 	 * @return the damage value
 	 */
-	// TODO: impl
+	@Stubbed
 	@SuppressWarnings("deprecation")
 	default int getMaxDamage(ItemStack stack) {
 		return getItem().getMaxDamage();
@@ -552,7 +564,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack the stack
 	 * @return if the stack is damaged
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isDamaged(ItemStack stack) {
 		return stack.getDamage() > 0;
 	}
@@ -564,7 +576,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack  the stack
 	 * @param damage the new damage value
 	 */
-	// TODO: impl
+	@Stubbed
 	default void setDamage(ItemStack stack, int damage) {
 		stack.getOrCreateTag().putInt("Damage", Math.max(0, damage));
 	}
@@ -576,7 +588,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param state The block trying to harvest
 	 * @return true if can harvest the block
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canHarvestBlock(ItemStack stack, BlockState state) {
 		return getItem().isEffectiveOn(state);
 	}
@@ -588,13 +600,14 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The ItemStack
 	 * @return The maximum number this item can be stacked to
 	 */
-	// TODO: impl
+	@Stubbed
 	@SuppressWarnings("deprecation")
 	default int getItemStackLimit(ItemStack stack) {
 		return getItem().getMaxCount();
 	}
 
-	// TODO: impl
+	@Stubbed
+	// TODO: needs call locations in IForgeItemStack, MiningToolItem
 	Set<ToolType> getToolTypes(ItemStack stack);
 
 	/**
@@ -607,12 +620,9 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param blockState The block to harvest
 	 * @return Harvest level, or -1 if not the specified tool type.
 	 */
-	// TODO: impl
-	int getHarvestLevel(ItemStack stack, ToolType tool,
-	                    @Nullable
-			                    PlayerEntity player,
-	                    @Nullable
-			                    BlockState blockState);
+	@Stubbed
+	// TODO: needs call location in IForgeItemStack
+	int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState);
 
 	/**
 	 * ItemStack sensitive version of getItemEnchantability
@@ -620,7 +630,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The ItemStack
 	 * @return the item echantability value
 	 */
-	// TODO: impl
+	@Stubbed
 	default int getItemEnchantability(ItemStack stack) {
 		return getItem().getEnchantability();
 	}
@@ -638,7 +648,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param enchantment the enchantment to be applied
 	 * @return true if the enchantment can be applied to this item
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment) {
 		return enchantment.type.isAcceptableItem(stack.getItem());
 	}
@@ -653,7 +663,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *                    hold the exact same item.
 	 * @return True to play the item change animation
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
 		return !oldStack.equals(newStack); // !ItemStack.areItemStacksEqual(oldStack, newStack);
 	}
@@ -667,7 +677,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param newStack The new stack
 	 * @return True to reset block break progress
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
 		return !(newStack.getItem() == oldStack.getItem() && ItemStack.areTagsEqual(newStack, oldStack)
 				&& (newStack.isDamageable() || newStack.getDamage() == oldStack.getDamage()));
@@ -682,7 +692,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param newStack the stack currently in the active hand
 	 * @return true to set the new stack to active and continue using it
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack) {
 		return ItemStack.areItemsEqual(oldStack, newStack);
 	}
@@ -701,10 +711,48 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @return the Mod ID for the ItemStack, or null when there is no specially
 	 * associated mod and {@link #getRegistryName()} would return null.
 	 */
-	// TODO: impl
 	@Nullable
 	default String getCreatorModId(ItemStack itemStack) {
-		return net.minecraftforge.common.ForgeHooks.getDefaultCreatorModId(itemStack);
+		// Patchwork: Copied from ForgeHooks
+		Item item = itemStack.getItem();
+		Identifier registryName = Registry.ITEM.getId(item);
+		String modId = registryName.getNamespace();
+
+		if ("minecraft".equals(modId)) {
+			if (item instanceof EnchantedBookItem) {
+				ListTag enchantmentsTag = EnchantedBookItem.getEnchantmentTag(itemStack);
+
+				if (enchantmentsTag.size() == 1) {
+					CompoundTag tag = enchantmentsTag.getCompound(0);
+					Identifier identifier = Identifier.tryParse(tag.getString("id"));
+
+					if (identifier != null && Registry.ENCHANTMENT.containsId(identifier)) {
+						return identifier.getNamespace();
+					}
+				}
+			} else if (item instanceof PotionItem || item instanceof TippedArrowItem) {
+				Potion potion = PotionUtil.getPotion(itemStack);
+				Identifier identifier = Registry.POTION.getId(potion);
+
+				// only return if our is defaulted check is false
+				if (!(!potion.equals(Potions.EMPTY) && identifier.equals(Registry.POTION.getDefaultId()))) {
+					return identifier.getNamespace();
+				}
+			} else if (item instanceof SpawnEggItem) {
+				EntityType<?> type = ((SpawnEggItem) item).getEntityType(null);
+				Identifier identifier = Registry.ENTITY_TYPE.getId(type);
+
+				if (!(!type.equals(EntityType.PIG) && identifier.equals(Registry.ENTITY_TYPE.getDefaultId()))) {
+					return identifier.getNamespace();
+				}
+			}
+		}
+
+		if (!item.equals(Items.AIR) && registryName.equals(new Identifier("air"))) {
+			return null;
+		}
+
+		return modId;
 	}
 
 	/**
@@ -721,11 +769,9 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @return A holder instance associated with this ItemStack where you can hold
 	 * capabilities for the life of this item.
 	 */
-	// TODO: impl
+	@Stubbed
 	@Nullable
-	default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack,
-	                                                                                    @Nullable
-			                                                                                    CompoundTag nbt) {
+	default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
 		return null;
 	}
 
@@ -746,7 +792,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param attacker The EntityLivingBase holding the ItemStack
 	 * @retrun True if this ItemStack can disable the shield in question.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
 		return this instanceof AxeItem;
 	}
@@ -758,7 +804,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity The Entity holding the ItemStack
 	 * @return True if the ItemStack is considered a shield
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isShield(ItemStack stack, @Nullable LivingEntity entity) {
 		return stack.getItem() == Items.SHIELD;
 	}
@@ -768,7 +814,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * it not act as a fuel. Return -1 to let the default vanilla logic
 	 * decide.
 	 */
-	// TODO: impl
+	@Stubbed
 	default int getBurnTime(ItemStack itemStack) {
 		return -1;
 	}
@@ -781,7 +827,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param world the world the horse is in
 	 * @param horse the horse wearing this armor
 	 */
-	// TODO: impl
+	@Stubbed
 	default void onHorseArmorTick(ItemStack stack, World world, MobEntity horse) {
 	}
 
@@ -790,14 +836,16 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * one.
 	 */
 	@Environment(EnvType.CLIENT)
-	// TODO: impl
+	@Stubbed
+	// TODO: needs call locations in ItemRenderer and BlockRenderManager
 	BuiltinModelItemRenderer getItemStackTileEntityRenderer();
 
 	/**
 	 * Retrieves a list of tags names this is known to be associated with.
 	 * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
 	 */
-	// TODO: impl
+	@Stubbed
+	// TODO: needs call location in MinecraftClient#initializeSearchableContainers
 	Set<Identifier> getTags();
 
 	/**
@@ -810,7 +858,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param onBroken The on-broken callback from vanilla
 	 * @return The amount of damage to pass to the vanilla logic
 	 */
-	// TODO: impl
+	@Stubbed
 	default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
 		return amount;
 	}
@@ -823,7 +871,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param endermanEntity The enderman that the player look
 	 * @return true if this Item can be used to hide player head for enderman
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity) {
 		return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
 	}
@@ -836,7 +884,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param entity The entity trying to fly.
 	 * @return True if the entity can use Elytra flight.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean canElytraFly(ItemStack stack, LivingEntity entity) {
 		return false;
 	}
@@ -853,7 +901,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param flightTicks The number of ticks the entity has been Elytra flying for.
 	 * @return True if the entity should continue Elytra flight or False to stop.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks) {
 		return false;
 	}
@@ -864,7 +912,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 *
 	 * @param stack ItemStack in the Chest slot of the entity.
 	 */
-	// TODO: impl
+	@Stubbed
 	default boolean isDamageable(ItemStack stack) {
 		return this.getItem().isDamageable();
 	}
