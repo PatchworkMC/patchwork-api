@@ -50,6 +50,9 @@ public abstract class MixinEntity implements IForgeEntity {
 	public boolean removed;
 
 	@Unique
+	private CompoundTag persistentData;
+
+	@Unique
 	private Collection<ItemEntity> captureDrops = null;
 
 	@Unique
@@ -73,10 +76,14 @@ public abstract class MixinEntity implements IForgeEntity {
 	}
 
 	/**
-	 * While other tags are being serialized, add "CanUpdate" to the {@link CompoundTag} for this entity.
+	 * While other tags are being serialized, add "CanUpdate" and "ForgeData" to the {@link CompoundTag} for this entity.
 	 */
 	@Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V", ordinal = 0))
 	private void serializeUpdate(CompoundTag tag, CallbackInfoReturnable<CompoundTag> callbackInfoReturnable) {
+		if (persistentData != null) {
+			tag.put("ForgeData", persistentData);
+		}
+
 		tag.putBoolean("CanUpdate", canUpdate);
 	}
 
@@ -85,6 +92,10 @@ public abstract class MixinEntity implements IForgeEntity {
 	 */
 	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setGlowing(Z)V", ordinal = 0))
 	private void deserializeUpdate(CompoundTag tag, CallbackInfo callbackInfo) {
+		if (tag.contains("ForgeData", 10)) {
+			persistentData = tag.getCompound("ForgeData");
+		}
+
 		if (tag.contains("CanUpdate", 99)) {
 			this.canUpdate(tag.getBoolean("CanUpdate"));
 		}
@@ -127,6 +138,15 @@ public abstract class MixinEntity implements IForgeEntity {
 		Collection<ItemEntity> oldDrops = captureDrops;
 		this.captureDrops = newCapture;
 		return oldDrops;
+	}
+
+	@Override
+	public CompoundTag getPersistentData() {
+		if (persistentData == null) {
+			persistentData = new CompoundTag();
+		}
+
+		return persistentData;
 	}
 
 	@Override

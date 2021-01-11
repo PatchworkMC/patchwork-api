@@ -32,11 +32,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 
 @Mixin(ServerPlayerEntity.class)
 public class MixinServerPlayerEntity {
+	private static final String PERSISTED_NBT_TAG = "PlayerPersisted";
+
 	/**
 	 * If drops are being captured by the {@link IForgeEntity}, do not spawn the entities in the world. Instead, store
 	 * them to the current {@link IForgeEntity#captureDrops()}.
@@ -52,6 +55,18 @@ public class MixinServerPlayerEntity {
 			return true;
 		} else {
 			return world.spawnEntity(itemEntity);
+		}
+	}
+
+	/**
+	 * Copy {@link IForgeEntity}'s persistent data to the new player entity on respawn.
+	 */
+	@Inject(method = "copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V", at = @At("TAIL"))
+	private void onPlayerCopy(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
+		CompoundTag oldPersistentData = ((IForgeEntity) oldPlayer).getPersistentData();
+
+		if (oldPersistentData.contains(PERSISTED_NBT_TAG)) {
+			((IForgeEntity) this).getPersistentData().put(PERSISTED_NBT_TAG, oldPersistentData.get(PERSISTED_NBT_TAG));
 		}
 	}
 

@@ -23,20 +23,43 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.NotImplementedException;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 
 import net.fabricmc.fabric.api.entity.EntityPickInteractionAware;
 
+import net.patchworkmc.annotations.Stubbed;
 import net.patchworkmc.impl.extensions.entity.PatchworkEntityItems;
 
 public interface IForgeEntity extends EntityPickInteractionAware {
 	default Entity getEntity() {
 		return (Entity) this;
+	}
+
+	/**
+	 * TODO: This method will be implemented in patchwork-capabilities when fully updated
+	 */
+	@Stubbed
+	default void deserializeNBT(CompoundTag tag) {
+		throw new NotImplementedException("Entity capabilities are currently unsupported.");
+	}
+
+	/**
+	 * TODO: This method will be implemented in patchwork-capabilities when fully updated
+	 */
+	@Stubbed
+	default CompoundTag serializeNBT() {
+		throw new NotImplementedException("Entity capabilities are currently unsupported.");
 	}
 
 	boolean canUpdate();
@@ -47,6 +70,15 @@ public interface IForgeEntity extends EntityPickInteractionAware {
 	Collection<ItemEntity> captureDrops();
 
 	Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> newCapture);
+
+	/**
+	 * Returns a {@link CompoundTag} that can be used to store custom data for this entity.
+	 *
+	 * <p>It will be written and read from disk, so it persists over world saves and respawns.</p>
+	 *
+	 * @return A persistent {@link CompoundTag}.
+	 */
+	CompoundTag getPersistentData();
 
 	/**
 	 * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
@@ -101,8 +133,11 @@ public interface IForgeEntity extends EntityPickInteractionAware {
 	 * @param pos The block pos
 	 * @param fallDistance The fall distance
 	 * @return {@code true} if this entity can trample, {@code false} otherwise
-	 *
-	boolean canTrample(BlockState state, BlockPos pos, float fallDistance); */
+	 */
+	@Stubbed
+	default boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
+		throw new NotImplementedException("IForgeEntity#canTrample is currently unsupported.");
+	}
 
 	/**
 	 * Returns The classification of this entity
