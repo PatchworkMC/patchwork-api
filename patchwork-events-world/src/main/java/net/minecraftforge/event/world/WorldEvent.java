@@ -161,6 +161,11 @@ public class WorldEvent extends Event {
 		public List<SpawnSettings.SpawnEntry> getList() {
 			return list;
 		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
+		}
 	}
 
 	/**
@@ -177,6 +182,11 @@ public class WorldEvent extends Event {
 
 		public ServerWorldProperties getSettings() {
 			return settings;
+		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
 		}
 	}
 }
