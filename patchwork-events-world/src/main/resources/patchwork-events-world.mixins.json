@@ -3,7 +3,7 @@
   "package": "net.patchworkmc.mixin.event.world",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinChunkGenerator",
+    "MixinLevelInfo",
     "MixinMinecraftServer",
     "MixinSaplingBlock",
     "MixinServerWorld",
@@ -12,6 +12,7 @@
   ],
   "client": [
     "MixinClientWorld",
+    "MixinClientWorldProperties",
     "MixinMinecraftClient"
   ],
   "injectors": {

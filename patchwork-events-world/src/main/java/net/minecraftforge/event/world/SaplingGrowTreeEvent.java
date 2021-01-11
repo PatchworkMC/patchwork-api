@@ -22,6 +22,8 @@ package net.minecraftforge.event.world;
 import java.util.Random;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.SaplingBlock;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldAccess;
 
@@ -29,7 +31,7 @@ import net.minecraft.world.WorldAccess;
  * SaplingGrowTreeEvent is fired when a sapling grows into a tree.
  *
  * <p>This event is fired during sapling growth in
- * {@link net.minecraft.block.SaplingBlock#generate(WorldAccess, BlockPos, BlockState, Random)}.
+ * {@link SaplingBlock#generate(ServerWorld, BlockPos, BlockState, Random)}.
  *
  * <p>{@link #pos} contains the coordinates of the growing sapling.
  * {@link #rand} contains an instance of Random for use.
@@ -39,7 +41,6 @@ import net.minecraft.world.WorldAccess;
  * <p>This event has a result.
  * This result determines if the sapling is allowed to grow.
  */
-
 public class SaplingGrowTreeEvent extends WorldEvent {
 	private final BlockPos pos;
 	private final Random rand;

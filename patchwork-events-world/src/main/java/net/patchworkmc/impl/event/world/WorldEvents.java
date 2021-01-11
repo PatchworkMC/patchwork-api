@@ -26,33 +26,40 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
+
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.SpawnSettings;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
 public class WorldEvents implements ModInitializer {
-	public static boolean onCreateWorldSpawn(WorldAccess world, LevelInfo settings) {
+	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+		MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+	}
+
+	public static boolean onCreateWorldSpawn(WorldAccess world, ServerWorldProperties settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
 
-	public static List<Biome.SpawnEntry> getPotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<Biome.SpawnEntry> oldSpawns) {
+	public static List<SpawnSettings.SpawnEntry> getPotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<SpawnSettings.SpawnEntry> oldSpawns) {
 		WorldEvent.PotentialSpawns event = new WorldEvent.PotentialSpawns(world, type, pos, oldSpawns);
 
 		if (MinecraftForge.EVENT_BUS.post(event)) {
@@ -97,7 +104,7 @@ public class WorldEvents implements ModInitializer {
 		ServerWorldEvents.LOAD.register((server, world) -> {
 			// Fabric fires this much earlier than Forge does for the overworld
 			// So, we're going to manually fire it for the overworld.
-			if (world.getDimension().getType() != DimensionType.OVERWORLD) {
+			if (world.getRegistryKey() != World.OVERWORLD) {
 				onWorldLoad(world);
 			}
 		});

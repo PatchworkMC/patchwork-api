@@ -19,30 +19,26 @@
 
 package net.patchworkmc.mixin.event.world;
 
-import java.util.function.Supplier;
-
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.MutableWorldProperties;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.level.LevelInfo;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
-@Mixin(ServerWorld.class)
-public abstract class MixinServerWorld extends World {
-	protected MixinServerWorld(MutableWorldProperties properties, RegistryKey<World> registryRef, DimensionType dimensionType, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
-		super(properties, registryRef, dimensionType, profiler, isClient, debugWorld, seed);
-	}
+@Mixin(LevelInfo.class)
+public abstract class MixinLevelInfo {
+	@Shadow
+	@Final
+	private Difficulty difficulty;
 
-	@Inject(method = "save", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerChunkManager.save(Z)V"))
-	private void hookSave(CallbackInfo info) {
-		WorldEvents.onWorldSave((ServerWorld) (Object) this);
+	@Inject(method = "withDifficulty", at = @At("HEAD"))
+	private void onDifficultyChange(Difficulty difficulty, CallbackInfoReturnable<LevelInfo> info) {
+		WorldEvents.onDifficultyChange(difficulty, this.difficulty);
 	}
 }

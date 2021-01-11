@@ -29,13 +29,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SaplingBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.server.world.ServerWorld;
+
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(SaplingBlock.class)
-public class MixinSaplingBlock {
-	@Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/sapling/SaplingGenerator;generate(Lnet/minecraft/world/IWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Ljava/util/Random;)Z"), cancellable = true)
-	private void onGenerateTree(WorldAccess world, BlockPos pos, BlockState state, Random random, CallbackInfo ci) {
+public abstract class MixinSaplingBlock {
+	@Inject(method = "generate", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/sapling/SaplingGenerator;generate(Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Ljava/util/Random;)Z"), cancellable = true)
+	private void onGenerateTree(ServerWorld world, BlockPos pos, BlockState blockState, Random random, CallbackInfo ci) {
 		if (!WorldEvents.onSaplingGrowTree(world, random, pos)) {
 			ci.cancel();
 		}

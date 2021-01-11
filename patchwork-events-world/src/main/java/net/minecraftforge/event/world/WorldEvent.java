@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -36,15 +37,14 @@ import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ProgressListener;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.biome.Biome.SpawnEntry;
+import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
+import net.minecraft.world.level.ServerWorldProperties;
 
 /**
  * WorldEvent is fired when an event involving the world occurs.
@@ -71,8 +71,8 @@ public class WorldEvent extends Event {
 	 * WorldEvent.Load is fired when Minecraft loads a world.
 	 *
 	 * <p>This event is fired when a world is loaded in
-	 * {@link ClientWorld#ClientWorld(ClientPlayNetworkHandler, LevelInfo, DimensionType, int, Profiler, WorldRenderer)},
-	 * {@link MinecraftServer#createWorlds(WorldSaveHandler, LevelProperties, LevelInfo, WorldGenerationProgressListener)},
+	 * {@link ClientWorld#ClientWorld(ClientPlayNetworkHandler, ClientWorld.Properties, RegistryKey, DimensionType, int, Supplier, WorldRenderer, boolean, long)},
+	 * {@link MinecraftServer#createWorlds(WorldGenerationProgressListener)},
 	 * TODO: {@link DimensionManager#initDimension(int)}</p>
 	 *
 	 * <p>This event is not cancellable.</p>
@@ -129,25 +129,25 @@ public class WorldEvent extends Event {
 	/**
 	 * Called by {@link ServerWorld} to gather a list of all possible entities that can spawn at the specified location.
 	 * If an entry is added to the list, it needs to be a globally unique instance.
-	 * The event is called in {@link SpawnHelper#pickRandomSpawnEntry(ChunkGenerator, SpawnGroup, Random, BlockPos)} as well as
-	 * {@link SpawnHelper#containsSpawnEntry(ChunkGenerator, SpawnGroup, SpawnEntry, BlockPos)}
+	 * The event is called in {@link SpawnHelper#pickRandomSpawnEntry(ServerWorld, StructureAccessor, ChunkGenerator, SpawnGroup, Random, BlockPos)} as well as
+	 * {@link SpawnHelper#containsSpawnEntry(ServerWorld, StructureAccessor, ChunkGenerator, SpawnGroup, SpawnSettings.SpawnEntry, BlockPos)}
 	 * where the latter checks for identity, meaning both events must add the same instance.
 	 * Canceling the event will result in a empty list, meaning no entity will be spawned.
 	 */
 	public static class PotentialSpawns extends WorldEvent {
 		private final SpawnGroup type;
 		private final BlockPos pos;
-		private final List<SpawnEntry> list;
+		private final List<SpawnSettings.SpawnEntry> list;
 
-		public PotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<SpawnEntry> oldList) {
+		public PotentialSpawns(WorldAccess world, SpawnGroup type, BlockPos pos, List<SpawnSettings.SpawnEntry> oldList) {
 			super(world);
 			this.pos = pos;
 			this.type = type;
 
 			if (oldList != null) {
-				this.list = new ArrayList<SpawnEntry>(oldList);
+				this.list = new ArrayList<>(oldList);
 			} else {
-				this.list = new ArrayList<SpawnEntry>();
+				this.list = new ArrayList<>();
 			}
 		}
 
@@ -159,7 +159,7 @@ public class WorldEvent extends Event {
 			return pos;
 		}
 
-		public List<SpawnEntry> getList() {
+		public List<SpawnSettings.SpawnEntry> getList() {
 			return list;
 		}
 
@@ -170,18 +170,18 @@ public class WorldEvent extends Event {
 	}
 
 	/**
-	 * Called by ServerWorld when it attempts to create a spawnpoint for a dimension.
+	 * Called by {@link ServerWorld} when it attempts to create a spawnpoint for a dimension.
 	 * Canceling the event will prevent the vanilla code from running.
 	 */
 	public static class CreateSpawnPosition extends WorldEvent {
-		private final LevelInfo settings;
+		private final ServerWorldProperties settings;
 
-		public CreateSpawnPosition(WorldAccess world, LevelInfo settings) {
+		public CreateSpawnPosition(WorldAccess world, ServerWorldProperties settings) {
 			super(world);
 			this.settings = settings;
 		}
 
-		public LevelInfo getSettings() {
+		public ServerWorldProperties getSettings() {
 			return settings;
 		}
 

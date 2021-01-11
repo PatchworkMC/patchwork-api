@@ -19,27 +19,26 @@
 
 package net.patchworkmc.mixin.event.world;
 
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkManager;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelProperties;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(ClientWorld.class)
 public abstract class MixinClientWorld extends World {
-	protected MixinClientWorld(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
-		super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
+	protected MixinClientWorld(MutableWorldProperties properties, RegistryKey<World> registryRef, DimensionType dimensionType, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
+		super(properties, registryRef, dimensionType, profiler, isClient, debugWorld, seed);
 	}
 
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
