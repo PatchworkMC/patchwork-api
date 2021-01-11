@@ -24,35 +24,26 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.server.WorldGenerationProgressListener;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.SpawnHelper;
-
-import net.minecraft.world.WorldSaveHandler;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
-
-import net.minecraft.world.level.LevelInfo;
-
-import net.minecraft.world.level.LevelProperties;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
-import net.minecraft.util.ProgressListener;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.server.WorldGenerationProgressListener;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ProgressListener;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.SpawnSettings;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.ServerWorldProperties;
 
 /**
