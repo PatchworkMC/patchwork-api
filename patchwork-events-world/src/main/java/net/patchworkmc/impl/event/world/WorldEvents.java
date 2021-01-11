@@ -105,7 +105,6 @@ public class WorldEvents implements ModInitializer {
 			// Fabric fires this much earlier than Forge does for the overworld
 			// So, we're going to manually fire it for the overworld.
 			if (world.getRegistryKey() != World.OVERWORLD) {
-				System.out.println(world.getRegistryKey());
 				onWorldLoad(world);
 			}
 		});

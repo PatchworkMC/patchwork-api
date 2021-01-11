@@ -47,13 +47,14 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.ServerWorldProperties;
 
 /**
- * WorldEvent is fired when an event involving the world occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
- * receive every child event of this class.<br>
- * <br>
- * {@link #world} contains the World this event is occurring in.<br>
- * <br>
- * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ * WorldEvent is fired when an event involving the world occurs.
+ *
+ * <p>If a method utilizes this {@link Event} as its parameter, the method will
+ * receive every child event of this class.</p>
+ *
+ * <p>{@link #world} contains the World this event is occurring in.</p>
+ *
+ * <p>All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.</p>
  */
 public class WorldEvent extends Event {
 	private final WorldAccess world;
