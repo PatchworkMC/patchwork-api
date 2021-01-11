@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.Chunk;
 
@@ -61,7 +62,7 @@ public class ChunkEvent extends WorldEvent {
 	 * <br>
 	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
 	 * <br>
-	 * This event does not have a result. {@link HasResult} <br>
+	 * This event does not have a result.<br>
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
 	 */
@@ -89,4 +90,3 @@ public class ChunkEvent extends WorldEvent {
 		}
 	}
 }
-

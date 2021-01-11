@@ -31,6 +31,7 @@ import net.minecraft.util.math.ChunkPos;
  * receive every child event of this class.<br>
  * <br>
  * {@link #pos} contains the ChunkPos of the Chunk this event is affecting.<br>
+ * {@link #world} contains the World of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
  * <br>
  * The {@link #player}'s world may not be the same as the world of the chunk

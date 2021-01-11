@@ -19,6 +19,7 @@
 
 package net.patchworkmc.mixin.event.world;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,7 +42,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(ThreadedAnvilChunkStorage.class)
-public class MixinThreadedAnvilChunkStorage {
+public abstract class MixinThreadedAnvilChunkStorage {
+	@Final
 	@Shadow
 	private ServerWorld world;
 
@@ -52,14 +54,14 @@ public class MixinThreadedAnvilChunkStorage {
 		}
 	}
 
-	// Lambda in "private CompletableFuture<Either<Chunk, Unloaded>> method_20619(ChunkPos chunkPos)"
+	// Lambda in "private CompletableFuture<Either<Chunk, Unloaded>> loadChunk(ChunkPos chunkPos)"
 	//   chunk.setLastSaveTime(this.world.getTime());
 	// + MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
 	//   return Either.left(chunk);
 	@SuppressWarnings("rawtypes")
 	@Inject(method = "method_17256", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "INVOKE", shift = Shift.AFTER, ordinal = 0, target =
 			"net/minecraft/world/chunk/Chunk.setLastSaveTime(J)V"))
-	public void onServerChunkLoad(ChunkPos chunkPos, CallbackInfoReturnable cir, CompoundTag compoundTag, boolean bl, Chunk chunk) {
+	public void onServerChunkLoad(ChunkPos chunkPos, CallbackInfoReturnable info, CompoundTag compoundTag, boolean bl, Chunk chunk) {
 		// Fire ChunkEvent.Load on server side
 		MinecraftForge.EVENT_BUS.post(new ChunkEvent.Load(chunk));
 	}

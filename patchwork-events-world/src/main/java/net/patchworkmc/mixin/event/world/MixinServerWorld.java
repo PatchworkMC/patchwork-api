@@ -19,7 +19,7 @@
 
 package net.patchworkmc.mixin.event.world;
 
-import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,33 +29,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkManager;
-import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
-import net.minecraft.world.level.LevelProperties;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.MutableWorldProperties;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(ServerWorld.class)
 public abstract class MixinServerWorld extends World {
-	protected MixinServerWorld(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
-		super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
+	protected MixinServerWorld(MutableWorldProperties properties, RegistryKey<World> registryRef, DimensionType dimensionType, Supplier<Profiler> profiler, boolean isClient, boolean debugWorld, long seed) {
+		super(properties, registryRef, dimensionType, profiler, isClient, debugWorld, seed);
 	}
 
-	@Inject(method = "save", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerChunkManager.save (Z)V"))
+	@Inject(method = "save", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerChunkManager.save(Z)V"))
 	private void hookSave(CallbackInfo info) {
 		WorldEvents.onWorldSave((ServerWorld) (Object) this);
-	}
-
-	// TODO: consider adding a shift to before obtaining the ChunkManager to match forge more closely
-	// I don't think it'll make much of a difference.
-	@Inject(method = "init", cancellable = true, at = @At(value = "INVOKE", target = "net/minecraft/world/gen/chunk/ChunkGenerator.getBiomeSource ()Lnet/minecraft/world/biome/source/BiomeSource;"))
-	private void hookInitForCreateWorldSpawn(LevelInfo levelInfo, CallbackInfo info) {
-		ServerWorld world = (ServerWorld) (Object) this;
-
-		if (WorldEvents.onCreateWorldSpawn(world, levelInfo)) {
-			info.cancel();
-		}
 	}
 }

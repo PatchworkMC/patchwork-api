@@ -25,7 +25,10 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.Difficulty;
+
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
@@ -41,14 +44,18 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.level.LevelInfo;
+import net.minecraft.world.level.ServerWorldProperties;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 
 public class WorldEvents implements ModInitializer {
-	public static boolean onCreateWorldSpawn(WorldAccess world, LevelInfo settings) {
+	public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+		MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+	}
+
+	public static boolean onCreateWorldSpawn(WorldAccess world, ServerWorldProperties settings) {
 		return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
 	}
 
