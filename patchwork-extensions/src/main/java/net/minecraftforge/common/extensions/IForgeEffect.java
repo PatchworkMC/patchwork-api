@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
@@ -73,12 +74,13 @@ public interface IForgeEffect {
 	 *
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @param gui    the gui instance
+	 * @param mStack the MatrixStack
 	 * @param x      the x coordinate
 	 * @param y      the y coordinate
 	 * @param z      the z level
 	 */
 	@Environment(EnvType.CLIENT)
-	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, int x, int y, float z) {
+	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, MatrixStack mStack, int x, int y, float z) {
 	}
 
 	/**
@@ -87,13 +89,14 @@ public interface IForgeEffect {
 	 *
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @param gui    the gui instance
+	 * @param mStack the MatrixStack
 	 * @param x      the x coordinate
 	 * @param y      the y coordinate
 	 * @param z      the z level
 	 * @param alpha  the alpha value, blinks when the {@link StatusEffect} is about to run out
 	 */
 	@Environment(EnvType.CLIENT)
-	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, int x, int y, float z, float alpha) {
+	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, MatrixStack mStack, int x, int y, float z, float alpha) {
 	}
 
 	/**

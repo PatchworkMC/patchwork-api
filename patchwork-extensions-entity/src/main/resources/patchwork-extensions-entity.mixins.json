@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.entity",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinEntity",
+    "MixinEntityType",
+    "MixinEntityTypeBuilder",
+    "MixinLivingEntity",
+    "MixinProjectileUtil",
+    "MixinServerPlayerEntity",
+    "MixinServerWorld",
+    "MixinSpawnHelper"
+  ],
+  "client": [
+    "MixinClientWorld",
+    "MixinLivingEntityRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
