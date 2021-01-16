@@ -25,7 +25,6 @@ A clear and concise description of what you expected to happen.
 
 **Screenshots or Crash Report**
 If applicable, add screenshots to help explain your problem.
-Otherwise, put your crash report on a website like pastebin.com and link it here.
-
+Otherwise, put your crash report on a website like pastebin.com and link it here. ***IF YOU DO NOT PUT YOUR CRASH REPORT IN A PASTE SITE, YOUR ISSUE WILL BE CLOSED AS INVALID***
 **Additional context**
 Add any other context about the problem here.
