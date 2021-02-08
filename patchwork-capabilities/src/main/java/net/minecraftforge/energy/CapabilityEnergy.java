@@ -33,12 +33,13 @@ public class CapabilityEnergy {
 	public static Capability<IEnergyStorage> ENERGY = null;
 
 	public static void register() {
+		// TODO: This might not register before it's needed, double check that
 		CapabilityRegisteredCallback.event(IEnergyStorage.class).register(cap -> ENERGY = cap);
 
 		CapabilityManager.INSTANCE.register(IEnergyStorage.class, new IStorage<IEnergyStorage>() {
 					@Override
 					public Tag writeNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, Direction side) {
-						return new IntTag(instance.getEnergyStored());
+						return IntTag.of(instance.getEnergyStored());
 					}
 
 					@Override

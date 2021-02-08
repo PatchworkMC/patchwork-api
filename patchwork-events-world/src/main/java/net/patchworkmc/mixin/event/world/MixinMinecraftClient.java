@@ -32,7 +32,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(MinecraftClient.class)
-public class MixinMinecraftClient {
+public abstract class MixinMinecraftClient {
 	@Shadow
 	public ClientWorld world;
 
@@ -43,7 +43,7 @@ public class MixinMinecraftClient {
 		}
 	}
 
-	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, target = "net/minecraft/client/MinecraftClient.world : Lnet/minecraft/client/world/ClientWorld;"))
+	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At(value = "FIELD", opcode = Opcodes.GETFIELD, ordinal = 0, target = "Lnet/minecraft/client/MinecraftClient;world:Lnet/minecraft/client/world/ClientWorld;"))
 	private void hookDisconnect(CallbackInfo info) {
 		if (this.world != null) {
 			WorldEvents.onWorldUnload(this.world);

@@ -1,0 +1,81 @@
+package net.patchworkmc.mixin.capability.provider;
+
+import net.minecraftforge.common.capabilities.CapabilityProvider;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.World;
+
+import net.patchworkmc.impl.capability.BaseCapabilityProvider;
+import net.patchworkmc.impl.capability.CapabilityProviderHolder;
+import net.patchworkmc.impl.capability.IForgeEntityDuck;
+
+// EntityEvent.EntityConstructing is fired before gatherCapabilities, so let's avoid potential conflicts
+// Disabled because Players rely on a bunch of extra logic changes because entity jank.
+// they weren't handled properly in 1.14.4, so in here let's just not handle them
+@Mixin(value = Entity.class, priority = 1100)
+public class MixinEntity implements CapabilityProviderHolder, IForgeEntityDuck {
+	@Shadow
+	public boolean removed;
+	@Unique
+	private final CapabilityProvider<?> internalProvider = new BaseCapabilityProvider<>(Entity.class, this);
+
+	@NotNull
+	@Override
+	public CapabilityProvider<?> patchwork$getCapabilityProvider() {
+		return internalProvider;
+	}
+
+	@Inject(method = "<init>", at = @At("TAIL"))
+	private void patchwork$callGatherCapabilities(EntityType<?> type, World world, CallbackInfo ci) {
+		this.gatherCapabilities();
+	}
+
+	@Inject(method = "toTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;writeCustomDataToTag(Lnet/minecraft/nbt/CompoundTag;)V",
+			ordinal = 0))
+	private void patchwork$callSerializeCaps(CompoundTag tag, CallbackInfoReturnable<CompoundTag> cir) {
+		CompoundTag caps = serializeCaps();
+
+		if (caps != null) {
+			caps.put("ForgeCaps", caps);
+		}
+	}
+
+	@Inject(method = "fromTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setGlowing(Z)V",
+			ordinal = 0, shift = At.Shift.AFTER))
+	private void patchwork$callDeserializeCaps(CompoundTag tag, CallbackInfo ci) {
+		if (tag.contains("ForgeCaps", 10)) {
+			deserializeCaps(tag.getCompound("ForgeCaps"));
+		}
+	}
+
+	@Inject(method = "remove", at = @At("TAIL"))
+	public void patchwork$invalidateCapsOnRemoval(CallbackInfo ci) {
+		this.invalidateCaps();
+	}
+
+	// TODO: forge-added method without a duck
+	//      and this could cause various other incompatibilities
+	public void remove(boolean keepData) {
+		this.removed = true;
+
+		if (!keepData) {
+			invalidateCaps();
+		}
+	}
+
+	@Override
+	public void revive() {
+		this.removed = false;
+		this.reviveCaps();
+	}
+}

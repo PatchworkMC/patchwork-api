@@ -13,8 +13,8 @@ def ENV = System.getenv()
 
 class Globals {
 	static def baseVersion = "0.11.0"
-	static def mcVersion = "1.16.4"
-	static def yarnVersion = "+build.7"
+	static def mcVersion = "1.16.5"
+	static def yarnVersion = "+build.1"
 }
 version = Globals.baseVersion //+ "+" + (ENV.BUILD_NUMBER ? ("build." + ENV.BUILD_NUMBER) : "local") + "-" + getBranch()
 
@@ -60,19 +60,18 @@ allprojects {
 	}
 
 	repositories {
-		maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
+		maven { url 'https://maven.patchworkmc.net' }
 	}
 
 	dependencies {
 		minecraft "com.mojang:minecraft:$Globals.mcVersion"
 		mappings "net.fabricmc:yarn:${Globals.mcVersion}${Globals.yarnVersion}:v2"
-		modImplementation "net.fabricmc:fabric-loader:0.10.8"
-		modImplementation "net.fabricmc.fabric-api:fabric-api:0.29.0+1.16"
+		modImplementation "net.fabricmc:fabric-loader:0.11.1"
+		modImplementation "net.fabricmc.fabric-api:fabric-api:0.30.0+1.16"
 
-		implementation 'net.patchworkmc:patchwork-eventbus:2.0.1:all'
+		implementation 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 		implementation 'com.electronwill.night-config:toml:3.6.2'
-		implementation 'net.jodah:typetools:0.6.0'
 	}
 
 	configurations {
@@ -119,7 +118,7 @@ allprojects {
 
 	checkstyle {
 		configFile = rootProject.file("checkstyle.xml")
-		toolVersion = '8.36.2'
+		toolVersion = '8.39'
 	}
 }
 
@@ -254,7 +253,7 @@ repositories {
 		dirs 'jars'
 	}
 	mavenCentral()
-	maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
+	maven { url 'https://maven.patchworkmc.net' }
 }
 
 dependencies {
@@ -267,7 +266,7 @@ dependencies {
 
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
-	include 'net.patchworkmc:patchwork-eventbus:2.0.0:all'
+	include 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
 }
 
 loom {

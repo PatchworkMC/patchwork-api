@@ -20,19 +20,16 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
+import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -45,22 +42,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.CollisionView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 import net.minecraft.world.explosion.Explosion;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.patchworkmc.annotations.Stubbed;
+
+// Remember to remove @Stubbed from the IForgeBlock method too
 public interface IForgeBlockState {
 	default BlockState getBlockState() {
 		return (BlockState) this;
@@ -71,7 +69,7 @@ public interface IForgeBlockState {
 	}
 
 	/**
-	 * Gets the slipperiness at the given location of this state. Normally
+	 * Gets the slipperiness at the given location at the given state. Normally
 	 * between 0 and 1.
 	 *
 	 * <p>Note that entities may reduce slipperiness by a certain factor of their own;
@@ -84,14 +82,16 @@ public interface IForgeBlockState {
 	 * @param entity the entity in question
 	 * @return the factor by which the entity's motion should be multiplied
 	 */
-	default float getSlipperiness(CollisionView world, BlockPos pos, @Nullable Entity entity) {
+	@Stubbed
+	default float getSlipperiness(WorldView world, BlockPos pos, @Nullable Entity entity) {
 		return patchwork$getForgeBlock().getSlipperiness(getBlockState(), world, pos, entity);
 	}
 
 	/**
-	 * Get a light value for this block, taking into account the state and coordinates, normal ranges are between 0 and 15.
+	 * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
 	 */
-	default int getLightValue(BlockRenderView world, BlockPos pos) {
+	@Stubbed
+	default int getLightValue(BlockView world, BlockPos pos) {
 		return patchwork$getForgeBlock().getLightValue(getBlockState(), world, pos);
 	}
 
@@ -103,54 +103,39 @@ public interface IForgeBlockState {
 	 * @param entity The entity trying to use the ladder, CAN be null.
 	 * @return True if the block should act like a ladder
 	 */
-	default boolean isLadder(CollisionView world, BlockPos pos, LivingEntity entity) {
+	@Stubbed
+	default boolean isLadder(WorldView world, BlockPos pos, LivingEntity entity) {
 		return patchwork$getForgeBlock().isLadder(getBlockState(), world, pos, entity);
 	}
 
-	// deprecated for removal in 1.15, don't bother implementing
 	/**
-	 * Check if the face of a block should block rendering.
+	 * Called throughout the code as a replacement for block instanceof BlockContainer
+	 * Moving this to the Block base class allows for mods that wish to extend vanilla
+	 * blocks, and also want to have a tile entity on that block, may.
+	 * <p>
+	 * Return true from this function to specify this block has a tile entity.
 	 *
-	 * <p>Faces which are fully opaque should return true, faces with transparency
-	 * or faces which do not span the full size of the block should return false.
-	 *
-	 * @param world The current world
-	 * @param pos   Block position in world
-	 * @param face  The side to check
-	 * @return True if the block is opaque on the specified side.
-	 * @deprecated This is no longer used for rendering logic.
+	 * @return True if block has a tile entity, false otherwise
 	 */
-	@Deprecated
-	default boolean doesSideBlockRendering(BlockRenderView world, BlockPos pos, Direction face) {
-		return patchwork$getForgeBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
-	}
-
-	/**
-	 * Called throughout the code as a replacement for {@code block instanceof} {@link BlockEntityProvider}.
-	 * Allows for blocks to have a block entity conditionally based on block state.
-	 *
-	 * <p>Return true from this function to specify this block has a block entity.
-	 *
-	 * @return True if block has a block entity, false otherwise
-	 */
+	// Implemented through mass asm
 	default boolean hasTileEntity() {
 		return patchwork$getForgeBlock().hasTileEntity(getBlockState());
 	}
 
 	/**
-	 * Called throughout the code as a replacement for {@link BlockEntityProvider#createBlockEntity(BlockView)}
+	 * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
 	 * Return the same thing you would from that function.
-	 * This will fall back to {@link BlockEntityProvider#createBlockEntity(BlockView)} if this block is a {@link BlockEntityProvider}
+	 * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
 	 *
-	 * @param world The world to create the BE in
-	 * @return An instance of a class extending {@link BlockEntity}
+	 * @param world The world to create the TE in
+	 * @return A instance of a class extending TileEntity
 	 */
 	@Nullable
+	// Implemented through mass asm
 	default BlockEntity createTileEntity(BlockView world) {
 		return patchwork$getForgeBlock().createTileEntity(getBlockState(), world);
 	}
 
-	/* TODO IForgeBlockState#canHarvestBlock indirectly requires ToolType */
 	/**
 	 * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
 	 *
@@ -159,6 +144,7 @@ public interface IForgeBlockState {
 	 * @param player The player damaging the block
 	 * @return True to spawn the drops
 	 */
+	@Stubbed
 	default boolean canHarvestBlock(BlockView world, BlockPos pos, PlayerEntity player) {
 		return patchwork$getForgeBlock().canHarvestBlock(getBlockState(), world, pos, player);
 	}
@@ -168,20 +154,21 @@ public interface IForgeBlockState {
 	 * actually destroying the block, and the block is intact at time of call.
 	 * This is called regardless of whether the player can harvest the block or
 	 * not.
-	 *
-	 * <p>Return true if the block is actually destroyed.
-	 *
-	 * <p>Note: When used in multiplayer, this is called on both client and
+	 * <p>
+	 * Return true if the block is actually destroyed.
+	 * <p>
+	 * Note: When used in multiplayer, this is called on both client and
 	 * server sides!
 	 *
 	 * @param world       The current world
-	 * @param pos         Block position in world
 	 * @param player      The player damaging the block, may be null
-	 * @param willHarvest True if {@link Block#onBroken(WorldAccess, BlockPos, BlockState)} will be called after this if this method returns true.
-	 *                    Can be useful to delay the destruction of block entities till after onBroken
-	 * @param fluid       The current fluid state at current position
+	 * @param pos         Block position in world
+	 * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
+	 *                    Can be useful to delay the destruction of tile entities till after harvestBlock
+	 * @param fluid       The current fluid and block state for the position in the world.
 	 * @return True if the block is actually destroyed.
 	 */
+	@Stubbed
 	default boolean removedByPlayer(World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 		return patchwork$getForgeBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest, fluid);
 	}
@@ -191,41 +178,43 @@ public interface IForgeBlockState {
 	 * players to sleep in it, though the block has to specifically
 	 * perform the sleeping functionality in it's activated event.
 	 *
-	 * @param world  The current world
-	 * @param pos    Block position in world
-	 * @param player The player or camera entity, null in some cases.
+	 * @param world   The current world
+	 * @param pos     Block position in world
+	 * @param sleeper The sleeper or camera entity, null in some cases.
 	 * @return True to treat this as a bed
 	 */
-	default boolean isBed(BlockView world, BlockPos pos, @Nullable LivingEntity player) {
-		return patchwork$getForgeBlock().isBed(getBlockState(), world, pos, player);
+	@Stubbed
+	default boolean isBed(BlockView world, BlockPos pos, @Nullable LivingEntity sleeper) {
+		return patchwork$getForgeBlock().isBed(getBlockState(), world, pos, sleeper);
 	}
 
 	/**
 	 * Determines if a specified mob type can spawn on this block, returning false will
 	 * prevent any mob from spawning on the block.
 	 *
-	 * @param world        The current world
-	 * @param pos          Block position in world
-	 * @param restriction  The location spawn restriction
-	 * @param entityType   The type of entity attempting to spawn
+	 * @param world The current world
+	 * @param pos   Block position in world
+	 * @param type  The Mob Category Type
 	 * @return True to allow a mob of the specified category to spawn, false to prevent it.
 	 */
-	default boolean canCreatureSpawn(CollisionView world, BlockPos pos, Location restriction, EntityType<?> entityType) {
-		return patchwork$getForgeBlock().canCreatureSpawn(getBlockState(), world, pos, restriction, entityType);
+	@Stubbed
+	default boolean canCreatureSpawn(WorldView world, BlockPos pos, Location type, EntityType<?> entityType) {
+		return patchwork$getForgeBlock().canCreatureSpawn(getBlockState(), world, pos, type, entityType);
 	}
 
 	/**
 	 * Returns the position that the sleeper is moved to upon
 	 * waking up, or respawning at the bed.
 	 *
-	 * @param entityType the sleeper's entity type
-	 * @param world      The current world
-	 * @param pos        Block position in world
-	 * @param sleeper    The sleeper or camera entity, null in some cases.
+	 * @param world       The current world
+	 * @param pos         Block position in world
+	 * @param orientation The direction the entity is facing while getting into bed.
+	 * @param sleeper     The sleeper or camera entity, null in some cases.
 	 * @return The spawn position
 	 */
-	default Optional<Vec3d> getBedSpawnPosition(EntityType<?> type, CollisionView world, BlockPos pos, @Nullable LivingEntity sleeper) {
-		return patchwork$getForgeBlock().getBedSpawnPosition(type, getBlockState(), world, pos, sleeper);
+	@Stubbed
+	default Optional<Vec3d> getBedSpawnPosition(EntityType<?> type, WorldView world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper) {
+		return patchwork$getForgeBlock().getBedSpawnPosition(type, getBlockState(), world, pos, orientation, sleeper);
 	}
 
 	/**
@@ -236,41 +225,22 @@ public interface IForgeBlockState {
 	 * @param sleeper  The sleeper or camera entity, null in some cases.
 	 * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
 	 */
-	default void setBedOccupied(CollisionView world, BlockPos pos, LivingEntity sleeper, boolean occupied) {
+	@Stubbed
+	default void setBedOccupied(World world, BlockPos pos, LivingEntity sleeper, boolean occupied) {
 		patchwork$getForgeBlock().setBedOccupied(getBlockState(), world, pos, sleeper, occupied);
 	}
 
 	/**
 	 * Returns the direction of the block. Same values that
-	 * are returned by {@link net.minecraft.block.FacingBlock}. Called every frame tick for every living entity. Be VERY fast.
+	 * are returned by BlockDirectional
 	 *
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return Bed direction
 	 */
-	default Direction getBedDirection(CollisionView world, BlockPos pos) {
+	@Stubbed
+	default Direction getBedDirection(WorldView world, BlockPos pos) {
 		return patchwork$getForgeBlock().getBedDirection(getBlockState(), world, pos);
-	}
-
-	/**
-	 * Determines if the current block is the foot half of the bed.
-	 *
-	 * @param world The current world
-	 * @param pos   Block position in world
-	 * @return True if the current block is the foot side of a bed.
-	 */
-	default boolean isBedFoot(CollisionView world, BlockPos pos) {
-		return patchwork$getForgeBlock().isBedFoot(getBlockState(), world, pos);
-	}
-
-	/**
-	 * Called when a leaf should start its decay process.
-	 *
-	 * @param world The current world
-	 * @param pos   Block position in world
-	 */
-	default void beginLeaveDecay(CollisionView world, BlockPos pos) {
-		patchwork$getForgeBlock().beginLeaveDecay(getBlockState(), world, pos);
 	}
 
 	/**
@@ -282,7 +252,14 @@ public interface IForgeBlockState {
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return True if the block considered air
+	 * @deprecated TODO: Remove in 1.17, in favor of state only version. This is a old hook from before
+	 * block states were unlimited and people used TileEntities. If you still use the location
+	 * information in your TileEntity please explain why and how you can't use BlockState only version
+	 * here: https://github.com/MinecraftForge/MinecraftForge/issues/7409
 	 */
+	@Deprecated
+	// Don't bother implementing, getting removed in 1.17
+	@Stubbed
 	default boolean isAir(BlockView world, BlockPos pos) {
 		return patchwork$getForgeBlock().isAir(getBlockState(), world, pos);
 	}
@@ -294,46 +271,34 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return true if this block can be replaced by growing leaves.
 	 */
-	default boolean canBeReplacedByLeaves(CollisionView world, BlockPos pos) {
+	@Stubbed
+	default boolean canBeReplacedByLeaves(WorldView world, BlockPos pos) {
 		return patchwork$getForgeBlock().canBeReplacedByLeaves(getBlockState(), world, pos);
 	}
 
 	/**
 	 * Used during tree growth to determine if newly generated logs can replace this block.
 	 *
-	 * @param state The current state
 	 * @param world The current world
 	 * @param pos   Block position in world
 	 * @return true if this block can be replaced by growing leaves.
 	 */
-	default boolean canBeReplacedByLogs(CollisionView world, BlockPos pos) {
+	@Stubbed
+	default boolean canBeReplacedByLogs(WorldView world, BlockPos pos) {
 		return patchwork$getForgeBlock().canBeReplacedByLogs(getBlockState(), world, pos);
 	}
 
 	/**
-	 * Determines if the current block is replaceable by ore veins during world generation.
-	 *
-	 * @param world  The current world
-	 * @param pos    Block position in world
-	 * @param target The generic target block the gen is looking for, usually stone
-	 *               for overworld generation, and netherrack for the nether.
-	 * @return True to allow this block to be replaced by a ore
-	 */
-	default boolean isReplaceableOreGen(CollisionView world, BlockPos pos, Predicate<BlockState> target) {
-		return patchwork$getForgeBlock().isReplaceableOreGen(getBlockState(), world, pos, target);
-	}
-
-	/**
-	 * Location sensitive version of getExplosionResistance.
+	 * Location sensitive version of getExplosionResistance
 	 *
 	 * @param world     The current world
 	 * @param pos       Block position in world
-	 * @param exploder  The entity that caused the explosion, can be null
 	 * @param explosion The explosion
 	 * @return The amount of the explosion absorbed.
 	 */
-	default float getExplosionResistance(CollisionView world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
-		return patchwork$getForgeBlock().getExplosionResistance(getBlockState(), world, pos, exploder, explosion);
+	@Stubbed
+	default float getExplosionResistance(BlockView world, BlockPos pos, Explosion explosion) {
+		return patchwork$getForgeBlock().getExplosionResistance(getBlockState(), world, pos, explosion);
 	}
 
 	/**
@@ -345,65 +310,60 @@ public interface IForgeBlockState {
 	 * @param side  The side that is trying to make the connection, CAN BE NULL
 	 * @return True to make the connection
 	 */
+	@Stubbed
 	default boolean canConnectRedstone(BlockView world, BlockPos pos, @Nullable Direction side) {
 		return patchwork$getForgeBlock().canConnectRedstone(getBlockState(), world, pos, side);
 	}
 
 	/**
-	 * Called when a user uses the creative pick block button on this block.
+	 * Called when A user uses the creative pick block button on this block
 	 *
 	 * @param target The full target the player is looking at
-	 * @param world  The world the block is in
-	 * @param pos    The block's position
-	 * @param player The player picking the block
-	 * @return An {@link ItemStack} to add to the player's inventory, empty itemstack if nothing should be added.
+	 * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
 	 */
+	@Stubbed
 	default ItemStack getPickBlock(HitResult target, BlockView world, BlockPos pos, PlayerEntity player) {
 		return patchwork$getForgeBlock().getPickBlock(getBlockState(), target, world, pos, player);
 	}
 
 	/**
-	 * Forge javadoc only said where this was used. It isn't used anywhere, so there's really no way to document this.
-	 */
-	default boolean isFoliage(CollisionView world, BlockPos pos) {
-		return patchwork$getForgeBlock().isFoliage(getBlockState(), world, pos);
-	}
-
-	/**
-	 * Allows a block to override the standard {@link LivingEntity#fall} particles.
-	 * This is a server side method that spawns particles with
-	 * {@link ServerWorld#spawnParticles}
+	 * Allows a block to override the standard EntityLivingBase.updateFallState
+	 * particles, this is a server side method that spawns particles with
+	 * WorldServer.spawnParticle.
 	 *
-	 * @param serverworld       The {@link ServerWorld} this block is in.
+	 * @param worldserver       The current Server World
 	 * @param pos               The position of the block.
-	 * @param state2            This block's state, but again.
-	 * @param entity            The entity that landed on the block
-	 * @param numberOfParticles Number of particles the vanilla version of this method would spawn.
+	 * @param state2            The state at the specific world/pos
+	 * @param entity            The entity that hit landed on the block
+	 * @param numberOfParticles That vanilla world have spawned
 	 * @return True to prevent vanilla landing particles from spawning
 	 */
+	@Stubbed
 	default boolean addLandingEffects(ServerWorld worldserver, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
 		return patchwork$getForgeBlock().addLandingEffects(getBlockState(), worldserver, pos, state2, entity, numberOfParticles);
 	}
 
 	/**
 	 * Allows a block to override the standard vanilla running particles.
-	 * This is called from {@link Entity#spawnSprintingParticles} and is called both
-	 * client and server side, it's up to the implementor to client check / server check.
+	 * This is called from {@link Entity#spawnRunningParticles} and is called both,
+	 * Client and server side, it's up to the implementor to client check / server check.
 	 * By default vanilla spawns particles only on the client and the server methods no-op.
 	 *
 	 * @param world  The world.
-	 * @param pos    The position at the entity's feet.
+	 * @param pos    The position at the entities feet.
 	 * @param entity The entity running on the block.
 	 * @return True to prevent vanilla running particles from spawning.
 	 */
+	@Stubbed
 	default boolean addRunningEffects(World world, BlockPos pos, Entity entity) {
 		return patchwork$getForgeBlock().addRunningEffects(getBlockState(), world, pos, entity);
 	}
 
 	/**
 	 * Spawn a digging particle effect in the world, this is a wrapper
-	 * around {@link ParticleManager.addBlockBreakParticles} to allow the block more
-	 * control over the particles.
+	 * around EffectRenderer.addBlockHitEffects to allow the block more
+	 * control over the particles. Useful when you have entirely different
+	 * texture sheets for different sides/locations in the world.
 	 *
 	 * @param world   The current world
 	 * @param target  The target the player is looking at {x/y/z/side/sub}
@@ -411,6 +371,7 @@ public interface IForgeBlockState {
 	 * @return True to prevent vanilla digging particles form spawning.
 	 */
 	@Environment(EnvType.CLIENT)
+	@Stubbed
 	default boolean addHitEffects(World world, HitResult target, ParticleManager manager) {
 		return patchwork$getForgeBlock().addHitEffects(getBlockState(), world, target, manager);
 	}
@@ -427,6 +388,7 @@ public interface IForgeBlockState {
 	 * @return True to prevent vanilla break particles from spawning.
 	 */
 	@Environment(EnvType.CLIENT)
+	@Stubbed
 	default boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
 		return patchwork$getForgeBlock().addDestroyEffects(getBlockState(), world, pos, manager);
 	}
@@ -447,25 +409,10 @@ public interface IForgeBlockState {
 	 * @param plantable The plant that wants to check
 	 * @return True to allow the plant to be planted/stay.
 	 */
-	default boolean canSustainPlant(BlockView world, BlockPos pos, Direction facing, IPlantable plantable) {
-		return patchwork$getForgeBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
-	}
-
-	/**
-	 * Called when a plant grows on this block.
-	 * This does not use ForgeDirection, because large/huge trees can be located in non-representable direction,
-	 * so the source location is specified.
-	 * Currently this just changes the block to dirt if it was grass.
-	 *
-	 * <p>Note: This happens DURING the generation, the generation may not be complete when this is called.
-	 *
-	 * @param world  Current world
-	 * @param pos    Block position in world
-	 * @param source Source plant's position in world
-	 */
-	default void onPlantGrow(WorldAccess world, BlockPos pos, BlockPos source) {
-		patchwork$getForgeBlock().onPlantGrow(getBlockState(), world, pos, source);
-	}
+	//@Stubbed
+	//default boolean canSustainPlant(BlockView world, BlockPos pos, Direction facing, IPlantable plantable) {
+	//	return patchwork$getForgeBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
+	//}
 
 	/**
 	 * Checks if this soil is fertile, typically this means that growth rates
@@ -476,35 +423,50 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return True if the soil should be considered fertile.
 	 */
+	@Stubbed
 	default boolean isFertile(BlockView world, BlockPos pos) {
 		return patchwork$getForgeBlock().isFertile(getBlockState(), world, pos);
 	}
 
 	/**
-	 * Determines if this block can be used as the base of a beacon.
+	 * Determines if this block can be used as the frame of a conduit.
 	 *
-	 * @param world  The current world
-	 * @param pos    Block position in world
-	 * @param beacon Beacon position in world
-	 * @return True, to support the beacon, and make it active with this block.
+	 * @param world   The current world
+	 * @param pos     Block position in world
+	 * @param conduit Conduit position in world
+	 * @return True, to support the conduit, and make it active with this block.
 	 */
-	default boolean isBeaconBase(CollisionView world, BlockPos pos, BlockPos beacon) {
-		return patchwork$getForgeBlock().isBeaconBase(getBlockState(), world, pos, beacon);
+	@Stubbed
+	default boolean isConduitFrame(WorldView world, BlockPos pos, BlockPos conduit) {
+		return patchwork$getForgeBlock().isConduitFrame(getBlockState(), world, pos, conduit);
+	}
+
+	/**
+	 * Determines if this block can be used as part of a frame of a nether portal.
+	 *
+	 * @param world The current world
+	 * @param pos   Block position in world
+	 * @return True, to support being part of a nether portal frame, false otherwise.
+	 */
+	@Stubbed
+	default boolean isPortalFrame(BlockView world, BlockPos pos) {
+		return patchwork$getForgeBlock().isPortalFrame(getBlockState(), world, pos);
 	}
 
 	/**
 	 * Gathers how much experience this block drops when broken.
 	 *
-	 * @param world     The world
-	 * @param pos       Block position
-	 * @param fortune   Level of fortune on the breaker's tool
-	 * @param silktouch Level of silk touch on the breaker's tool
+	 * @param world   The world
+	 * @param pos     Block position
+	 * @param fortune
 	 * @return Amount of XP from breaking this block.
 	 */
-	default int getExpDrop(CollisionView world, BlockPos pos, int fortune, int silktouch) {
+	@Stubbed
+	default int getExpDrop(WorldView world, BlockPos pos, int fortune, int silktouch) {
 		return patchwork$getForgeBlock().getExpDrop(getBlockState(), world, pos, fortune, silktouch);
 	}
 
+	@Stubbed
 	default BlockState rotate(WorldAccess world, BlockPos pos, BlockRotation direction) {
 		return patchwork$getForgeBlock().rotate(getBlockState(), world, pos, direction);
 	}
@@ -516,32 +478,20 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return The amount of enchanting power this block produces.
 	 */
-	default float getEnchantPowerBonus(CollisionView world, BlockPos pos) {
+	@Stubbed
+	default float getEnchantPowerBonus(WorldView world, BlockPos pos) {
 		return patchwork$getForgeBlock().getEnchantPowerBonus(getBlockState(), world, pos);
 	}
 
 	/**
-	 * Re-colors this block in the world.
-	 *
-	 * @param state   The current state
-	 * @param world   The world
-	 * @param pos     Block position
-	 * @param facing  ??? (this method has no usages)
-	 * @param color   Color to recolor to.
-	 * @return if the block was affected
-	 */
-	default boolean recolorBlock(WorldAccess world, BlockPos pos, Direction facing, DyeColor color) {
-		return patchwork$getForgeBlock().recolorBlock(getBlockState(), world, pos, facing, color);
-	}
-
-	/**
-	 * Called when a block entity on a side of this block changes is created or is destroyed.
+	 * Called when a tile entity on a side of this block changes is created or is destroyed.
 	 *
 	 * @param world    The world
 	 * @param pos      Block position in world
 	 * @param neighbor Block position of neighbor
 	 */
-	default void onNeighborChange(CollisionView world, BlockPos pos, BlockPos neighbor) {
+	@Stubbed
+	default void onNeighborChange(WorldView world, BlockPos pos, BlockPos neighbor) {
 		patchwork$getForgeBlock().onNeighborChange(getBlockState(), world, pos, neighbor);
 	}
 
@@ -554,6 +504,7 @@ public interface IForgeBlockState {
 	 * @param changed       The updated block.
 	 * @param changedPos    The updated block's position.
 	 */
+	@Stubbed
 	default void observedNeighborChange(World world, BlockPos pos, Block changed, BlockPos changedPos) {
 		patchwork$getForgeBlock().observedNeighborChange(getBlockState(), world, pos, changed, changedPos);
 	}
@@ -566,7 +517,8 @@ public interface IForgeBlockState {
 	 * @param side  The INPUT side of the block to be powered - ie the opposite of this block's output side
 	 * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
 	 */
-	default boolean shouldCheckWeakPower(CollisionView world, BlockPos pos, Direction side) {
+	@Stubbed
+	default boolean shouldCheckWeakPower(WorldView world, BlockPos pos, Direction side) {
 		return patchwork$getForgeBlock().shouldCheckWeakPower(getBlockState(), world, pos, side);
 	}
 
@@ -579,58 +531,44 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return true To be notified of changes
 	 */
-	default boolean getWeakChanges(CollisionView world, BlockPos pos) {
+	@Stubbed
+	default boolean getWeakChanges(WorldView world, BlockPos pos) {
 		return patchwork$getForgeBlock().getWeakChanges(getBlockState(), world, pos);
 	}
 
-	/* TODO IForgeBlockState#getHarvestTool needs ToolType */
 	/**
 	 * Queries the class of tool required to harvest this block, if null is returned
 	 * we assume that anything can harvest this block.
 	 */
+	@Stubbed
 	default ToolType getHarvestTool() {
 		return patchwork$getForgeBlock().getHarvestTool(getBlockState());
 	}
 
+	@Stubbed
 	default int getHarvestLevel() {
 		return patchwork$getForgeBlock().getHarvestLevel(getBlockState());
 	}
 
-	/* TODO IForgeBlockState#isToolEffective needs ToolType
 	/**
 	 * Checks if the specified tool type is efficient on this block,
 	 * meaning that it digs at full speed.
-	 *
+	 */
+	@Stubbed
 	default boolean isToolEffective(ToolType tool) {
 		return patchwork$getForgeBlock().isToolEffective(getBlockState(), tool);
-	}*/
-
-	/**
-	 * TODO: do not bother implementing hooks, deprecated since 1.13
-	 * Can return IExtendedBlockState.
-	 */
-	default BlockState getExtendedState(BlockView world, BlockPos pos) {
-		return patchwork$getForgeBlock().getExtendedState(getBlockState(), world, pos);
 	}
 
 	/**
-	 * TODO: do not bother implementing hooks, deprecated since 1.15
-	 * Queries if this block should render in a given layer.
-	 * A custom {@link net.minecraft.client.render.model.BakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
-	 */
-	default boolean canRenderInLayer(RenderLayer layer) {
-		return patchwork$getForgeBlock().canRenderInLayer(getBlockState(), layer);
-	}
-
-	/**
-	 * Sensitive version of {@link Block#getSoundType}.
+	 * Sensitive version of getSoundType
 	 *
 	 * @param world  The world
 	 * @param pos    The position. Note that the world may not necessarily have {@code state} here!
 	 * @param entity The entity that is breaking/stepping on/placing/hitting/falling on this block, or null if no entity is in this context
-	 * @return A {@link BlockSoundGroup} to use
+	 * @return A SoundType to use
 	 */
-	default BlockSoundGroup getSoundType(CollisionView world, BlockPos pos, @Nullable Entity entity) {
+	@Stubbed
+	default BlockSoundGroup getSoundType(WorldView world, BlockPos pos, @Nullable Entity entity) {
 		return patchwork$getForgeBlock().getSoundType(getBlockState(), world, pos, entity);
 	}
 
@@ -641,13 +579,14 @@ public interface IForgeBlockState {
 	 * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
 	 */
 	@Nullable
-	default float[] getBeaconColorMultiplier(CollisionView world, BlockPos pos, BlockPos beacon) {
+	@Stubbed
+	default float[] getBeaconColorMultiplier(WorldView world, BlockPos pos, BlockPos beacon) {
 		return patchwork$getForgeBlock().getBeaconColorMultiplier(getBlockState(), world, pos, beacon);
 	}
 
 	/**
 	 * Use this to change the fog color used when the entity is "inside" a material.
-	 * {@link Vec3d} is used here as "r/g/b" 0 - 1 values.
+	 * Vec3d is used here as "r/g/b" 0 - 1 values.
 	 *
 	 * @param world         The world.
 	 * @param pos           The position at the entity viewport.
@@ -656,12 +595,14 @@ public interface IForgeBlockState {
 	 * @return The new fog color.
 	 */
 	@Environment(EnvType.CLIENT)
-	default Vec3d getFogColor(CollisionView world, BlockPos pos, Entity entity, Vec3d originalColor, float partialTicks) {
+	@Stubbed
+	default Vec3d getFogColor(WorldView world, BlockPos pos, Entity entity, Vec3d originalColor, float partialTicks) {
 		return patchwork$getForgeBlock().getFogColor(getBlockState(), world, pos, entity, originalColor, partialTicks);
 	}
 
 	/**
-	 * Used to determine the state 'viewed' by an entity.
+	 * Used to determine the state 'viewed' by an entity (see
+	 * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
 	 * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
 	 *
 	 * @param world     the world
@@ -669,44 +610,38 @@ public interface IForgeBlockState {
 	 * @param viewpoint the viewpoint
 	 * @return the block state that should be 'seen'
 	 */
+	@Stubbed
 	default BlockState getStateAtViewpoint(BlockView world, BlockPos pos, Vec3d viewpoint) {
 		return patchwork$getForgeBlock().getStateAtViewpoint(getBlockState(), world, pos, viewpoint);
-	}
-
-	/**
-	 * Gets the {@link BlockState} to place.
-	 *
-	 * @param state  ??? (presumably this block's state, but it has not yet been placed?)
-	 * @param facing The side the block is being placed on
-	 * @param state2 ???
-	 * @param world  The world the block is being placed in
-	 * @param pos1   ??? (presumably where it's being placed)
-	 * @param pos2   ???
-	 * @param hand   The hand the block is being placed from
-	 * @return The state to be placed in the world
-	 */
-	default BlockState getStateForPlacement(Direction facing, BlockState state2, WorldAccess world, BlockPos pos1, BlockPos pos2, Hand hand) {
-		return patchwork$getForgeBlock().getStateForPlacement(getBlockState(), facing, state2, world, pos1, pos2, hand);
-	}
-
-	/**
-	 * Determines if another block can connect to this block.
-	 *
-	 * @param world  The current world
-	 * @param pos    The position of this block
-	 * @param facing The side the connecting block is on
-	 * @return True to allow another block to connect to this block
-	 */
-	default boolean canBeConnectedTo(BlockView world, BlockPos pos, Direction facing) {
-		return patchwork$getForgeBlock().canBeConnectedTo(getBlockState(), world, pos, facing);
 	}
 
 	/**
 	 * @param state The state
 	 * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
 	 */
+	@Stubbed
+	default boolean isSlimeBlock() {
+		return patchwork$getForgeBlock().isSlimeBlock(getBlockState());
+	}
+
+	/**
+	 * @param state The state
+	 * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
+	 */
+	@Stubbed
 	default boolean isStickyBlock() {
 		return patchwork$getForgeBlock().isStickyBlock(getBlockState());
+	}
+
+	/**
+	 * Determines if this block can stick to another block when pushed by a piston.
+	 *
+	 * @param other Other block
+	 * @return True to link blocks
+	 */
+	@Stubbed
+	default boolean canStickTo(BlockState other) {
+		return patchwork$getForgeBlock().canStickTo(getBlockState(), other);
 	}
 
 	/**
@@ -718,6 +653,7 @@ public interface IForgeBlockState {
 	 * @param face  The face that the fire is coming from
 	 * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
 	 */
+	@Stubbed
 	default int getFlammability(BlockView world, BlockPos pos, Direction face) {
 		return patchwork$getForgeBlock().getFlammability(getBlockState(), world, pos, face);
 	}
@@ -730,6 +666,7 @@ public interface IForgeBlockState {
 	 * @param face  The face that the fire is coming from
 	 * @return True if the face can be on fire, false otherwise.
 	 */
+	@Stubbed
 	default boolean isFlammable(BlockView world, BlockPos pos, Direction face) {
 		return patchwork$getForgeBlock().isFlammable(getBlockState(), world, pos, face);
 	}
@@ -742,6 +679,7 @@ public interface IForgeBlockState {
 	 * @param face    The face that the fire is coming from
 	 * @param igniter The entity that lit the fire
 	 */
+	@Stubbed
 	default void catchFire(World world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {
 		patchwork$getForgeBlock().catchFire(getBlockState(), world, pos, face, igniter);
 	}
@@ -755,6 +693,7 @@ public interface IForgeBlockState {
 	 * @param face  The face that the fire is coming from
 	 * @return A number that is used to determine the speed of fire growth around the block
 	 */
+	@Stubbed
 	default int getFireSpreadSpeed(BlockView world, BlockPos pos, Direction face) {
 		return patchwork$getForgeBlock().getFireSpreadSpeed(getBlockState(), world, pos, face);
 	}
@@ -769,7 +708,8 @@ public interface IForgeBlockState {
 	 * @param side  The face that the fire is coming from
 	 * @return True if this block sustains fire, meaning it will never go out.
 	 */
-	default boolean isFireSource(BlockView world, BlockPos pos, Direction side) {
+	@Stubbed
+	default boolean isFireSource(WorldView world, BlockPos pos, Direction side) {
 		return patchwork$getForgeBlock().isFireSource(getBlockState(), world, pos, side);
 	}
 
@@ -780,21 +720,9 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return True to allow the ender dragon to destroy this block
 	 */
+	@Stubbed
 	default boolean canEntityDestroy(BlockView world, BlockPos pos, Entity entity) {
 		return patchwork$getForgeBlock().canEntityDestroy(getBlockState(), world, pos, entity);
-	}
-
-	/**
-	 * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
-	 * Note, this is up to the block to decide. It may not be accurate or representative.
-	 *
-	 * @param world The world
-	 * @param pos   Block position in world
-	 * @return An array of valid axes to rotate around, or null for none or unknown
-	 */
-	@Nullable
-	default Direction[] getValidRotations(BlockView world, BlockPos pos) {
-		return patchwork$getForgeBlock().getValidRotations(getBlockState(), world, pos);
 	}
 
 	/**
@@ -805,16 +733,29 @@ public interface IForgeBlockState {
 	 * @param pos   Block position in world
 	 * @return True if the block should deal damage
 	 */
+	@Stubbed
 	default boolean isBurning(BlockView world, BlockPos pos) {
 		return patchwork$getForgeBlock().isBurning(getBlockState(), world, pos);
 	}
 
 	/**
-	 * Get the {@link PathNodeType} for this block. Return {@code null} for vanilla behavior.
+	 * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
 	 *
-	 * @return the {@link PathNodeType}
+	 * @return the PathNodeType
 	 */
 	@Nullable
+	@Stubbed
+	default PathNodeType getAiPathNodeType(BlockView world, BlockPos pos) {
+		return getAiPathNodeType(world, pos, null);
+	}
+
+	/**
+	 * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+	 *
+	 * @return the PathNodeType
+	 */
+	@Nullable
+	@Stubbed
 	default PathNodeType getAiPathNodeType(BlockView world, BlockPos pos, @Nullable MobEntity entity) {
 		return patchwork$getForgeBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
 	}
@@ -822,6 +763,7 @@ public interface IForgeBlockState {
 	/**
 	 * Determines if this block should drop loot when exploded.
 	 */
+	@Stubbed
 	default boolean canDropFromExplosion(BlockView world, BlockPos pos, Explosion explosion) {
 		return patchwork$getForgeBlock().canDropFromExplosion(getBlockState(), world, pos, explosion);
 	}
@@ -835,6 +777,7 @@ public interface IForgeBlockState {
 	 * @param pos       Block position in world
 	 * @param explosion The explosion instance affecting the block
 	 */
+	@Stubbed
 	default void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
 		patchwork$getForgeBlock().onBlockExploded(getBlockState(), world, pos, explosion);
 	}
@@ -843,7 +786,52 @@ public interface IForgeBlockState {
 	 * Determines if this block's collision box should be treated as though it can extend above its block space.
 	 * This can be used to replicate fence and wall behavior.
 	 */
+	@Stubbed
 	default boolean collisionExtendsVertically(BlockView world, BlockPos pos, Entity collidingEntity) {
 		return patchwork$getForgeBlock().collisionExtendsVertically(getBlockState(), world, pos, collidingEntity);
+	}
+
+	/**
+	 * Called to determine whether this block should use the fluid overlay texture or flowing texture when it is placed under the fluid.
+	 *
+	 * @param world      The world
+	 * @param pos        Block position in world
+	 * @param fluidState The state of the fluid
+	 * @return Whether the fluid overlay texture should be used
+	 */
+	@Stubbed
+	default boolean shouldDisplayFluidOverlay(BlockRenderView world, BlockPos pos, FluidState fluidState) {
+		return patchwork$getForgeBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
+	}
+
+	/**
+	 * Returns the state that this block should transform into when right clicked by a tool.
+	 * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+	 * Return null if vanilla behavior should be disabled.
+	 *
+	 * @param world     The world
+	 * @param pos       The block position in world
+	 * @param player    The player clicking the block
+	 * @param stack     The stack being used by the player
+	 * @param toolTypes The tool types to be considered when performing the action
+	 * @return The resulting state after the action has been performed
+	 */
+	@Nullable
+	@Stubbed
+	default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+		throw new NotImplementedException("getToolModifiedState not implemented");
+		//BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(getBlockState(), world, pos, player, stack, toolType);
+		//return eventState != getBlockState() ? eventState : patchwork$getForgeBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
+	}
+
+	/**
+	 * Checks if a player or entity handles movement on this block like scaffolding.
+	 *
+	 * @param entity The entity on the scaffolding
+	 * @return True if the block should act like scaffolding
+	 */
+	@Stubbed
+	default boolean isScaffolding(LivingEntity entity) {
+		return patchwork$getForgeBlock().isScaffolding(getBlockState(), entity.world, entity.getBlockPos(), entity);
 	}
 }

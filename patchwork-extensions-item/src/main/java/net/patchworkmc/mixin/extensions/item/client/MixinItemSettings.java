@@ -28,16 +28,21 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
 import net.minecraft.item.Item;
 
-import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
+import net.patchworkmc.api.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
-	@Unique private BuiltinModelItemRenderer teisr = BuiltinModelItemRenderer.INSTANCE;
+	@Unique
+	private BuiltinModelItemRenderer ister;
 
+	// NOTE: technically this is available on the server for forge
+	// you can tell cpw wrote this code because it abuses classloading and lambdas over @OnlyIn(Dist.CLIENT)
 	@Override
-	public Item.Settings setTEISR(Supplier<Callable<BuiltinModelItemRenderer>> teisr) {
+	public Item.Settings setISTER(Supplier<Callable<BuiltinModelItemRenderer>> ister) {
 		try {
-			this.teisr = teisr.get().call();
+			if (ister != null) {
+				this.ister = ister.get().call();
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -46,7 +51,7 @@ public abstract class MixinItemSettings implements PatchworkItemSettingsExtensio
 	}
 
 	@Override
-	public BuiltinModelItemRenderer getTeisr() {
-		return teisr;
+	public BuiltinModelItemRenderer patchwork$ISTER() {
+		return ister;
 	}
 }

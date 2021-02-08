@@ -1,6 +1,0 @@
-archivesBaseName = "patchwork-tooltype"
-version = getSubprojectVersion(project, "0.3.1")
-
-dependencies {
-	implementation project(path: ':patchwork-api-base', configuration: 'dev')
-}

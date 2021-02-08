@@ -24,14 +24,16 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
 
+import net.patchworkmc.api.capability.CapabilityProviderConvertible;
 import net.patchworkmc.impl.capability.CapabilityEvents;
 
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider<B> implements ICapabilityProvider {
+public abstract class CapabilityProvider<B> implements ICapabilityProvider, CapabilityProviderConvertible {
 	protected final Class<B> baseClass;
 	protected CapabilityDispatcher capabilities;
 	private boolean valid = true;
@@ -106,5 +108,11 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider {
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
 		final CapabilityDispatcher disp = getCapabilities();
 		return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
+	}
+
+	@NotNull
+	@Override
+	public CapabilityProvider<B> patchwork$getCapabilityProvider() {
+		return this;
 	}
 }

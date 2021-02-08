@@ -34,33 +34,44 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.thread.ReentrantThreadExecutor;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.level.ServerWorldProperties;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 
 @Mixin(MinecraftServer.class)
 public abstract class MixinMinecraftServer extends ReentrantThreadExecutor<ServerTask> {
-	public MixinMinecraftServer(String name) {
-		super(name);
-	}
-
 	@Shadow
 	@Final
-	private Map<DimensionType, ServerWorld> worlds;
+	private Map<RegistryKey<World>, ServerWorld> worlds;
 
-	// Fabric usually fires the event much earlier in the method, so this is just picking a point closer to when Forge would fire it.
-	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "net/minecraft/world/dimension/DimensionType.getAll ()Ljava/lang/Iterable;"))
-	private void fireLoadForOverworld(CallbackInfo info) {
-		WorldEvents.onWorldLoad(worlds.get(DimensionType.OVERWORLD));
+	public MixinMinecraftServer(String string) {
+		super(string);
 	}
 
-	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close ()V"))
+	// Fabric usually fires the event much earlier in the method, so this is just picking a point closer to when Forge would fire it.
+	@Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/SimpleRegistry;getEntries()Ljava/util/Set;"))
+	private void fireLoadForOverworld(CallbackInfo info) {
+		WorldEvents.onWorldLoad(worlds.get(World.OVERWORLD));
+	}
+
+	@Redirect(method = "shutdown", at = @At(value = "INVOKE", target = "net/minecraft/server/world/ServerWorld.close()V"))
 	private void proxyClose(ServerWorld world) throws IOException {
 		WorldEvents.onWorldUnload(world);
 		world.close();
 	}
 
-	// TODO: DimensionManager, and move this into a seperate module/*
+	// TODO: consider adding a shift to before obtaining the ChunkManager to match forge more closely
+	// I don't think it'll make much of a difference.
+	@Inject(method = "setupSpawn", cancellable = true, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/chunk/ChunkGenerator;getBiomeSource()Lnet/minecraft/world/biome/source/BiomeSource;"))
+	private static void onCreateWorldSpawn(ServerWorld world, ServerWorldProperties serverWorldProperties, boolean bonusChest, boolean debugWorld, boolean bl, CallbackInfo info) {
+		if (WorldEvents.onCreateWorldSpawn(world, serverWorldProperties)) {
+			info.cancel();
+		}
+	}
+
+	// TODO: DimensionManager, and move this into a separate module/*
 	/*@Inject(method = "createWorlds", at = @At(value = "HEAD"))
 	private void hookCreateWorldsForDimensionRegistration(CallbackInfo info) {
 		DimensionManager.fireRegister();

@@ -19,7 +19,6 @@
 
 package net.patchworkmc.mixin.extensions.item;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,8 +27,8 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.common.util.ReverseTagWrapper;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,35 +37,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.item.ModelPredicateProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tag.ItemTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 
-import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
+import net.patchworkmc.api.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.class)
 public abstract class MixinItem implements IForgeItem {
-	@Unique private Map<ToolType, Integer> toolClasses;
+	@Unique
+	private Map<ToolType, Integer> toolClasses;
+	// TODO: duck interface
 	protected boolean canRepair;
+	@Unique
+	private final ReverseTagWrapper<Item> reverseTags = new ReverseTagWrapper<>(this.getItem(), ItemTags::getTagGroup);
 
 	@Inject(at = @At("RETURN"), method = "<init>")
 	private void onConstruct(Item.Settings settings, CallbackInfo info) {
 		final PatchworkItemSettingsExtensions extension = (PatchworkItemSettingsExtensions) settings;
 
-		canRepair = extension.canRepair();
+		canRepair = extension.patchwork$canRepair();
 
 		toolClasses = Maps.newHashMap();
-		toolClasses.putAll(extension.getToolClasses());
-	}
-
-	@Redirect(method = "isEnchantable(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getMaxCount()I"))
-	private int getMaxCountForStack(Item item, ItemStack stack) {
-		return getItemStackLimit(stack);
+		toolClasses.putAll(extension.patchwork$toolTypes());
 	}
 
 	@Inject(method = "isIn(Lnet/minecraft/item/ItemGroup;)Z", at = @At("HEAD"), cancellable = true)
@@ -74,6 +70,11 @@ public abstract class MixinItem implements IForgeItem {
 		if (getCreativeTabs().contains(group)) {
 			info.setReturnValue(true);
 		}
+	}
+
+	@Redirect(method = "isEnchantable(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getMaxCount()I"))
+	private int useStateSensitiveGetMaxCount(Item item, ItemStack stack) {
+		return ((IForgeItem) item).getItemStackLimit(stack);
 	}
 
 	@Override
@@ -91,31 +92,8 @@ public abstract class MixinItem implements IForgeItem {
 		return toolClasses.getOrDefault(tool, -1);
 	}
 
-	@Shadow
-	Map<Identifier, ModelPredicateProvider> propertyGetters;
-
-	@Override
-	public Map<Identifier, ModelPredicateProvider> patchwork_getPropertyGetters() {
-		return propertyGetters;
-	}
-
-	@Unique Set<Identifier> cachedTags;
-	@Unique int tagVersion;
-
 	@Override
 	public Set<Identifier> getTags() {
-		if (cachedTags == null || tagVersion != ItemTagsAccessor.getLatestVersion()) {
-			this.cachedTags = new HashSet<>();
-
-			for (final Map.Entry<Identifier, Tag<Item>> entry : ItemTags.getTagGroup().getEntries().entrySet()) {
-				if (entry.getValue().contains((Item) (Object) this)) {
-					cachedTags.add(entry.getKey());
-				}
-			}
-
-			this.tagVersion = ItemTagsAccessor.getLatestVersion();
-		}
-
-		return this.cachedTags;
+		return reverseTags.getTagNames();
 	}
 }

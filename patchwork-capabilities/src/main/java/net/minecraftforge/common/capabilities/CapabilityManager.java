@@ -24,10 +24,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
+import net.minecraftforge.fml.Logging;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import net.patchworkmc.api.capability.CapabilityRegisteredCallback;
 
@@ -35,12 +34,10 @@ public enum CapabilityManager {
 	INSTANCE;
 
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static final Marker CAPABILITIES = MarkerManager.getMarker("Capabilities");
-
 	private final Map<String, Capability<?>> providers = new HashMap<>();
 
 	/**
-	 * Registers a {@link Capability} to be consumed by others.
+	 * Registers a capability to be consumed by others.
 	 * APIs who define the capability should call this.
 	 * To retrieve the Capability instance, use the @CapabilityInject annotation.
 	 * This method is safe to call during parallel mod loading.
@@ -58,7 +55,7 @@ public enum CapabilityManager {
 
 		synchronized (providers) {
 			if (providers.containsKey(realName)) {
-				LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times : {}", realName);
+				LOGGER.error(Logging.CAPABILITIES, "Cannot register a capability implementation multiple times : {}", realName);
 				throw new IllegalArgumentException("Cannot register a capability implementation multiple times : " + realName);
 			}
 

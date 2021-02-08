@@ -11,16 +11,10 @@
   "license": "LGPL-2.1-only",
   "environment": "*",
   "depends": {
-    "patchwork-api-base": "*",
-    "patchwork-enum-hacks": "*",
-    "patchwork-extensions-item": "*",
-    "patchwork-tooltype": "*"
+    "patchwork-api-base": "*"
   },
   "mixins": [
-    "patchwork-extensions-block.mixins.json",
-    "patchwork-extensions-block-blockentity.mixins.json",
-    "patchwork-extensions-block-flammable.mixins.json",
-    "patchwork-extensions-block-harvest.mixins.json"
+    "patchwork-extensions-block.mixins.json"
   ],
   "accessWidener": "patchwork-extensions-block.accesswidener",
   "custom": {

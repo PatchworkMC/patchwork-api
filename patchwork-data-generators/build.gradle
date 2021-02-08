@@ -1,8 +1,0 @@
-archivesBaseName = "patchwork-data-generators"
-version = getSubprojectVersion(project, "0.3.1")
-
-dependencies {
-	implementation project(path: ':patchwork-api-base', configuration: 'dev')
-	implementation project(path: ':patchwork-events-lifecycle', configuration: 'dev')
-	implementation project(path: ':patchwork-fml', configuration: 'dev')
-}

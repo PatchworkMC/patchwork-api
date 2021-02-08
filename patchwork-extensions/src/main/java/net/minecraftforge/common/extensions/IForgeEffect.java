@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,8 @@ import net.minecraft.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+
+import net.patchworkmc.annotations.Stubbed;
 
 public interface IForgeEffect {
 	default StatusEffect getEffect() {
@@ -43,6 +46,7 @@ public interface IForgeEffect {
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to display it (default), false to hide it.
 	 */
+	@Stubbed
 	default boolean shouldRender(StatusEffectInstance effect) {
 		return true;
 	}
@@ -53,6 +57,7 @@ public interface IForgeEffect {
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to draw the standard text
 	 */
+	@Stubbed
 	default boolean shouldRenderInvText(StatusEffectInstance effect) {
 		return true;
 	}
@@ -63,6 +68,7 @@ public interface IForgeEffect {
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @return true to display it (default), false to hide it.
 	 */
+	@Stubbed
 	default boolean shouldRenderHUD(StatusEffectInstance effect) {
 		return true;
 	}
@@ -73,12 +79,14 @@ public interface IForgeEffect {
 	 *
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @param gui    the gui instance
+	 * @param mStack the MatrixStack
 	 * @param x      the x coordinate
 	 * @param y      the y coordinate
 	 * @param z      the z level
 	 */
+	@Stubbed
 	@Environment(EnvType.CLIENT)
-	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, int x, int y, float z) {
+	default void renderInventoryEffect(StatusEffectInstance effect, AbstractInventoryScreen<?> gui, MatrixStack mStack, int x, int y, float z) {
 	}
 
 	/**
@@ -87,13 +95,15 @@ public interface IForgeEffect {
 	 *
 	 * @param effect the active {@link StatusEffectInstance}
 	 * @param gui    the gui instance
+	 * @param mStack the MatrixStack
 	 * @param x      the x coordinate
 	 * @param y      the y coordinate
 	 * @param z      the z level
 	 * @param alpha  the alpha value, blinks when the {@link StatusEffect} is about to run out
 	 */
+	@Stubbed
 	@Environment(EnvType.CLIENT)
-	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, int x, int y, float z, float alpha) {
+	default void renderHUDEffect(StatusEffectInstance effect, DrawableHelper gui, MatrixStack mStack, int x, int y, float z, float alpha) {
 	}
 
 	/**
@@ -102,6 +112,7 @@ public interface IForgeEffect {
 	 *
 	 * @return A list of items that can cure this {@link StatusEffect}
 	 */
+	@Stubbed
 	default List<ItemStack> getCurativeItems() {
 		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();
 		ret.add(new ItemStack(Items.MILK_BUCKET));
@@ -115,6 +126,7 @@ public interface IForgeEffect {
 	 * @param effect the {@link StatusEffectInstance} containing the {@link StatusEffect}
 	 * @return a value used to sort {@link StatusEffectInstance}s in GUIs
 	 */
+	@Stubbed
 	default int getGuiSortColor(StatusEffectInstance effect) {
 		return getEffect().getColor();
 	}

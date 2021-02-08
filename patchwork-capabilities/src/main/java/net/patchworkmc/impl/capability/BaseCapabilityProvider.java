@@ -27,9 +27,10 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
 	private final T provider;
 
-	public BaseCapabilityProvider(Class<T> baseClass, T provider) {
+	public BaseCapabilityProvider(Class<T> baseClass, Object provider) {
 		super(baseClass);
-		this.provider = provider;
+		//noinspection unchecked
+		this.provider = (T) provider;
 	}
 
 	@Override

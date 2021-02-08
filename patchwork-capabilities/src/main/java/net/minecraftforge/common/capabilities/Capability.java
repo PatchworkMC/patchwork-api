@@ -54,44 +54,44 @@ import net.minecraft.util.math.Direction;
 public class Capability<T> {
 	public interface IStorage<T> {
 		/**
-		 * Serialize the capability instance to a {@link Tag}.
+		 * Serialize the capability instance to a NBTTag.
 		 * This allows for a central implementation of saving the data.
-		 *
-		 * <p>It is important to note that it is up to the API defining
+		 * <p>
+		 * It is important to note that it is up to the API defining
 		 * the capability what requirements the 'instance' value must have.
-		 *
-		 * <p>Due to the possibility of manipulating internal data, some
+		 * <p>
+		 * Due to the possibility of manipulating internal data, some
 		 * implementations MAY require that the 'instance' be an instance
 		 * of the 'default' implementation.
+		 * <p>
+		 * Review the API docs for more info.
 		 *
-		 * <p>Review the API docs for more info.
-		 *
-		 * @param capability The capability being stored.
-		 * @param instance   An instance of that capability's interface.
+		 * @param capability The Capability being stored.
+		 * @param instance   An instance of that capabilities interface.
 		 * @param side       The side of the object the instance is associated with.
-		 * @return A {@link Tag} holding the data. Null if no data needs to be stored.
+		 * @return a NBT holding the data. Null if no data needs to be stored.
 		 */
 		@Nullable
 		Tag writeNBT(Capability<T> capability, T instance, Direction side);
 
 		/**
-		 * Read the capability instance from a {@link Tag}.
-		 *
-		 * <p>This allows for a central implementation of saving the data.
-		 *
-		 * <p>It is important to note that it is up to the API defining
+		 * Read the capability instance from a NBT tag.
+		 * <p>
+		 * This allows for a central implementation of saving the data.
+		 * <p>
+		 * It is important to note that it is up to the API defining
 		 * the capability what requirements the 'instance' value must have.
-		 *
-		 * <p>Due to the possibility of manipulating internal data, some
+		 * <p>
+		 * Due to the possibility of manipulating internal data, some
 		 * implementations MAY require that the 'instance' be an instance
 		 * of the 'default' implementation.
+		 * <p>
+		 * Review the API docs for more info.         *
 		 *
-		 * <p>Review the API docs for more info.
-		 *
-		 * @param capability The capability being stored.
-		 * @param instance   An instance of that capability's interface.
+		 * @param capability The Capability being stored.
+		 * @param instance   An instance of that capabilities interface.
 		 * @param side       The side of the object the instance is associated with.
-		 * @param nbt        A {@link Tag} holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+		 * @param nbt        A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
 		 */
 		void readNBT(Capability<T> capability, T instance, Direction side, Tag nbt);
 	}
@@ -112,14 +112,16 @@ public class Capability<T> {
 	}
 
 	/**
-	 * Quick access to {@link IStorage#readNBT(Capability, Object, Direction, Tag)}.
+	 * Quick access to the IStorage's readNBT.
+	 * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
 	 */
 	public void readNBT(T instance, Direction side, Tag nbt) {
 		storage.readNBT(this, instance, side, nbt);
 	}
 
 	/**
-	 * Quick access to {@link IStorage#writeNBT(Capability, Object, Direction)}.
+	 * Quick access to the IStorage's writeNBT.
+	 * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
 	 */
 	@Nullable
 	public Tag writeNBT(T instance, Direction side) {
@@ -128,10 +130,10 @@ public class Capability<T> {
 
 	/**
 	 * A NEW instance of the default implementation.
-	 *
-	 * <p>If it important to note that if you want to use the default storage
+	 * <p>
+	 * If it important to note that if you want to use the default storage
 	 * you may be required to use this exact implementation.
-	 * Refer to the owning API of the {@link Capability} in question.
+	 * Refer to the owning API of the Capability in question.
 	 *
 	 * @return A NEW instance of the default implementation.
 	 */

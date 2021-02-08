@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraftforge.common.MinecraftForge;
+
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.Chunk;
 
@@ -59,9 +60,9 @@ public class ChunkEvent extends WorldEvent {
 	 * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
 	 * Chunk.onChunkLoad(). <br>
 	 * <br>
-	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+	 * This event is not cancelable.<br>
 	 * <br>
-	 * This event does not have a result. {@link HasResult} <br>
+	 * This event does not have a result.<br>
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
 	 */
@@ -77,9 +78,9 @@ public class ChunkEvent extends WorldEvent {
 	 * This event is fired during chunk unloading in <br>
 	 * Chunk.onChunkUnload(). <br>
 	 * <br>
-	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+	 * This event is not cancelable.<br>
 	 * <br>
-	 * This event does not have a result. {@link HasResult} <br>
+	 * This event does not have a result.<br>
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
 	 */
@@ -89,4 +90,3 @@ public class ChunkEvent extends WorldEvent {
 		}
 	}
 }
-

@@ -29,32 +29,34 @@ import org.spongepowered.asm.mixin.Unique;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.Settings;
 
-import net.patchworkmc.impl.extensions.item.PatchworkItemSettingsExtensions;
+import net.patchworkmc.api.extensions.item.PatchworkItemSettingsExtensions;
 
 @Mixin(Item.Settings.class)
 public abstract class MixinItemSettings implements PatchworkItemSettingsExtensions {
-	@Unique private boolean canRepair = true;
-	@Unique private final Map<ToolType, Integer> toolClasses = new HashMap<>();
+	@Unique
+	private boolean canRepair = true;
+	@Unique
+	private final Map<ToolType, Integer> toolClasses = new HashMap<>();
 
 	@Override
 	public Settings setNoRepair() {
-		canRepair = false;
+		this.canRepair = false;
 		return (Settings) (Object) this;
 	}
 
 	@Override
 	public Settings addToolType(ToolType type, int level) {
-		toolClasses.put(type, level);
+		this.toolClasses.put(type, level);
 		return (Settings) (Object) this;
 	}
 
 	@Override
-	public boolean canRepair() {
+	public boolean patchwork$canRepair() {
 		return canRepair;
 	}
 
 	@Override
-	public Map<ToolType, Integer> getToolClasses() {
+	public Map<ToolType, Integer> patchwork$toolTypes() {
 		return toolClasses;
 	}
 }

@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.patchworkmc.mixin.extensions.item",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinItem",
+    "MixinItemSettings",
+  ],
+  "client": [
+    "client.MixinItem",
+    "client.MixinItemSettings"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

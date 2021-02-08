@@ -1,33 +1,31 @@
 pluginManagement {
 	repositories {
-		jcenter()
+		mavenCentral()
 		gradlePluginPortal()
 		maven {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
-		mavenLocal()
 	}
 }
 rootProject.name = "patchwork-api"
 
 include 'patchwork-api-base'
 //include 'patchwork-biomes'
-//include 'patchwork-capabilities'
-//include 'patchwork-data-generators'
+include 'patchwork-capabilities'
 include 'patchwork-dispatcher'
 //include 'patchwork-enum-hacks'
 //include 'patchwork-events-entity'
 include 'patchwork-events-input'
 include 'patchwork-events-lifecycle'
 include 'patchwork-events-rendering'
-//include 'patchwork-events-world'
-//include 'patchwork-extensions'
+include 'patchwork-events-world'
+include 'patchwork-extensions'
 //include 'patchwork-extensions-bakedmodel'
-//include 'patchwork-extensions-block'
+include 'patchwork-extensions-block'
 //include 'patchwork-extensions-blockentity'
-//include 'patchwork-extensions-entity'
-//include 'patchwork-extensions-item'
+include 'patchwork-extensions-entity'
+include 'patchwork-extensions-item'
 //include 'patchwork-extensions-shearing'
 //include 'patchwork-fake-players'
 include 'patchwork-fml'
@@ -44,4 +42,3 @@ include 'patchwork-key-bindings'
 include 'patchwork-registries'
 //include 'patchwork-resource'
 //include 'patchwork-tags'
-//include 'patchwork-tooltype'

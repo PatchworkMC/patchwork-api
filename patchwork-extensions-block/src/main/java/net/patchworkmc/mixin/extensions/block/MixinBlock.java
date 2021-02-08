@@ -19,43 +19,34 @@
 
 package net.patchworkmc.mixin.extensions.block;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeBlock;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.CollisionView;
+import net.minecraft.world.WorldView;
 
 @Mixin(Block.class)
 public class MixinBlock implements IForgeBlock {
-	protected Random RANDOM = new Random();
-
-	@Shadow
-	@Final
-	private float slipperiness;
-
 	@Unique
 	private Set<Identifier> cachedTags;
 	@Unique
 	private int tagVersion;
+	@Unique
+	private final net.minecraftforge.common.util.ReverseTagWrapper<Block> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>((Block) (Object) this, BlockTags::getTagGroup);
 
 	@Override
-	public float getSlipperiness(BlockState state, CollisionView world, BlockPos pos, Entity entity) {
-		return slipperiness;
+	public float getSlipperiness(BlockState state, WorldView world, BlockPos pos, @Nullable Entity entity) {
+		return 0;
 	}
 
 	@Override
@@ -70,23 +61,6 @@ public class MixinBlock implements IForgeBlock {
 
 	@Override
 	public Set<Identifier> getTags() {
-		if (cachedTags == null || tagVersion != BlockTagsAccessor.getLatestVersion()) {
-			this.cachedTags = new HashSet<>();
-
-			for (final Map.Entry<Identifier, Tag<Block>> entry : BlockTags.getTagGroup().getEntries().entrySet()) {
-				if (entry.getValue().contains((Block) (Object) this)) {
-					cachedTags.add(entry.getKey());
-				}
-			}
-
-			this.tagVersion = BlockTagsAccessor.getLatestVersion();
-		}
-
-		return this.cachedTags;
-	}
-
-	@Override
-	public Random getRandom() {
-		return RANDOM;
+		return reverseTags.getTagNames();
 	}
 }

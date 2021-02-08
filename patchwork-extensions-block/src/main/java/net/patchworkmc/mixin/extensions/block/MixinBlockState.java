@@ -19,10 +19,11 @@
 
 package net.patchworkmc.mixin.extensions.block;
 
-import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeBlockState;
+import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.block.BlockState;
 
 @Mixin(BlockState.class)
-public class MixinBlockState implements IForgeBlockState { }
+public class MixinBlockState implements IForgeBlockState {
+}
