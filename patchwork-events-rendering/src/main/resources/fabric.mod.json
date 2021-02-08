@@ -16,6 +16,11 @@
     "patchwork-api-base": "*",
     "patchwork-fml": "*"
   },
+  "entrypoints": {
+    "client": [
+      "net.patchworkmc.impl.event.render.RenderEvents"
+    ]
+  },
   "mixins": [
     "patchwork-events-rendering.mixins.json"
   ],

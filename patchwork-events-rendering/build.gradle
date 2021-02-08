@@ -1,4 +1,4 @@
-archivesBaseName = "patchwork-client-colors"
+archivesBaseName = "patchwork-events-rendering"
 version = getSubprojectVersion(project, "0.3.3")
 
 dependencies {

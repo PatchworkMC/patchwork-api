@@ -23,13 +23,15 @@ import java.util.Set;
 
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoader;
 
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.render.Camera;
@@ -42,7 +44,10 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 
-public class RenderEvents {
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+
+public class RenderEvents implements ClientModInitializer {
 	public static void onBlockColorsInit(BlockColors blockColors) {
 		ModLoader.get().postEvent(new ColorHandlerEvent.Block(blockColors));
 	}
@@ -60,31 +65,47 @@ public class RenderEvents {
 	}
 
 	/**
-	 * Called by ForgeHooksClient and MixinWorldRenderer.
+	 * Called by ForgeHooksClient and in WorldRenderEvents callback.
 	 * @return true if the bounding box rendering is cancelled.
 	 */
-	public static boolean onDrawHighlightEvent(WorldRenderer context, Camera info, HitResult target, int subID, float partialTicks) {
+	public static boolean onDrawHighlightEvent(WorldRenderer context, Camera info, HitResult target, float partialTicks, MatrixStack matrix, VertexConsumerProvider buffers) {
 		switch (target.getType()) {
-		case BLOCK:
-			if (!(target instanceof BlockHitResult)) return false;
-			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightBlock(context, info, target, subID, partialTicks));
-		case ENTITY:
-			if (!(target instanceof EntityHitResult)) return false;
-			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent.HighlightEntity(context, info, target, subID, partialTicks));
-		default:
-			return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, info, target, subID, partialTicks));
+			case BLOCK:
+				if (!(target instanceof BlockHitResult)) {
+					return false;
+				}
+
+				return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightBlock(context, info, target, partialTicks, matrix, buffers));
+			case ENTITY:
+				if (!(target instanceof EntityHitResult)) {
+					return false;
+				}
+
+				return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent.HighlightEntity(context, info, target, partialTicks, matrix, buffers));
+			default:
+				return MinecraftForge.EVENT_BUS.post(new DrawHighlightEvent(context, info, target, partialTicks, matrix, buffers));
 		}
 	}
 
-	public static void onRenderWorldLast(WorldRenderer context, float tickDelta) {
-		MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, tickDelta));
+	public static void onRenderWorldLast(WorldRenderer context, MatrixStack matrixStack, float tickDelta, Matrix4f projectionMatrix, long limitTime) {
+		MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, matrixStack, tickDelta, projectionMatrix, limitTime));
 	}
 
-	public static boolean onRenderHand(WorldRenderer context, float tickDelta) {
-		return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, tickDelta));
+	public static boolean onRenderHand(Hand hand, MatrixStack mat, VertexConsumerProvider buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack) {
+		return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
 	}
 
-	public static boolean onRenderSpecificHand(Hand hand, float tickDelta, float pitch, float swingProgress, float equipProgress, ItemStack stack) {
-		return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, tickDelta, pitch, swingProgress, equipProgress, stack));
+	@Override
+	public void onInitializeClient() {
+		WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register(((worldRenderContext, hitResult) -> !onDrawHighlightEvent(
+				worldRenderContext.worldRenderer(),
+				worldRenderContext.camera(),
+				hitResult,
+				worldRenderContext.tickDelta(),
+				worldRenderContext.matrixStack(),
+				worldRenderContext.consumers()
+		)));
+
+		WorldRenderEvents.END.register((end) -> onRenderWorldLast(end.worldRenderer(), end.matrixStack(), end.tickDelta(), end.projectionMatrix(), end.limitTime()));
 	}
 }

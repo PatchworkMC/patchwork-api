@@ -21,6 +21,8 @@ package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.util.hit.BlockHitResult;
@@ -31,20 +33,21 @@ import net.minecraft.util.hit.HitResult;
  * An event called whenever the selection highlight around blocks is about to be rendered.
  * Canceling this event stops the selection highlight from being rendered.
  */
-//TODO: in 1.15 rename to DrawHighlightEvent
-public class DrawBlockHighlightEvent extends Event {
+public class DrawHighlightEvent extends Event {
 	private final WorldRenderer context;
 	private final Camera info;
 	private final HitResult target;
-	private final int subID;
 	private final float partialTicks;
+	private final MatrixStack matrix;
+	private final VertexConsumerProvider buffers;
 
-	public DrawBlockHighlightEvent(WorldRenderer context, Camera info, HitResult target, int subID, float partialTicks) {
+	public DrawHighlightEvent(WorldRenderer context, Camera info, HitResult target, float partialTicks, MatrixStack matrix, VertexConsumerProvider buffers) {
 		this.context = context;
 		this.info = info;
 		this.target = target;
-		this.subID = subID;
 		this.partialTicks = partialTicks;
+		this.matrix = matrix;
+		this.buffers = buffers;
 	}
 
 	public WorldRenderer getContext() {
@@ -59,30 +62,34 @@ public class DrawBlockHighlightEvent extends Event {
 		return target;
 	}
 
-	public int getSubID() {
-		return subID;
-	}
-
 	public float getPartialTicks() {
 		return partialTicks;
 	}
 
-	@Override
-	public boolean isCancelable() {
-		return true;
+	public MatrixStack getMatrix() {
+		return matrix;
+	}
+
+	public VertexConsumerProvider getBuffers() {
+		return buffers;
 	}
 
 	/**
 	 * A variant of the DrawHighlightEvent only called when a block is highlighted.
 	 */
-	public static class HighlightBlock extends DrawBlockHighlightEvent {
-		public HighlightBlock(WorldRenderer context, Camera info, HitResult target, int subID, float partialTicks) {
-			super(context, info, target, subID, partialTicks);
+	public static class HighlightBlock extends DrawHighlightEvent {
+		public HighlightBlock(WorldRenderer context, Camera info, HitResult target, float partialTicks, MatrixStack matrix, VertexConsumerProvider buffers) {
+			super(context, info, target, partialTicks, matrix, buffers);
 		}
 
 		@Override
 		public BlockHitResult getTarget() {
 			return (BlockHitResult) super.target;
+		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
 		}
 	}
 
@@ -90,14 +97,19 @@ public class DrawBlockHighlightEvent extends Event {
 	 * A variant of the DrawHighlightEvent only called when an entity is highlighted.
 	 * Canceling this event has no effect.
 	 */
-	public static class HighlightEntity extends DrawBlockHighlightEvent {
-		public HighlightEntity(WorldRenderer context, Camera info, HitResult target, int subID, float partialTicks) {
-			super(context, info, target, subID, partialTicks);
+	public static class HighlightEntity extends DrawHighlightEvent {
+		public HighlightEntity(WorldRenderer context, Camera info, HitResult target, float partialTicks, MatrixStack matrix, VertexConsumerProvider buffers) {
+			super(context, info, target, partialTicks, matrix, buffers);
 		}
 
 		@Override
 		public EntityHitResult getTarget() {
 			return (EntityHitResult) super.target;
+		}
+
+		@Override
+		public boolean isCancelable() {
+			return true;
 		}
 	}
 }
