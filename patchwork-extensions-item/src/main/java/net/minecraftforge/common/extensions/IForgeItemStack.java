@@ -267,7 +267,6 @@ public interface IForgeItemStack extends IForgeItemStackDuck {
 	 * @param world The world the entity is in
 	 * @return The normal lifespan in ticks.
 	 */
-	@Stubbed
 	default int getEntityLifespan(World world) {
 		return patchwork$getForgeItem().getEntityLifespan(getStack(), world);
 	}

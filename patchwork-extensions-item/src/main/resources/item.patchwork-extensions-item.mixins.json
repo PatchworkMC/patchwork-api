@@ -5,6 +5,8 @@
   "mixins": [
     "MixinItem",
     "MixinItemSettings",
+    "MixinItemStack",
+    "MixinItemEntity"
   ],
   "client": [
     "client.MixinItem",

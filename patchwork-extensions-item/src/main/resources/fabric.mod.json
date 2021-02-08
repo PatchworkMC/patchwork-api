@@ -15,11 +15,11 @@
     "PatchworkMC"
   ],
   "depends": {
-    "patchwork-api-base": "*"
+    "patchwork-api-base": "*",
+    "patchwork-events-entity": "*"
   },
   "mixins": [
-    "item.patchwork-extensions-item.mixins.json",
-    "stack.patchwork-extensions-item.mixins.json"
+    "item.patchwork-extensions-item.mixins.json"
   ],
   "custom": {
     "modmenu:api": true,

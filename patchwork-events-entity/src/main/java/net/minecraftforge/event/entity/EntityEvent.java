@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.entity.Entity;
@@ -26,39 +27,40 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 
 /**
- * EntityEvent is fired when an event involving any Entity occurs.
- *
- * <p>If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
- * receive every child event of this class.</p>
- *
- * <p>{@link #entity} contains the entity that caused this event to occur.</p>
- *
- * <p>All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
- */
+ * EntityEvent is fired when an event involving any Entity occurs.<br>
+ * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
+ * receive every child event of this class.<br>
+ * <br>
+ * {@link #entity} contains the entity that caused this event to occur.<br>
+ * <br>
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ **/
 public class EntityEvent extends Event {
 	private final Entity entity;
 
-	public EntityEvent(Entity entity) {
+	public EntityEvent(Entity entity)
+	{
 		this.entity = entity;
 	}
 
-	public Entity getEntity() {
+	public Entity getEntity()
+	{
 		return entity;
 	}
 
 	/**
-	 * EntityConstructing is fired when an Entity is being created.
-	 *
-	 * <p>This event is fired within the constructor of the Entity.</p>
-	 *
-	 * <p>This event is not cancellable.</p>
-	 *
-	 * <p>This event does not have a result.</p>
-	 *
-	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
-	 */
+	 * EntityConstructing is fired when an Entity is being created. <br>
+	 * This event is fired within the constructor of the Entity.<br>
+	 * <br>
+	 * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+	 * <br>
+	 * This event does not have a result. {@link HasResult}<br>
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+	 **/
 	public static class EntityConstructing extends EntityEvent {
-		public EntityConstructing(Entity entity) {
+		public EntityConstructing(Entity entity)
+		{
 			super(entity);
 		}
 	}
@@ -92,17 +94,16 @@ public class EntityEvent extends Event {
 	}*/
 
 	/**
-	 * EnteringChunk is fired when an Entity enters a chunk.
-	 *
-	 * <p>This event is fired whenever vanilla Minecraft determines that an entity
-	 * is entering a chunk in {@link net.minecraft.world.chunk.Chunk#addEntity(net.minecraft.entity.Entity)}</p>
-	 *
-	 * <p>This event is not cancellable.</p>
-	 *
-	 * <p>This event does not have a result.</p>
-	 *
-	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
-	 */
+	 * EnteringChunk is fired when an Entity enters a chunk. <br>
+	 * This event is fired whenever vanilla Minecraft determines that an entity <br>
+	 * is entering a chunk in {@link Chunk#addEntity(net.minecraft.entity.Entity)} <br>
+	 * <br>
+	 * This event is not {@link Cancelable}.<br>
+	 * <br>
+	 * This event does not have a result. {@link HasResult}
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+	 **/
 	public static class EnteringChunk extends EntityEvent {
 		private int newChunkX;
 		private int newChunkZ;
@@ -151,48 +152,60 @@ public class EntityEvent extends Event {
 	}
 
 	/**
-	 * EyeHeight is fired when an Entity's eye height changes.
-	 *
-	 * <p>This event is fired whenever the {@link EntityPose} changes, and in a few other hardcoded scenarios.</p>
-	 *
-	 * <p>This event is not cancellable.</p>
-	 *
-	 * <p>This event does not have a result.</p>
-	 *
-	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
-	 */
-	public static class EyeHeight extends EntityEvent {
+	 * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
+	 * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
+	 * If you change the player's size, you probably want to set the eye height accordingly as well<br>
+	 * <br>
+	 * This event is not {@link Cancelable}.<br>
+	 * <br>
+	 * This event does not have a result. {@link HasResult}
+	 * <br>
+	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+	 **/
+	public static class Size extends EntityEvent {
 		private final EntityPose pose;
-		private final EntityDimensions size;
-		private final float oldHeight;
-		private float newHeight;
+		private final EntityDimensions oldSize;
+		private EntityDimensions newSize;
+		private final float oldEyeHeight;
+		private float newEyeHeight;
 
-		public EyeHeight(Entity entity, EntityPose pose, EntityDimensions size, float defaultHeight) {
+		public Size(Entity entity, EntityPose pose, EntityDimensions size, float defaultEyeHeight)
+		{
 			super(entity);
 			this.pose = pose;
-			this.size = size;
-			this.oldHeight = defaultHeight;
-			this.newHeight = defaultHeight;
+			this.oldSize = size;
+			this.newSize = size;
+			this.oldEyeHeight = defaultEyeHeight;
+			this.newEyeHeight = defaultEyeHeight;
 		}
+
 
 		public EntityPose getPose() {
 			return pose;
 		}
 
-		public EntityDimensions getSize() {
-			return size;
+		public EntityDimensions getOldSize() {
+			return oldSize;
 		}
 
-		public float getOldHeight() {
-			return oldHeight;
+		public EntityDimensions getNewSize() {
+			return newSize;
 		}
 
-		public float getNewHeight() {
-			return newHeight;
+		public void setNewSize(EntityDimensions size) {
+			this.newSize = size;
 		}
 
-		public void setNewHeight(float newSize) {
-			this.newHeight = newSize;
+		public float getOldEyeHeight() {
+			return oldEyeHeight;
+		}
+
+		public float getNewEyeHeight() {
+			return newEyeHeight;
+		}
+
+		public void setNewEyeHeight(float newHeight) {
+			this.newEyeHeight = newHeight;
 		}
 	}
 }

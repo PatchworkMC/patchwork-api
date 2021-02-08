@@ -282,7 +282,6 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param world     The world the entity is in
 	 * @return The normal lifespan in ticks.
 	 */
-	@Stubbed
 	default int getEntityLifespan(ItemStack itemStack, World world) {
 		return 6000;
 	}

@@ -5,4 +5,5 @@ dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 	implementation project(path: ':patchwork-extensions', configuration: 'dev')
 	implementation project(path: ':patchwork-extensions-item', configuration: 'dev')
+	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
 }

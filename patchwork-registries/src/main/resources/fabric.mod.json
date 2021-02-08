@@ -22,7 +22,7 @@
   ],
   "entrypoints": {
     "patchwork:commonAutomaticSubscribers": [
-      "net.minecraftforge.registries.DeferredRegister.EventDispatcher::patchwork_registerEventRegistrar"
+      "net.minecraftforge.registries.DeferredRegister::patchwork_registerEventRegistrar"
     ]
   },
   "accessWidener": "patchwork-registries.accesswidener",

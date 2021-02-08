@@ -4,4 +4,5 @@ version = getSubprojectVersion(project, "0.4.1")
 dependencies {
 	implementation project(path: ':patchwork-api-base', configuration: 'dev')
 	implementation project(path: ':patchwork-capabilities', configuration: 'dev')
+	// Depends on events-entity for some of implementation
 }

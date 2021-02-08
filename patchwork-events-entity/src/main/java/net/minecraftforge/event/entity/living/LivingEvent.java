@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
 import net.minecraft.entity.LivingEntity;
@@ -28,19 +29,18 @@ import net.minecraft.entity.LivingEntity;
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * All children of this event are fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
- */
+ * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ **/
 public class LivingEvent extends EntityEvent {
-	private final LivingEntity livingEntity;
+	private final LivingEntity entityLiving;
 
 	public LivingEvent(LivingEntity entity) {
 		super(entity);
-
-		livingEntity = entity;
+		entityLiving = entity;
 	}
 
 	public LivingEntity getEntityLiving() {
-		return livingEntity;
+		return entityLiving;
 	}
 
 	/**
@@ -57,9 +57,7 @@ public class LivingEvent extends EntityEvent {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class LivingUpdateEvent extends LivingEvent {
-		public LivingUpdateEvent(LivingEntity entity) {
-			super(entity);
-		}
+		public LivingUpdateEvent(LivingEntity e) { super(e); }
 
 		@Override
 		public boolean isCancelable() {
@@ -81,9 +79,9 @@ public class LivingEvent extends EntityEvent {
 	 *
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
-	/* TODO public static class LivingJumpEvent extends LivingEvent {
+	public static class LivingJumpEvent extends LivingEvent {
 		public LivingJumpEvent(LivingEntity e) {
 			super(e);
 		}
-	}*/
+	}
 }
