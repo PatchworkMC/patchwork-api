@@ -1,12 +1,11 @@
 pluginManagement {
 	repositories {
-		jcenter()
+		mavenCentral()
 		gradlePluginPortal()
 		maven {
 			name = 'Fabric'
 			url = 'https://maven.fabricmc.net/'
 		}
-		mavenLocal()
 	}
 }
 rootProject.name = "patchwork-api"
@@ -14,7 +13,6 @@ rootProject.name = "patchwork-api"
 include 'patchwork-api-base'
 //include 'patchwork-biomes'
 include 'patchwork-capabilities'
-//include 'patchwork-data-generators'
 include 'patchwork-dispatcher'
 //include 'patchwork-enum-hacks'
 //include 'patchwork-events-entity'
