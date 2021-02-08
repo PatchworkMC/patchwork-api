@@ -51,6 +51,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 		return new RegistryObject<>(name, registry);
 	}
 
+	public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final Identifier name, final Class<T> baseType, String modid) {
+		return new RegistryObject<>(name, baseType, modid);
+	}
+
 	private static final RegistryObject<?> EMPTY = new RegistryObject<>();
 
 	private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
@@ -76,6 +80,11 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 		this.name = name;
 		// Patchwork: use our own objectholder registry
 		ObjectHolderRegistry.INSTANCE.register(registry.getRegistrySuperType(), name.getNamespace(), name.getPath(), value -> this.value = (T) value);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <V extends IForgeRegistryEntry<V>> RegistryObject(final Identifier name, final Class<V> baseType, final String modid) {
+		throw new UnsupportedOperationException("No idea what this method does");
 	}
 
 	/**

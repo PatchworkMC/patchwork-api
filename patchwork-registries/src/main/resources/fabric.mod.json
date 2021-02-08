@@ -20,6 +20,11 @@
   "mixins": [
     "patchwork-registries.mixins.json"
   ],
+  "entrypoints": {
+    "patchwork:commonAutomaticSubscribers": [
+      "net.minecraftforge.registries.DeferredRegister.EventDispatcher::patchwork_registerEventRegistrar"
+    ]
+  },
   "accessWidener": "patchwork-registries.accesswidener",
   "custom": {
     "modmenu:api": true,
