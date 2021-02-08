@@ -27,7 +27,6 @@ import net.patchworkmc.annotations.Stubbed;
 @Stubbed
 public class ExistingFileHelper {
 	public interface IResourceType {
-
 		net.minecraft.resource.ResourceType getPackType();
 
 		String getSuffix();
@@ -36,7 +35,6 @@ public class ExistingFileHelper {
 	}
 
 	public static class ResourceType implements IResourceType {
-
 		final net.minecraft.resource.ResourceType packType;
 		final String suffix, prefix;
 		public ResourceType(net.minecraft.resource.ResourceType type, String suffix, String prefix) {
@@ -46,13 +44,19 @@ public class ExistingFileHelper {
 		}
 
 		@Override
-		public net.minecraft.resource.ResourceType getPackType() { return packType; }
+		public net.minecraft.resource.ResourceType getPackType() {
+			return packType;
+		}
 
 		@Override
-		public String getSuffix() { return suffix; }
+		public String getSuffix() {
+			return suffix;
+		}
 
 		@Override
-		public String getPrefix() { return prefix; }
+		public String getPrefix() {
+			return prefix;
+		}
 	}
 
 	private final ReloadableResourceManagerImpl clientResources, serverData;
@@ -101,6 +105,7 @@ public class ExistingFileHelper {
 		if (!enable) {
 			return true;
 		}
+
 		return generated.get(packType).contains(loc) || getManager(packType).containsResource(loc);
 	}
 

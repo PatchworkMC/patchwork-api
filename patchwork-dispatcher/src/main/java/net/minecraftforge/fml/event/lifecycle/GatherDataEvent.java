@@ -4,10 +4,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,19 +33,33 @@ public class GatherDataEvent extends Event {
 		return this.modContainer;
 	}
 
-	public DataGenerator getGenerator() { return this.dataGenerator; }
+	public DataGenerator getGenerator() {
+		return this.dataGenerator;
+	}
 
-	public ExistingFileHelper getExistingFileHelper() { return existingFileHelper; }
+	public ExistingFileHelper getExistingFileHelper() {
+		return existingFileHelper;
+	}
 
-	public boolean includeServer() { return this.config.server; }
+	public boolean includeServer() {
+		return this.config.server;
+	}
 
-	public boolean includeClient() { return this.config.client; }
+	public boolean includeClient() {
+		return this.config.client;
+	}
 
-	public boolean includeDev() { return this.config.dev; }
+	public boolean includeDev() {
+		return this.config.dev;
+	}
 
-	public boolean includeReports() { return this.config.reports; }
+	public boolean includeReports() {
+		return this.config.reports;
+	}
 
-	public boolean validate() { return this.config.validate; }
+	public boolean validate() {
+		return this.config.validate;
+	}
 
 	public static class DataGeneratorConfig {
 		private final Set<String> mods;
@@ -71,7 +83,6 @@ public class GatherDataEvent extends Event {
 			this.reports = reports;
 			this.validate = validate;
 			this.flat = flat;
-
 		}
 
 		public Set<String> getMods() {
@@ -84,9 +95,11 @@ public class GatherDataEvent extends Event {
 
 		public DataGenerator makeGenerator(final Function<Path, Path> pathEnhancer, final boolean shouldExecute) {
 			final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
+
 			if (shouldExecute) {
 				generators.add(generator);
 			}
+
 			return generator;
 		}
 

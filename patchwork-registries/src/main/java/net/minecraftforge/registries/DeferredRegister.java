@@ -8,9 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.EventRegistrarRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
@@ -23,7 +21,7 @@ import net.minecraft.util.Identifier;
  * Suppliers should return NEW instances every time.
  * <p>
  * Example Usage:
- * <pre>
+ * <pre> {@code
  *   private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
  *   private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
  *
@@ -34,6 +32,7 @@ import net.minecraft.util.Identifier;
  *       ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
  *       BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
  *   }
+ * }
  * </pre>
  *
  * @param <T> The base registry type, must be a concrete base class, do not use subclasses or wild cards.
@@ -84,11 +83,13 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 		if (seenRegisterEvent) {
 			throw new IllegalStateException("Cannot register new entries to DeferredRegister after RegistryEvent.Register has been fired.");
 		}
+
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(sup);
 		final Identifier key = new Identifier(modid, name);
 
 		RegistryObject<I> ret;
+
 		if (this.type != null) {
 			ret = RegistryObject.of(key, this.type);
 		} else if (this.superType != null) {
@@ -117,11 +118,13 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 		if (this.superType == null) {
 			throw new IllegalStateException("Cannot create a registry without specifying a base type");
 		}
+
 		if (this.type != null || this.registryFactory != null) {
 			throw new IllegalStateException("Cannot create a registry for a type that already exists");
 		}
 
 		this.registryFactory = () -> sup.get().setName(new Identifier(modid, name)).setType(this.superType);
+
 		return () -> this.type;
 	}
 
@@ -133,6 +136,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 	 */
 	public void register(IEventBus bus) {
 		bus.register(new EventDispatcher(this));
+
 		if (this.type == null && this.registryFactory != null) {
 			bus.addListener(this::createRegistry);
 		}
@@ -170,10 +174,12 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 			// to ensure that mods can properly use deferred registers for custom registries added by other mods
 			captureRegistry();
 		}
+
 		if (this.type != null && event.getGenericType() == this.type.getRegistrySuperType()) {
 			this.seenRegisterEvent = true;
 			@SuppressWarnings("unchecked")
 			IForgeRegistry<T> reg = (IForgeRegistry<T>) event.getRegistry();
+
 			for (Map.Entry<RegistryObject<T>, Supplier<? extends T>> e : entries.entrySet()) {
 				reg.register(e.getValue().get());
 				e.getKey().updateReference(reg);
@@ -188,6 +194,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 	private void captureRegistry() {
 		if (this.superType != null) {
 			this.type = RegistryManager.ACTIVE.getRegistry(this.superType);
+
 			if (this.type == null) {
 				throw new IllegalStateException("Unable to find registry for type " + this.superType.getName() + " for modid \"" + modid + "\" after NewRegistry event");
 			}
