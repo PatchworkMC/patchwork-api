@@ -69,7 +69,7 @@ allprojects {
 		modImplementation "net.fabricmc:fabric-loader:0.11.1"
 		modImplementation "net.fabricmc.fabric-api:fabric-api:0.30.0+1.16"
 
-		implementation 'net.patchworkmc:event-racecar:1.0.0'
+		implementation 'net.patchworkmc:event-racecar:1.0.1'
 		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 		implementation 'com.electronwill.night-config:toml:3.6.2'
 		implementation 'net.jodah:typetools:0.6.0'
@@ -254,7 +254,7 @@ repositories {
 		dirs 'jars'
 	}
 	mavenCentral()
-	maven { url 'https://dl.bintray.com/patchworkmc/Patchwork-Maven/' }
+	maven { url 'https://maven.patchworkmc.net' }
 }
 
 dependencies {
@@ -267,7 +267,7 @@ dependencies {
 
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
-	include 'net.patchworkmc:patchwork-eventbus:2.0.0:all'
+	include 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
 }
 
 loom {
