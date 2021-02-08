@@ -154,17 +154,25 @@ class Transformer {
 
 					for (AbstractInsnNode creator : ((InstanceFinder.FoundException) e.getCause()).insns) {
 						if (creator instanceof VarInsnNode) {
+							VarInsnNode vin = (VarInsnNode) creator;
 							if (conversionMap == null) {
 								conversionMap = createBaseToContextMapping(method, className, redirect);
 							}
 
-							((VarInsnNode) creator).var = conversionMap.get(((VarInsnNode) creator).var);
+							Integer translation = conversionMap.get(vin.var);
+							if (translation == null) {
+								LOGGER.warn("Found a target in " + className + "::" + method.name + method.desc + ", but not a conversion method!");
+								continue;
+							}
+
+							vin.var = translation;
 							targetNode.owner = redirect.contextClass;
 							targetNode.name = redirect.newTargetName;
 							didSomething = true;
 						} else if (creator instanceof MethodInsnNode) {
 							if (!redirect.isConversionMethod((MethodInsnNode) creator)) {
-								LOGGER.debug("Found a target in " + className + "::" + method.name + method.desc + ", but not a conversion method!");
+								LOGGER.warn("Found a target in " + className + "::" + method.name + method.desc + ", but not a conversion method!");
+								continue;
 							}
 
 							method.instructions.remove(creator);
@@ -173,7 +181,9 @@ class Transformer {
 							didSomething = true;
 						}
 					}
+					continue;
 				}
+				throw new IllegalStateException("Did not find instance, something is very wrong!");
 			}
 		}
 

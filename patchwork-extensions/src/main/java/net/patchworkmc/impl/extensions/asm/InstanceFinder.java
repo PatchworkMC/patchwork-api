@@ -46,9 +46,6 @@ class InstanceFinder extends Analyzer<SourceValue> {
 
 	private class InternalFrame extends Frame<SourceValue> {
 		private AbstractInsnNode current;
-		// block -> state
-		int depth;
-
 		InternalFrame(int numLocals, int numStack) {
 			super(numLocals, numStack);
 		}
@@ -61,17 +58,13 @@ class InstanceFinder extends Analyzer<SourceValue> {
 
 		@Override
 		public void push(SourceValue value) {
-			depth++;
 			super.push(value);
 		}
 
 		@Override
 		public SourceValue pop() {
-			depth--;
-
-			if (depth == 0 && current == target) {
-				SourceValue it = super.pop();
-				throw new FoundException(it.insns);
+			if (current == target) {
+				throw new FoundException(super.pop().insns);
 			}
 
 			return super.pop();

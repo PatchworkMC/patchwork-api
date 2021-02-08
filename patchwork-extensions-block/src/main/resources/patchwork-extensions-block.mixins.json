@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinBlock",
-    "MixinBlockState"
+    "MixinBlockState",
+    "MixinChunkRegion"
   ],
   "injectors": {
     "defaultRequire": 1

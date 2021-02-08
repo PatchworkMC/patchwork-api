@@ -34,6 +34,7 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 import org.objectweb.asm.tree.analysis.SourceInterpreter;
 import org.objectweb.asm.tree.analysis.SourceValue;
 
+// TODO: this doesn't work on ChunkRegion.setBlockState's call to createBlockEntity, for no apparent reason.
 class BaseToContextMapper extends Analyzer<SourceValue> {
 	public final Map<Integer, Integer> translations = new HashMap<>();
 	private final Transformer.RedirectTarget redirect;
