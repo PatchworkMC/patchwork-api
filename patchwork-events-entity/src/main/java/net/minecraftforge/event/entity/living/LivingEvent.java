@@ -30,7 +30,7 @@ import net.minecraft.entity.LivingEntity;
  * receive every child event of this class.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- **/
+**/
 public class LivingEvent extends EntityEvent {
 	private final LivingEntity entityLiving;
 
@@ -57,7 +57,9 @@ public class LivingEvent extends EntityEvent {
 	 * <p>This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.</p>
 	 */
 	public static class LivingUpdateEvent extends LivingEvent {
-		public LivingUpdateEvent(LivingEntity e) { super(e); }
+		public LivingUpdateEvent(LivingEntity e) {
+			super(e);
+		}
 
 		@Override
 		public boolean isCancelable() {

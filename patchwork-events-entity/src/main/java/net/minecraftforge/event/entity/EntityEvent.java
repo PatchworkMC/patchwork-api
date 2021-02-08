@@ -34,17 +34,15 @@ import net.minecraft.entity.EntityPose;
  * {@link #entity} contains the entity that caused this event to occur.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
- **/
+**/
 public class EntityEvent extends Event {
 	private final Entity entity;
 
-	public EntityEvent(Entity entity)
-	{
+	public EntityEvent(Entity entity) {
 		this.entity = entity;
 	}
 
-	public Entity getEntity()
-	{
+	public Entity getEntity() {
 		return entity;
 	}
 
@@ -57,10 +55,9 @@ public class EntityEvent extends Event {
 	 * This event does not have a result. {@link HasResult}<br>
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
+	**/
 	public static class EntityConstructing extends EntityEvent {
-		public EntityConstructing(Entity entity)
-		{
+		public EntityConstructing(Entity entity) {
 			super(entity);
 		}
 	}
@@ -103,7 +100,7 @@ public class EntityEvent extends Event {
 	 * This event does not have a result. {@link HasResult}
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
+	**/
 	public static class EnteringChunk extends EntityEvent {
 		private int newChunkX;
 		private int newChunkZ;
@@ -161,7 +158,7 @@ public class EntityEvent extends Event {
 	 * This event does not have a result. {@link HasResult}
 	 * <br>
 	 * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-	 **/
+	**/
 	public static class Size extends EntityEvent {
 		private final EntityPose pose;
 		private final EntityDimensions oldSize;
@@ -169,8 +166,7 @@ public class EntityEvent extends Event {
 		private final float oldEyeHeight;
 		private float newEyeHeight;
 
-		public Size(Entity entity, EntityPose pose, EntityDimensions size, float defaultEyeHeight)
-		{
+		public Size(Entity entity, EntityPose pose, EntityDimensions size, float defaultEyeHeight) {
 			super(entity);
 			this.pose = pose;
 			this.oldSize = size;
@@ -178,7 +174,6 @@ public class EntityEvent extends Event {
 			this.oldEyeHeight = defaultEyeHeight;
 			this.newEyeHeight = defaultEyeHeight;
 		}
-
 
 		public EntityPose getPose() {
 			return pose;
