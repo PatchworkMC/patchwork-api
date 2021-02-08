@@ -110,7 +110,7 @@ class Transformer {
 		byte[] out = in;
 
 		if (didSomething) {
-			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+			ClassWriter writer = new KnotClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
 			node.accept(writer);
 			out = writer.toByteArray();
 		}
