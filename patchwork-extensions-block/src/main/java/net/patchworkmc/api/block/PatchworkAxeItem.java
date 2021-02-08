@@ -17,25 +17,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block.blockentity;
-
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+package net.patchworkmc.api.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ChunkHolder;
+import net.minecraft.block.PillarBlock;
+import net.minecraft.item.AxeItem;
 
-import net.patchworkmc.impl.extensions.block.BlockContext;
-import net.patchworkmc.impl.extensions.block.Signatures;
-
-@Mixin(ChunkHolder.class)
-public class MixinChunkHolder {
-	// if (world.getBlockState(blockPos).getBlock().hasBlockEntity()) {
-	// if (world.getBlockState(blockPos2).getBlock().hasBlockEntity()) {
-	@Redirect(method = "flushUpdates", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock))
-	private Block patchwork_flushUpdates_getBlock(BlockState blockState) {
-		return BlockContext.hasBlockEntityBlockMarker(blockState);
+public class PatchworkAxeItem {
+	public static BlockState getAxeStrippingState(BlockState originalState) {
+		Block block = AxeItem.STRIPPED_BLOCKS.get(originalState.getBlock());
+		return block != null ? block.getDefaultState().with(PillarBlock.AXIS, originalState.get(PillarBlock.AXIS)) : null;
 	}
 }

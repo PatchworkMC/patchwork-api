@@ -1,9 +1,11 @@
 {
   "required": true,
-  "package": "net.patchworkmc.mixin.extensions.block.flammable",
+  "package": "net.patchworkmc.mixin.extensions.stack",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinWorld"
+    "MixinItemStack"
+  ],
+  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

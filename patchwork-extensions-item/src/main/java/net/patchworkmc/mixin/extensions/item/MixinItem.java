@@ -32,6 +32,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -69,6 +70,11 @@ public abstract class MixinItem implements IForgeItem {
 		if (getCreativeTabs().contains(group)) {
 			info.setReturnValue(true);
 		}
+	}
+
+	@Redirect(method = "isEnchantable(Lnet/minecraft/item/ItemStack;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;getMaxCount()I"))
+	private int useStateSensitiveGetMaxCount(Item item, ItemStack stack) {
+		return ((IForgeItem) item).getItemStackLimit(stack);
 	}
 
 	@Override

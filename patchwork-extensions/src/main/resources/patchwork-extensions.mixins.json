@@ -3,7 +3,6 @@
   "package": "net.patchworkmc.mixin.extension",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinMinecraftClient",
     "MixinStatusEffect"
   ],
   "injectors": {

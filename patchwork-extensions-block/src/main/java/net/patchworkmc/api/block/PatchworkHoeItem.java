@@ -17,16 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extension;
+package net.patchworkmc.api.block;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.ToolMaterial;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.color.item.ItemColors;
+// Extends so we can get access to the protected field
+public class PatchworkHoeItem extends HoeItem {
+	private PatchworkHoeItem(ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {
+		super(material, attackDamage, attackSpeed, settings);
+	}
 
-@Mixin(MinecraftClient.class)
-public abstract class MixinMinecraftClient {
-	@Accessor("itemColors")
-	public abstract ItemColors getItemColors();
+	public static BlockState getHoeTillingState(BlockState originalState) {
+		return HoeItem.TILLED_BLOCKS.get(originalState.getBlock());
+	}
 }

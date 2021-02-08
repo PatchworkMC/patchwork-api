@@ -551,8 +551,7 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The itemstack that is damaged
 	 * @return the damage value
 	 */
-	@Stubbed
-	@SuppressWarnings("deprecation")
+	// call sites implemented in Transformer
 	default int getMaxDamage(ItemStack stack) {
 		return getItem().getMaxDamage();
 	}
@@ -600,8 +599,6 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * @param stack The ItemStack
 	 * @return The maximum number this item can be stacked to
 	 */
-	@Stubbed
-	@SuppressWarnings("deprecation")
 	default int getItemStackLimit(ItemStack stack) {
 		return getItem().getMaxCount();
 	}

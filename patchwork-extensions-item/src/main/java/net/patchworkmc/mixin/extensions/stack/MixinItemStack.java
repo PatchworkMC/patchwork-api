@@ -17,23 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block.blockentity;
+package net.patchworkmc.mixin.extensions.stack;
 
+import net.minecraftforge.common.extensions.IForgeItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SpongeBlock;
+import net.minecraft.item.ItemStack;
 
-import net.patchworkmc.impl.extensions.block.BlockContext;
-import net.patchworkmc.impl.extensions.block.Signatures;
-
-@Mixin(SpongeBlock.class)
-public abstract class MixinSpongeBlock {
-	@Redirect(method = "absorbWater", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 3))
-	private Block patchwork_absorbWater_getBlock(BlockState blockstate) {
-		return BlockContext.hasBlockEntityBlockMarker(blockstate);
-	}
+@Mixin(ItemStack.class)
+public abstract class MixinItemStack implements IForgeItemStack {
 }

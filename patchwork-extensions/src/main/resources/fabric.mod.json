@@ -17,6 +17,11 @@
   "mixins": [
     "patchwork-extensions.mixins.json"
   ],
+  "entrypoints": {
+    "preLaunch": [
+      "net.patchworkmc.impl.extensions.asm.MassAsmBootstrapper"
+    ]
+  },
   "custom": {
     "modmenu:api": true,
     "modmenu:parent": "patchwork"

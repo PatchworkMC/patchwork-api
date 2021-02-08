@@ -3,21 +3,8 @@
   "package": "net.patchworkmc.mixin.extensions.block",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "BlockTagsAccessor",
-    "FireBlockAccessor",
-    "MixinBedBlock",
     "MixinBlock",
-    "MixinBlockSettings",
-    "MixinBlockState",
-    "MixinCactusBlock",
-    "MixinCropBlock",
-    "MixinFarmlandBlock",
-    "MixinMushroomPlantBlock",
-    "MixinPlantBlock",
-    "MixinStemBlock",
-    "MixinSugarCaneBlock",
-    "PlantBlockAccessor",
-    "PlantTypeAccessor"
+    "MixinBlockState"
   ],
   "injectors": {
     "defaultRequire": 1

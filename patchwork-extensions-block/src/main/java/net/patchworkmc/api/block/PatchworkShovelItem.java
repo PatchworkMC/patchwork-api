@@ -17,24 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block.blockentity;
+package net.patchworkmc.api.block;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.world.World;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.ToolMaterial;
 
-import net.patchworkmc.impl.extensions.block.BlockContext;
-import net.patchworkmc.impl.extensions.block.Signatures;
+// Extends so we can get access to the protected field
+public class PatchworkShovelItem extends ShovelItem {
+	private PatchworkShovelItem(ToolMaterial material, float attackDamage, float attackSpeed, Settings settings) {
+		super(material, attackDamage, attackSpeed, settings);
+	}
 
-@Mixin(World.class)
-public abstract class MixinWorld {
-	// if (blockState.getBlock().hasBlockEntity()) {
-	@Redirect(method = "breakBlock", at = @At(value = "INVOKE", target = Signatures.BlockState_getBlock, ordinal = 0))
-	private Block patchwork_breakBlock_getBlock(BlockState blockstate) {
-		return BlockContext.hasBlockEntityBlockMarker(blockstate);
+	public static BlockState getShovelPathingState(BlockState originalState) {
+		return ShovelItem.PATH_STATES.get(originalState.getBlock());
 	}
 }

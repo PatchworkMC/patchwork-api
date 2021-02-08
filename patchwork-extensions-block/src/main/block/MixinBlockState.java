@@ -17,22 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.patchworkmc.mixin.extensions.block.blockentity;
+package net.patchworkmc.mixin.extensions.block;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.minecraftforge.common.extensions.IForgeBlock;
+import net.minecraftforge.common.extensions.IForgeBlockState;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 
-import net.patchworkmc.impl.extensions.block.BlockContext;
-
-@Mixin(Block.class)
-public abstract class MixinBlock {
-	@Inject(method = "hasBlockEntity", at = @At("RETURN"), cancellable = true)
-	public void patchwork_hasBlockEntity(CallbackInfoReturnable<Boolean> info) {
-		info.setReturnValue(BlockContext.block_hasBlockEntity((IForgeBlock) this));
-	}
-}
+@Mixin(BlockState.class)
+public class MixinBlockState implements IForgeBlockState { }

@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinItem",
-    "MixinItemSettings"
+    "MixinItemSettings",
   ],
   "client": [
     "client.MixinItem",
