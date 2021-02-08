@@ -1,7 +1,5 @@
 package net.patchworkmc.mixin.extensions.block;
 
-import java.util.Locale;
-
 import net.minecraftforge.common.extensions.IForgeBlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,11 +30,13 @@ public class MixinChunkRegion {
 	private void captureBE(BlockPos pos, BlockState state, int arg2, int arg3, CallbackInfoReturnable<Boolean> cir, Chunk chunk, BlockState blockState) {
 		blockContext.set(state);
 	}
+
 	@Redirect(method = "Lnet/minecraft/world/ChunkRegion;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;II)Z",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockEntityProvider;createBlockEntity(Lnet/minecraft/world/BlockView;)Lnet/minecraft/block/entity/BlockEntity;", ordinal = 0))
 	private BlockEntity redirectCreateBlockEntity(BlockEntityProvider blockEntityProvider, BlockView world) {
 		BlockEntity ret = ((IForgeBlockState) blockContext.get()).createTileEntity(world);
-		blockContext.set(null);
+		blockContext.remove();
+
 		return ret;
 	}
 }
