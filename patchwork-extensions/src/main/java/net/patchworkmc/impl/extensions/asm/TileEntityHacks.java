@@ -32,9 +32,9 @@ import net.fabricmc.loader.api.FabricLoader;
  */
 class TileEntityHacks {
 	private static final String BLOCK_ENTITY_PROVIDER = Transformer.mapSlashedClass("net/minecraft/block/BlockEntityProvider");
-	// it's easier to just hardcode this method name that will never change since we don't need the desc
-	private static final String CREATE_BE =
-			FabricLoader.getInstance().isDevelopmentEnvironment() ? "createBlockEntity" : "method_10123";
+	// it's easier to just hardcode these method names that will never change since we don't need the desc
+	private static final String CREATE_BE = FabricLoader.getInstance().isDevelopmentEnvironment() ? "createBlockEntity" : "method_10123";
+	private static final String HAS_BLOCK_ENTITY = FabricLoader.getInstance().isDevelopmentEnvironment() ? "hasBlockEntity" : "method_9570";
 	private static final String BLOCK = Transformer.mapSlashedClass("net/minecraft/class_2248");
 
 	public static void classLoadMePlease() {
@@ -45,12 +45,18 @@ class TileEntityHacks {
 		boolean didSomething = false;
 
 		for (AbstractInsnNode instruction : node.instructions) {
-			if (instruction.getOpcode() == Opcodes.CHECKCAST) {
+			if (instruction instanceof TypeInsnNode) {
 				TypeInsnNode tin = (TypeInsnNode) instruction;
 
 				if (tin.desc.equals(BLOCK_ENTITY_PROVIDER)) {
-					// this could be problematic for weird use cases. too bad!
-					node.instructions.remove(tin);
+					if (tin.getOpcode() == Opcodes.CHECKCAST) {
+						// this could be problematic for weird use cases. too bad!
+						node.instructions.remove(tin);
+					} else if (tin.getOpcode() == Opcodes.INSTANCEOF) {
+						MethodInsnNode newMin = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, BLOCK, HAS_BLOCK_ENTITY, "()Z");
+						node.instructions.insertBefore(tin, newMin);
+						node.instructions.remove(tin);
+					}
 				}
 			} else if (instruction.getOpcode() == Opcodes.INVOKEINTERFACE) {
 				MethodInsnNode min = (MethodInsnNode) instruction;

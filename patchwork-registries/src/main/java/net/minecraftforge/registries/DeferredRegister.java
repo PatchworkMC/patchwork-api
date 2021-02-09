@@ -154,6 +154,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 	 * @param bus The Mod Specific event bus.
 	 */
 	public void register(IEventBus bus) {
+		EventRegistrarRegistry.INSTANCE.registerInstance(EventDispatcher.class, (in, it) -> it.addListener(in::handleEvent));
 		bus.register(new EventDispatcher(this));
 
 		if (this.type == null && this.registryFactory != null) {
@@ -171,11 +172,6 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>> {
 		public void handleEvent(RegistryEvent.Register<?> event) {
 			register.addEntries(event);
 		}
-	}
-
-	// can't use $ because of how the ${version} replacement works
-	public static void patchwork_registerEventRegistrar() {
-		EventRegistrarRegistry.INSTANCE.registerInstance(EventDispatcher.class, (in, bus) -> bus.addListener(in::handleEvent));
 	}
 
 	/**

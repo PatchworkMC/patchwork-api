@@ -50,7 +50,7 @@ import net.fabricmc.loader.api.FabricLoader;
  */
 class Transformer {
 	private static final FabricLoader LOADER = FabricLoader.getInstance();
-	private static final boolean CHANGE_ME_TO_AUDIT = false;
+	private static final boolean CHANGE_ME_TO_AUDIT = true;
 	private static final boolean AUDIT = FabricLoader.getInstance().isDevelopmentEnvironment() && CHANGE_ME_TO_AUDIT;
 
 	public static final Logger LOGGER = LogManager.getLogger("Patchwork Mass ASM");

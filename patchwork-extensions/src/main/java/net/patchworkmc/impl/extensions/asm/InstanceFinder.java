@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.Frame;
@@ -46,6 +47,9 @@ class InstanceFinder extends Analyzer<SourceValue> {
 
 	private class InternalFrame extends Frame<SourceValue> {
 		private AbstractInsnNode current;
+		boolean capturing = false;
+		SourceValue last = null;
+
 		InternalFrame(int numLocals, int numStack) {
 			super(numLocals, numStack);
 		}
@@ -53,6 +57,12 @@ class InstanceFinder extends Analyzer<SourceValue> {
 		@Override
 		public void execute(AbstractInsnNode insn, Interpreter<SourceValue> interpreter) throws AnalyzerException {
 			this.current = insn;
+
+			// The instance is pushed first and therefore popped last
+			if (capturing && current != target) {
+				throw new FoundException(last.insns);
+			}
+
 			super.execute(insn, interpreter);
 		}
 
@@ -63,17 +73,34 @@ class InstanceFinder extends Analyzer<SourceValue> {
 
 		@Override
 		public SourceValue pop() {
+			SourceValue ret = super.pop();
+
 			if (current == target) {
-				throw new FoundException(super.pop().insns);
+				capturing = true;
+				this.last = ret;
 			}
 
-			return super.pop();
+			return ret;
 		}
 	}
 
 	@Override
 	protected Frame<SourceValue> newFrame(int numLocals, int numStack) {
 		return new InternalFrame(numLocals, numStack);
+	}
+
+	@Override
+	public Frame<SourceValue>[] analyze(String owner, MethodNode method) throws AnalyzerException {
+		Frame<SourceValue>[] frames = super.analyze(owner, method);
+		InternalFrame ours = (InternalFrame) frames[0];
+
+		// Handle the case where the MIN is the last of the whole method
+		// I don't actually know if this could ever even happen, but better safe than sorry
+		if (ours.capturing) {
+			throw new FoundException(ours.last.insns);
+		}
+
+		return frames;
 	}
 
 	class FoundException extends RuntimeException {

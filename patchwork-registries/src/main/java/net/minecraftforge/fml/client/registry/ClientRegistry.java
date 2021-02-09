@@ -21,38 +21,39 @@ package net.minecraftforge.fml.client.registry;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
-import net.fabricmc.fabric.api.client.render.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 
 import net.patchworkmc.impl.registries.AddedKeybinds;
 
 public class ClientRegistry {
-	private static Map<Class<? extends Entity>, Identifier> entityShaderMap = new ConcurrentHashMap<>();
+	private static final Map<Class<? extends Entity>, Identifier> entityShaderMap = new ConcurrentHashMap<>();
 
 	/**
-	 * Registers a {@link BlockEntityRenderer}
+	 * Registers a Tile Entity renderer.
 	 * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
 	 * This method is safe to call during parallel mod loading.
 	 */
-	public static synchronized <T extends BlockEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, BlockEntityRenderer<? super T> specialRenderer) {
-		BlockEntityRendererRegistry.INSTANCE.register(tileEntityClass, specialRenderer);
-		// Done by Fabric API: specialRenderer.setRenderManager(BlockEntityRenderDispatcher.INSTANCE);
+	public static synchronized <T extends BlockEntity> void bindTileEntityRenderer(BlockEntityType<T> tileEntityType,
+			Function rendererFactory) {
+		BlockEntityRendererRegistry.INSTANCE.register(tileEntityType, rendererFactory);
 	}
 
 	/**
-	 * Registers a {@link KeyBinding}.
+	 * Registers a KeyBinding.
 	 * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
 	 * This method is safe to call during parallel mod loading.
 	 */
 	public static synchronized void registerKeyBinding(KeyBinding key) {
-		KeyBindingRegistry.INSTANCE.addCategory(key.getCategory());
+		KeyBindingHelper.registerKeyBinding(key);
 		AddedKeybinds.registerKeyBinding(key);
 	}
 
