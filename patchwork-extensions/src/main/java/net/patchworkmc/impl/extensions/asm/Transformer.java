@@ -167,17 +167,20 @@ class Transformer {
 								continue;
 							}
 
+							// load the context instead
 							vin.var = translation;
+							// call our new method
 							targetNode.owner = redirect.contextClass;
 							targetNode.name = redirect.newTargetName;
 							didSomething = true;
 						} else if (creator instanceof MethodInsnNode) {
 							if (!redirect.isConversionMethod((MethodInsnNode) creator)) {
 								LOGGER.warn("Found a target in " + className + "::" + method.name + method.desc + ", but not a conversion method!");
-
 								continue;
 							}
 
+							// since this is context.convert().targetMethod()
+							// we can just remove the convert() and then we have context.newMethod()
 							method.instructions.remove(creator);
 							targetNode.owner = redirect.contextClass;
 							targetNode.name = redirect.newTargetName;

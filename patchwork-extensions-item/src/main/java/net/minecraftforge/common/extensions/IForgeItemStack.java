@@ -130,7 +130,7 @@ public interface IForgeItemStack extends IForgeItemStackDuck {
 			Item item = getStack().getItem();
 			ActionResult enumactionresult = patchwork$getForgeItem().onItemUseFirst(getStack(), context);
 
-			if (entityplayer != null && enumactionresult == ActionResult.SUCCESS) {
+			if (entityplayer != null && enumactionresult.isAccepted()) {
 				entityplayer.incrementStat(Stats.USED.getOrCreateStat(item));
 			}
 

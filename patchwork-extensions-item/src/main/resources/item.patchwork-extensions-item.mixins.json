@@ -4,12 +4,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinItem",
+    "MixinItemEntity",
     "MixinItemSettings",
-    "MixinItemStack",
-    "MixinItemEntity"
+    "MixinItemStack"
   ],
   "client": [
+    "client.MixinBlockRenderManager",
     "client.MixinItem",
+    "client.MixinItemRenderer",
     "client.MixinItemSettings"
   ],
   "injectors": {

@@ -32,6 +32,10 @@ import org.objectweb.asm.tree.analysis.Interpreter;
 import org.objectweb.asm.tree.analysis.SourceInterpreter;
 import org.objectweb.asm.tree.analysis.SourceValue;
 
+/**
+ * Throws a {@link FoundException} that contains the instructions that can load the instance on this instruction
+ * (i.e. for foo.bar(2), it returns any instructions to load foo)
+ */
 class InstanceFinder extends Analyzer<SourceValue> {
 	private final MethodInsnNode target;
 

@@ -832,8 +832,6 @@ public interface IForgeItem extends IForgeItemDuck {
 	 * one.
 	 */
 	@Environment(EnvType.CLIENT)
-	@Stubbed
-	// TODO: needs call locations in ItemRenderer and BlockRenderManager
 	BuiltinModelItemRenderer getItemStackTileEntityRenderer();
 
 	/**

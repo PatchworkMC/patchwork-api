@@ -26,4 +26,5 @@ import net.minecraft.item.ItemStack;
 
 @Mixin(ItemStack.class)
 public abstract class MixinItemStack implements IForgeItemStack {
+	// TODO: useOnBlock special magick
 }

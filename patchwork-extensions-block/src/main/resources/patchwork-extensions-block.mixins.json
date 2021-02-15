@@ -5,7 +5,8 @@
   "mixins": [
     "MixinBlock",
     "MixinBlockState",
-    "MixinChunkRegion"
+    "MixinAbstractBlock",
+    "MixinWorldChunk"
   ],
   "injectors": {
     "defaultRequire": 1

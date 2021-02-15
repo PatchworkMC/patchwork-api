@@ -19,34 +19,23 @@
 
 package net.patchworkmc.mixin.extensions.item.client;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.extensions.IForgeItem;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
+import net.minecraft.block.BlockState;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.item.BuiltinModelItemRenderer;
-import net.minecraft.item.Item;
+import net.minecraft.client.util.math.MatrixStack;
 
-import net.patchworkmc.api.extensions.item.PatchworkItemSettingsExtensions;
-
-@Mixin(Item.class)
-public abstract class MixinItem implements IForgeItem {
-	@Unique
-	@Nullable
-	private BuiltinModelItemRenderer ister;
-
-	@Inject(at = @At("RETURN"), method = "<init>")
-	private void onConstruct(Item.Settings settings, CallbackInfo info) {
-		final PatchworkItemSettingsExtensions extension = (PatchworkItemSettingsExtensions) settings;
-		this.ister = extension.patchwork$ISTER();
-	}
-
-	@Override
-	public BuiltinModelItemRenderer getItemStackTileEntityRenderer() {
-		return ister == null ? BuiltinModelItemRenderer.INSTANCE : ister;
+@Mixin(BlockRenderManager.class)
+public class MixinBlockRenderManager {
+	@Redirect(method = "renderBlockAsEntity", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/item/BuiltinModelItemRenderer;INSTANCE:Lnet/minecraft/client/render/item/BuiltinModelItemRenderer;",
+			opcode = Opcodes.GETSTATIC, ordinal = 0))
+	private BuiltinModelItemRenderer patchwork$useForgeISTER(BlockState state, MatrixStack matrices, VertexConsumerProvider vertexConsumer, int light, int overlay) {
+		return ((IForgeItem) state.getBlock().asItem()).getItemStackTileEntityRenderer();
 	}
 }

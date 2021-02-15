@@ -63,6 +63,7 @@ public abstract class MixinItem implements IForgeItem {
 
 		toolClasses = Maps.newHashMap();
 		toolClasses.putAll(extension.patchwork$toolTypes());
+		// ISTER handled in client package
 	}
 
 	@Inject(method = "isIn(Lnet/minecraft/item/ItemGroup;)Z", at = @At("HEAD"), cancellable = true)

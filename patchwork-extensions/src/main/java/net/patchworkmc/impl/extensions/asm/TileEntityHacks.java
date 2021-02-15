@@ -49,10 +49,13 @@ class TileEntityHacks {
 				TypeInsnNode tin = (TypeInsnNode) instruction;
 
 				if (tin.desc.equals(BLOCK_ENTITY_PROVIDER)) {
+					// Remove CHECKCAST BlockEntityProvider since we will be calling directly to blocks
 					if (tin.getOpcode() == Opcodes.CHECKCAST) {
 						// this could be problematic for weird use cases. too bad!
 						node.instructions.remove(tin);
 					} else if (tin.getOpcode() == Opcodes.INSTANCEOF) {
+						// Redirect INSTANCEOF to block.hasBlockEntity()
+						// the Transformer will convert this to hasTileEntity(state) later.
 						MethodInsnNode newMin = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, BLOCK, HAS_BLOCK_ENTITY, "()Z");
 						node.instructions.insertBefore(tin, newMin);
 						node.instructions.remove(tin);
@@ -61,6 +64,8 @@ class TileEntityHacks {
 			} else if (instruction.getOpcode() == Opcodes.INVOKEINTERFACE) {
 				MethodInsnNode min = (MethodInsnNode) instruction;
 
+				// Convert BlockEntityProvider.createBlockEntity(BlockView) to Block.createTileEntity(BlockView)
+				// The next step will be done by Transformer
 				if (min.owner.equals(BLOCK_ENTITY_PROVIDER) && min.name.equals(CREATE_BE)) {
 					min.owner = BLOCK;
 					min.name = "patchwork$createTileEntityIntermediate";
