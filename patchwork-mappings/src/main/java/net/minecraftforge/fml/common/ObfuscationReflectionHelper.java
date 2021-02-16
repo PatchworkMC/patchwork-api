@@ -40,7 +40,7 @@ import net.patchworkmc.api.mappings.PatchworkRemappingService;
  * If you're a Fabric mod that depends on Patchwork API, this class will not do
  * what you expect. Use {@link PatchworkRemappingService} instead.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") // Since our implementation is different from Forge we don't use all of the parameters
 @Deprecated
 public class ObfuscationReflectionHelper {
 	private static final Logger LOGGER = LogManager.getLogger();

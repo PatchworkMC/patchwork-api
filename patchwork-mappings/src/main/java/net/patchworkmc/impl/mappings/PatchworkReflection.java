@@ -30,7 +30,6 @@ import net.patchworkmc.api.mappings.PatchworkRemappingService;
 /**
  * Hooks for patcher to replace calls to the Java Reflection API with.
  */
-@SuppressWarnings("unused")
 public class PatchworkReflection {
 	public static Class<?> forName(String name) throws ClassNotFoundException {
 		MappingSet srgToRuntimeMappings = PatchworkMappings.getMappingGenerator().getSrgToRuntimeMappings();

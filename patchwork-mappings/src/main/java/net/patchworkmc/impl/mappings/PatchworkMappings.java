@@ -32,6 +32,7 @@ import net.fabricmc.api.ModInitializer;
 public class PatchworkMappings implements ModInitializer {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static MappingGenerator mappingGenerator;
+	private static IOException exception;
 
 	@Override
 	public void onInitialize() {
@@ -39,10 +40,15 @@ public class PatchworkMappings implements ModInitializer {
 			mappingGenerator = new MappingGenerator(SharedConstants.getGameVersion().getReleaseTarget());
 		} catch (IOException e) {
 			LOGGER.log(Level.ERROR, "An unexpected error occurred while generating mappings for Patchwork", e);
+			exception = e;
 		}
 	}
 
 	public static MappingGenerator getMappingGenerator() {
-		return mappingGenerator;
+		if (mappingGenerator == null) {
+			throw new RuntimeException(exception);
+		} else {
+			return mappingGenerator;
+		}
 	}
 }
