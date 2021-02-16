@@ -46,7 +46,7 @@ public class PatchworkMappings implements ModInitializer {
 
 	public static MappingGenerator getMappingGenerator() {
 		if (mappingGenerator == null) {
-			throw new RuntimeException(exception);
+			throw new RuntimeException("A mod tried to use reflection but the mappings are not loaded. Is the game offline?", exception);
 		} else {
 			return mappingGenerator;
 		}
