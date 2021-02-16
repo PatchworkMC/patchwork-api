@@ -267,6 +267,7 @@ dependencies {
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
+	include 'org.cadixdev:lorenz:0.5.4'
 }
 
 loom {
