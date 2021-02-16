@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-- [ ]  I understand that the latest version of Patchwork released on Github Releases is not supported, and I have compiled the version the bug is found on from the source code.
+- [ ]  I understand that the latest version of Patchwork released on Github Releases is not supported, and I have compiled the version the bug is found on from the latest commit.
 - [ ] I understand that a crash report that includes the line "Patchwork mod [modid] tried to access an unimplemented [...]" is not a bug, but instead a report that a mod is missing a feature. I will not open an issue for crash reports that report unimplemented features.
 - [ ] I understand if I do not confirm these things my issue will be closed as invalid.
 
