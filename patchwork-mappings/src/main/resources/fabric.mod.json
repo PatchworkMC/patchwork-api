@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "patchwork-mappings",
+  "name": "Patchwork Mappings",
+  "version": "${version}",
+  "license": "LGPL-2.1-only",
+  "icon": "assets/patchwork-mappings/icon.png",
+  "contact": {
+    "issues": "https://github.com/PatchworkMC/patchwork-api/issues",
+    "sources": "https://github.com/PatchworkMC/patchwork-api"
+  },
+  "authors": [
+    "PatchworkMC"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.1",
+    "fabric": ">=0.30.0",
+    "minecraft": "1.16.5"
+  },
+  "description": "Manages remapping reflection calls for Patchwork mods at runtime",
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:parent": "patchwork"
+  },
+  "entrypoints": {
+    "main": [
+      "net.patchworkmc.impl.mappings.PatchworkMappings"
+    ]
+  }
+}
