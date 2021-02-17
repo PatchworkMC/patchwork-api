@@ -19,12 +19,9 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
@@ -32,7 +29,6 @@ import net.minecraft.util.math.Direction;
 import net.patchworkmc.api.capability.CapabilityProviderConvertible;
 import net.patchworkmc.impl.capability.CapabilityEvents;
 
-@ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B> implements ICapabilityProvider, CapabilityProviderConvertible {
 	protected final Class<B> baseClass;
 	protected CapabilityDispatcher capabilities;
@@ -104,8 +100,8 @@ public abstract class CapabilityProvider<B> implements ICapabilityProvider, Capa
 	}
 
 	@Override
-	@Nonnull
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+	@NotNull
+	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 		final CapabilityDispatcher disp = getCapabilities();
 		return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
 	}

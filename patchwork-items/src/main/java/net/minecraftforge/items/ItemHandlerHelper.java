@@ -19,8 +19,8 @@
 
 package net.minecraftforge.items;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -32,8 +32,8 @@ public class ItemHandlerHelper {
 		return ((CapabilityProviderHolder) (Object) a).areCapsCompatible(((CapabilityProviderHolder) (Object) b).getCapabilityProvider());
 	}
 
-	@Nonnull
-	public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate) {
+	@NotNull
+	public static ItemStack insertItem(IItemHandler dest, @NotNull ItemStack stack, boolean simulate) {
 		if (dest == null || stack.isEmpty()) {
 			return stack;
 		}
@@ -49,7 +49,7 @@ public class ItemHandlerHelper {
 		return stack;
 	}
 
-	public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b) {
+	public static boolean canItemStacksStack(@NotNull ItemStack a, @NotNull ItemStack b) {
 		if (a.isEmpty() || !a.isItemEqualIgnoreDamage(b) || a.hasTag() != b.hasTag()) {
 			return false;
 		}
@@ -61,7 +61,7 @@ public class ItemHandlerHelper {
 	 * A relaxed version of canItemStacksStack that stacks itemstacks with different metadata if they don't have subtypes.
 	 * This usually only applies when players pick up items.
 	 */
-	public static boolean canItemStacksStackRelaxed(@Nonnull ItemStack a, @Nonnull ItemStack b) {
+	public static boolean canItemStacksStackRelaxed(@NotNull ItemStack a, @NotNull ItemStack b) {
 		if (a.isEmpty() || b.isEmpty() || a.getItem() != b.getItem()) {
 			return false;
 		}
@@ -77,8 +77,8 @@ public class ItemHandlerHelper {
 		return (!a.hasTag() || a.getTag().equals(b.getTag())) && patchwork$areItemStackCapsCompatible(a, b);
 	}
 
-	@Nonnull
-	public static ItemStack copyStackWithSize(@Nonnull ItemStack itemStack, int size) {
+	@NotNull
+	public static ItemStack copyStackWithSize(@NotNull ItemStack itemStack, int size) {
 		if (size == 0) {
 			return ItemStack.EMPTY;
 		}
@@ -93,8 +93,8 @@ public class ItemHandlerHelper {
 	 * This is equivalent to the behaviour of a player picking up an item.
 	 * Note: This function stacks items without subtypes with different metadata together.
 	 */
-	@Nonnull
-	public static ItemStack insertItemStacked(IItemHandler inventory, @Nonnull ItemStack stack, boolean simulate) {
+	@NotNull
+	public static ItemStack insertItemStacked(IItemHandler inventory, @NotNull ItemStack stack, boolean simulate) {
 		if (inventory == null || stack.isEmpty()) {
 			return stack;
 		}
@@ -141,7 +141,7 @@ public class ItemHandlerHelper {
 	 */
 
 	/* TODO: PlayerMainInvWrapper
-	public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack) {
+	public static void giveItemToPlayer(PlayerEntity player, @NotNull ItemStack stack) {
 		giveItemToPlayer(player, stack, -1);
 	}*/
 
@@ -154,7 +154,7 @@ public class ItemHandlerHelper {
 	 */
 
 	/* TODO: PlayerMainInvWrapper
-	public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack, int preferredSlot) {
+	public static void giveItemToPlayer(PlayerEntity player, @NotNull ItemStack stack, int preferredSlot) {
 		if (stack.isEmpty()) return;
 
 		IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);

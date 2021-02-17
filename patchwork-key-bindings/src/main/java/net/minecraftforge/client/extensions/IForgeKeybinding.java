@@ -19,10 +19,9 @@
 
 package net.minecraftforge.client.extensions;
 
-import javax.annotation.Nonnull;
-
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -32,7 +31,7 @@ public interface IForgeKeybinding {
 		return (KeyBinding) this;
 	}
 
-	@Nonnull
+	@NotNull
 	InputUtil.Key getKey();
 
 	/**

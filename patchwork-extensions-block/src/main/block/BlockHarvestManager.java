@@ -21,7 +21,7 @@ package net.patchworkmc.impl.extensions.block;
 
 import java.util.Stack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolType;
@@ -76,7 +76,7 @@ public class BlockHarvestManager {
 	 * Requires harvest levels.
 	 */
 	@SuppressWarnings("unused")
-	public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull BlockView world, @Nonnull BlockPos pos) {
+	public static boolean canHarvestBlock(@NotNull BlockState state, @NotNull PlayerEntity player, @NotNull BlockView world, @NotNull BlockPos pos) {
 		// state = state.getActualState(world, pos);
 		if (state.getMaterial().canBreakByHand()) {
 			return true;

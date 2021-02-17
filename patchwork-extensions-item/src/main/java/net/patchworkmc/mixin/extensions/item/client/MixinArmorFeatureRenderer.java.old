@@ -21,7 +21,7 @@ package net.patchworkmc.mixin.extensions.item.client;
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;

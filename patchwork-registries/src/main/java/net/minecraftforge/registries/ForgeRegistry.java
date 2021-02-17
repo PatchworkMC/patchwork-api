@@ -29,8 +29,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -240,7 +238,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements
 	}
 
 	@Override
-	@Nonnull
+	@NotNull
 	public Iterator<V> iterator() {
 		return vanilla.stream().iterator();
 	}

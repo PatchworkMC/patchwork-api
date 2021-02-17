@@ -21,15 +21,14 @@ package net.minecraftforge.client.settings;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
-
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public enum KeyModifier {
 	CONTROL {

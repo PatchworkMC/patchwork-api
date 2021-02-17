@@ -19,9 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import javax.annotation.Nonnull;
-
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -42,10 +41,10 @@ public class RenderHandEvent extends Event {
 	private final float interpolatedPitch;
 	private final float swingProgress;
 	private final float equipProgress;
-	@Nonnull
+	@NotNull
 	private final ItemStack stack;
 
-	public RenderHandEvent(Hand hand, MatrixStack mat, VertexConsumerProvider buffers, int light, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack) {
+	public RenderHandEvent(Hand hand, MatrixStack mat, VertexConsumerProvider buffers, int light, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @NotNull ItemStack stack) {
 		this.hand = hand;
 		this.mat = mat;
 		this.buffers = buffers;
@@ -101,7 +100,7 @@ public class RenderHandEvent extends Event {
 	/**
 	 * @return The ItemStack to be rendered
 	 */
-	@Nonnull
+	@NotNull
 	public ItemStack getItemStack() {
 		return stack;
 	}

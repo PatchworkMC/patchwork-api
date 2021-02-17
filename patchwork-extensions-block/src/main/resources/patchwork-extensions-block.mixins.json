@@ -3,9 +3,9 @@
   "package": "net.patchworkmc.mixin.extensions.block",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinAbstractBlock",
     "MixinBlock",
     "MixinBlockState",
-    "MixinAbstractBlock",
     "MixinWorldChunk"
   ],
   "injectors": {

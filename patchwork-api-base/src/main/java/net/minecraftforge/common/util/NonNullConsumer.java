@@ -21,14 +21,14 @@ package net.minecraftforge.common.util;
 
 import java.util.function.Consumer;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Equivalent to {@link Consumer}, except with nonnull contract.
+ * Equivalent to {@link Consumer}, except with NotNull contract.
  *
  * @see Consumer
  */
 @FunctionalInterface
 public interface NonNullConsumer<T> {
-	void accept(@Nonnull T t);
+	void accept(@NotNull T t);
 }

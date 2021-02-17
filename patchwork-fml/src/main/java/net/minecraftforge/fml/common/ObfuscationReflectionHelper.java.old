@@ -24,8 +24,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.StringJoiner;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import cpw.mods.modlauncher.api.INameMappingService;
@@ -58,7 +58,7 @@ public class ObfuscationReflectionHelper {
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 * @deprecated Fabric mods should use {@link PatchworkMappingService#remapName(INameMappingService.Domain, String)} instead.
 	 */
-	@Nonnull
+	@NotNull
 	@Deprecated
 	public static String remapName(INameMappingService.Domain domain, String name) {
 		return PatchworkMappingService.remapName(domain, name);
@@ -142,7 +142,7 @@ public class ObfuscationReflectionHelper {
 	 * Forge: TODO Remove in 1.15
 	 */
 	@Deprecated
-	public static <T, E> void setPrivateValue(@Nonnull final Class<? super T> classToAccess, @Nonnull final T instance, @Nullable final E value, int fieldIndex) {
+	public static <T, E> void setPrivateValue(@NotNull final Class<? super T> classToAccess, @NotNull final T instance, @Nullable final E value, int fieldIndex) {
 		try {
 			findField(classToAccess, fieldIndex).set(instance, value);
 		} catch (IllegalAccessException e) {
@@ -166,8 +166,8 @@ public class ObfuscationReflectionHelper {
 	 * @throws UnableToFindFieldException   If there was a problem getting the field.
 	 * @throws UnableToAccessFieldException If there was a problem setting the value of the field.
 	 */
-	public static <T, E> void setPrivateValue(@Nonnull final Class<? super T> classToAccess, @Nonnull final T instance,
-				@Nullable final E value, @Nonnull final String fieldName) {
+	public static <T, E> void setPrivateValue(@NotNull final Class<? super T> classToAccess, @NotNull final T instance,
+				@Nullable final E value, @NotNull final String fieldName) {
 		try {
 			findField(classToAccess, fieldName).set(instance, value);
 		} catch (UnableToFindFieldException e) {
@@ -195,8 +195,8 @@ public class ObfuscationReflectionHelper {
 	 * @throws NullPointerException        If {@code parameterTypes} is null.
 	 * @throws UnableToFindMethodException If the method could not be found.
 	 */
-	@Nonnull
-	public static Method findMethod(@Nonnull final Class<?> clazz, @Nonnull final String methodName, @Nonnull final Class<?>... parameterTypes) {
+	@NotNull
+	public static Method findMethod(@NotNull final Class<?> clazz, @NotNull final String methodName, @NotNull final Class<?>... parameterTypes) {
 		Preconditions.checkNotNull(clazz, "Class to find method on cannot be null.");
 		Preconditions.checkNotNull(methodName, "Name of method to find cannot be null.");
 		Preconditions.checkArgument(!methodName.isEmpty(), "Name of method to find cannot be empty.");
@@ -226,8 +226,8 @@ public class ObfuscationReflectionHelper {
 	 * @throws NullPointerException        If {@code parameterTypes} is null.
 	 * @throws UnknownConstructorException If the constructor could not be found.
 	 */
-	@Nonnull
-	public static <T> Constructor<T> findConstructor(@Nonnull final Class<T> clazz, @Nonnull final Class<?>... parameterTypes) {
+	@NotNull
+	public static <T> Constructor<T> findConstructor(@NotNull final Class<T> clazz, @NotNull final Class<?>... parameterTypes) {
 		Preconditions.checkNotNull(clazz, "Class to find constructor on cannot be null.");
 		Preconditions.checkNotNull(parameterTypes, "Parameter types of constructor to find cannot be null.");
 
@@ -266,8 +266,8 @@ public class ObfuscationReflectionHelper {
 	 * @throws IllegalArgumentException   If {@code fieldName} is empty.
 	 * @throws UnableToFindFieldException If the field could not be found.
 	 */
-	@Nonnull
-	public static <T> Field findField(@Nonnull final Class<? super T> clazz, @Nonnull final String fieldName) {
+	@NotNull
+	public static <T> Field findField(@NotNull final Class<? super T> clazz, @NotNull final String fieldName) {
 		Preconditions.checkNotNull(clazz, "Class to find field on cannot be null.");
 		Preconditions.checkNotNull(fieldName, "Name of field to find cannot be null.");
 		Preconditions.checkArgument(!fieldName.isEmpty(), "Name of field to find cannot be empty.");
@@ -298,7 +298,7 @@ public class ObfuscationReflectionHelper {
 	 * TODO: Remove in 1.15
 	 */
 	@Deprecated
-	@Nonnull
+	@NotNull
 	public static <T> Field findField(final Class<? super T> clazz, final int fieldIndex) {
 		Preconditions.checkNotNull(clazz, "Class to find field on cannot be null.");
 

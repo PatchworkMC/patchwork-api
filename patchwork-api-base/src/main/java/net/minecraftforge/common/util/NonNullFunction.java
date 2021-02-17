@@ -21,7 +21,7 @@ package net.minecraftforge.common.util;
 
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Equivalent to {@link Function}, except with nonnull contract.
@@ -30,6 +30,6 @@ import javax.annotation.Nonnull;
  */
 @FunctionalInterface
 public interface NonNullFunction<T, R> {
-	@Nonnull
-	R apply(@Nonnull T t);
+	@NotNull
+	R apply(@NotNull T t);
 }

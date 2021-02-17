@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -97,24 +97,24 @@ public class ForgeHooks {
 	//private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
 
 	@Stubbed
-	public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to) {
+	public static boolean canContinueUsing(@NotNull ItemStack from, @NotNull ItemStack to) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
 	@Stubbed
-	public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull BlockView world, @Nonnull BlockPos pos) {
+	public static boolean canHarvestBlock(@NotNull BlockState state, @NotNull PlayerEntity player, @NotNull BlockView world, @NotNull BlockPos pos) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
 	/*
 	@Stubbed
-	public static boolean canToolHarvestBlock(ViewableWorld world, BlockPos pos, @Nonnull ItemStack stack) {
+	public static boolean canToolHarvestBlock(ViewableWorld world, BlockPos pos, @NotNull ItemStack stack) {
 		throw new NotImplementedException("ForgeHooks stub");
 	} */
 
 	/*
 	@Stubbed
-	public static boolean isToolEffective(ViewableWorld world, BlockPos pos, @Nonnull ItemStack stack) {
+	public static boolean isToolEffective(ViewableWorld world, BlockPos pos, @NotNull ItemStack stack) {
 		throw new NotImplementedException("ForgeHooks stub");
 	} */
 
@@ -199,7 +199,7 @@ public class ForgeHooks {
 	}
 
 	@Stubbed
-	public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity) {
+	public static boolean isLivingOnLadder(@NotNull BlockState state, @NotNull World world, @NotNull BlockPos pos, @NotNull LivingEntity entity) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
@@ -209,7 +209,7 @@ public class ForgeHooks {
 	}
 
 	@Nullable
-	public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName) {
+	public static ItemEntity onPlayerTossEvent(@NotNull PlayerEntity player, @NotNull ItemStack item, boolean includeName) {
 		// EntityEvents.onPlayerTossEvent is called through an Inject mixin into PlayerEntity.dropItem
 		return player.dropItem(item, false, includeName);
 	}
@@ -234,16 +234,16 @@ public class ForgeHooks {
 	}
 
 	@Stubbed
-	public static ActionResult onPlaceItemIntoWorld(@Nonnull ItemUsageContext context) {
+	public static ActionResult onPlaceItemIntoWorld(@NotNull ItemUsageContext context) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
-	public static boolean onAnvilChange(AnvilScreenHandler container, @Nonnull ItemStack left, @Nonnull ItemStack right, Inventory outputSlot, String name, int baseCost) {
+	public static boolean onAnvilChange(AnvilScreenHandler container, @NotNull ItemStack left, @NotNull ItemStack right, Inventory outputSlot, String name, int baseCost) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
 	@Stubbed
-	public static float onAnvilRepair(PlayerEntity player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right) {
+	public static float onAnvilRepair(PlayerEntity player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
@@ -258,8 +258,8 @@ public class ForgeHooks {
 	}
 
 	@Stubbed
-	@Nonnull
-	public static ItemStack getContainerItem(@Nonnull ItemStack stack) {
+	@NotNull
+	public static ItemStack getContainerItem(@NotNull ItemStack stack) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
@@ -362,7 +362,7 @@ public class ForgeHooks {
 	 */
 	@Stubbed
 	@Nullable
-	public static String getDefaultCreatorModId(@Nonnull ItemStack itemStack) {
+	public static String getDefaultCreatorModId(@NotNull ItemStack itemStack) {
 		throw new NotImplementedException("ForgeHooks stub");
 	}
 
@@ -463,7 +463,7 @@ public class ForgeHooks {
 	//	}
 	//
 	//	@Override
-	//	public boolean applyTagGetter(@Nonnull Function<Identifier, Tag<T>> resolver) {
+	//	public boolean applyTagGetter(@NotNull Function<Identifier, Tag<T>> resolver) {
 	//		if (this.resolvedTag == null) {
 	//			this.resolvedTag = resolver.apply(this.getId());
 	//		}
@@ -471,7 +471,7 @@ public class ForgeHooks {
 	//	}
 	//
 	//	@Override
-	//	public void build(@Nonnull Collection<T> items) {
+	//	public void build(@NotNull Collection<T> items) {
 	//		if (this.resolvedTag != null) {
 	//			items.addAll(this.resolvedTag.values());
 	//		}

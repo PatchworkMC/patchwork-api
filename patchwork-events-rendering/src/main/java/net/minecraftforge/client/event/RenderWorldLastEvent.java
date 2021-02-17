@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.client.render.WorldRenderer;
 
 public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event {
 	private final WorldRenderer context;

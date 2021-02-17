@@ -21,9 +21,8 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

@@ -27,12 +27,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 
@@ -92,7 +91,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
 	 * Will throw NPE if the value is null, use isPresent to check first. Or use any of the other guarded functions.
 	 */
 	@Override
-	@Nonnull
+	@NotNull
 	public T get() {
 		T ret = this.value;
 		Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);

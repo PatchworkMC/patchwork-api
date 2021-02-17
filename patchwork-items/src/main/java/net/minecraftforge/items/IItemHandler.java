@@ -19,7 +19,7 @@
 
 package net.minecraftforge.items;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -48,7 +48,7 @@ public interface IItemHandler {
 	 * @param slot Slot to query
 	 * @return ItemStack in given slot. Empty Itemstack if the slot is empty.
 	 */
-	@Nonnull
+	@NotNull
 	ItemStack getStackInSlot(int slot);
 
 	/**
@@ -64,8 +64,8 @@ public interface IItemHandler {
 	 * May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
 	 * The returned ItemStack can be safely modified after.
 	 */
-	@Nonnull
-	ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
+	@NotNull
+	ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate);
 
 	/**
 	 * Extracts an ItemStack from the given slot.
@@ -79,7 +79,7 @@ public interface IItemHandler {
 	 * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
 	 * The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
 	 */
-	@Nonnull
+	@NotNull
 	ItemStack extractItem(int slot, int amount, boolean simulate);
 
 	/**
@@ -108,5 +108,5 @@ public interface IItemHandler {
 	 * @return true if the slot can insert the ItemStack, not considering the current state of the inventory.
 	 * false if the slot can never insert the ItemStack in any situation.
 	 */
-	boolean isItemValid(int slot, @Nonnull ItemStack stack);
+	boolean isItemValid(int slot, @NotNull ItemStack stack);
 }

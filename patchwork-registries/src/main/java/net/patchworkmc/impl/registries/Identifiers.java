@@ -21,10 +21,8 @@ package net.patchworkmc.impl.registries;
 
 import java.util.Objects;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import net.minecraftforge.registries.GameData;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
@@ -34,7 +32,6 @@ import net.minecraft.util.registry.RegistryKey;
 /**
  * Not every registry entry is registered the Forge way, so we need to delegate to Vanilla.
  */
-@ParametersAreNonnullByDefault
 public class Identifiers {
 	private Identifiers() {
 	}

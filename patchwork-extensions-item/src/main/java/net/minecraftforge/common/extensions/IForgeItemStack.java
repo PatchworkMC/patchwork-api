@@ -21,9 +21,8 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.ToolType;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.pattern.CachedBlockPosition;

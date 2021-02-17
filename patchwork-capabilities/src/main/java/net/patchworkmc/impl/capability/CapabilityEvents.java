@@ -19,12 +19,11 @@
 
 package net.patchworkmc.impl.capability;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import org.jetbrains.annotations.Nullable;
 
 public class CapabilityEvents {
 	// This is less restrictive than Forge's implementation, since patchwork can't make vanilla extend stuff at random.

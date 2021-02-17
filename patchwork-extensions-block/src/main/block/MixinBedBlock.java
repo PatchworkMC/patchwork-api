@@ -19,7 +19,7 @@
 
 package net.patchworkmc.mixin.extensions.block;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.spongepowered.asm.mixin.Mixin;
 import net.minecraftforge.common.extensions.IForgeBlock;

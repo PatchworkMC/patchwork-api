@@ -19,7 +19,7 @@
 
 package net.patchworkmc.mixin.extensions.block.harvest;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;

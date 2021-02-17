@@ -19,9 +19,8 @@
 
 package net.patchworkmc.mixin.extensions.item.client;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.extensions.IForgeItem;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

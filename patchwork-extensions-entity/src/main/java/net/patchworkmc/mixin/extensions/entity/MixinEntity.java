@@ -21,9 +21,8 @@ package net.patchworkmc.mixin.extensions.entity;
 
 import java.util.Collection;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.extensions.IForgeEntity;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;

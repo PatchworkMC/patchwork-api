@@ -22,10 +22,9 @@ package net.minecraftforge.common.extensions;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.ToolType;
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;

@@ -4,9 +4,9 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinAllForgeRegistryEntries",
-    "MixinSimpleRegistry",
     "MixinRecipeSerializer",
-    "MixinRecipeSerializerSubclass"
+    "MixinRecipeSerializerSubclass",
+    "MixinSimpleRegistry"
   ],
   "client": [
   ],

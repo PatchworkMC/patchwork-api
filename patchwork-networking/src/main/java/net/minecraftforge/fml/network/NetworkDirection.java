@@ -22,8 +22,8 @@ package net.minecraftforge.fml.network;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.fml.LogicalSide;
 import org.apache.commons.lang3.tuple.Pair;
@@ -54,7 +54,7 @@ public enum NetworkDirection {
 		this.otherWay = i;
 	}
 
-	@Nonnull
+	@NotNull
 	public NetworkDirection reply() {
 		return NetworkDirection.values()[this.otherWay];
 	}
@@ -63,12 +63,12 @@ public enum NetworkDirection {
 		return this.eventSupplier.apply(buffer, context);
 	}
 
-	@Nonnull
+	@NotNull
 	public LogicalSide getOriginationSide() {
 		return logicalSide;
 	}
 
-	@Nonnull
+	@NotNull
 	public LogicalSide getReceptionSide() {
 		return reply().logicalSide;
 	}
@@ -88,7 +88,7 @@ public enum NetworkDirection {
 		}
 	}
 
-	@Nonnull
+	@NotNull
 	@SuppressWarnings("unchecked")
 	private <T extends Packet<?>> ICustomPacket<T> construct() {
 		switch (this) {
@@ -107,7 +107,7 @@ public enum NetworkDirection {
 		}
 	}
 
-	@Nonnull
+	@NotNull
 	public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketByteBuf, Integer> packetData, Identifier channelName) {
 		ICustomPacket<T> packet = construct();
 

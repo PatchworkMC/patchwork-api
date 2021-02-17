@@ -4,8 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinRecipeGridAligner",
-    "MixinShapedRecipe",
-    "MixinRecipeManager"
+    "MixinRecipeManager",
+    "MixinShapedRecipe"
   ],
   "injectors": {
     "defaultRequire": 1

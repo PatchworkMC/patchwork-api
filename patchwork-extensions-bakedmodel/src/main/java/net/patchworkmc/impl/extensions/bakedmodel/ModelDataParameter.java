@@ -21,7 +21,7 @@ package net.patchworkmc.impl.extensions.bakedmodel;
 
 import java.util.Stack;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
@@ -50,7 +50,7 @@ public class ModelDataParameter {
 	 * If this is not called, the behavior of Vanilla method should not be changed, the additional parameter is assumed to
 	 * have the default value: {@link #DEFAULT}.
 	 */
-	public void setFuncParam(@Nonnull IModelData modelData) {
+	public void setFuncParam(@NotNull IModelData modelData) {
 		if (modelDataParam.get() == null) {
 			modelDataParam.set(modelData);
 		} else {

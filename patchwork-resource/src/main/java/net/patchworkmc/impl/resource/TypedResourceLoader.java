@@ -21,7 +21,7 @@ package net.patchworkmc.impl.resource;
 
 import java.util.concurrent.CompletableFuture;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ReloadRequirements;

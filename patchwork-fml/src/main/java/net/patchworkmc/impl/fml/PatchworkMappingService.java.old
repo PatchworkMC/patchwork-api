@@ -19,8 +19,8 @@
 
 package net.patchworkmc.impl.fml;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import cpw.mods.modlauncher.api.INameMappingService;
 
@@ -47,7 +47,7 @@ public class PatchworkMappingService {
 	 * @param name      The name to try and remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 */
-	@Nonnull
+	@NotNull
 	public static String remapName(INameMappingService.Domain domain, String name) {
 		if (runtimeNamespaceIsIntermediary()) {
 			return name;
@@ -77,7 +77,7 @@ public class PatchworkMappingService {
 	 * @param name      The name to remap.
 	 * @return The remapped name, or the original name if it couldn't be remapped.
 	 */
-	@Nonnull
+	@NotNull
 	public static String remapNameFast(INameMappingService.Domain domain, Class<?> clazz, String name) {
 		if (runtimeNamespaceIsIntermediary()) {
 			return name;

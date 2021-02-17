@@ -21,11 +21,10 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.concurrent.Callable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Throwables;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.Direction;
@@ -147,7 +146,7 @@ public class Capability<T> {
 		}
 	}
 
-	public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst) {
+	public @NotNull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst) {
 		return this == toCheck ? inst.cast() : LazyOptional.empty();
 	}
 

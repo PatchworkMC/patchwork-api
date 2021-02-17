@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -92,7 +92,7 @@ public class ForgeEventFactory {
 
 	/*
 	@Stubbed
-	public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction) {
+	public static boolean onBlockPlace(@Nullable Entity entity, @NotNull BlockSnapshot blockSnapshot, @NotNull Direction direction) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	} */
 
@@ -113,7 +113,7 @@ public class ForgeEventFactory {
 	}
 
 	@Stubbed
-	public static void onPlayerDestroyItem(PlayerEntity player, @Nonnull ItemStack stack, @Nullable Hand hand) {
+	public static void onPlayerDestroyItem(PlayerEntity player, @NotNull ItemStack stack, @Nullable Hand hand) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
@@ -135,7 +135,7 @@ public class ForgeEventFactory {
 	}
 
 	@Stubbed
-	public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime) {
+	public static int getItemBurnTime(@NotNull ItemStack itemStack, int burnTime) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
@@ -240,7 +240,7 @@ public class ForgeEventFactory {
 	}
 
 	@Stubbed
-	@Nonnull
+	@NotNull
 	public static String onClientSendMessage(String message) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
@@ -251,13 +251,13 @@ public class ForgeEventFactory {
 	}
 
 	@Stubbed
-	public static int onApplyBonemeal(@Nonnull PlayerEntity player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack) {
+	public static int onApplyBonemeal(@NotNull PlayerEntity player, @NotNull World world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ItemStack stack) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
 	@Stubbed
 	@Nullable
-	public static TypedActionResult<ItemStack> onBucketUse(@Nonnull PlayerEntity player, @Nonnull World world, @Nonnull ItemStack stack, @Nullable HitResult target) {
+	public static TypedActionResult<ItemStack> onBucketUse(@NotNull PlayerEntity player, @NotNull World world, @NotNull ItemStack stack, @Nullable HitResult target) {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	}
 
@@ -272,7 +272,7 @@ public class ForgeEventFactory {
 		throw new NotImplementedException("ForgeEventFactory stub");
 	} */
 
-	public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item) {
+	public static int onItemExpire(ItemEntity entity, @NotNull ItemStack item) {
 		return EntityEvents.onItemExpire(entity, item);
 	}
 

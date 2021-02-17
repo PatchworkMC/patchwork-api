@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -351,7 +351,7 @@ public class ForgeHooksClient {
 	} */
 
 	@Stubbed
-	public static boolean shouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot) {
+	public static boolean shouldCauseReequipAnimation(@NotNull ItemStack from, @NotNull ItemStack to, int slot) {
 		throw new NotImplementedException("ForgeHooksClient stub");
 	}
 

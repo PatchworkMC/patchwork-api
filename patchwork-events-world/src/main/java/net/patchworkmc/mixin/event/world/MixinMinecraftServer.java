@@ -33,10 +33,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.thread.ReentrantThreadExecutor;
-import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.World;
+import net.minecraft.world.level.ServerWorldProperties;
 
 import net.patchworkmc.impl.event.world.WorldEvents;
 

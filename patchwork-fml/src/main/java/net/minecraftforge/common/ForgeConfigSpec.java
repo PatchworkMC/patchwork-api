@@ -35,8 +35,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.ConfigSpec;
@@ -53,6 +51,7 @@ import com.google.common.collect.ObjectArrays;
 import net.minecraftforge.fml.loading.LogMarkers;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
@@ -596,7 +595,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 	}
 
 	private static class BuilderContext {
-		private @Nonnull
+		private @NotNull
 		String[] comment = new String[0];
 		private String langKey;
 		private Range<?> range;

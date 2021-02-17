@@ -19,14 +19,13 @@
 
 package net.patchworkmc.impl.capability;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.Direction;
@@ -74,13 +73,13 @@ public interface CapabilityProviderHolder extends ICapabilityProvider, Capabilit
 		patchwork$getCapabilityProvider().reviveCaps();
 	}
 
-	@Nonnull
-	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+	@NotNull
+	default <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 		return patchwork$getCapabilityProvider().getCapability(cap, side);
 	}
 
-	@Nonnull
-	default <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+	@NotNull
+	default <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
 		return patchwork$getCapabilityProvider().getCapability(cap);
 	}
 }

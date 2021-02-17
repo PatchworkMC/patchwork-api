@@ -19,11 +19,10 @@
 
 package net.patchworkmc.api.capability;
 
-import javax.annotation.Nonnull;
-
 import net.minecraftforge.common.capabilities.CapabilityProvider;
+import org.jetbrains.annotations.NotNull;
 
 public interface CapabilityProviderConvertible {
-	@Nonnull
+	@NotNull
 	CapabilityProvider<?> patchwork$getCapabilityProvider();
 }

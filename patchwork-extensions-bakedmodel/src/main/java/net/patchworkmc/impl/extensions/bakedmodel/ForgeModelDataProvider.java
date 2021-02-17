@@ -19,7 +19,7 @@
 
 package net.patchworkmc.impl.extensions.bakedmodel;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
@@ -33,7 +33,7 @@ public interface ForgeModelDataProvider {
 	 *
 	 * @return Your model data
 	 */
-	@Nonnull
+	@NotNull
 	default IModelData getModelData() {
 		return EmptyModelData.INSTANCE;
 	}

@@ -21,7 +21,7 @@ package net.minecraftforge.common.util;
 
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Equivalent to {@link Supplier}, except with nonnull contract.
@@ -30,6 +30,6 @@ import javax.annotation.Nonnull;
  */
 @FunctionalInterface
 public interface NonNullSupplier<T> {
-	@Nonnull
+	@NotNull
 	T get();
 }

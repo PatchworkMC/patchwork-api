@@ -22,8 +22,8 @@ package net.minecraftforge.client.extensions;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -44,8 +44,8 @@ public interface IForgeBakedModel {
 		return (BakedModel) this;
 	}
 
-	@Nonnull
-	default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+	@NotNull
+	default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData) {
 		return getBakedModel().getQuads(state, side, rand);
 	}
 
@@ -53,12 +53,12 @@ public interface IForgeBakedModel {
 		return getBakedModel().useAmbientOcclusion();
 	}
 
-	@Nonnull
-	default IModelData getModelData(@Nonnull BlockRenderView world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
+	@NotNull
+	default IModelData getModelData(@NotNull BlockRenderView world, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData tileData) {
 		return tileData;
 	}
 
-	default Sprite getParticleTexture(@Nonnull IModelData data) {
+	default Sprite getParticleTexture(@NotNull IModelData data) {
 		return getBakedModel().getSprite();
 	}
 }

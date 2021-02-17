@@ -19,10 +19,9 @@
 
 package net.patchworkmc.impl.capability;
 
-import javax.annotation.Nullable;
-
 import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 
 public class BaseCapabilityProvider<T> extends CapabilityProvider<T> {
 	private final T provider;

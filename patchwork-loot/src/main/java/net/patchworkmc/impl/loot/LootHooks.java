@@ -22,7 +22,7 @@ package net.patchworkmc.impl.loot;
 import java.util.Deque;
 import java.util.HashSet;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;

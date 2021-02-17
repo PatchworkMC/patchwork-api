@@ -21,7 +21,7 @@ package net.minecraftforge.fml.client;
 
 import java.io.File;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import org.apache.commons.lang3.NotImplementedException;
 

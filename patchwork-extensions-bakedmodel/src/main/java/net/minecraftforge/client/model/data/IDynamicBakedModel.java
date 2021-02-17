@@ -22,8 +22,8 @@ package net.minecraftforge.client.model.data;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.client.extensions.IForgeBakedModel;
 
@@ -37,13 +37,13 @@ import net.minecraft.util.math.Direction;
  */
 public interface IDynamicBakedModel extends BakedModel, IForgeBakedModel {
 	@Override
-	default @Nonnull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand) {
+	default @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand) {
 		return getQuads(state, side, rand, EmptyModelData.INSTANCE);
 	}
 
 	// Force this to be overriden otherwise this introduces a default cycle between
 	// the two overloads.
 	@Override
-	@Nonnull
-	List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData);
+	@NotNull
+	List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull Random rand, @NotNull IModelData extraData);
 }

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model.data;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public interface IModelData {
 	/**

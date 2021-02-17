@@ -3,10 +3,10 @@
   "package": "net.patchworkmc.mixin.event.render",
   "compatibilityLevel": "JAVA_8",
   "client": [
-    "MixinItemColors",
     "MixinBlockColors",
-    "MixinSpriteAtlasTexture",
-    "MixinHeldItemRenderer"
+    "MixinHeldItemRenderer",
+    "MixinItemColors",
+    "MixinSpriteAtlasTexture"
   ],
   "injectors": {
     "defaultRequire": 1

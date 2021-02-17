@@ -19,7 +19,7 @@
 
 package net.patchworkmc.impl.extensions.item;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraftforge.common.extensions.IForgeItem;
 

@@ -25,13 +25,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This object encapsulates a lazy value, with typical transformation operations
@@ -49,14 +47,13 @@ import org.apache.logging.log4j.Logger;
  *
  * @param <T> The type of the optional value.
  */
-@ParametersAreNonnullByDefault
 public class LazyOptional<T> {
 	private final NonNullSupplier<T> supplier;
 	private AtomicReference<T> resolved;
 	private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
 	private boolean isValid = true;
 
-	private static final @Nonnull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
+	private static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	/**

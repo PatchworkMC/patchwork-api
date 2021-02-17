@@ -19,14 +19,13 @@
 
 package net.patchworkmc.impl.event.entity;
 
-import javax.annotation.Nonnull;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
@@ -43,7 +42,7 @@ public class EntityEvents {
 		return evt;
 	}
 
-	public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item) {
+	public static int onItemExpire(ItemEntity entity, @NotNull ItemStack item) {
 		if (item.isEmpty()) return -1;
 		ItemExpireEvent event = new ItemExpireEvent(entity, ((IForgeItemStack) (Object) item).getEntityLifespan(entity.world));
 		if (!MinecraftForge.EVENT_BUS.post(event)) return -1;

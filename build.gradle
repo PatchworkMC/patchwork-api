@@ -70,8 +70,8 @@ allprojects {
 		modImplementation "net.fabricmc.fabric-api:fabric-api:0.30.0+1.16"
 
 		implementation 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
-		implementation 'com.google.code.findbugs:jsr305:3.0.2'
 		implementation 'com.electronwill.night-config:toml:3.6.2'
+		implementation 'org.cadixdev:lorenz:0.5.7'
 	}
 
 	configurations {
@@ -84,7 +84,7 @@ allprojects {
 
 	afterEvaluate {
 		remapJar {
-			input = file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar")
+			input.set(file("${project.buildDir}/libs/$archivesBaseName-${version}-dev.jar"))
 			archiveName = "${archivesBaseName}-${version}.jar"
 		}
 
@@ -183,36 +183,6 @@ subprojects {
 	javadoc.enabled = false
 }
 
-subprojects.each { bintrayUpload.dependsOn("${it.path}:bintrayUpload") }
-
-bintray {
-	user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : System.getenv('bintray_user')
-	key = project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : System.getenv('bintray_key')
-	publish = true
-	override = true
-	publications = ['mavenJava']
-	pkg {
-		repo = project.bintrayRepo
-		name = project.name
-		user = bintray.user
-		userOrg = project.repoOwner
-		licenses = [project.codeLicense]
-		desc = project.description
-		websiteUrl = "https://github.com/${project.repoOwner}/${project.repoName}"
-		issueTrackerUrl = "https://github.com/${project.repoOwner}/${project.repoName}/issues"
-		vcsUrl = "https://github.com/${project.repoOwner}/${project.repoName}.git"
-		publicDownloadNumbers = true
-
-		githubRepo = "${project.repoOwner}/${project.repoName}"
-		version {
-			name = project.version
-			released = new Date()
-		}
-	}
-
-	javadoc.enabled = false
-}
-
 task remapMavenJar(type: net.fabricmc.loom.task.RemapJarTask, dependsOn: jar) {
 	afterEvaluate {
 		input = file("${project.buildDir}/libs/${archivesBaseName}-${version}-dev.jar")
@@ -267,7 +237,8 @@ dependencies {
 	include 'com.electronwill.night-config:core:3.6.2'
 	include 'com.electronwill.night-config:toml:3.6.2'
 	include 'net.patchworkmc:event-racecar:1.0.1:with-typetools'
-	include 'org.cadixdev:lorenz:0.5.4'
+	include 'org.cadixdev:lorenz:0.5.7'
+	include 'org.cadixdev:bombe:0.3.4'
 }
 
 loom {
